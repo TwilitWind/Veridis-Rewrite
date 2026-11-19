@@ -199,8 +199,8 @@
 
 /* 语义层：组件只引用这一层，改一处全站同步。 */
 #blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
-  /* 内容区四周留白：模块卡片内边距、模块之间、模块到边 */
-  --blai-canvas-pad: var(--blai-space-12);
+  /* 内容区四周留白：模块卡片内边距、模块之间、模块到边。统一加大一档，避免次级容器贴边。 */
+  --blai-canvas-pad: var(--blai-space-14);
   /* 模块卡片内边距 */
   --blai-panel-pad: var(--blai-canvas-pad);
   /* 紧凑模块（工具页右栏窄卡）内边距 */

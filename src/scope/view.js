@@ -17,7 +17,7 @@ function getScopeTagDisplayGroupId(scopeTag, groupIds) {
     return groupIds.has(groupId) ? groupId : DEFAULT_SCOPE_TAG_GROUP_ID;
 }
 
-function buildScopeTagChipHtml(scopeTag, editId) {
+function buildScopeTagChipHtml(scopeTag, editId, index = 0, total = 1) {
     const isEnabled = scopeTag.enabled !== false;
     const checkedAttr = isEnabled ? 'checked' : '';
     const activeClass = scopeTag.id === editId ? 'is-active' : '';
@@ -28,6 +28,9 @@ function buildScopeTagChipHtml(scopeTag, editId) {
         : `${scopeTag.startTag} ... ${scopeTag.endTag}`;
     const primaryText = labelText || '标签范围';
     const chipTitle = `${primaryText} · ${rangeText}`;
+    // COT 思维链是多个内置标签合并成的展示项，不适合按单项移动。
+    const movable = !isCotScopeTagEntry(scopeTag);
+    const moveDisabled = (disabled) => (!movable || disabled ? 'disabled' : '');
     return `
         <div class="blai-clean-tag-item ${activeClass} ${disabledClass}" data-id="${safeHtml(scopeTag.id)}">
             <button type="button" class="blai-clean-tag-copy" data-id="${safeHtml(scopeTag.id)}" title="${safeHtml(chipTitle)}">
@@ -43,8 +46,9 @@ function buildScopeTagChipHtml(scopeTag, editId) {
                 <div class="blai-clean-tag-menu-wrap">
                     <button type="button" class="blai-clean-tag-action blai-clean-tag-menu-open" data-id="${safeHtml(scopeTag.id)}" title="更多操作" aria-label="更多操作" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
                     <div class="blai-clean-tag-menu" hidden>
-                        <button type="button" class="blai-clean-group-menu-item blai-clean-tag-edit" data-id="${safeHtml(scopeTag.id)}"><i class="fas fa-pen" aria-hidden="true"></i>编辑标签</button>
-                        <button type="button" class="blai-clean-group-menu-item blai-clean-group-menu-item--danger blai-clean-tag-delete" data-id="${safeHtml(scopeTag.id)}"><i class="fas fa-trash" aria-hidden="true"></i>删除标签</button>
+                        <button type="button" class="blai-clean-group-menu-item blai-clean-tag-move-up" data-id="${safeHtml(scopeTag.id)}" ${moveDisabled(index === 0)}><i class="fas fa-arrow-up" aria-hidden="true"></i>上移</button>
+                        <button type="button" class="blai-clean-group-menu-item blai-clean-tag-move-down" data-id="${safeHtml(scopeTag.id)}" ${moveDisabled(index === total - 1)}><i class="fas fa-arrow-down" aria-hidden="true"></i>下移</button>
+                        <button type="button" class="blai-clean-group-menu-item blai-clean-group-menu-item--danger blai-clean-tag-delete" data-id="${safeHtml(scopeTag.id)}"><i class="fas fa-trash" aria-hidden="true"></i>删除</button>
                     </div>
                 </div>
             </div>
@@ -129,7 +133,7 @@ export function renderScopeTagsModal() {
             : '此分组暂无标签';
         const groupToggleDisabled = hasTags ? '' : 'disabled';
         const tagsHtml = group.tags.length > 0
-            ? group.tags.map((scopeTag) => buildScopeTagChipHtml(scopeTag, editId)).join('')
+            ? group.tags.map((scopeTag, tagIndex) => buildScopeTagChipHtml(scopeTag, editId, tagIndex, group.tags.length)).join('')
             : '<div class="blai-clean-group-empty">此分组暂无标签。</div>';
         const groupMenuDisabledAttr = (disabled) => (disabled ? 'disabled' : '');
         const groupHeadHtml = `

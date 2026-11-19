@@ -154,21 +154,6 @@
     pointer-events: none;
 }
 
-#blai-purifier-popup .blai-clean-group-name-input {
-    width: 100%;
-    min-width: 0;
-    height: var(--blai-size-28);
-    padding: 0 var(--blai-space-8);
-    border: var(--blai-border-1) solid var(--accent-color);
-    border-radius: var(--blai-radius-6);
-    background: var(--bg-surface);
-    color: var(--text-main);
-    font-family: inherit;
-    font-size: var(--blai-font-12);
-    font-weight: var(--blai-weight-bold);
-    box-shadow: none;
-}
-
 #blai-purifier-popup .blai-clean-group-controls {
     display: inline-flex;
     align-items: center;

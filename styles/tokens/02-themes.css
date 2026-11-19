@@ -75,6 +75,9 @@
     --blai-modal-shadow: rgba(0, 0, 0, 0.5);
     /* 投影颜色恒为中性黑，夜间只加深浓度；所有浮层共用这组令牌。 */
     --blai-shadow-color: rgba(0, 0, 0, 0.5);
+    /* 深底上滚动条拇指改为浅灰，否则黑色拇指在深卡上看不见。 */
+    --blai-scrollbar-thumb: rgba(255, 255, 255, 0.28);
+    --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.44);
     /* 深蓝底配白字，避免浅蓝底在深主题下发荧光。 */
     --blai-dropdown-active-bg: #3D6FB4;
     --re-escape: #FF8F40;

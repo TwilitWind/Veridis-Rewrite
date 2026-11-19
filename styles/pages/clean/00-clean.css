@@ -226,11 +226,11 @@
 #blai-purifier-popup .blai-clean-count-badge {
     min-width: var(--blai-size-24);
     height: var(--blai-size-20);
-    padding: 0 var(--blai-space-7);
+    padding: 0 var(--blai-space-8);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--blai-radius-5);
+    border-radius: var(--blai-radius-full);
     background: var(--bg-surface);
     color: var(--text-secondary);
     font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
@@ -341,11 +341,11 @@
 #blai-purifier-popup .blai-clean-group-count {
     min-width: var(--blai-size-20);
     height: var(--blai-size-18);
-    padding: 0 var(--blai-space-6);
+    padding: 0 var(--blai-space-7);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--blai-radius-4);
+    border-radius: var(--blai-radius-full);
     background: var(--bg-surface);
     color: var(--text-secondary);
     font-family: ui-monospace, SFMono-Regular, Consolas, monospace;

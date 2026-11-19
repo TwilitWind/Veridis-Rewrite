@@ -141,6 +141,15 @@
     background: var(--bg-surface);
 }
 
+/* 运行日志视图：日志框自带滚动条，内容区再出一条最右侧滚动条显得冗余，
+   这里隐藏内容区滚动条但仍保留其滚动能力（其它 tab 如提交反馈仍显示）。 */
+#blai-feedback-workspace .blai-feedback-workspace-content:has(.blai-feedback-log-output) {
+    scrollbar-width: none;
+}
+#blai-feedback-workspace .blai-feedback-workspace-content:has(.blai-feedback-log-output)::-webkit-scrollbar {
+    display: none;
+}
+
 #blai-feedback-workspace .blai-feedback-form {
     width: min(var(--blai-size-1180), 100%);
     margin: 0 auto;

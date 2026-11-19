@@ -1,10 +1,24 @@
 /* 全局重置：隐藏辅助类、滚动条、命中高亮动画。 */
 
-/* 可见滚动条统一用当前主题关键色、并调为细条。两者都可继承，挂在根容器上即可覆盖内部所有滚动区；
-   刻意隐藏的滚动条（后代显式 scrollbar-width: none）会覆盖继承值，不受影响。 */
+/* 可见滚动条统一细条 + 中性灰拇指。Firefox 走 scrollbar-width/color，Chromium 走 ::-webkit-scrollbar。
+   刻意隐藏的滚动条（后代显式 scrollbar-width: none / ::-webkit-scrollbar display:none）不受影响。 */
 :where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) {
     scrollbar-width: thin;
-    scrollbar-color: var(--accent-color) transparent;
+    scrollbar-color: var(--blai-scrollbar-thumb) var(--blai-scrollbar-track);
+}
+:where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+:where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) ::-webkit-scrollbar-thumb {
+    border-radius: var(--blai-radius-full);
+    background: var(--blai-scrollbar-thumb);
+}
+:where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) ::-webkit-scrollbar-thumb:hover {
+    background: var(--blai-scrollbar-thumb-hover);
+}
+:where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) ::-webkit-scrollbar-track {
+    background: var(--blai-scrollbar-track);
 }
 
 #blai-purifier-popup .page-panel::-webkit-scrollbar, #blai-edit-subrules-container::-webkit-scrollbar {

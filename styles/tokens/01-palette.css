@@ -23,6 +23,10 @@
     --blai-shadow-lg: 0 12px 32px var(--blai-shadow-color);
     /* 固定栏下沿的细分隔投影，spread 收负，只留一条软边。 */
     --blai-shadow-divider: 0 6px 16px -12px rgba(0, 0, 0, 0.62);
+    /* 滚动条统一细条 + 中性灰拇指：不用强调色，避免紫色竖条抢眼；夜色在 02-themes.css 加深。 */
+    --blai-scrollbar-thumb: rgba(0, 0, 0, 0.26);
+    --blai-scrollbar-thumb-hover: rgba(0, 0, 0, 0.42);
+    --blai-scrollbar-track: transparent;
     /* 危险实心块（删除类按钮）上的文字色 */
     --danger-contrast: #FFFFFF;
 
