@@ -1,0 +1,294 @@
+/* 首页规则预览文本、分组详情、搜索框与最近搜索。 */
+
+#blai-purifier-popup .blai-home-rule-labels {
+    min-width: 0;
+    min-height: var(--blai-size-18);
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-5);
+    overflow: hidden;
+}
+
+#blai-purifier-popup .blai-home-rule-badge {
+    flex: 0 0 auto;
+    min-height: var(--blai-size-18);
+    padding: 0;
+    border-radius: 0;
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    color: var(--accent-ink);
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-normal);
+    line-height: 1.2;
+}
+
+#blai-purifier-popup :is(.blai-home-source-text, .blai-home-target-text) {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-normal);
+    line-height: 1.35;
+}
+
+#blai-purifier-popup .blai-home-preview-label {
+    min-height: var(--blai-size-18);
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-main);
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-normal);
+    line-height: 1.2;
+}
+
+#blai-purifier-popup .blai-home-rule-arrow {
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    text-align: center;
+}
+
+#blai-purifier-popup .blai-home-more-text {
+    padding: var(--blai-space-3) 0 var(--blai-space-1);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-normal);
+    text-align: right;
+}
+
+#blai-purifier-popup .blai-home-card-empty {
+    min-height: var(--blai-size-74);
+    padding: var(--blai-space-16);
+    display: grid;
+    place-items: center;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+}
+
+#blai-purifier-popup .blai-home-empty-state {
+    min-height: var(--blai-size-180);
+    grid-column: 1 / -1;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--blai-space-8);
+    border: var(--blai-border-1) dashed var(--border-color);
+    border-radius: var(--blai-radius-14);
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+#blai-purifier-popup .blai-home-empty-state i {
+    color: var(--accent-ink);
+    font-size: var(--blai-font-22);
+}
+
+#blai-purifier-popup .blai-home-empty-state strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-13);
+}
+
+#blai-purifier-popup .blai-home-empty-state span {
+    font-size: var(--blai-font-11);
+}
+@media (max-width: 1120px) {
+
+#blai-purifier-popup .blai-home-dataset-actions {
+    margin-left: 0;
+    justify-content: flex-start;
+}
+
+#blai-purifier-popup .blai-home-rule-grid {
+    grid-template-columns: minmax(0, 1fr);
+}}
+
+@media (min-width: 601px) and (max-width: 780px) {
+
+#blai-purifier-popup .blai-home-preset-field {
+    width: 100%;
+    min-width: 0;
+    flex-basis: auto;
+}
+
+#blai-purifier-popup .blai-home-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--blai-space-6);
+}
+
+#blai-purifier-popup .blai-home-toolbar-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#blai-purifier-popup .blai-home-toolbar-button {
+    padding-inline: var(--blai-space-7);
+}}
+
+@media (max-width: 600px) {
+#blai-purifier-popup .blai-home-page {
+    padding: 0 var(--blai-space-16) var(--blai-space-84);
+    gap: var(--blai-space-16);
+    box-sizing: border-box;
+}
+
+#blai-purifier-popup .blai-home-dataset {
+    padding-top: var(--blai-space-12);
+    padding-bottom: var(--blai-space-8);
+}
+
+#blai-purifier-popup .blai-home-preset-field {
+    width: clamp(var(--blai-size-104), 34vw, var(--blai-size-132));
+    min-width: 0;
+    flex: 0 1 clamp(var(--blai-size-104), 34vw, var(--blai-size-132));
+}
+
+#blai-purifier-popup .blai-home-preset-select {
+    height: var(--blai-size-38);
+    padding: 0 var(--blai-space-24) 0 var(--blai-space-9);
+    font-size: var(--blai-font-11);
+}
+
+#blai-purifier-popup .blai-home-metrics {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    gap: var(--blai-space-8);
+    font-size: var(--blai-font-10);
+}
+
+#blai-purifier-popup .blai-home-metric b {
+    font-size: var(--blai-font-11);
+}
+
+#blai-purifier-popup .blai-home-dataset-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+#blai-purifier-popup .blai-home-dataset-actions button {
+    min-width: 0;
+    min-height: var(--blai-size-30);
+    padding-inline: var(--blai-space-3);
+    gap: var(--blai-space-3);
+    font-size: var(--blai-font-10);
+}
+
+#blai-purifier-popup .blai-home-toolbar-actions {
+    gap: var(--blai-space-4);
+}
+
+#blai-purifier-popup .blai-home-toolbar-button {
+    min-height: var(--blai-size-30);
+    padding-inline: var(--blai-space-6);
+    gap: var(--blai-space-4);
+    font-size: var(--blai-font-10);
+}
+
+#blai-purifier-popup .blai-home-batch-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--blai-space-4);
+}
+
+#blai-purifier-popup .blai-home-batch-panel {
+    padding: var(--blai-space-4) 0 0;
+    gap: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+#blai-purifier-popup .blai-home-batch-heading {
+    display: none;
+}
+
+#blai-purifier-popup .blai-home-batch-actions button {
+    min-height: var(--blai-size-30);
+    padding: 0 var(--blai-space-4);
+    gap: var(--blai-space-3);
+    font-size: var(--blai-font-10);
+}
+
+#blai-purifier-popup .blai-home-card {
+    background: var(--bg-surface);
+    box-shadow: none;
+}
+
+#blai-purifier-popup .blai-home-rule-item {
+    grid-template-columns: minmax(0, 1.35fr) 14px minmax(0, 1fr);
+    gap: var(--blai-space-5);
+}
+
+#blai-purifier-popup :is(.blai-home-source-text, .blai-home-target-text, .blai-home-preview-label, .blai-home-more-text) {
+    font-weight: var(--blai-weight-normal);
+}
+
+.blai-modal-shell .blai-field-label, .blai-modal-shell .blai-edit-field > label, .blai-modal-shell .blai-subrule-field > label {
+    font-size: var(--blai-font-14);
+    line-height: 1.35;
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-rule-edit-modal :is(.blai-subrule-preview, .blai-subrule-preview-source, .blai-subrule-preview-replacement, .blai-subrule-remark, .blai-subrule-empty) {
+    font-weight: var(--blai-weight-normal);
+}
+
+#blai-rule-edit-modal .blai-edit-modal-title {
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-rule-edit-modal .blai-field-label {
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-edit-subrules-container .blai-mapping-badge {
+    font-weight: var(--blai-weight-bold);
+}}
+
+@media (min-width: 601px) {#blai-rule-edit-modal > .blai-edit-modal-card, #blai-subrule-edit-modal > .blai-subrule-modal-card, #blai-rule-transfer-modal > .blai-transfer-content {
+    width: min(var(--blai-size-720), 100%);
+    max-width: var(--blai-size-720);
+    max-height: calc(100dvh - clamp(var(--blai-size-48), 8vw, var(--blai-size-88)));
+    border-radius: var(--blai-radius-14);
+}}
+
+@media (max-width: 600px) {
+#blai-rule-edit-modal > .blai-edit-modal-card, #blai-preset-import-choice-modal > .blai-import-choice-card, #blai-rule-search-modal > .blai-rule-search-card, #blai-subrule-edit-modal > .blai-subrule-modal-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+}
+
+#blai-rule-transfer-modal {
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    padding: max(var(--blai-space-20), env(safe-area-inset-top)) max(var(--blai-space-20), env(safe-area-inset-right)) max(var(--blai-space-20), env(safe-area-inset-bottom)) max(var(--blai-space-20), env(safe-area-inset-left));
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--text-main) 38%, transparent);
+    box-sizing: border-box;
+}
+
+#blai-rule-transfer-modal > .blai-transfer-content {
+    width: 100%;
+    max-width: var(--blai-size-420);
+    max-height: calc(100dvh - var(--blai-size-40));
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-16);
+    background: var(--bg-surface);
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--text-main) 16%, transparent);
+    box-sizing: border-box;
+}}
+
+@media (min-width: 601px) {#blai-rule-transfer-modal {
+    padding: clamp(var(--blai-space-24), 4vw, var(--blai-space-44));
+    align-items: center;
+    justify-content: center;
+}}

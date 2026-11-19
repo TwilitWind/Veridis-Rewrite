@@ -1,0 +1,330 @@
+// 负责反馈工作区操作绑定，以及提交给网关的精确序列化预览。
+import { buildFeedbackPayload, getFeedbackPayloadReaders } from './payload.js';
+import { submitFeedbackPayloadJson, validateFeedbackAttachments } from './client.js';
+import {
+    clearDeepCleanDiagnostics,
+    getDeepCleanDiagnosticSlots,
+} from '../deepClean/diagnostics.js';
+import {
+    clearRenderedFeedbackPreview,
+    openFeedbackWorkspace,
+    renderAiContext,
+    renderDeepCleanDiagnostics,
+    renderFeedbackForm,
+    renderFeedbackPreview,
+    renderRuntimeLog,
+    setFeedbackSubmitEnabled,
+    showFeedbackSubmissionStatus,
+    showDeepCleanDiagnosticJson,
+    showFeedbackStatus,
+    updateFeedbackAreaSummary,
+} from './view.js';
+import {
+    applyDebugDisplayOrder,
+    clearAiRewriteDebugEvents,
+    getAiRewriteDebugDisplayText,
+    getAiRewriteDebugLogText,
+    readDebugDisplayOrderPreference,
+} from '../aiRewrite/debug.js';
+import { clearAiCommunicationRecords } from '../aiRewrite/communicationMonitor.js';
+import { logger } from '../log.js';
+import { showConfirmModal } from '../ui/notifications.js';
+import { showToast } from '../ui/notifications.js';
+
+let previewPayloadJson = '';
+let previewAttachments = [];
+let previewRevision = 0;
+
+async function resolveFeedbackPreviewReaders(selected, readers) {
+    const unresolvedReaders = readers || getFeedbackPayloadReaders();
+    if (typeof unresolvedReaders.readExtensionManifest !== 'function') return unresolvedReaders;
+
+    const pluginManifest = await unresolvedReaders.readExtensionManifest(unresolvedReaders.veridisExternalId);
+    const resolvedReaders = {
+        ...unresolvedReaders,
+        getPluginVersion: () => pluginManifest?.version || '',
+    };
+    if (selected.installedEnabledExtensions === true) {
+        const extensions = await unresolvedReaders.getInstalledEnabledExtensions();
+        resolvedReaders.getInstalledEnabledExtensions = () => extensions;
+    }
+    return resolvedReaders;
+}
+
+export async function createFeedbackPreviewPayloadJson(form, selected, readers) {
+    const resolvedReaders = await resolveFeedbackPreviewReaders(selected, readers);
+    return JSON.stringify(buildFeedbackPayload(form, selected, resolvedReaders), null, 2);
+}
+
+export function invalidateFeedbackPreview() {
+    previewRevision += 1;
+    previewPayloadJson = '';
+    previewAttachments = [];
+    return previewPayloadJson;
+}
+
+export function submitCurrentFeedbackPreview(fetchImpl) {
+    if (!previewPayloadJson) throw new Error('Generate a new preview before submitting.');
+    return submitFeedbackPayloadJson(previewPayloadJson, previewAttachments, fetchImpl);
+}
+
+function readFeedbackAttachments(form) {
+    return [...(form.querySelector('#blai-feedback-files')?.files || [])];
+}
+
+function readFeedbackForm(form) {
+    return {
+        type: form.querySelector('[name="feedbackType"]')?.value || '',
+        area: [...form.querySelectorAll('input[name="feedbackArea"]:checked')].map((input) => input.value),
+        title: form.querySelector('#blai-feedback-title')?.value || '',
+        details: form.querySelector('#blai-feedback-details')?.value || '',
+    };
+}
+
+function readDiagnosticSelections(form) {
+    const checked = (name) => form.querySelector(`input[name="${name}"]`)?.checked === true;
+    return {
+        installedEnabledExtensions: checked('installedEnabledExtensions'),
+        runtimeLog: checked('runtimeLog'),
+        deepCleanLatestFailure: checked('deepCleanLatestFailure'),
+        deepCleanPreviousFailure: checked('deepCleanPreviousFailure'),
+        deepCleanLastSuccess: checked('deepCleanLastSuccess'),
+    };
+}
+
+function haveSameValues(left, right) {
+    return left.length === right.length && left.every((value, index) => value === right[index]);
+}
+
+function isCurrentVisibleFeedbackForm(form) {
+    const workspace = document.getElementById('blai-feedback-workspace');
+    const page = workspace?.closest?.('.page-panel[data-page="feedback"]');
+    return document.getElementById('blai-feedback-form') === form
+        && Boolean(page?.classList?.contains('active'))
+        && workspace?.dataset.feedbackView === 'submit';
+}
+
+function feedbackPreviewInputsStillMatch(form, capturedForm, capturedDiagnostics, capturedAttachments) {
+    if (!isCurrentVisibleFeedbackForm(form)) return false;
+    const currentForm = readFeedbackForm(form);
+    const currentDiagnostics = readDiagnosticSelections(form);
+    return currentForm.type === capturedForm.type
+        && currentForm.title === capturedForm.title
+        && currentForm.details === capturedForm.details
+        && haveSameValues(currentForm.area, capturedForm.area)
+        && haveSameValues(readFeedbackAttachments(form), capturedAttachments)
+        && currentDiagnostics.installedEnabledExtensions === capturedDiagnostics.installedEnabledExtensions
+        && currentDiagnostics.runtimeLog === capturedDiagnostics.runtimeLog
+        && currentDiagnostics.deepCleanLatestFailure === capturedDiagnostics.deepCleanLatestFailure
+        && currentDiagnostics.deepCleanPreviousFailure === capturedDiagnostics.deepCleanPreviousFailure
+        && currentDiagnostics.deepCleanLastSuccess === capturedDiagnostics.deepCleanLastSuccess;
+}
+
+function showWorkspaceView(view) {
+    invalidateFeedbackPreview();
+    clearRenderedFeedbackPreview({ preserveSubmissionStatus: true });
+    openFeedbackWorkspace(view);
+    if (view === 'runtime-log') renderRuntimeLog();
+    else if (view === 'ai-context') renderAiContext();
+    else if (view === 'diagnostics') renderDeepCleanDiagnostics(getDeepCleanDiagnosticSlots());
+    else renderFeedbackForm(getDeepCleanDiagnosticSlots());
+}
+
+export function openFeedbackPage(view = 'runtime-log') {
+    showWorkspaceView(view);
+}
+
+import { openMenuPopover, closeMenuPopover } from '../ui/popover.js';
+
+export function bindFeedbackEvents() {
+    $(document).off('click', '#blai-feedback-workspace [data-blai-area-select] .blai-feedback-area-trigger').on('click', '#blai-feedback-workspace [data-blai-area-select] .blai-feedback-area-trigger', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const wrap = this.closest('[data-blai-area-select]');
+        const menu = wrap?.querySelector('.blai-feedback-area-options');
+        if (!menu) return;
+        if (!menu.hidden) {
+            closeMenuPopover(menu);
+            menu.hidden = true;
+            this.setAttribute('aria-expanded', 'false');
+        } else {
+            menu.style.width = `${Math.round(this.getBoundingClientRect().width)}px`;
+            menu.hidden = false;
+            this.setAttribute('aria-expanded', 'true');
+            openMenuPopover(this, menu);
+        }
+    });
+
+    // 浮层选项点击：切换 form 内的隐藏 checkbox（业务读取源），保持菜单展开以连续多选。
+    $(document).off('click', '.blai-feedback-area-option').on('click', '.blai-feedback-area-option', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const area = String($(this).attr('data-area') || '');
+        const form = document.getElementById('blai-feedback-form');
+        const checkbox = form?.querySelector(`input[name="feedbackArea"][value="${CSS.escape(area)}"]`);
+        if (!checkbox) return;
+        checkbox.checked = !checkbox.checked;
+        $(checkbox).trigger('change');
+        $(this).attr('aria-checked', checkbox.checked ? 'true' : 'false')
+            .toggleClass('is-checked', checkbox.checked);
+    });
+
+    // 表单重渲染 / 外部改 checkbox 时同步浮层勾选态（用 change 委托即可覆盖）。
+    $(document).off('change', '#blai-feedback-workspace input[name="feedbackArea"]').on('change', '#blai-feedback-workspace input[name="feedbackArea"]', function() {
+        updateFeedbackAreaSummary();
+        const area = String(this.value || '');
+        $(`.blai-feedback-area-option[data-area="${CSS.escape(area)}"]`)
+            .attr('aria-checked', this.checked ? 'true' : 'false')
+            .toggleClass('is-checked', this.checked);
+    });
+
+    $(document).off('click', '#blai-feedback-workspace [data-feedback-view]').on('click', '#blai-feedback-workspace [data-feedback-view]', function() {
+        showWorkspaceView(String($(this).attr('data-feedback-view') || 'runtime-log'));
+    });
+
+    $(document).off('input change', '#blai-feedback-form input, #blai-feedback-form textarea, #blai-feedback-form select').on('input change', '#blai-feedback-form input, #blai-feedback-form textarea, #blai-feedback-form select', function() {
+        if (this.id === 'blai-feedback-confirm') return;
+        if (this.name === 'feedbackArea') updateFeedbackAreaSummary();
+        invalidateFeedbackPreview();
+        clearRenderedFeedbackPreview();
+        showFeedbackStatus('内容已更改，请重新生成预览。', 'notice');
+    });
+
+    $(document).off('click', '#blai-feedback-preview-generate').on('click', '#blai-feedback-preview-generate', async function() {
+        const form = document.getElementById('blai-feedback-form');
+        if (!form || this.disabled) return;
+        const capturedForm = readFeedbackForm(form);
+        const capturedDiagnostics = readDiagnosticSelections(form);
+        const capturedAttachments = readFeedbackAttachments(form);
+        invalidateFeedbackPreview();
+        clearRenderedFeedbackPreview();
+        this.disabled = true;
+        const revision = previewRevision;
+        try {
+            validateFeedbackAttachments(capturedAttachments);
+            const payloadJson = await createFeedbackPreviewPayloadJson(capturedForm, capturedDiagnostics);
+            if (revision !== previewRevision || !feedbackPreviewInputsStillMatch(form, capturedForm, capturedDiagnostics, capturedAttachments)) return;
+            previewPayloadJson = payloadJson;
+            previewAttachments = capturedAttachments;
+            renderFeedbackPreview(payloadJson, capturedAttachments);
+            document.getElementById('blai-feedback-preview-section')?.scrollIntoView({ block: 'start' });
+            showFeedbackStatus('预览已生成。请检查完整 JSON 和所选文件后确认提交。', 'success');
+        } catch (error) {
+            if (revision !== previewRevision || !feedbackPreviewInputsStillMatch(form, capturedForm, capturedDiagnostics, capturedAttachments)) return;
+            invalidateFeedbackPreview();
+            clearRenderedFeedbackPreview();
+            showFeedbackStatus(`无法生成预览：${error instanceof Error ? error.message : String(error)}`, 'error');
+        } finally {
+            this.disabled = false;
+        }
+    });
+
+    $(document).off('click', '#blai-feedback-files-trigger').on('click', '#blai-feedback-files-trigger', () => {
+        document.getElementById('blai-feedback-files')?.click();
+    });
+
+    // 复制给的是屏幕上看到的那份排版文本；要拿结构化数据去提 issue 的用「导出日志」。
+    $(document).off('click', '#blai-feedback-copy-log').on('click', '#blai-feedback-copy-log', async () => {
+        const logText = getAiRewriteDebugDisplayText();
+        if (!logText || logText === '暂无运行事件。') {
+            showToast('还没有可复制的日志。');
+            return;
+        }
+        try {
+            const tavernHelper = globalThis.TavernHelper || globalThis.parent?.TavernHelper;
+            if (typeof tavernHelper?.builtin?.copyText !== 'function') throw new Error('TavernHelper.builtin.copyText 不可用');
+            await tavernHelper.builtin.copyText(logText);
+            showToast('运行日志已复制。');
+        } catch (error) {
+            logger.warn('复制运行日志失败', error);
+            showToast('复制失败，请改用「导出日志」。');
+        }
+    });
+
+    $(document).off('click', '#blai-feedback-log-order').on('click', '#blai-feedback-log-order', function() {
+        const next = readDebugDisplayOrderPreference() === 'desc' ? 'asc' : 'desc';
+        applyDebugDisplayOrder(next);
+        renderRuntimeLog();
+    });
+
+    $(document).off('click', '#blai-feedback-export-log').on('click', '#blai-feedback-export-log', () => {
+        const data = getAiRewriteDebugLogText();
+        if (!data || data === '[]') {
+            showToast('还没有可导出的日志。');
+            return;
+        }
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `veridis-rewrite-log-${stamp}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast('运行日志已导出。');
+    });
+
+    $(document).off('click', '#blai-feedback-clear-log').on('click', '#blai-feedback-clear-log', async () => {
+        const confirmed = await showConfirmModal('清空后，已记录的全部运行事件将从本地移除，无法恢复。确定清空吗？', {
+            okText: '清空',
+            danger: true,
+        });
+        if (!confirmed) return;
+        clearAiRewriteDebugEvents();
+        renderRuntimeLog();
+        showToast('运行日志已清空。');
+    });
+
+    $(document).off('click', '#blai-ai-monitor-clear').on('click', '#blai-ai-monitor-clear', () => {
+        clearAiCommunicationRecords();
+        // 清空后立刻重绘，否则旧内容还留在屏幕上，用户会以为按钮没生效。
+        renderAiContext();
+    });
+
+
+    $(document).off('change', '#blai-feedback-confirm').on('change', '#blai-feedback-confirm', function() {
+        setFeedbackSubmitEnabled(this.checked === true && Boolean(previewPayloadJson));
+    });
+
+    $(document).off('click', '#blai-feedback-submit').on('click', '#blai-feedback-submit', async function() {
+        if (!previewPayloadJson || document.getElementById('blai-feedback-confirm')?.checked !== true) return;
+        const form = this.form;
+        const submittedInputs = [...form.querySelectorAll('input, textarea, select')]
+            .filter((input) => !input.disabled);
+        submittedInputs.forEach((input) => { input.disabled = true; });
+        const previewButton = form.querySelector('#blai-feedback-preview-generate');
+        previewButton.disabled = true;
+        $(this).prop('disabled', true);
+        showFeedbackSubmissionStatus('正在提交匿名反馈…', 'notice');
+        try {
+            const result = await submitCurrentFeedbackPreview();
+            form.reset();
+            updateFeedbackAreaSummary();
+            invalidateFeedbackPreview();
+            showFeedbackSubmissionStatus(`提交成功。反馈 ID：${result.feedbackId}`, 'success');
+            clearRenderedFeedbackPreview({ preserveSubmissionStatus: true });
+            showToast(`匿名反馈提交成功 · ID ${result.feedbackId}`, '如需更新提醒，请在贴内附 ID 并 @我，处理后会在贴内回复。');
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            showFeedbackSubmissionStatus(`提交失败：${message}`, 'error');
+            setFeedbackSubmitEnabled(Boolean(previewPayloadJson) && document.getElementById('blai-feedback-confirm')?.checked === true);
+        } finally {
+            submittedInputs.forEach((input) => { input.disabled = false; });
+            previewButton.disabled = false;
+        }
+    });
+
+    $(document).off('click', '[data-feedback-expand-diagnostic]').on('click', '[data-feedback-expand-diagnostic]', function() {
+        const slot = String($(this).attr('data-feedback-expand-diagnostic') || '');
+        const record = getDeepCleanDiagnosticSlots()[slot];
+        if (!record) return;
+        const expanded = $(this).attr('aria-expanded') !== 'true';
+        showDeepCleanDiagnosticJson(slot, record, expanded);
+    });
+
+    $(document).off('click', '#blai-feedback-clear-deep-clean').on('click', '#blai-feedback-clear-deep-clean', async () => {
+        if (!await showConfirmModal('仅清除本地深度清理诊断记录？', { danger: true, okText: '清除' })) return;
+        clearDeepCleanDiagnostics();
+        renderDeepCleanDiagnostics(getDeepCleanDiagnosticSlots());
+    });
+}

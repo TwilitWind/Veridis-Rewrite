@@ -1,0 +1,192 @@
+/* 外壳响应式：窄屏导航下移、平板断点、正文留白。 */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+#blai-purifier-popup.blai-app-shell {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    grid-template-columns: 70px minmax(0, 1fr);
+}
+
+#blai-purifier-popup.blai-app-shell .rail {
+    padding-inline: var(--blai-space-7);
+}
+
+#blai-purifier-popup.blai-app-shell .pages {
+    padding: var(--blai-space-18);
+}}
+
+/* ---------------------------------------------------------------------------
+   三套主题统一分区：最外层底色（--bg-base）与模块卡片（--bg-surface）分开，
+   顶栏 / 左栏 / 底栏白底，模块无边框白卡，靠明度差分块。
+   跟随酒馆主题在 foundation.css 里由 tint 派生 --bg-surface，保证比底色亮一层。
+   --------------------------------------------------------------------------- */
+/* 内容区必须是透明的，让最外层 --bg-base 的浅灰透上来；否则 .pages 自带的白底
+   会把整片内容区刷白，模块白卡与底色就没有明度差。带 .blai-app-shell 是为了压过
+   上面 602 / 494 两条同特异性的白底声明（它们都带 .blai-app-shell，先出现）。 */
+#blai-purifier-popup.blai-app-shell :is(.pages, .page-panel) {
+    background: transparent;
+}
+
+/* 内容区四周留白 = 模块间距（--blai-canvas-pad 与 --blai-panel-gap 同值） */
+#blai-purifier-popup.blai-app-shell .pages {
+    padding: var(--blai-canvas-pad);
+}
+
+#blai-purifier-popup.blai-app-shell .page-panel {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+}
+
+#blai-purifier-popup :is(.blai-ai-columns, .blai-clean-columns, .blai-tools-columns) {
+    gap: var(--blai-column-gap) !important;
+}
+
+#blai-purifier-popup :is(.blai-ai-primary-column, .blai-ai-secondary-column, .blai-clean-primary-column, .blai-clean-secondary-column, .blai-tools-primary-column, .blai-tools-secondary-column) {
+    gap: var(--blai-panel-gap) !important;
+}
+
+#blai-purifier-popup .blai-ai-settings {
+    gap: var(--blai-panel-gap);
+}
+
+/* 正文卡片与顶栏之间的缝隙统一走 token（顶栏铺满，正文自己留边） */
+#blai-purifier-popup .blai-home-page .blai-home-rules,
+#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
+    margin: var(--blai-canvas-pad) !important;
+}
+
+#blai-purifier-popup :is(.blai-global-header, .rail, .bottom-nav) {
+    background: var(--bg-surface) !important;
+    box-shadow: none !important;
+}
+
+/* 左栏右侧细边框：三套主题都保留，作为与内容区的视觉分界 */
+#blai-purifier-popup .rail {
+    border: 0;
+    border-right: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-purifier-popup .bottom-nav {
+    border: 0;
+    border-top: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-18);
+}
+
+/* 模块卡片：无边框白底 + 圆角，与最外层底色形成分区。
+   AI / 净化 / 工具三页的每个模块（section）都是一张独立白卡，
+   外底是 --bg-base 的灰白，白卡与灰白之间靠明度差分块，不加边框。 */
+#blai-purifier-popup :is(.blai-ai-section, .blai-clean-section, .blai-tools-section, .blai-clean-danger-zone) {
+    padding: var(--blai-panel-pad);
+    border: 0;
+    border-radius: var(--blai-radius-14);
+    background: var(--bg-surface);
+    box-shadow: none;
+}
+
+/* 两栏等高：栏内最后一张卡吃掉剩余高度，左右卡片底边齐平 */
+#blai-purifier-popup :is(.blai-ai-primary-column, .blai-ai-secondary-column, .blai-clean-primary-column, .blai-clean-secondary-column, .blai-tools-primary-column, .blai-tools-secondary-column) {
+    align-content: stretch;
+}
+
+/* 窄栏模块（工具页右栏「附加功能」）用紧凑内边距，避免内容被推到卡片右侧只占一半宽度 */
+#blai-purifier-popup .blai-tools-secondary-column > .blai-tools-section {
+    padding: var(--blai-panel-pad-tight);
+}
+
+#blai-purifier-popup :is(.blai-ai-section-header, .blai-clean-section-header, .blai-tools-section-header) {
+    border-bottom: 0 !important;
+}
+
+/* 模块内部不再用半透明底色叠底，统一纯色，避免发脏 */
+#blai-purifier-popup :is(.blai-clean-tag-group, .blai-ai-control, .blai-tools-binding-item, .blai-tools-extra-block, .blai-feedback-log-output) {
+    background: var(--bg-surface) !important;
+}
+
+/* 净化模式卡片的底色与边框由选中态自己控制（见 pages/clean/00-clean.css），这里不再压平 */
+
+#blai-purifier-popup .blai-clean-tag-item.is-active {
+    background: color-mix(in srgb, var(--accent-color) 8%, var(--bg-surface));
+}
+
+#blai-purifier-popup .blai-clean-mode-cards {
+    gap: var(--blai-space-10) !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * 首页 / 反馈页：顶栏铺满左右两侧，内容区独立留白。
+ * 全局顶栏 → 分隔线 → 页内顶栏（首页两行 / 反馈四标签）→ 分隔线。
+ * --------------------------------------------------------------------------- */
+#blai-purifier-popup.blai-app-shell .pages:has(> .page-panel.active[data-page="overview"]),
+#blai-purifier-popup.blai-app-shell .pages:has(> .page-panel.active[data-page="feedback"]) {
+    padding: 0;
+}
+
+#blai-purifier-popup.blai-app-shell :is(.page-panel.blai-home-page, .page-panel.blai-feedback-page) {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+}
+
+/* 全局顶栏：只留 1px 细边框，不再投影（需求：顶栏底部投影改细边框） */
+#blai-purifier-popup .blai-global-header {
+    border: 0;
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+    box-shadow: none;
+}
+
+/* 首页与反馈页各有一条页内顶栏，两条分隔线中间夹着页内顶栏，看上去是双层顶栏。
+   这两页去掉全局顶栏的分隔线，把两条合成一条（页内顶栏自己的下边框保留）。 */
+#blai-purifier-popup:is([data-active-page="overview"], [data-active-page="feedback"]) .blai-global-header {
+    border-bottom: 0;
+}
+
+/* 页内顶栏本身就是白底，去掉圆角，让白底一直铺到两侧 */
+#blai-purifier-popup .blai-home-page .blai-home-topbar,
+#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header {
+    border-radius: 0;
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+    box-shadow: none;
+}
+
+@media (min-width: 601px) {
+    #blai-purifier-popup .blai-home-page .blai-home-topbar,
+    #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header {
+        padding-top: var(--blai-space-12);
+    }}
+
+@media (max-width: 600px) {
+    #blai-purifier-popup .blai-home-page .blai-home-topbar,
+    #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header {
+        padding-top: var(--blai-space-10);
+    }}
+
+#blai-purifier-popup .blai-home-page .blai-home-rules {
+    border-radius: var(--blai-radius-14);
+}
+
+/* 反馈页整体不需要卡片包裹：顶栏一条 + 正文一条，各自独立留白 */
+#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header {
+    background: var(--bg-surface);
+}
+
+#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
+    background: var(--bg-surface);
+    border-radius: var(--blai-radius-14);
+}
+
+@media (max-width: 600px) {
+    #blai-purifier-popup .blai-home-page .blai-home-rules,
+    #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
+        margin: var(--blai-space-6) !important;
+    }}

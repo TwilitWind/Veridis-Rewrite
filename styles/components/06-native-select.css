@@ -1,0 +1,136 @@
+/* 原生 select 自绘化：数据锚点 select + 自绘触发器 + body 浮层菜单。
+   视觉沿用 --blai-dropdown-* 图1令牌；浮层由 popover.js 挂到 body，
+   因此菜单自身必须带上令牌定义，不能依赖 #blai-purifier-popup 祖先。 */
+
+.blai-native-select-wrap {
+    position: relative;
+    display: block;
+    min-width: 0;
+}
+
+/* 原生 select 只做数据锚点：保留 value / change / options 供业务读写，视觉完全隐藏。
+   display:none 下 .val() / change / options 操作完全正常，只需一条强制声明对抗主题。 */
+.blai-native-select-anchor {
+    display: none !important;
+}
+
+/* 触发器视觉与原生输入框一致：白底、1px 边框、圆角 10、图1字号。 */
+.blai-native-select-trigger {
+    --blai-dropdown-bg: var(--bg-surface);
+    --blai-dropdown-ink: var(--text-main);
+    --blai-dropdown-border: var(--border-color);
+    --blai-dropdown-radius: var(--blai-radius-10);
+    --blai-dropdown-item-height: var(--blai-size-28);
+    --blai-dropdown-item-font: var(--blai-font-13);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-8);
+    width: 100%;
+    min-width: 0;
+    min-height: var(--blai-size-36);
+    padding: 0 var(--blai-space-12);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    color: var(--blai-dropdown-ink);
+    font-size: var(--blai-dropdown-item-font);
+    font-weight: var(--blai-weight-normal);
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.blai-native-select-trigger:hover {
+    border-color: color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
+}
+
+.blai-native-select-trigger.is-empty .blai-native-select-label {
+    color: var(--text-secondary);
+}
+
+.blai-native-select-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blai-native-select-caret {
+    flex: 0 0 auto;
+    font-size: var(--blai-font-10);
+    color: var(--text-secondary);
+}
+
+/* 浮层菜单：令牌自带，挂到 body 后不再依赖任何祖先变量。 */
+.blai-native-select-menu {
+    --blai-dropdown-bg: var(--bg-surface);
+    --blai-dropdown-ink: var(--text-main);
+    --blai-dropdown-border: var(--border-color);
+    --blai-dropdown-radius: var(--blai-radius-10);
+    --blai-dropdown-pad: var(--blai-space-3) 0;
+    --blai-dropdown-gap: 0;
+    --blai-dropdown-shadow: 0 4px 10px color-mix(in srgb, var(--text-main) 12%, transparent);
+    --blai-dropdown-item-radius: 0;
+    --blai-dropdown-item-pad-x: var(--blai-space-10);
+    --blai-dropdown-item-height: var(--blai-size-28);
+    --blai-dropdown-item-font: var(--blai-font-13);
+    --blai-dropdown-item-weight: var(--blai-weight-normal);
+    position: fixed;
+    z-index: 2147483000;
+    display: grid;
+    gap: var(--blai-dropdown-gap);
+    padding: var(--blai-dropdown-pad);
+    max-height: min(var(--blai-size-360), 60vh);
+    overflow-y: auto;
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+    box-sizing: border-box;
+}
+
+.blai-native-select-menu[hidden] {
+    display: none;
+}
+
+.blai-native-select-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: var(--blai-dropdown-item-height);
+    padding: 0 var(--blai-dropdown-item-pad-x);
+    border: 0;
+    border-radius: var(--blai-dropdown-item-radius);
+    background: none;
+    color: var(--blai-dropdown-ink);
+    font-size: var(--blai-dropdown-item-font);
+    font-weight: var(--blai-dropdown-item-weight);
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.blai-native-select-item:hover,
+.blai-native-select-item[aria-selected="true"] {
+    background: var(--blai-dropdown-active-bg);
+    color: var(--blai-dropdown-active-ink);
+}
+
+.blai-native-select-item[aria-disabled="true"] {
+    background: none;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.blai-native-select-group {
+    display: grid;
+    gap: var(--blai-dropdown-gap);
+}
+
+.blai-native-select-group-label {
+    padding: var(--blai-space-2) var(--blai-dropdown-item-pad-x) 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+}

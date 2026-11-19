@@ -1,0 +1,31 @@
+/* 基础调色板：状态色、危险色、正则语法高亮色。
+   这些值被三套主题共同继承；主题相关的覆盖见 02-themes.css。
+   间距/字号/圆角/尺寸刻度见 03-scale.css。 */
+
+#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
+    --status-danger: #B6494B;
+    --status-success: #5D8A68;
+    /* 净化透视四种来源的实心圆点 / 改写文字色。夜间在 02-themes.css 覆盖为亮一档。 */
+    --blai-diff-original: #6B7280;
+    --blai-diff-program: #3D6FB4;
+    --blai-diff-ai: #7A4FA8;
+    --blai-diff-manual: #B0742A;
+    /* 遮罩与投影统一走中性黑，按主题在 02-themes.css 调整浓度。 */
+    --blai-scrim: rgba(0, 0, 0, 0.52);
+    --blai-modal-shadow: rgba(0, 0, 0, 0.24);
+    /* 危险实心块（删除类按钮）上的文字色 */
+    --danger-contrast: #FFFFFF;
+
+    /* 正则表达式语法高亮（日间值，夜间在 dark 段覆盖） */
+    --re-escape: #C25E00;
+    --re-class: #2A7B9B;
+    --re-group: #7A4FA8;
+    --re-quant: #C4463F;
+    --re-anchor: #5C7D00;
+    --re-error: #C4433F;
+    /* 强调色拆三个角色，不可混用：
+       --accent-color    实心块底色（按钮/开关/选中条）
+       --accent-ink      浅底上的强调文字与图标
+       --accent-contrast 实心强调块上的文字与图标 */
+
+    }

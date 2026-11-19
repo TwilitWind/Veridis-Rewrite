@@ -1,0 +1,245 @@
+/* 规则编辑弹窗：头部、字段、语法模式、测试区。 */
+
+/* 需求（首页 2）：编辑规则弹窗顶栏——减字号、压高度 */
+#blai-rule-edit-modal .blai-edit-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-10);
+    margin: 0 0 var(--blai-space-10);
+    padding: 0;
+    border-bottom: 0;
+    flex-shrink: 0;
+}
+
+#blai-rule-edit-modal .blai-edit-modal-head #blai-edit-modal-title {
+    margin: 0 !important;
+    font-size: var(--blai-font-14) !important;
+    font-weight: var(--blai-weight-bold) !important;
+    line-height: 1.3 !important;
+}
+
+#blai-rule-edit-modal .blai-edit-modal-head #blai-edit-cancel-x {
+    font-size: var(--blai-font-16);
+    line-height: 1;
+}
+
+/* 两个规则弹窗顶栏的关闭叉号统一：无边框、无背景，靠 flex 与顶栏内容垂直居中。
+   用 id+class 链提高特异性压过主题裸 button 的边框/尺寸强声明，不新增强声明。 */
+:is(#blai-rule-edit-modal .blai-edit-head-actions, #blai-subrule-edit-modal .blai-subrule-modal-header) .blai-modal-close-x {
+    width: var(--blai-size-30);
+    min-width: var(--blai-size-30);
+    height: var(--blai-size-30);
+    min-height: var(--blai-size-30);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    /* 主题对裸 button 有 border 强声明，只能用同级强声明抵消（与既有 .blai-subrule-close-btn 一致）。 */
+    border: 0 !important;
+    border-radius: var(--blai-radius-8);
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-16);
+    line-height: 1;
+}
+
+/* 需求（首页 2）：编辑规则弹窗底部按钮不再强制铺满一行 */
+#blai-rule-edit-modal .blai-modal-actions {
+    justify-content: flex-end;
+    gap: var(--blai-space-10);
+    padding-top: var(--blai-space-10);
+    border-top: 0;
+}
+
+#blai-rule-edit-modal .blai-modal-actions > button {
+    flex: 0 0 auto !important;
+    min-width: var(--blai-size-104) !important;
+    padding: var(--blai-space-8) var(--blai-space-16) !important;
+    font-size: var(--blai-font-13) !important;
+}
+
+/* 需求（首页 1）：规则组合集名称 / 处理方式 两个下拉框字号偏大，收到 13px */
+#blai-rule-edit-modal #blai-edit-name,
+#blai-subrule-edit-modal #blai-modal-sub-rewrite-mode {
+    font-size: var(--blai-font-13) !important;
+    padding: var(--blai-space-9) var(--blai-space-12) !important;
+    height: auto !important;
+    min-height: var(--blai-size-36) !important;
+}
+
+#blai-rule-edit-modal .blai-edit-modal-title, #blai-subrule-edit-modal .blai-edit-modal-title {
+    font-size: var(--blai-font-18);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: 0;
+    color: var(--text-main);
+}
+
+#blai-edit-subrules-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-10);
+    min-height: var(--blai-size-160);
+    max-height: min(var(--blai-size-420), 50dvh);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: var(--blai-space-10) 0;
+    padding-right: var(--blai-space-2);
+    scrollbar-width: none;
+}
+
+#blai-edit-subrules-container .blai-subrule-card {
+    margin: 0;
+    padding: var(--blai-space-12);
+    border-radius: var(--blai-radius-15);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: transparent;
+    box-shadow: none;
+}
+
+#blai-edit-subrules-container .blai-subrule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-6);
+    padding-bottom: var(--blai-space-10);
+    margin-bottom: var(--blai-space-10);
+    border-bottom: var(--blai-border-1) dotted color-mix(in srgb, var(--text-main) 35%, color-mix(in srgb, var(--bg-base) 12%, transparent));
+}
+
+#blai-edit-subrules-container .blai-subrule-badges {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: var(--blai-space-8);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* 子规则行右侧操作：铅笔 + 下拉菜单（与首页分组顶栏同一套交互） */
+#blai-edit-subrules-container .blai-subrule-actions {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: var(--blai-space-2);
+    margin: 0;
+    padding: 0;
+}
+
+#blai-edit-subrules-container .blai-subrule-menu-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+#blai-edit-subrules-container .blai-subrule-action-btn {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 var(--blai-size-28);
+    width: var(--blai-size-28);
+    min-width: var(--blai-size-28);
+    height: var(--blai-size-28);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--blai-radius-8);
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-main);
+    font-size: var(--blai-font-13);
+    cursor: pointer;
+}
+
+#blai-edit-subrules-container .blai-subrule-action-btn:hover {
+    background: var(--bg-base) !important;
+}
+
+#blai-edit-subrules-container .blai-subrule-preview {
+    color: var(--text-main);
+    font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-normal);
+    line-height: 1.5;
+    word-break: break-all;
+}
+
+#blai-edit-subrules-container .blai-subrule-preview-source {
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-edit-subrules-container :is(.blai-subrule-preview-replacement, .blai-subrule-remark, .blai-subrule-empty) {
+    font-weight: var(--blai-weight-normal);
+}
+
+#blai-edit-subrules-container .blai-subrule-empty {
+    padding: var(--blai-space-20);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    text-align: center;
+}
+
+#blai-rule-edit-modal .blai-modal-actions, #blai-subrule-edit-modal .blai-subrule-footer {
+    gap: var(--blai-space-8) !important;
+    padding-top: var(--blai-space-10) !important;
+}
+
+/* 子规则弹窗的标题是「处理方式」下拉，被 .blai-modal-shell .blai-select-box 的 13px 压过，
+   这里按标题字号单独放大一档。 */
+#blai-subrule-edit-modal .blai-subrule-mode-select {
+    font-size: var(--blai-font-15) !important;
+}
+
+#blai-subrule-edit-modal .blai-subrule-modal-header {
+    gap: var(--blai-space-10);
+    align-items: center;
+}
+
+
+#blai-subrule-edit-modal .blai-subrule-mode-block {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
+    border-radius: var(--blai-radius-14);
+}
+
+/* 下拉箭头原先 right:0，正好压在输入框圆角边缘；给它留出内边距，文字同步让位。 */
+#blai-subrule-edit-modal .blai-subrule-mode-select {
+    padding: 0 var(--blai-space-36) 0 var(--blai-space-12) !important;
+}
+
+#blai-subrule-edit-modal .blai-subrule-mode-arrow {
+    right: var(--blai-space-12);
+}
+
+#blai-subrule-edit-modal .blai-subrule-mode-hint {
+    margin-top: var(--blai-space-7) !important;
+    color: var(--text-secondary) !important;
+    font-size: var(--blai-font-12) !important;
+    line-height: 1.45 !important;
+}
+
+#blai-subrule-edit-modal .blai-subrule-field {
+    margin-bottom: var(--blai-space-10) !important;
+}
+
+#blai-subrule-edit-modal .blai-textarea {
+    min-height: var(--blai-size-92) !important;
+    resize: vertical !important;
+}
+
+#blai-rule-search-modal .blai-modal-card {
+    width: min(var(--blai-size-520), calc(100vw - var(--blai-size-28)));
+    border-radius: var(--blai-radius-20);
+}
+
+@media screen and (max-width: 600px) {#blai-rule-edit-modal .blai-edit-modal-card, #blai-subrule-edit-modal .blai-subrule-modal-card {
+    width: calc(100vw - var(--blai-size-20));
+    max-height: calc(100dvh - var(--blai-size-20));
+    padding: var(--blai-space-12);
+}}

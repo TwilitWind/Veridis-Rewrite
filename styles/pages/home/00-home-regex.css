@@ -1,0 +1,462 @@
+/* 正则语法高亮、标志提示与测试区（子规则弹窗）。 */
+
+/* 正则语法高亮 / 标志提示 / 测试区（子规则弹窗） */
+/* 代码高亮：高亮层叠在查找输入框之上，输入框文字转透明，光标保留 —— 不再另起一个高亮框 */
+.blai-regex-input-wrap {
+    position: relative;
+    display: block;
+}
+
+.blai-regex-input-wrap .blai-textarea {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    line-height: 1.55;
+}
+
+.blai-regex-input-wrap.is-highlighting .blai-textarea {
+    color: transparent !important;
+    caret-color: var(--text-main) !important;
+}
+
+.blai-regex-input-wrap.is-highlighting .blai-textarea::selection {
+    background: color-mix(in srgb, var(--accent-color) 32%, transparent) !important;
+}
+
+.blai-regex-highlight {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    /* 与输入框内边距逐像素对齐：输入框有 1px 边框，这里把那一像素补进内边距，
+       否则高亮字形会比输入框里的真字形整体偏左上 1px。 */
+    padding: calc(var(--blai-space-10) + var(--blai-border-1)) calc(var(--blai-space-14) + var(--blai-border-1));
+    border: none;
+    border-radius: var(--blai-radius-8);
+    background: transparent;
+    box-sizing: border-box;
+    /* 字体必须与输入框一致，否则高亮字形与光标位置对不齐 */
+    font-family: inherit;
+    font-size: var(--blai-font-14);
+    line-height: 1.55;
+    letter-spacing: normal;
+    word-spacing: normal;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.blai-regex-highlight[hidden] {
+    display: none;
+}
+
+.blai-regex-hl-line {
+    white-space: pre-wrap !important;
+}
+
+.blai-regex-tok {
+    white-space: pre-wrap !important;
+}
+
+.blai-regex-tok--literal {
+    color: var(--text-main) !important;
+}
+
+.blai-regex-tok--escape {
+    color: var(--re-escape) !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
+
+.blai-regex-tok--class {
+    color: var(--re-class) !important;
+}
+
+.blai-regex-tok--group {
+    color: var(--re-group) !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
+
+.blai-regex-tok--quantifier {
+    color: var(--re-quant) !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
+
+.blai-regex-tok--anchor {
+    color: var(--re-anchor) !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
+
+.blai-regex-tok--alternation {
+    color: var(--re-group) !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
+
+.blai-regex-tok--dot {
+    color: var(--re-quant) !important;
+}
+
+.blai-regex-tok--flags {
+    color: var(--text-secondary) !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
+
+.blai-regex-flags-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    margin: 0 0 var(--blai-space-6);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11-5);
+    line-height: 1.5;
+}
+
+.blai-regex-flags-hint[hidden] {
+    display: none;
+}
+
+.blai-regex-flags-chip {
+    flex: 0 0 auto;
+    padding: var(--blai-space-2) var(--blai-space-8);
+    border-radius: var(--blai-radius-full);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-base);
+    color: var(--text-main);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: 0.04em;
+}
+
+.blai-regex-test-block {
+    margin-top: var(--blai-space-10);
+}
+
+.blai-regex-test-block[hidden] {
+    display: none;
+}
+
+.blai-regex-test-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+}
+
+.blai-regex-test-toggle.is-open {
+    border-color: var(--accent-color);
+}
+
+.blai-regex-test-panel {
+    margin-top: var(--blai-space-8);
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    display: grid;
+    gap: var(--blai-space-8);
+}
+
+.blai-regex-test-panel[hidden] {
+    display: none;
+}
+
+.blai-regex-test-input-wrap {
+    position: relative;
+    display: block;
+}
+
+.blai-regex-test-input-wrap .blai-textarea {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    padding: var(--blai-space-10) var(--blai-space-12);
+    min-height: var(--blai-size-88);
+    line-height: 1.55;
+}
+
+/* 命中时只改变量，让共用输入框规则自然透出下层高亮，不叠加新的强声明。 */
+.blai-regex-test-input-wrap.has-matches {
+    --field-bg: transparent;
+}
+
+.blai-regex-test-highlight {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: calc(var(--blai-space-10) + var(--blai-border-1)) calc(var(--blai-space-12) + var(--blai-border-1));
+    border: var(--blai-border-1) solid transparent;
+    border-radius: var(--blai-radius-12);
+    background: transparent;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: var(--blai-font-13);
+    line-height: 1.55;
+    letter-spacing: normal;
+    word-spacing: normal;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.blai-regex-test-highlight[hidden] {
+    display: none;
+}
+
+.blai-regex-test-mark {
+    border-radius: var(--blai-radius-4);
+    background: color-mix(in srgb, var(--accent-color) 32%, transparent);
+    color: inherit;
+}
+
+.blai-regex-test-stat {
+    position: absolute;
+    top: var(--blai-space-6);
+    right: var(--blai-space-8);
+    z-index: 4;
+    max-width: calc(100% - var(--blai-space-24));
+    padding: var(--blai-space-2) var(--blai-space-8);
+    border-radius: var(--blai-radius-full);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.blai-regex-test-stat.is-hit {
+    color: var(--accent-ink);
+}
+
+.blai-regex-test-stat.is-error {
+    color: var(--re-error);
+}
+
+.blai-regex-test-stat[hidden] {
+    display: none;
+}
+
+.blai-regex-replacement-list {
+    margin-top: var(--blai-space-10);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--blai-space-10);
+}
+
+.blai-regex-replacement-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    width: 100%;
+    min-height: var(--blai-size-34);
+    padding: var(--blai-space-8) var(--blai-space-10);
+    border: var(--blai-border-1) dashed var(--border-color);
+    border-radius: var(--blai-radius-8);
+    color: var(--text-secondary);
+    background: color-mix(in srgb, var(--bg-surface) 72%, transparent);
+    font-size: var(--blai-font-12);
+    box-sizing: border-box;
+}
+
+.blai-regex-replacement-empty i {
+    color: var(--accent-ink);
+    flex: 0 0 auto;
+}
+
+.blai-regex-replacement-chip {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    border-radius: var(--blai-radius-full);
+    background: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+}
+
+.blai-regex-replacement-chip.is-active {
+    border-color: var(--accent-color);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 45%, transparent);
+}
+
+.blai-regex-replacement-chip-main {
+    max-width: min(var(--blai-size-240), 62vw);
+    padding: var(--blai-space-7) var(--blai-space-8) var(--blai-space-7) var(--blai-space-12);
+    border: none;
+    background: transparent;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.blai-regex-replacement-chip-remove {
+    padding: var(--blai-space-6) var(--blai-space-10) var(--blai-space-6) var(--blai-space-4);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.blai-regex-replacement-chip-remove:hover {
+    color: var(--status-danger) !important;
+}
+
+.blai-subrule-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-22);
+    padding: 0;
+    min-width: var(--blai-size-36);
+    width: var(--blai-size-36);
+    min-height: var(--blai-size-36);
+    height: var(--blai-size-36);
+    flex: 0 0 var(--blai-size-36);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blai-subrule-close-btn:hover {
+    color: var(--text-main) !important;
+}
+
+.blai-subrule-footer {
+    margin-top: auto;
+    padding-top: var(--blai-space-10);
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    background: var(--bg-surface);
+    border-top: 0;
+}
+
+/* 底部主按钮与「编辑规则合集」弹窗保持同一套：实心强调蓝、13px、38px 高、12px 圆角。
+   两个弹窗的底部按钮从这里起只有一套取值，改一处即两处同步。 */
+#blai-subrule-edit-modal .blai-subrule-footer-save {
+    width: auto !important;
+    flex: 0 0 auto !important;
+    min-width: var(--blai-size-104) !important;
+    min-height: var(--blai-size-38) !important;
+    padding: var(--blai-space-8) var(--blai-space-16) !important;
+    border-radius: var(--blai-radius-12) !important;
+    border: var(--blai-border-1) solid var(--accent-color) !important;
+    background: var(--accent-color) !important;
+    color: var(--accent-contrast) !important;
+    font-size: var(--blai-font-13) !important;
+    font-weight: var(--blai-weight-bold) !important;
+    letter-spacing: 0 !important;
+    box-shadow: none !important;
+}
+
+.blai-subrule-footer-save:hover {
+    background: color-mix(in srgb, var(--accent-color) 88%, var(--text-main) 12%) !important;
+    border-color: color-mix(in srgb, var(--accent-color) 88%, var(--text-main) 12%) !important;
+}
+
+.blai-subrule-card {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    background: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    padding: var(--blai-space-12) var(--blai-space-14);
+    margin-bottom: var(--blai-space-12);
+    box-shadow: 0 4px 10px color-mix(in srgb, var(--bg-base) 12%, transparent);
+}
+
+.blai-subrule-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-4);
+}
+
+/* display:flex!important 会压掉 [hidden] 的原生 display:none，这里显式补回，
+   否则「程序改写」下仍会显示「单条改写要求」。 */
+.blai-subrule-field[hidden] {
+    display: none;
+}
+
+#blai-rule-transfer-modal {
+    position: fixed;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg-base) 12%, transparent);
+    z-index: 10000000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: var(--blai-space-16);
+    box-sizing: border-box;
+}
+
+.blai-transfer-content {
+    width: min(var(--blai-size-420), 96vw);
+    background: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-12);
+    padding: var(--blai-space-14);
+    box-shadow: 0 12px 24px color-mix(in srgb, var(--bg-base) 12%, transparent);
+}
+
+.blai-transfer-title {
+    margin-bottom: var(--blai-space-10);
+    font-size: var(--blai-font-16);
+}
+
+.blai-transfer-target {
+    font-size: var(--blai-font-14) !important;
+    padding: var(--blai-space-8) var(--blai-space-36) var(--blai-space-8) var(--blai-space-10) !important;
+    margin-bottom: var(--blai-space-12) !important;
+}
+
+.blai-transfer-actions {
+    display: flex;
+    gap: var(--blai-space-8);
+    flex-wrap: nowrap;
+}
+
+.blai-transfer-btn {
+    flex: 1;
+    padding: var(--blai-space-9) var(--blai-space-10);
+    border-radius: var(--blai-radius-8);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    font-size: var(--blai-font-13);
+    line-height: 1.2;
+}
+
+.blai-transfer-btn:hover {
+    background: var(--bg-surface) !important;
+}
+
+#blai-preset-import-choice-modal {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: max(var(--blai-space-18), env(safe-area-inset-top)) max(var(--blai-space-18), env(safe-area-inset-right)) max(var(--blai-space-18), env(safe-area-inset-bottom)) max(var(--blai-space-18), env(safe-area-inset-left));
+    box-sizing: border-box;
+    pointer-events: auto;
+    z-index: 10000008;
+}
+
+#blai-preset-import-choice-modal.blai-is-open {
+    display: flex;
+}

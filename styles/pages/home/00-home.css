@@ -1,0 +1,231 @@
+/* 首页总览：规则卡、分组卡、批量操作、子规则卡。 */
+
+/* 总览/首页、规则编辑器/搜索/转移，以及预设操作呈现。 */
+
+#blai-purifier-popup .edit-field > span {
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+}
+
+.blai-batch-checkbox-label {
+    display: none;
+    align-items: center;
+    cursor: pointer;
+}
+
+.blai-subrule-card.blai-is-disabled {
+    opacity: 0.56;
+}
+
+.blai-subrule-enable-label {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+#blai-rule-edit-modal {
+    z-index: 10000005;
+}
+
+#blai-subrule-edit-modal {
+    z-index: 10000006;
+}
+
+/* 移动子规则的弹窗从编辑分组弹窗里打开，层级必须高于它，否则会被盖住 */
+#blai-subrule-transfer-modal {
+    z-index: 10000007;
+}
+
+/* 卡片自身已提供边框、底色与内边距；里面的 .blai-transfer-content 原先是独立一张卡（固定 420px 宽 + 自己一圈边框），
+   套进卡片后两层框重叠，窄屏下 420px 的固定宽度还会顶破卡片右边缘。这里让它变成纯内容层，宽度跟随卡片。 */
+#blai-subrule-transfer-modal > .blai-subrule-transfer-card {
+    padding: 0;
+}
+
+#blai-subrule-transfer-modal .blai-transfer-content {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+/* 说明文字与下拉框之间留一点呼吸，原来紧贴标题 */
+.blai-subrule-transfer-hint {
+    margin: 0 0 var(--blai-space-8);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.blai-edit-modal-card {
+    width: 95%;
+    max-width: var(--blai-size-480);
+    max-height: 85vh;
+    padding: var(--blai-space-20);
+    border-radius: var(--blai-radius-12);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.blai-edit-modal-title {
+    margin: 0 0 var(--blai-space-10) 0;
+    font-size: var(--blai-font-16);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-main);
+    flex-shrink: 0;
+}
+
+.blai-edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-4);
+    margin-bottom: var(--blai-space-12);
+    flex-shrink: 0;
+}
+
+.blai-field-label {
+    font-size: var(--blai-font-13);
+    color: var(--text-secondary);
+}
+
+.blai-subrule-modal-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.blai-subrule-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--blai-space-16);
+    margin-bottom: var(--blai-space-14);
+    padding-bottom: 0;
+    border-bottom: 0;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+.blai-subrule-mode-block {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-6);
+}
+
+.blai-subrule-mode-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    flex: 0 1 auto;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.blai-subrule-mode-select {
+    margin: 0 !important;
+    display: inline-block !important;
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 0 0 auto !important;
+    max-width: 100% !important;
+    padding: 0 var(--blai-space-22) 0 0 !important;
+    border: none !important;
+    /* 只显示文字的下拉，不要框线；底色仍写实色，避免主题底色透出 */
+    background: var(--bg-surface) !important;
+    box-sizing: border-box !important;
+    color: var(--text-main) !important;
+    font-size: var(--blai-font-15) !important;
+    font-weight: var(--blai-weight-bold) !important;
+    line-height: 1.3 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    cursor: pointer !important;
+}
+
+.blai-subrule-mode-select:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.blai-subrule-mode-arrow {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    font-size: var(--blai-font-15);
+    line-height: 1;
+}
+
+.blai-subrule-mode-hint {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    line-height: 1.55;
+}
+
+#blai-modal-sub-target-error {
+    margin-top: 0;
+    margin-bottom: var(--blai-space-8);
+}
+
+.blai-subrule-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--blai-space-2) var(--blai-space-10) var(--blai-space-2) var(--blai-space-10);
+    margin-right: 0;
+}
+
+.blai-subrule-replacement-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--blai-space-10);
+    margin-bottom: var(--blai-space-6);
+}
+
+.blai-regex-replacement-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.blai-regex-replacement-actions[hidden], .blai-regex-replacement-list[hidden] {
+    display: none !important;
+}
+
+.blai-subrule-mini-btn {
+    padding: var(--blai-space-6) var(--blai-space-10);
+    border-radius: var(--blai-radius-full);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.2;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.blai-subrule-mini-btn:hover {
+    background: var(--bg-surface) !important;
+    border-color: var(--accent-color) !important;
+}

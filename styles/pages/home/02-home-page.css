@@ -1,0 +1,466 @@
+/* 首页：页头、预设下拉、工具栏、批量面板、规则卡。与 02-home.css（弹窗）按页面 / 弹窗分区，保持合并顺序相邻。 */
+
+
+#blai-purifier-popup .blai-home-page {
+    width: 100%;
+    color: var(--text-main);
+    font-family: "Segoe UI Variable", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+#blai-purifier-popup .blai-home-dataset {
+    padding: var(--blai-space-2) 0 var(--blai-space-18);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-purifier-popup .blai-home-preset-field {
+    position: relative;
+    width: clamp(var(--blai-size-240), 26vw, var(--blai-size-320));
+    min-width: 0;
+    flex: 0 1 clamp(var(--blai-size-240), 26vw, var(--blai-size-320));
+}
+
+/* 下拉箭头统一用 Font Awesome 字体图标（fa-chevron-down），不再用两条描边拼三角 */
+#blai-purifier-popup .blai-home-preset-field::after {
+    content: '\f078';
+    position: absolute;
+    top: 50%;
+    right: var(--blai-space-12);
+    transform: translateY(-50%);
+    font-family: 'Font Awesome 6 Free';
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-icon);
+    line-height: 1;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+#blai-purifier-popup .blai-home-preset-select,
+#blai-purifier-popup .blai-preset-select-trigger {
+    width: 100%;
+    height: var(--blai-size-42);
+    box-sizing: border-box;
+    padding: 0 var(--blai-space-38) 0 var(--blai-space-14) !important;
+    /* 与全站输入框同一套：1px 边框 + 弱填充，悬停时边框提亮一档 */
+    border: var(--blai-border-1) solid var(--border-color) !important;
+    border-radius: var(--blai-radius-10);
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--field-bg) !important;
+    background-image: none !important;
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-13);
+    /* 顶栏是信息层不是操作层：字重交给颜色与字号区分，不加粗。 */
+    font-weight: var(--blai-weight-normal);
+    text-align: left;
+    cursor: pointer;
+}
+
+/* 自绘触发按钮里的当前值：超出省略，给右侧箭头留空间 */
+#blai-purifier-popup .blai-preset-select-trigger #blai-preset-select-label {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 自绘规则集下拉菜单：与卡片菜单同一套弹层风格（白底/圆角/边框/阴影），宽度铺满触发器。 */
+#blai-purifier-popup .blai-preset-menu,
+.blai-preset-menu {
+    z-index: 2147483000;
+    gap: var(--blai-dropdown-gap);
+    padding: var(--blai-dropdown-pad);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+    max-height: min(var(--blai-size-360), 60vh);
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+/* 用 :not([hidden]) 控制 display，避免为压 [hidden] 再新增强声明。 */
+#blai-purifier-popup .blai-preset-menu:not([hidden]),
+.blai-preset-menu:not([hidden]) {
+    display: grid;
+}
+
+.blai-preset-menu .blai-preset-menu-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: var(--blai-dropdown-item-height);
+    padding: 0 var(--blai-dropdown-item-pad-x);
+    border: 0;
+    border-radius: var(--blai-dropdown-item-radius);
+    background: transparent;
+    color: var(--blai-dropdown-ink);
+    font: inherit;
+    font-size: var(--blai-dropdown-item-font);
+    font-weight: var(--blai-dropdown-item-weight);
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.blai-preset-menu .blai-preset-menu-item:hover,
+.blai-preset-menu .blai-preset-menu-item[aria-selected="true"] {
+    background: var(--blai-dropdown-active-bg);
+    color: var(--blai-dropdown-active-ink);
+    font-weight: var(--blai-dropdown-item-weight);
+}
+
+/* 悬停只改文字色：底色已被强声明写死，这里再加一条强声明只会把层叠搞得更硬。 */
+#blai-purifier-popup .blai-home-preset-select:hover {
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-home-metrics {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: var(--blai-space-14);
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    white-space: nowrap;
+}
+
+#blai-purifier-popup .blai-home-metric b {
+    color: var(--text-main);
+    font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-bold);
+}
+
+/* AI 改写开启态：用当前主题关键色强调，关闭态保持常规文字色。 */
+#blai-purifier-popup #blai-ai-enabled-status.is-on {
+    color: var(--accent-color);
+}
+
+#blai-purifier-popup .blai-home-dataset-actions {
+    margin-left: auto;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--blai-space-2);
+}
+
+#blai-purifier-popup .blai-home-dataset-actions button {
+    min-height: var(--blai-size-36);
+    padding: 0 var(--blai-space-8);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--blai-space-6);
+    border: 0;
+    border-radius: var(--blai-radius-10);
+    background: transparent;
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-normal);
+    white-space: nowrap;
+}
+
+#blai-purifier-popup .blai-home-dataset-actions button:hover {
+    background: var(--bg-surface);
+    color: var(--text-main);
+}
+
+#blai-purifier-popup .blai-home-danger-action, #blai-purifier-popup .blai-home-dataset-actions .blai-home-danger-action {
+    color: var(--status-danger);
+}
+
+#blai-purifier-popup .blai-home-toolbar {
+    min-width: 0;
+    padding: var(--blai-space-4) 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+}
+
+#blai-purifier-popup .blai-home-toolbar h2 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: var(--blai-font-17);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.2;
+}
+
+#blai-purifier-popup .blai-home-toolbar-actions {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--blai-space-6);
+}
+
+/* 右侧四个功能是纯文字动作：不画边框、不铺底色，只用字色区分主次与状态。
+   主操作「添加」保留品牌色文字、同样不铺底色，避免白色模块卡上多出一块实心块。 */
+#blai-purifier-popup .blai-home-toolbar-button {
+    min-height: var(--blai-size-34);
+    padding: 0 var(--blai-space-10);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--blai-space-6);
+    border: 0;
+    border-radius: var(--blai-radius-10);
+    background: transparent;
+    color: var(--text-main);
+    box-shadow: none;
+    font: inherit;
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-normal);
+    white-space: nowrap;
+}
+
+#blai-purifier-popup .blai-home-toolbar-button:hover, #blai-purifier-popup .blai-home-toolbar-button.blai-active {
+    background: color-mix(in srgb, var(--text-main) 6%, transparent);
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-home-toolbar-button-primary {
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-home-toolbar-button-primary:hover {
+    background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-home-batch-panel {
+    padding: var(--blai-space-13);
+    display: grid;
+    gap: var(--blai-space-10);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-14);
+    background: color-mix(in srgb, var(--bg-surface) 58%, transparent);
+}
+
+#blai-purifier-popup:not(.blai-is-batch-mode) .blai-home-batch-panel {
+    display: none;
+}
+
+#blai-purifier-popup .blai-home-batch-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    line-height: 1.2;
+}
+
+#blai-purifier-popup .blai-home-batch-heading strong {
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-purifier-popup .blai-home-batch-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--blai-space-8);
+}
+
+#blai-purifier-popup .blai-home-batch-actions button {
+    min-width: 0;
+    min-height: var(--blai-size-38);
+    padding: 0 var(--blai-space-10);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--blai-space-7);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+}
+
+#blai-purifier-popup .blai-home-batch-actions button:hover {
+    border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-home-rules {
+    min-width: 0;
+}
+
+#blai-purifier-popup .blai-home-rule-grid {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--blai-space-14);
+}
+
+#blai-purifier-popup .blai-home-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--blai-radius-14);
+    /* 每个规则分组是一张白卡，与首页灰白底形成明度差（与 AI/净化/工具三页模块卡一致） */
+    background: var(--bg-surface);
+    box-shadow: none;
+}
+
+#blai-purifier-popup .blai-home-card.blai-is-disabled {
+    opacity: 0.58;
+}
+
+#blai-purifier-popup .blai-home-card-header {
+    min-height: var(--blai-size-50);
+    padding: 0 var(--blai-space-13);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-10);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-purifier-popup :is(.blai-home-card-heading, .blai-home-enabled-control) {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-9);
+}
+
+#blai-purifier-popup .blai-home-enabled-control {
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-home-selection-control {
+    display: none;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#blai-purifier-popup.blai-is-batch-mode .blai-home-selection-control {
+    display: inline-flex;
+}
+
+#blai-purifier-popup .blai-home-selection-control input, #blai-purifier-popup .blai-home-enabled-control input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#blai-purifier-popup :is(.blai-home-selection-indicator, .blai-home-enabled-indicator) {
+    position: relative;
+    width: var(--blai-size-18);
+    min-width: var(--blai-size-18);
+    height: var(--blai-size-18);
+    border: var(--blai-border-1-5) solid var(--border-color);
+    border-radius: 50%;
+    background: var(--bg-surface);
+}
+
+#blai-purifier-popup.blai-is-batch-mode .blai-home-enabled-indicator {
+    display: none;
+}
+
+#blai-purifier-popup .blai-home-selection-control input:checked + .blai-home-selection-indicator, #blai-purifier-popup .blai-home-enabled-control input:checked + .blai-home-enabled-indicator {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+}
+
+/* 选中对勾同样走字体图标（fa-check），不再用两条描边拼出来 */
+#blai-purifier-popup .blai-home-selection-control input:checked + .blai-home-selection-indicator::after, #blai-purifier-popup .blai-home-enabled-control input:checked + .blai-home-enabled-indicator::after {
+    content: '\f00c';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Font Awesome 6 Free';
+    font-size: var(--blai-font-9);
+    font-weight: var(--blai-weight-icon);
+    line-height: 1;
+    color: var(--bg-base);
+}
+
+#blai-purifier-popup .blai-home-card-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-main);
+    font-size: var(--blai-font-14);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-purifier-popup .blai-home-card-count {
+    flex: 0 0 auto;
+    padding: var(--blai-space-3) var(--blai-space-7);
+    border-radius: var(--blai-radius-7);
+    background: var(--bg-surface);
+    color: var(--accent-ink);
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.2;
+}
+
+#blai-purifier-popup .blai-home-card-actions {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+}
+
+#blai-purifier-popup :is(.blai-home-card-menu-toggle, .blai-home-card-pencil, .blai-home-card-risk) {
+    width: var(--blai-size-32);
+    min-width: var(--blai-size-32);
+    height: var(--blai-size-32);
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: var(--blai-radius-10);
+    background: transparent;
+    color: var(--text-main);
+    font-size: var(--blai-font-14);
+}
+
+#blai-purifier-popup .blai-home-card-menu-toggle:hover, #blai-purifier-popup .blai-home-card-pencil:hover {
+    background: var(--bg-surface);
+    color: var(--text-main);
+}
+
+#blai-purifier-popup .blai-home-card-risk {
+    color: var(--status-danger);
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-home-card-body {
+    padding: 0 var(--blai-space-13) var(--blai-space-9);
+}
+
+#blai-purifier-popup .blai-home-rule-item {
+    min-width: 0;
+    min-height: var(--blai-size-62);
+    padding: var(--blai-space-9) 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) 18px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--blai-space-8);
+}
+
+#blai-purifier-popup .blai-home-rule-item + .blai-home-rule-item {
+    border-top: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 78%, transparent);
+}
+
+#blai-purifier-popup .blai-home-rule-item.blai-is-disabled {
+    opacity: 0.48;
+}
+
+#blai-purifier-popup :is(.blai-home-rule-source, .blai-home-rule-target) {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-5);
+}

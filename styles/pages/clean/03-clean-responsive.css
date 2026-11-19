@@ -1,0 +1,327 @@
+/* 深度净化响应式：900 / 600 / 920 / 700 四档媒体查询。深度净化静态样式留在 03-clean.css。 */
+
+
+@media (max-width: 900px) {
+#blai-deep-clean-workspace .blai-deep-clean-header {
+    min-height: var(--blai-size-54);
+    padding-inline: var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-config {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
+    min-height: var(--blai-size-44);
+    padding: 0 var(--blai-space-16);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    list-style: none;
+    cursor: pointer;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-controls > summary::-webkit-details-marker {
+    display: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-controls > summary span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-controls > summary > i {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    transition: transform .16s ease;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-controls[open] > summary > i {
+    transform: rotate(90deg);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-section {
+    padding: var(--blai-space-10) var(--blai-space-12);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-main {
+    grid-row: 2;
+    padding: var(--blai-space-24);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing > .blai-deep-clean-batch-summary {
+    grid-row: 1;
+    max-height: 30dvh;
+    border-left: 0;
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-head {
+    padding: var(--blai-space-10) var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-body {
+    padding: var(--blai-space-12) var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-status {
+    margin-top: var(--blai-space-10);
+    padding: var(--blai-space-8) 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-contents {
+    margin-top: var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-main {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-area {
+    grid-row: 2;
+    border-right: 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-main > .blai-deep-clean-batch-summary {
+    grid-row: 1;
+    max-height: var(--blai-size-180);
+    border-left: 0;
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+}
+
+@media (max-width: 600px) {
+#blai-deep-clean-workspace .blai-deep-clean-heading {
+    gap: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-eyebrow {
+    display: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-section {
+    padding: var(--blai-space-10) var(--blai-space-12);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header {
+    padding: var(--blai-space-10) var(--blai-space-12) var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
+    font-size: var(--blai-font-13);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
+    padding: var(--blai-space-8) var(--blai-space-12) var(--blai-space-10);
+    gap: var(--blai-space-8);
+}
+
+/* 窄屏下「规则预设 + 处理模式」并排会把选项压成 56px 宽、文字竖排，改为整列堆叠。 */
+#blai-deep-clean-workspace .blai-deep-clean-options {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-options {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--blai-space-2);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-program-policy {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+}
+}
+
+@media (max-width: 900px) {#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
+    padding: var(--blai-space-12) var(--blai-space-16);
+}}
+
+@media (max-width: 600px) {
+#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
+    padding: var(--blai-space-12) var(--blai-space-14);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-config {
+    padding: var(--blai-space-8) var(--blai-space-12) var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-list {
+    max-height: var(--blai-size-200);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--blai-space-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-search-field {
+    width: 100%;
+    min-width: 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-summary {
+    justify-content: space-between;
+    white-space: normal;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice-copy {
+    display: grid;
+    gap: var(--blai-space-3);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-selection-actions {
+    min-height: var(--blai-size-56);
+    padding: var(--blai-space-9) var(--blai-space-14);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-main {
+    padding: var(--blai-space-20) var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-intro {
+    margin-bottom: var(--blai-space-24);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-intro h3 {
+    font-size: var(--blai-font-18);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-scan-metrics, .blai-deep-clean-scan-categories) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result {
+    padding: var(--blai-space-22) var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-complete-state {
+    width: min(calc(100% - var(--blai-size-24)), var(--blai-size-720));
+    padding: var(--blai-space-22) var(--blai-space-12);
+    place-content: start center;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-completion-metrics, #blai-deep-clean-workspace .blai-deep-clean-completion-metrics.is-ai {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--blai-space-13);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-review-head, .blai-deep-clean-review-scroll) {
+    padding-inline: var(--blai-space-14);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-views {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-navigation {
+    padding-inline: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-navigation button {
+    font-size: var(--blai-font-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-apply {
+    padding: var(--blai-space-10) var(--blai-space-14);
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--blai-space-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-review-apply button {
+    width: 100%;
+}
+}
+
+@media (max-width: 920px) {
+#blai-purifier-popup .blai-clean-columns {
+    grid-template-columns: minmax(0, 1.58fr) minmax(250px, 1fr);
+    gap: var(--blai-column-gap);
+}
+
+#blai-purifier-popup .blai-clean-mode-card {
+    min-height: var(--blai-size-96);
+    padding-inline: var(--blai-space-13);
+}
+
+#blai-purifier-popup .blai-clean-mode-title > i {
+    width: var(--blai-size-19);
+    font-size: var(--blai-font-16);
+}
+}
+
+@media (max-width: 700px) {
+#blai-purifier-popup .blai-clean-page {
+    gap: var(--blai-space-20);
+    padding: var(--blai-space-12) var(--blai-space-16) var(--blai-space-84);
+    box-sizing: border-box;
+}
+
+#blai-purifier-popup .blai-clean-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--blai-space-28);
+}
+
+#blai-purifier-popup .blai-clean-mode-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--blai-space-8);
+}
+
+#blai-purifier-popup .blai-clean-mode-card {
+    min-height: var(--blai-size-84);
+    padding: var(--blai-space-11);
+}
+
+#blai-purifier-popup .blai-clean-mode-title > i {
+    width: var(--blai-size-17);
+    font-size: var(--blai-font-15);
+}
+
+#blai-purifier-popup .blai-clean-mode-copy {
+    gap: var(--blai-space-3);
+}
+
+#blai-purifier-popup .blai-clean-mode-copy strong {
+    font-size: var(--blai-font-12);
+}
+
+#blai-purifier-popup .blai-clean-mode-desc {
+    font-size: var(--blai-font-10);
+    line-height: 1.4;
+}
+
+#blai-purifier-popup .blai-clean-group-list {
+    max-height: none;
+    overflow: visible;
+}
+
+#blai-purifier-popup .blai-clean-secondary-column {
+    gap: var(--blai-space-28);
+}
+}

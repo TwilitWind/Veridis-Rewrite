@@ -1,0 +1,256 @@
+/* 反馈页：本地诊断与预览。 */
+
+/* 三个内容视图的标题行吸顶：滚动日志时标题与右侧按钮一直可见。
+   用负外边距抵消正文卡的内边距，让标题条的底色铺满整条宽度，
+   否则滚动的正文会从两侧漏出来。 */
+#blai-feedback-workspace :is(.blai-feedback-local-heading, .blai-feedback-diagnostics-intro) {
+    position: sticky;
+    /* 负的 top 抵消正文卡的上内边距：否则吸顶时上方会留一条 21px 的缝，
+       滚动的日志会从这条缝里露出来。 */
+    top: calc(-1 * var(--blai-feedback-page-pad-y));
+    z-index: 3;
+    margin: calc(-1 * var(--blai-feedback-page-pad-y)) calc(-1 * var(--blai-feedback-page-pad-x)) 0;
+    padding: var(--blai-feedback-page-pad-y) var(--blai-feedback-page-pad-x) var(--blai-space-14);
+    background: var(--bg-surface);
+}
+
+#blai-feedback-workspace .blai-feedback-local-heading {
+    padding-bottom: var(--blai-space-18);
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--blai-space-16);
+    /* 标题下的分隔线在卡片内是冗余线条，去掉（需求：标题下方不要分隔线） */
+    border-bottom: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-local-heading :is(h2, p) {
+    margin: 0;
+}
+
+/* 四个标签页的内容标题原来继承酒馆 h2 的 20.25px，比全局顶栏还大；与工具/AI 页模块标题统一为 15px */
+#blai-feedback-workspace :is(.blai-feedback-local-heading h2, .blai-feedback-diagnostics-intro h2) {
+    margin: 0;
+    color: var(--text-main);
+    font-size: var(--blai-font-15);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.3;
+}
+
+#blai-feedback-workspace .blai-feedback-local-heading p {
+    margin-top: var(--blai-space-5);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.55;
+}
+
+/* 标题行右侧动作按钮：图标 + 文字的同一种样式，四个标签页共用
+   （运行日志「复制日志」、AI 上下文「清空」、深度清理诊断「清空」）。 */
+#blai-feedback-workspace .blai-feedback-heading-action {
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-10);
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    border: 0;
+    border-radius: var(--blai-radius-8);
+    background: transparent;
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+}
+
+#blai-feedback-workspace .blai-feedback-heading-action i {
+    flex: none;
+    color: var(--accent-ink);
+    font-size: var(--blai-font-10);
+    line-height: 1;
+}
+
+#blai-feedback-workspace .blai-feedback-heading-action:hover {
+    background: color-mix(in srgb, var(--text-main) 6%, transparent);
+    color: var(--accent-ink);
+}
+
+/* 运行日志顶栏一排动作：顺序、复制、导出、清空。
+   四个按钮同一个外观，只有「清空」是对抗性操作，图标与悬停转红。 */
+#blai-feedback-workspace .blai-feedback-heading-actions {
+    min-width: 0;
+    flex: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--blai-space-4);
+}
+
+#blai-feedback-workspace .blai-feedback-heading-action.is-danger {
+    color: var(--status-danger);
+}
+
+#blai-feedback-workspace .blai-feedback-heading-action.is-danger i {
+    color: var(--status-danger);
+}
+
+#blai-feedback-workspace .blai-feedback-heading-action.is-danger:hover {
+    background: color-mix(in srgb, var(--status-danger) 10%, transparent);
+    color: var(--status-danger);
+}
+
+/* 排序按钮按下去时保持可读的按下态：用图标方向 + 文字本身表达方向，
+   不靠反色，否则一次点击就多一块深色，与标题行抢注意力。 */
+#blai-feedback-workspace .blai-feedback-heading-action[aria-pressed="true"] i {
+    color: var(--accent-color);
+}
+
+/* 标题右侧的条数：与标题同一行、比标题轻，只在扫视时提供规模感。 */
+#blai-feedback-workspace .blai-feedback-log-badge {
+    margin-left: var(--blai-space-8);
+    padding: 1px var(--blai-space-6);
+    border-radius: var(--blai-space-6);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    color: var(--accent-ink);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: 0;
+    vertical-align: var(--blai-space-2);
+}
+
+#blai-feedback-workspace .blai-feedback-log-badge b {
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-feedback-workspace .blai-feedback-log-output {
+    max-width: 100%;
+    min-height: var(--blai-size-142);
+    max-height: var(--blai-size-420);
+    margin: var(--blai-space-14) 0 0;
+    padding: var(--blai-feedback-box-pad);
+    overflow: auto;
+    box-sizing: border-box;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-9);
+    background: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--blai-feedback-font);
+    font-size: var(--blai-font-12-5);
+    line-height: 1.68;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-diagnostic-heading) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-20);
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostics-intro {
+    padding-bottom: var(--blai-space-24);
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostics-intro h2 {
+    margin: 0;
+}
+
+/* 3 个诊断记录的次级标题：比主标题（15px）小一档，拉开层次。
+   有记录时 h3 在 .diagnostic-heading 内，无记录时是 .diagnostic-record 直接子级，统一覆盖。 */
+#blai-feedback-workspace .blai-feedback-diagnostic-record h3 {
+    margin: 0;
+    font-size: var(--blai-font-12);
+    line-height: 1.35;
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostics-intro p {
+    margin: var(--blai-space-5) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostic-record {
+    padding: var(--blai-space-22) 0;
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostic-record dl {
+    margin: var(--blai-space-16) 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--blai-space-14) var(--blai-space-22);
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostic-record dl > div {
+    min-width: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostic-record dt {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    font-weight: var(--blai-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostic-record dd {
+    margin: var(--blai-space-4) 0 0;
+    overflow-wrap: anywhere;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+}
+
+#blai-feedback-workspace .blai-feedback-no-record {
+    margin: var(--blai-space-12) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+}
+
+@media (max-width: 820px) {
+    #blai-feedback-workspace .blai-feedback-form {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--blai-space-16);
+    }
+
+    #blai-feedback-workspace .blai-feedback-preview {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    #blai-feedback-workspace .blai-feedback-workspace-header {
+        padding: calc(var(--blai-space-9) + env(safe-area-inset-top, 0px)) var(--blai-space-12) 0;
+    }
+
+    #blai-feedback-workspace .blai-feedback-workspace-nav {
+        padding: 0;
+        gap: var(--blai-space-2);
+    }
+
+    #blai-feedback-workspace .blai-feedback-workspace-content {
+        margin: var(--blai-space-8) 0 0;
+        padding: var(--blai-space-14) var(--blai-space-10) calc(var(--blai-space-44) + env(safe-area-inset-bottom, 0px));
+        border-radius: 0;
+    }
+
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-diagnostic-heading, .blai-feedback-local-heading) {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--blai-space-12);
+    }
+
+    #blai-feedback-workspace .blai-feedback-diagnostic-record dl {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #blai-feedback-workspace .blai-feedback-form-pair {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--blai-space-12);
+    }
+
+    #blai-feedback-workspace .blai-feedback-control textarea {
+        min-height: var(--blai-size-160);
+    }
+}

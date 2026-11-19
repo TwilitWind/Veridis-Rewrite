@@ -1,0 +1,235 @@
+/* 尺寸刻度：间距、字号、圆角、边框与控件尺寸的唯一来源。
+   组件与页面样式一律 var() 引用，不再写字面量 px。
+   需要新数值时先在本表找近似值；确实没有，再在这里追加并在行尾注明用途。 */
+
+:root {
+  /* 挂在 :root 上：弹层、toast、巡览层都不在插件容器内，仍要能取到刻度。 */
+  /* 间距：padding / margin / gap / inset 共用一套刻度。 */
+  --blai-space-neg-2: -2px;
+  --blai-space-neg-1: -1px;
+  --blai-space-1: 1px;
+  --blai-space-2: 2px;
+  --blai-space-3: 3px;
+  --blai-space-4: 4px;
+  --blai-space-5: 5px;
+  --blai-space-6: 6px;
+  --blai-space-7: 7px;
+  --blai-space-8: 8px;
+  --blai-space-9: 9px;
+  --blai-space-10: 10px;
+  --blai-space-11: 11px;
+  --blai-space-12: 12px;
+  --blai-space-13: 13px;
+  --blai-space-14: 14px;
+  --blai-space-15: 15px;
+  --blai-space-16: 16px;
+  --blai-space-17: 17px;
+  --blai-space-18: 18px;
+  --blai-space-20: 20px;
+  --blai-space-22: 22px;
+  --blai-space-24: 24px;
+  --blai-space-26: 26px;
+  --blai-space-28: 28px;
+  --blai-space-30: 30px;
+  --blai-space-32: 32px;
+  --blai-space-34: 34px;
+  --blai-space-36: 36px;
+  --blai-space-38: 38px;
+  --blai-space-39: 39px;
+  --blai-space-40: 40px;
+  --blai-space-42: 42px;
+  --blai-space-44: 44px;
+  --blai-space-48: 48px;
+  --blai-space-56: 56px;
+  --blai-space-64: 64px;
+  --blai-space-84: 84px;
+  --blai-space-680: 680px;
+  --blai-space-0: 0;
+
+  /* 字号。 */
+  --blai-font-8: 8px;
+  --blai-font-9: 9px;
+  --blai-font-10: 10px;
+  --blai-font-11: 11px;
+  --blai-font-11-5: 11.5px;
+  --blai-font-12: 12px;
+  --blai-font-12-5: 12.5px;
+  --blai-font-13: 13px;
+  --blai-font-14: 14px;
+  --blai-font-15: 15px;
+  --blai-font-16: 16px;
+  --blai-font-17: 17px;
+  --blai-font-18: 18px;
+  --blai-font-20: 20px;
+  --blai-font-22: 22px;
+  --blai-font-24: 24px;
+  --blai-font-26: 26px;
+
+  /* 字重：全插件正文只用两类——正常 400 与加粗 600，不再有其他字重。 */
+  --blai-weight-normal: 400;
+  --blai-weight-bold: 600;
+  /* Font Awesome 字形专用：'Font Awesome 6 Free' 的 Solid 字形必须 900 才渲染。
+     这不是正文排版字重，只用于图标伪元素，正文一律走上面两类。 */
+  --blai-weight-icon: 900;
+
+  /* 动效节奏：淡入淡出、展开收起的时长与缓动统一从这里取值。 */
+  --blai-duration-fast: 120ms; /* 菜单浮层等即显元素的退场 */
+  --blai-duration-base: 160ms; /* 页面面板、toast 进场 */
+  --blai-duration-slow: 180ms; /* 有位移的弹卡进场 */
+  --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
+
+  /* 圆角；--blai-radius-full 用于胶囊与圆形。 */
+  --blai-radius-2: 2px;
+  --blai-radius-3: 3px;
+  --blai-radius-4: 4px;
+  --blai-radius-5: 5px;
+  --blai-radius-6: 6px;
+  --blai-radius-7: 7px;
+  --blai-radius-8: 8px;
+  --blai-radius-9: 9px;
+  --blai-radius-10: 10px;
+  --blai-radius-11: 11px;
+  --blai-radius-12: 12px;
+  --blai-radius-13: 13px;
+  --blai-radius-14: 14px;
+  --blai-radius-15: 15px;
+  --blai-radius-16: 16px;
+  --blai-radius-18: 18px;
+  --blai-radius-20: 20px;
+  --blai-radius-full: 999px;
+
+  /* 边框宽度。 */
+  --blai-border-1: 1px;
+  --blai-border-1-5: 1.5px;
+  --blai-border-2: 2px;
+  --blai-border-3: 3px;
+
+  /* 控件与容器尺寸：按钮、输入框、栅格列宽、面板宽度。 */
+  --blai-size-1: 1px;
+  --blai-size-3: 3px;
+  --blai-size-4: 4px;
+  --blai-size-5: 5px;
+  --blai-size-6: 6px;
+  --blai-size-7: 7px;
+  --blai-size-9: 9px;
+  --blai-size-12: 12px;
+  --blai-size-14: 14px;
+  --blai-size-15: 15px;
+  --blai-size-16: 16px;
+  --blai-size-17: 17px;
+  --blai-size-18: 18px;
+  --blai-size-19: 19px;
+  --blai-size-20: 20px;
+  --blai-size-21: 21px;
+  --blai-size-22: 22px;
+  --blai-size-24: 24px;
+  --blai-size-26: 26px;
+  --blai-size-28: 28px;
+  --blai-size-30: 30px;
+  --blai-size-32: 32px;
+  --blai-size-34: 34px;
+  --blai-size-36: 36px;
+  --blai-size-38: 38px;
+  --blai-size-40: 40px;
+  --blai-size-41: 41px;
+  --blai-size-42: 42px;
+  --blai-size-44: 44px;
+  --blai-size-45: 45px;
+  --blai-size-46: 46px;
+  --blai-size-48: 48px;
+  --blai-size-50: 50px;
+  --blai-size-52: 52px;
+  --blai-size-54: 54px;
+  --blai-size-56: 56px;
+  --blai-size-58: 58px;
+  --blai-size-62: 62px;
+  --blai-size-72: 72px;
+  --blai-size-74: 74px;
+  --blai-size-78: 78px;
+  --blai-size-80: 80px;
+  --blai-size-84: 84px;
+  --blai-size-88: 88px;
+  --blai-size-92: 92px;
+  --blai-size-96: 96px;
+  --blai-size-104: 104px;
+  --blai-size-120: 120px;
+  --blai-size-122: 122px;
+  --blai-size-132: 132px;
+  --blai-size-140: 140px;
+  --blai-size-142: 142px;
+  --blai-size-148: 148px;
+  --blai-size-150: 150px;
+  --blai-size-152: 152px;
+  --blai-size-160: 160px;
+  --blai-size-168: 168px;
+  --blai-size-180: 180px;
+  --blai-size-200: 200px;
+  --blai-size-208: 208px;
+  --blai-size-210: 210px;
+  --blai-size-220: 220px;
+  --blai-size-240: 240px;
+  --blai-size-260: 260px;
+  --blai-size-280: 280px;
+  --blai-size-300: 300px;
+  --blai-size-320: 320px;
+  --blai-size-340: 340px;
+  --blai-size-360: 360px;
+  --blai-size-380: 380px;
+  --blai-size-400: 400px;
+  --blai-size-420: 420px;
+  --blai-size-440: 440px;
+  --blai-size-460: 460px;
+  --blai-size-468: 468px;
+  --blai-size-480: 480px;
+  --blai-size-520: 520px;
+  --blai-size-540: 540px;
+  --blai-size-560: 560px;
+  --blai-size-580: 580px;
+  --blai-size-620: 620px;
+  --blai-size-640: 640px;
+  --blai-size-680: 680px;
+  --blai-size-720: 720px;
+  --blai-size-760: 760px;
+  --blai-size-860: 860px;
+  --blai-size-900: 900px;
+  --blai-size-980: 980px;
+  --blai-size-1180: 1180px;
+  --blai-size-1440: 1440px;
+}
+
+/* 语义层：组件只引用这一层，改一处全站同步。 */
+#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
+  /* 内容区四周留白：模块卡片内边距、模块之间、模块到边 */
+  --blai-canvas-pad: var(--blai-space-12);
+  /* 模块卡片内边距 */
+  --blai-panel-pad: var(--blai-canvas-pad);
+  /* 紧凑模块（工具页右栏窄卡）内边距 */
+  --blai-panel-pad-tight: var(--blai-space-10);
+  /* 模块与模块之间、上下堆叠卡片之间 */
+  --blai-panel-gap: var(--blai-canvas-pad);
+  /* 左右分栏之间 */
+  --blai-column-gap: var(--blai-canvas-pad);
+  /* 模块标题块与正文之间 */
+  --blai-head-gap: var(--blai-space-8);
+  /* 模块标题块自身下内边距 */
+  --blai-head-pad: var(--blai-space-12);
+  /* 列表行上下内边距 */
+  --blai-row-pad: var(--blai-space-10);
+
+  /* 输入框内边距统一令牌：正文输入框 / 文本域 / 下拉框只引用这一组，
+     页面与模板里不再散写具体 padding，改一处即全站同步。 */
+  --blai-input-pad-y: var(--blai-space-14);
+  --blai-input-pad-x: var(--blai-space-16);
+  --blai-input-pad: var(--blai-input-pad-y) var(--blai-input-pad-x);
+  /* 紧凑档：弹窗、卡片里的单行输入与文本域 */
+  --blai-input-pad-compact: var(--blai-space-10) var(--blai-space-14);
+  /* 对话框输入框 / 多行提示域，保留各自原有档位，但同样收口为变量 */
+  --blai-input-pad-dialog: var(--blai-space-9) var(--blai-space-10);
+  --blai-input-pad-area: var(--blai-space-12) var(--blai-space-14);
+  /* 单行输入 / 下拉：纵向不留白，只给横向内边距 */
+  --blai-input-pad-inline: 0 var(--blai-space-12);
+  --blai-input-pad-inline-compact: 0 var(--blai-space-10);
+  --blai-input-pad-inline-wide: 0 var(--blai-space-14);
+  /* 窄屏下拉：高度只有 32px，横向留白相应收紧 */
+  --blai-input-pad-inline-tight: var(--blai-space-3) var(--blai-space-8);
+}

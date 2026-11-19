@@ -1,0 +1,479 @@
+/* 工具页：中文词表卡、版本与绑定、设置项。 */
+
+.blai-zh-dict-card {
+    width: min(var(--blai-size-480), 94vw);
+    padding: var(--blai-space-22);
+    border-radius: var(--blai-radius-12);
+    text-align: left;
+}
+
+.blai-zh-dict-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+    margin-bottom: var(--blai-space-12);
+}
+
+.blai-zh-dict-title {
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    font-size: var(--blai-font-18);
+    line-height: 1.3;
+    color: var(--text-main);
+}
+
+.blai-zh-dict-title i {
+    color: var(--accent-ink);
+}
+
+.blai-zh-dict-text {
+    margin: 0 0 var(--blai-space-12) 0;
+    font-size: var(--blai-font-14);
+    line-height: 1.65;
+    color: var(--text-main);
+}
+
+.blai-zh-dict-stats {
+    margin: 0 0 var(--blai-space-14) 0;
+    padding: var(--blai-space-10) var(--blai-space-12);
+    border-radius: var(--blai-radius-8);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-13);
+    line-height: 1.45;
+}
+
+.blai-zh-dict-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--blai-space-12) var(--blai-space-18);
+    margin-bottom: var(--blai-space-18);
+}
+
+.blai-zh-dict-options .blai-checkbox-label {
+    min-height: var(--blai-size-28);
+    color: var(--text-main);
+    font-size: var(--blai-font-14);
+}
+
+.blai-zh-dict-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--blai-space-10);
+}
+
+.blai-zh-dict-actions :is(.blai-secondary-btn, .blai-primary-btn) {
+    min-height: var(--blai-size-38);
+    padding: 0 var(--blai-space-14);
+    border-radius: var(--blai-radius-8);
+}
+
+@media screen and (min-width: 601px) and (max-width: 1024px) {.blai-loading-panel {
+    width: min(var(--blai-size-620), calc(100vw - var(--blai-size-48)));
+    max-height: calc(100dvh - var(--blai-size-48));
+}}
+
+#blai-purifier-popup .blai-tools-page {
+    width: 100%;
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: var(--blai-space-24);
+    color: var(--text-main);
+}
+
+#blai-purifier-popup .blai-tools-page :is(h2, p) {
+    margin: 0;
+}
+
+#blai-purifier-popup .blai-tools-columns {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 3fr);
+    /* 左右两栏等高：短的那栏白卡被拉到与长栏底边齐平 */
+    align-items: stretch;
+    gap: var(--blai-column-gap);
+}
+
+#blai-purifier-popup :is(.blai-tools-primary-column, .blai-tools-secondary-column, .blai-tools-section) {
+    min-width: 0;
+}
+
+#blai-purifier-popup :is(.blai-tools-primary-column, .blai-tools-secondary-column) {
+    display: grid;
+    align-content: stretch;
+    gap: var(--blai-panel-gap);
+}
+
+#blai-purifier-popup .blai-tools-section-header {
+    min-width: 0;
+    padding-bottom: var(--blai-head-pad);
+    /* 标题下的分隔线在卡片里是冗余线条，去掉 */
+    border-bottom: 0;
+}
+
+#blai-purifier-popup .blai-tools-section-header h2 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: var(--blai-font-15);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.3;
+}
+
+#blai-purifier-popup .blai-tools-section-header p, #blai-purifier-popup .blai-tools-header-description {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.5;
+}
+
+#blai-purifier-popup .blai-tools-section-header > p {
+    margin-top: var(--blai-space-4);
+}
+
+#blai-purifier-popup .blai-tools-version-content {
+    padding-top: var(--blai-space-14);
+}
+
+#blai-purifier-popup .blai-tools-version-details {
+    width: 100%;
+    display: grid;
+    gap: var(--blai-space-10);
+}
+
+#blai-purifier-popup .blai-tools-version-body {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-content: start;
+    gap: var(--blai-space-10);
+}
+
+#blai-purifier-popup .blai-tools-version-status-row {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
+    align-items: baseline;
+    column-gap: var(--blai-space-16);
+}
+
+#blai-purifier-popup .blai-tools-version-current {
+    display: inline-flex;
+    align-items: baseline;
+    grid-column: 1;
+    justify-self: start;
+    gap: var(--blai-space-7);
+    min-width: 0;
+    white-space: nowrap;
+}
+
+#blai-purifier-popup .blai-tools-version-status {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    line-height: 1.55;
+    grid-column: 3;
+    justify-self: end;
+    white-space: nowrap;
+    text-align: right;
+}
+
+#blai-purifier-popup .blai-tools-version-value {
+    color: var(--text-main);
+    font-size: var(--blai-font-14);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-purifier-popup :is(.blai-tools-version-status.is-latest, .blai-tools-version-status.is-update) {
+    color: var(--accent-ink);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-purifier-popup .blai-tools-version-note-list {
+    margin: var(--blai-space-2) 0 0;
+    padding-left: var(--blai-space-18);
+    display: grid;
+    gap: var(--blai-space-5);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    line-height: 1.55;
+}
+
+#blai-purifier-popup .blai-tools-version-update-action {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    justify-self: end;
+    min-height: var(--blai-size-34);
+    padding: 0 var(--blai-space-13);
+    border: 0;
+    border-radius: var(--blai-radius-6);
+    background: var(--accent-color);
+    color: var(--accent-contrast);
+    font: inherit;
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-tools-version-update-action:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--accent-color) 88%, var(--text-main));
+}
+
+#blai-purifier-popup .blai-tools-version-update-action:disabled {
+    opacity: .55;
+    cursor: wait;
+}
+
+#blai-purifier-popup .blai-tools-version-error {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    color: var(--status-danger);
+}
+
+#blai-purifier-popup .blai-tools-header-description {
+    margin-top: var(--blai-space-4);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--blai-space-7);
+}
+
+#blai-purifier-popup .blai-tools-binding-list {
+    margin-top: var(--blai-space-8);
+    display: grid;
+    gap: 0;
+}
+
+#blai-purifier-popup .blai-tools-binding-item {
+    min-width: 0;
+    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 72%, transparent);
+}
+
+#blai-purifier-popup .blai-tools-binding-main-action:focus-visible, #blai-purifier-popup .blai-tools-switch:focus-visible, #blai-purifier-popup .blai-tools-primary-button:focus-visible, #blai-purifier-popup #blai-diff-limit-input:focus-visible {
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 78%, transparent);
+    outline-offset: 2px;
+}
+
+#blai-purifier-popup .blai-tools-binding-row {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: var(--blai-space-8);
+    padding: var(--blai-row-pad) var(--blai-space-2);
+}
+
+#blai-purifier-popup .blai-tools-binding-main-action {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-main);
+    box-sizing: border-box;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-tools-binding-main-action:hover {
+    background: color-mix(in srgb, var(--bg-surface) 38%, transparent);
+}
+
+#blai-purifier-popup .blai-tools-binding-main-action.is-disabled {
+    opacity: .48;
+    cursor: not-allowed;
+}
+
+#blai-purifier-popup .blai-tools-binding-icon {
+    width: var(--blai-size-30);
+    height: var(--blai-size-30);
+    display: grid;
+    place-items: center;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-13);
+}
+
+#blai-purifier-popup .blai-tools-binding-item.is-bound .blai-tools-binding-title > strong,
+#blai-purifier-popup .blai-tools-binding-item.is-bound .blai-tools-binding-icon,
+#blai-purifier-popup .blai-tools-binding-item.is-bound .blai-tools-binding-context-value strong,
+#blai-purifier-popup .blai-tools-binding-item.is-bound .blai-tools-binding-current-value strong {
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-tools-binding-copy {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-4);
+}
+
+#blai-purifier-popup .blai-tools-binding-title {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--blai-space-7);
+}
+
+#blai-purifier-popup .blai-tools-binding-title > strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.35;
+}
+
+#blai-purifier-popup .blai-tools-binding-value {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+    gap: var(--blai-space-14);
+}
+
+
+
+#blai-purifier-popup .blai-tools-binding-value > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#blai-purifier-popup .blai-tools-binding-value strong {
+    color: var(--text-main);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-purifier-popup .blai-tools-settings {
+    display: grid;
+}
+
+#blai-purifier-popup :is(.blai-tools-setting-row, .blai-tools-slider-setting) {
+    min-width: 0;
+    padding: var(--blai-row-pad) 0;
+}
+
+#blai-purifier-popup .blai-tools-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-16);
+}
+
+#blai-purifier-popup .blai-tools-slider-setting {
+    display: grid;
+    gap: var(--blai-space-13);
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-purifier-popup .blai-tools-setting-copy {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-4);
+}
+
+#blai-purifier-popup .blai-tools-setting-copy > strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.4;
+}
+
+#blai-purifier-popup .blai-tools-setting-copy > :is(p, span) {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.5;
+    text-wrap: pretty;
+}
+
+#blai-purifier-popup .blai-tools-switch {
+    width: var(--blai-size-32);
+    min-width: var(--blai-size-32);
+    height: var(--blai-size-18);
+    padding: 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-tools-switch-track {
+    width: var(--blai-size-32);
+    height: var(--blai-size-18);
+    position: relative;
+    display: block;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-full);
+    background: var(--bg-surface);
+    box-sizing: border-box;
+    transition: border-color .16s ease, background-color .16s ease;
+}
+
+#blai-purifier-popup .blai-tools-switch-track > span {
+    width: var(--blai-size-14);
+    height: var(--blai-size-14);
+    position: absolute;
+    top: var(--blai-space-2);
+    left: var(--blai-space-2);
+    border-radius: 50%;
+    background: var(--bg-base);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--text-main) 18%, transparent);
+    transition: transform .16s ease, background-color .16s ease;
+}
+
+#blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+}
+
+#blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track > span {
+    transform: translateX(14px);
+    background: var(--bg-surface);
+}
+
+#blai-purifier-popup .blai-tools-switch-state {
+    position: absolute;
+    width: var(--blai-size-1);
+    height: var(--blai-size-1);
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+#blai-purifier-popup .blai-tools-slider-header {
+    min-width: 0;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+}
+
+#blai-purifier-popup .blai-tools-number-setting {
+    display: grid;
+    gap: var(--blai-space-8);
+}
+
+/* 输入框与「条」各自独立：边框只包住输入框，单位落在框外，不再被一起圈进去。 */
+#blai-purifier-popup .blai-tools-number-field {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    padding: 0;
+    border: 0;
+    background: transparent;
+}

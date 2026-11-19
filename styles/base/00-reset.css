@@ -1,0 +1,29 @@
+/* 全局重置：隐藏辅助类、滚动条、命中高亮动画。 */
+
+/* 可见滚动条统一用当前主题关键色、并调为细条。两者都可继承，挂在根容器上即可覆盖内部所有滚动区；
+   刻意隐藏的滚动条（后代显式 scrollbar-width: none）会覆盖继承值，不受影响。 */
+:where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) transparent;
+}
+
+#blai-purifier-popup .page-panel::-webkit-scrollbar, #blai-edit-subrules-container::-webkit-scrollbar {
+    display: none;
+}
+
+.blai-highlight-flash {
+    animation: blaiHighlightFlash 0.8s ease-in-out 2;
+    will-change: filter;
+}
+
+.blai-visually-hidden {
+    position: absolute;
+    width: var(--blai-size-1);
+    height: var(--blai-size-1);
+    padding: 0;
+    margin: var(--blai-space-neg-1);
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

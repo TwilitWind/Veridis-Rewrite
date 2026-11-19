@@ -1,0 +1,390 @@
+/* 深度净化：执行面板、批处理进度、扫描与完成态。 */
+
+#blai-deep-clean-workspace .blai-deep-clean-processing {
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    overflow: hidden;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-main {
+    min-width: 0;
+    min-height: 0;
+    padding: clamp(var(--blai-space-28), 5vw, var(--blai-space-64));
+    overflow-y: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-intro {
+    max-width: var(--blai-size-680);
+    margin: 0 auto var(--blai-space-34);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-intro h3 {
+    color: var(--text-main);
+    font-size: var(--blai-font-22);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: -.02em;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-intro p {
+    margin-top: var(--blai-space-7);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.5;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline {
+    width: min(100%, var(--blai-size-680));
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline li {
+    position: relative;
+    min-height: var(--blai-size-62);
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: var(--blai-space-14);
+    color: var(--text-secondary);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline li:not(:last-child)::before {
+    position: absolute;
+    top: var(--blai-space-24);
+    bottom: 0;
+    left: var(--blai-space-11);
+    width: var(--blai-size-1);
+    background: var(--border-color);
+    content: "";
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline-marker {
+    position: relative;
+    z-index: 1;
+    width: var(--blai-size-24);
+    height: var(--blai-size-24);
+    display: grid;
+    place-items: center;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: 50%;
+    background: var(--bg-surface);
+    color: var(--accent-ink);
+    font-size: var(--blai-font-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline li.is-active .blai-deep-clean-pipeline-marker {
+    border: var(--blai-border-2) solid var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline li.is-active .blai-deep-clean-pipeline-marker::after {
+    width: var(--blai-size-6);
+    height: var(--blai-size-6);
+    border-radius: 50%;
+    background: var(--accent-color);
+    content: "";
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline li > div {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline strong {
+    color: inherit;
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline li.is-active strong {
+    color: var(--accent-ink);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline span {
+    color: var(--text-secondary);
+    font: 9px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline span > .fa-spinner {
+    margin-right: var(--blai-space-5);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline progress {
+    width: min(100%, var(--blai-size-400));
+    height: var(--blai-size-5);
+    margin-top: var(--blai-space-4);
+    accent-color: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline progress.is-determinate {
+    appearance: none;
+    border: 0;
+    border-radius: var(--blai-radius-full);
+    background: color-mix(in srgb, var(--border-color) 72%, transparent);
+    overflow: hidden;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline progress.is-determinate::-webkit-progress-bar {
+    background: color-mix(in srgb, var(--border-color) 72%, transparent);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline progress.is-determinate::-webkit-progress-value {
+    background: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-pipeline progress.is-determinate::-moz-progress-bar {
+    background: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-processing-main > .blai-deep-clean-secondary-action {
+    margin: var(--blai-space-18) max(var(--blai-space-0), calc((100% - var(--blai-space-680)) / 2)) 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-summary {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-left: var(--blai-border-1) solid var(--border-color);
+    background: color-mix(in srgb, var(--bg-base) 52%, var(--bg-surface));
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-head {
+    flex: 0 0 auto;
+    padding: var(--blai-space-16) var(--blai-space-18);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-head h3 {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-body {
+    min-height: 0;
+    padding: var(--blai-space-18);
+    overflow-y: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-metrics {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--blai-space-6);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.2;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-metrics > span {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--blai-space-3);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-metrics strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-16);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-metrics i {
+    color: var(--text-secondary);
+    font-style: normal;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-status {
+    margin-top: var(--blai-space-18);
+    padding: var(--blai-space-13) 0;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--blai-space-9);
+    border-block: var(--blai-border-1) solid var(--border-color);
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.45;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-status > span {
+    width: var(--blai-size-7);
+    height: var(--blai-size-7);
+    margin-top: var(--blai-space-4);
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-contents {
+    margin-top: var(--blai-space-18);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-contents h4 {
+    margin-bottom: var(--blai-space-8);
+    color: var(--text-main);
+    font-size: var(--blai-font-9);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-contents ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-contents li {
+    position: relative;
+    padding: var(--blai-space-8) 0 var(--blai-space-8) var(--blai-space-12);
+    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 62%, transparent);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-contents li::before {
+    position: absolute;
+    top: var(--blai-space-14);
+    left: var(--blai-space-1);
+    width: var(--blai-size-4);
+    height: var(--blai-size-4);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--text-secondary) 56%, transparent);
+    content: "";
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-batch-empty {
+    padding: var(--blai-space-18) 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.5;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result {
+    width: min(var(--blai-size-980), 100%);
+    height: 100%;
+    margin: 0 auto;
+    padding: clamp(var(--blai-space-24), 5vw, var(--blai-space-56));
+    overflow-y: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result > header {
+    margin-bottom: var(--blai-space-24);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result > header h3 {
+    font-size: var(--blai-font-20);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result > header p {
+    margin-top: var(--blai-space-6);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-scan-metrics, .blai-deep-clean-scan-categories) {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--blai-space-12) var(--blai-space-18);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories {
+    margin-top: var(--blai-space-28);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories h3 {
+    grid-column: 1 / -1;
+    padding: 0 0 var(--blai-space-2);
+    font-size: var(--blai-font-11);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics > div, #blai-deep-clean-workspace .blai-deep-clean-scan-categories > div {
+    min-width: 0;
+    padding: var(--blai-space-8) 0;
+    display: grid;
+    gap: var(--blai-space-6);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics span, #blai-deep-clean-workspace .blai-deep-clean-scan-categories span {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics strong, #blai-deep-clean-workspace .blai-deep-clean-scan-categories strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-18);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-actions {
+    margin-top: var(--blai-space-24);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--blai-space-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state {
+    width: min(var(--blai-size-540), calc(100% - var(--blai-size-40)));
+    height: 100%;
+    margin: 0 auto;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--blai-space-11);
+    text-align: center;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state > i {
+    color: var(--accent-ink);
+    font-size: var(--blai-font-20);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state h3 {
+    font-size: var(--blai-font-16);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state p {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.55;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-complete-state {
+    width: min(var(--blai-size-720), calc(100% - var(--blai-size-40)));
+    padding: var(--blai-space-30) var(--blai-space-24);
+    overflow-y: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-complete-state > p {
+    max-width: 52em;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-completion-summary {
+    width: 100%;
+    margin-top: var(--blai-space-10);
+    border-block: var(--blai-border-1) solid var(--border-color);
+    text-align: left;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-completion-summary > section {
+    padding: var(--blai-space-13) 0 var(--blai-space-15);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-completion-summary > section + section {
+    border-top: var(--blai-border-1) solid var(--border-color);
+}

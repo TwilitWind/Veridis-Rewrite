@@ -1,0 +1,43 @@
+/* 深度净化处理范围卡片。 */
+
+/* Deep Clean · 处理范围卡片（需求7：仅当前角色卡的世界书与聊天记录） */
+/* 处理范围横排成一条：标签 / 角色卡名 / 计数同处一行，省掉竖向空白。 */
+#blai-purifier-popup .blai-deep-clean-scope-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--blai-space-4) var(--blai-space-10);
+    margin-top: var(--blai-space-8);
+    padding: var(--blai-space-8) var(--blai-space-12);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    background-color: var(--bg-surface);
+}
+
+#blai-purifier-popup .blai-deep-clean-scope-card.is-blocked {
+    border-color: var(--status-danger);
+}
+
+#blai-purifier-popup .blai-deep-clean-scope-label {
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-secondary);
+}
+
+#blai-purifier-popup .blai-deep-clean-scope-name {
+    font-size: var(--blai-font-14);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+}
+
+#blai-purifier-popup .blai-deep-clean-scope-detail {
+    margin-left: auto;
+    font-size: var(--blai-font-11);
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+#blai-purifier-popup .blai-deep-clean-scope-card.is-blocked .blai-deep-clean-scope-detail {
+    color: var(--status-danger);
+}

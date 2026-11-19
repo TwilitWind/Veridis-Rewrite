@@ -1,0 +1,461 @@
+/* 工具页：差异上限、绑定记录入口与弹窗。 */
+
+#blai-purifier-popup #blai-diff-limit-input {
+    width: var(--blai-size-46) !important;
+    height: var(--blai-size-30) !important;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding: 0 var(--blai-space-2) !important;
+    border: var(--blai-border-1) solid var(--border-color) !important;
+    border-radius: var(--blai-radius-9) !important;
+    background: var(--field-bg) !important;
+    box-shadow: none !important;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    appearance: textfield;
+    -moz-appearance: textfield;
+    outline: none !important;
+}
+
+/* 聚焦态用内阴影描边，避免再写一条高优先级声明去压基类的 border 简写。 */
+#blai-purifier-popup #blai-diff-limit-input:focus {
+    box-shadow: inset 0 0 0 1px var(--accent-color) !important;
+    outline: none !important;
+}
+
+#blai-purifier-popup #blai-diff-limit-input::-webkit-outer-spin-button,
+#blai-purifier-popup #blai-diff-limit-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+#blai-purifier-popup .blai-tools-number-unit {
+    flex: none;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+}
+
+/* 需求二：界面集成 / 扩展兼容 / 简繁转换合并为一个模块，条目之间用分隔线区分。 */
+#blai-purifier-popup .blai-tools-extras > * {
+    min-width: 0;
+}
+
+#blai-purifier-popup .blai-tools-extras > * + * {
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-purifier-popup .blai-tools-extras > .blai-tools-slider-setting {
+    padding-top: var(--blai-row-pad);
+}
+
+/* 首条设置紧贴标题说明，行分隔线与标题区重复，去掉（需求：标题下方不要分隔线） */
+#blai-purifier-popup .blai-tools-extras > :first-child {
+    border-top: 0;
+}
+
+#blai-purifier-popup .blai-tools-extras > .blai-tools-extra-block {
+    padding: var(--blai-row-pad) 0;
+}
+
+#blai-purifier-popup .blai-tools-opencc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+}
+
+#blai-purifier-popup .blai-tools-opencc-header > .blai-tools-setting-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+#blai-purifier-popup .blai-tools-opencc-header > .blai-tools-setting-copy > strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.4;
+}
+
+#blai-purifier-popup .blai-tools-opencc-header > .blai-tools-setting-copy > p {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.5;
+}
+
+#blai-purifier-popup .blai-tools-opencc-header > button {
+    flex: none;
+}
+
+#blai-purifier-popup .blai-tools-opencc-header > button[hidden] {
+    display: none;
+}
+
+#blai-purifier-popup .blai-tools-opencc-content {
+    padding-top: var(--blai-space-14);
+    display: grid;
+    justify-items: start;
+    gap: var(--blai-space-12);
+}
+
+#blai-purifier-popup .blai-tools-opencc-content > p {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.65;
+    text-wrap: pretty;
+}
+
+#blai-purifier-popup .blai-zh-dict-state {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--blai-space-8);
+    padding: var(--blai-space-9) var(--blai-space-12);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-9);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.5;
+}
+
+#blai-purifier-popup .blai-zh-dict-state-icon {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    font-size: var(--blai-font-12);
+    color: var(--text-secondary);
+}
+
+#blai-purifier-popup .blai-zh-dict-state.is-ready {
+    color: var(--text-main);
+}
+
+#blai-purifier-popup .blai-zh-dict-state.is-ready .blai-zh-dict-state-icon {
+    color: var(--status-success);
+}
+
+#blai-purifier-popup .blai-zh-dict-state.is-failed {
+    border-color: color-mix(in srgb, var(--status-danger) 46%, var(--border-color));
+}
+
+#blai-purifier-popup .blai-zh-dict-state.is-failed :is(.blai-zh-dict-state-icon, .blai-zh-dict-state-text) {
+    color: var(--status-danger);
+}
+
+#blai-purifier-popup .blai-zh-dict-state-text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#blai-purifier-popup .blai-tools-secondary-button {
+    flex: none;
+    min-height: var(--blai-size-30);
+    padding: 0 var(--blai-space-12);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-7);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    box-sizing: border-box;
+    font: inherit;
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-tools-secondary-button:hover {
+    border-color: var(--accent-color);
+}
+
+#blai-purifier-popup .blai-tools-secondary-button[hidden] {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    #blai-purifier-popup .blai-tools-opencc-content > p {
+        text-wrap: wrap;
+    }}
+
+#blai-purifier-popup .blai-tools-primary-button {
+    min-height: var(--blai-size-36);
+    padding: 0 var(--blai-space-14);
+    border: var(--blai-border-1) solid var(--accent-color);
+    border-radius: var(--blai-radius-7);
+    background: var(--accent-color);
+    color: var(--accent-contrast);
+    box-sizing: border-box;
+    font: inherit;
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background-color .16s ease, transform .12s ease;
+}
+
+#blai-purifier-popup .blai-tools-primary-button:hover {
+    background: color-mix(in srgb, var(--accent-color) 88%, var(--text-main));
+}
+
+#blai-purifier-popup .blai-tools-primary-button:active {
+    transform: translateY(1px) scale(.985);
+}
+
+@media (max-width: 720px) {#blai-purifier-popup .blai-tools-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--blai-panel-gap);
+}}
+
+@media (max-width: 600px) {
+#blai-purifier-popup .blai-tools-page {
+    gap: var(--blai-space-20);
+    padding: var(--blai-space-12) var(--blai-space-16) var(--blai-space-84);
+    box-sizing: border-box;
+}
+
+#blai-purifier-popup .blai-tools-version-update-action {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+}
+
+#blai-purifier-popup .blai-tools-version-body {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#blai-purifier-popup .blai-tools-version-error {
+    grid-row: auto;
+}
+
+#blai-purifier-popup .blai-tools-binding-item {
+    padding: 0;
+}
+
+#blai-purifier-popup .blai-tools-binding-icon {
+    width: var(--blai-size-30);
+    height: var(--blai-size-30);
+}
+
+#blai-purifier-popup .blai-tools-binding-row {
+    gap: var(--blai-space-4);
+    padding: var(--blai-space-10) 0;
+}
+
+#blai-purifier-popup .blai-tools-binding-value {
+    flex-wrap: wrap;
+    white-space: normal;
+}
+
+#blai-purifier-popup .blai-tools-secondary-column {
+    gap: var(--blai-panel-gap);
+    order: 1;
+}
+
+#blai-purifier-popup .blai-tools-primary-column {
+    display: contents;
+}
+
+
+
+#blai-purifier-popup .blai-tools-version-section {
+    order: 2;
+}}
+
+@media (prefers-reduced-motion: reduce) {
+#blai-purifier-popup .blai-tools-switch-track,
+#blai-purifier-popup .blai-tools-switch-track > span,
+#blai-purifier-popup .blai-tools-primary-button
+{
+    transition: none;
+}}
+
+@media (max-width: 600px) {#blai-zh-dictionary-modal > .blai-zh-dict-card {
+    width: 100%;
+    max-width: var(--blai-size-420);
+    max-height: calc(100dvh - var(--blai-size-40));
+    border-radius: var(--blai-radius-16);
+}}
+
+/* ---- 工具页标题栏操作（绑定记录入口） ---- */
+#blai-purifier-popup .blai-tools-binding-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+}
+
+#blai-purifier-popup .blai-tools-header-action {
+    flex: 0 0 auto;
+    min-height: var(--blai-size-28);
+    padding: var(--blai-space-4) var(--blai-space-10);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-8);
+    background-color: var(--bg-surface);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#blai-purifier-popup .blai-tools-header-action:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-tools-header-action i {
+    font-size: var(--blai-font-11);
+}
+
+/* ---- 绑定记录弹窗 ---- */
+#blai-binding-history-modal .blai-binding-history-card {
+    width: min(92vw, var(--blai-size-468));
+    max-height: min(80vh, var(--blai-size-620));
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-14);
+    padding: var(--blai-space-20) var(--blai-space-22) var(--blai-space-18);
+}
+
+#blai-binding-history-modal .blai-binding-history-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+}
+
+#blai-binding-history-modal .blai-binding-history-head h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    color: var(--text-main);
+    font-size: var(--blai-font-15);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.3;
+}
+
+#blai-binding-history-modal .blai-binding-history-head p {
+    margin-top: var(--blai-space-6);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.5;
+}
+
+#blai-binding-history-modal .blai-binding-history-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    display: grid;
+    align-content: start;
+    gap: var(--blai-space-12);
+}
+
+#blai-binding-history-modal .blai-binding-history-group {
+    display: grid;
+    gap: var(--blai-space-5);
+}
+
+#blai-binding-history-modal .blai-binding-history-group-title {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: .02em;
+}
+
+#blai-binding-history-modal .blai-binding-history-row {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    padding: var(--blai-space-8) var(--blai-space-10);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-8);
+    background-color: var(--bg-surface);
+    font-size: var(--blai-font-12);
+    line-height: 1.4;
+}
+
+#blai-binding-history-modal .blai-binding-history-name {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-main);
+}
+
+#blai-binding-history-modal .blai-binding-history-arrow {
+    flex: 0 0 auto;
+    font-size: var(--blai-font-10);
+    line-height: 1;
+    color: var(--text-secondary);
+}
+
+#blai-binding-history-modal .blai-binding-history-preset {
+    flex: 0 1 auto;
+    max-width: 45%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--accent-ink);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-binding-history-modal .blai-binding-history-badge {
+    flex: 0 0 auto;
+    padding: var(--blai-space-2) var(--blai-space-6);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--status-danger) 32%, var(--border-color));
+    border-radius: var(--blai-radius-6);
+    background-color: color-mix(in srgb, var(--status-danger) 12%, transparent);
+    color: color-mix(in srgb, var(--status-danger) 82%, var(--text-main));
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.4;
+}
+
+#blai-binding-history-modal .blai-binding-history-empty {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    padding: var(--blai-space-9) var(--blai-space-10);
+    border: var(--blai-border-1) dashed var(--border-color);
+    border-radius: var(--blai-radius-8);
+    background-color: var(--bg-base);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.4;
+}
+
+#blai-binding-history-modal .blai-binding-history-empty i {
+    flex: 0 0 auto;
+    font-size: var(--blai-font-11);
+    opacity: .72;
+}
+
+/* 「关闭」贴右侧，不再拉满整行；与其它弹窗的主按钮同高。 */
+#blai-binding-history-modal .blai-binding-history-actions {
+    flex: 0 0 auto;
+    justify-content: flex-end !important;
+    margin-top: 0 !important;
+    padding-top: var(--blai-space-12);
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-binding-history-modal .blai-binding-history-actions .blai-primary-btn {
+    flex: 0 0 auto !important;
+    min-width: var(--blai-size-96);
+    padding: 0 var(--blai-space-22) !important;
+    min-height: var(--blai-size-38);
+    font-size: var(--blai-font-13) !important;
+}

@@ -1,0 +1,613 @@
+/* 通用控件：按钮、输入框、下拉框、开关、复选框、标签徽章。 */
+
+#blai-purifier-popup :is(.field, .clean-row) {
+    min-height: var(--blai-size-38);
+    min-width: 0;
+    border-radius: var(--blai-radius-12);
+    padding: var(--blai-space-8) var(--blai-space-10);
+    background: var(--bg-surface);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--blai-space-8);
+    border: 0;
+    color: var(--text-main);
+    text-align: left;
+}
+
+#blai-purifier-popup .clean-row {
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+}
+
+#blai-purifier-popup .field span, #blai-purifier-popup .row-main strong {
+    min-width: 0;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#blai-purifier-popup .field small {
+    min-width: 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#blai-purifier-popup :is(.text-btn, .mini-btn, .round-btn) {
+    min-height: var(--blai-size-28);
+    border-radius: var(--blai-radius-10);
+    padding: 0 var(--blai-space-10);
+    display: inline-grid;
+    place-items: center;
+    color: var(--text-main);
+    background: transparent;
+    border: var(--blai-border-1) solid var(--border-color);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+    box-shadow: none;
+    transition:
+        background-color .16s ease,
+        border-color .16s ease,
+        color .16s ease,
+        opacity .16s ease,
+        transform .12s ease;
+}
+
+#blai-purifier-popup .round-btn {
+    width: var(--blai-size-38);
+    min-width: var(--blai-size-38);
+    height: var(--blai-size-38);
+    border-radius: 50%;
+    padding: 0;
+}
+
+#blai-purifier-popup :is(.text-btn.accent, .mini-btn.accent) {
+    color: var(--accent-contrast);
+    background: var(--accent-color);
+    border-color: transparent;
+}
+
+#blai-purifier-popup button:not(:disabled), #blai-purifier-popup .blai-proxy-field:not(:disabled), .blai-modal-shell button:not(:disabled) {
+    cursor: pointer !important;
+}
+
+#blai-purifier-popup .text-btn:not(.accent):hover, #blai-purifier-popup .mini-btn:not(.accent):hover, #blai-purifier-popup .round-btn:hover, #blai-purifier-popup .field.blai-proxy-field:not(.is-disabled):hover {
+    background: var(--bg-surface) !important;
+    border-color: color-mix(in srgb, var(--accent-color) 32%, var(--border-color) 68%) !important;
+}
+
+#blai-purifier-popup button:not(:disabled):active, #blai-purifier-popup .field.blai-proxy-field:not(.is-disabled):active, .blai-modal-shell button:not(:disabled):active {
+    transform: translateY(1px) scale(0.985) !important;
+}
+
+#blai-purifier-popup button:focus-visible, #blai-modal-shell button:focus-visible {
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 62%, transparent) !important;
+    outline-offset: 2px !important;
+}
+
+/*
+ * 输入框 / 下拉框 / 文本域只保留单层高亮：焦点态统一用内阴影描边，
+ * 不再靠 border-color 变色（输入框本身已经没有边框了）。
+ * 之前 outline(2px) + border-color 同时生效会看起来像双层描边，还被外层容器裁掉一圈。
+ */
+#blai-purifier-popup select:focus-visible, #blai-purifier-popup input:focus-visible,
+#blai-purifier-popup textarea:focus-visible, .blai-modal-shell input:focus-visible,
+.blai-modal-shell textarea:focus-visible, .blai-modal-shell select:focus-visible {
+    outline: none !important;
+}
+
+#blai-purifier-popup select:focus, #blai-purifier-popup input:focus, #blai-purifier-popup textarea:focus,
+.blai-modal-shell input:focus, .blai-modal-shell textarea:focus, .blai-modal-shell select:focus {
+    outline: none !important;
+    /* 输入框本身无边框，焦点态一律用内阴影描边，不再改 border-color */
+    box-shadow: inset 0 0 0 1px var(--accent-color) !important;
+}
+
+#blai-purifier-popup button:disabled, #blai-purifier-popup .field.blai-proxy-field.is-disabled, .blai-modal-shell button:disabled {
+    opacity: .48 !important;
+    cursor: not-allowed !important;
+    filter: saturate(.72) !important;
+}
+
+#blai-purifier-popup .field.blai-proxy-field.is-active {
+    border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color) 58%);
+    background: color-mix(in srgb, var(--accent-color) 14%, var(--bg-surface) 86%);
+}
+
+#blai-purifier-popup .row-main {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--blai-space-7);
+}
+
+#blai-purifier-popup .clean-row p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.45;
+    font-weight: var(--blai-weight-bold);
+}
+
+@media (max-width: 600px) {#blai-purifier-popup .text-btn {
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-8);
+}}
+
+.blai-legacy-warning {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-10);
+    padding: var(--blai-space-10) var(--blai-space-12);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--status-danger) 42%, var(--border-color));
+    border-radius: var(--blai-radius-8);
+    background: color-mix(in srgb, var(--status-danger) 13%, var(--bg-surface));
+    color: var(--text-main);
+}
+
+.blai-legacy-warning[hidden] {
+    display: none;
+}
+
+.blai-legacy-warning-icon {
+    flex: 0 0 auto;
+    color: var(--status-danger);
+    font-size: var(--blai-font-16);
+    line-height: 1;
+}
+
+.blai-legacy-warning-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.blai-legacy-warning-title {
+    font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.25;
+}
+
+.blai-legacy-warning-text {
+    margin-top: var(--blai-space-2);
+    font-size: var(--blai-font-12);
+    line-height: 1.35;
+    color: var(--text-secondary);
+}
+
+.blai-legacy-warning-action {
+    flex: 0 0 auto;
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-12);
+    border: none;
+    border-radius: var(--blai-radius-7);
+    background: var(--status-danger);
+    color: var(--danger-contrast);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.blai-legacy-warning-action:hover {
+    filter: brightness(1.05) !important;
+}
+
+.blai-legacy-target-flash {
+    animation: blaiLegacyTargetFlash 1.8s ease-out;
+}
+
+@keyframes blaiLegacyTargetFlash {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-danger) 58%, transparent); }
+    35% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--status-danger) 38%, transparent); }
+    100% { box-shadow: 0 0 0 0 transparent; }}
+
+@media (max-width: 600px) {
+.blai-legacy-warning {
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.blai-legacy-warning-action {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}}
+
+.blai-input, .blai-textarea {
+    width: 100%;
+    padding: var(--blai-input-pad);
+    border-radius: var(--blai-radius-10);
+    /* 输入框用 1px 边框表达「这里能输入」，填充只做弱区分。
+       边框色取 --border-color，三套主题各自给值，日间 / 夜间 / 跟随酒馆同为边框式。
+       border-box 已声明，加边框不会顶开布局。 */
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--field-bg);
+    color: var(--text-main);
+    font-size: var(--blai-font-18);
+    box-sizing: border-box;
+    outline: none;
+    font-family: inherit;
+}
+
+.blai-textarea {
+    resize: vertical;
+    font-size: var(--blai-font-14);
+}
+
+.blai-input:focus, .blai-textarea:focus {
+    /* 只染已有的 1px 边框：改颜色不占位，聚焦时不会把周围元素顶开 */
+    border-color: var(--accent-color) !important;
+}
+
+.blai-input.blai-invalid, .blai-textarea.blai-invalid {
+    border-color: var(--status-danger);
+}
+
+.blai-field-error {
+    display: none;
+    margin-top: var(--blai-space-6);
+    font-size: var(--blai-font-12);
+    line-height: 1.45;
+    color: var(--status-danger);
+}
+
+.blai-field-error.is-visible {
+    display: block;
+}
+
+.blai-icon-btn {
+    padding: 0 var(--blai-space-10);
+    min-height: var(--blai-size-30);
+    min-width: var(--blai-size-30);
+    font-size: var(--blai-font-13);
+    line-height: 1;
+    border-radius: var(--blai-radius-8);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+.blai-icon-btn:hover {
+    background: transparent !important;
+    transform: scale(1.15);
+    color: var(--accent-ink) !important;
+}
+
+.blai-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--blai-space-4) var(--blai-space-10);
+    border-radius: var(--blai-radius-4);
+    font-size: var(--blai-font-14);
+    margin-right: var(--blai-space-12);
+    font-weight: var(--blai-weight-bold);
+    color: var(--accent-contrast);
+    min-width: var(--blai-size-50);
+    line-height: 1;
+    margin-top: var(--blai-space-3);
+    flex-shrink: 0;
+}
+
+.blai-badge-compact {
+    font-size: var(--blai-font-10);
+    padding: var(--blai-space-2) var(--blai-space-5);
+    min-width: auto;
+    margin-right: var(--blai-space-6);
+    margin-top: 0;
+}
+
+.blai-select-box {
+    flex: 1 1 auto;
+    min-width: 0;
+    background-color: var(--field-bg);
+    padding: var(--blai-input-pad-inline-wide);
+    border-radius: var(--blai-radius-6);
+    font-size: var(--blai-font-14);
+    color: var(--text-main);
+    cursor: pointer;
+    height: var(--blai-size-40);
+    box-sizing: border-box;
+    border: var(--blai-border-1) solid var(--border-color);
+    outline: none;
+}
+
+.blai-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.blai-checkbox-label input, .blai-batch-checkbox-label input {
+    display: none;
+}
+
+.blai-custom-checkbox {
+    width: var(--blai-size-16);
+    height: var(--blai-size-16);
+    min-width: var(--blai-size-16);
+    min-height: var(--blai-size-16);
+    flex: 0 0 var(--blai-size-16);
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-surface);
+    box-sizing: border-box;
+}
+
+.blai-custom-checkbox.blai-square {
+    border-radius: var(--blai-radius-4);
+}
+
+.blai-checkbox-label input:checked + .blai-custom-checkbox {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.blai-checkbox-label input:checked + .blai-custom-checkbox::after
+{
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    color: var(--accent-contrast);
+    font-size: var(--blai-font-10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blai-tag {
+    background-color: var(--accent-color);
+    color: var(--accent-contrast);
+    padding: var(--blai-space-2) var(--blai-space-6);
+    border-radius: var(--blai-radius-10);
+    font-size: var(--blai-font-10);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.blai-source {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-main);
+    font-weight: var(--blai-weight-normal);
+    display: block;
+    min-width: 0;
+}
+
+.blai-empty-state {
+    opacity: 0.58;
+    width: 100%;
+    text-align: center;
+    font-size: var(--blai-font-13);
+    padding: var(--blai-space-20) 0;
+    color: var(--text-secondary);
+}
+
+/* 弹窗层级：插件内各级弹窗占用 10000004~10000008，而配置/确认对话框是从任意弹窗里
+   弹出的最终层，必须压在所有插件弹窗之上，否则「备注/删除/移动」这类对话框会被
+   打开它的编辑弹窗盖住、点不到。放在 10000020 留出一段余量给后续新增的弹窗层级。 */
+.blai-modal-shell {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    padding: max(var(--blai-space-20), env(safe-area-inset-top)) max(var(--blai-space-20), env(safe-area-inset-right)) max(var(--blai-space-20), env(safe-area-inset-bottom)) max(var(--blai-space-20), env(safe-area-inset-left));
+    box-sizing: border-box;
+    z-index: 10000000;
+    flex-direction: column;
+    font-family: inherit;
+    align-items: center;
+    justify-content: center;
+}
+
+.blai-modal-shell:not(#blai-tour-layer) {
+    background: color-mix(in srgb, var(--bg-base) 12%, transparent);
+    backdrop-filter: blur(9px);
+}
+
+.blai-modal-shell.blai-is-open {
+    display: flex;
+}
+
+/* 从任意插件弹窗里弹出的最终层：统一对话框（备注/删除/重命名等）与风险确认。
+   这类弹窗由打开它的编辑弹窗触发，必须压在上面，否则遮罩盖住后按钮完全点不到。 */
+.blai-plugin-dialog,
+#blai-risk-confirm-modal,
+#blai-risk-info-modal {
+    z-index: 10000020;
+}
+
+.blai-modal-card {
+    box-sizing: border-box;
+    border-radius: var(--blai-radius-18);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--text-main) 16%, transparent);
+}
+
+.blai-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--blai-space-10);
+    flex-shrink: 0;
+    margin-top: var(--blai-space-5);
+}
+
+.blai-secondary-btn, .blai-primary-btn {
+    flex: 1;
+    padding: var(--blai-space-10);
+    border-radius: var(--blai-radius-8);
+    cursor: pointer;
+    font-weight: var(--blai-weight-bold);
+}
+
+.blai-secondary-btn:hover {
+    background: var(--bg-surface) !important;
+}
+
+.blai-primary-btn:hover {
+    background: var(--accent-color) !important;
+}
+
+.blai-primary-btn:disabled, .blai-primary-btn.blai-is-disabled {
+    background: var(--bg-surface) !important;
+    color: var(--text-secondary) !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+}
+
+.blai-modal-actions .blai-secondary-btn, .blai-modal-actions .blai-primary-btn, .blai-modal-actions button {
+    flex: 1;
+    padding: var(--blai-space-10);
+    font-size: var(--blai-font-14);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--blai-space-6);
+    margin: 0;
+    border-radius: var(--blai-radius-8);
+}
+
+.blai-plugin-dialog-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-14);
+    width: min(92vw, var(--blai-size-420));
+    max-width: var(--blai-size-420);
+    padding: var(--blai-space-22);
+    text-align: left;
+}
+
+.blai-plugin-dialog-text {
+    margin: 0;
+    font-size: var(--blai-font-14);
+    line-height: 1.6;
+    color: var(--text-main);
+    white-space: pre-line;
+    word-break: break-word;
+}
+
+.blai-plugin-dialog-input {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+    color: var(--text-main);
+    padding: var(--blai-input-pad-dialog);
+    border-radius: var(--blai-radius-8);
+    font-size: var(--blai-font-14);
+}
+
+.blai-plugin-dialog-input:focus {
+    outline: none !important;
+    border-color: var(--accent-color) !important;
+}
+
+.blai-plugin-dialog .blai-modal-actions {
+    justify-content: flex-end;
+    gap: var(--blai-space-10);
+}
+
+.blai-plugin-dialog .blai-modal-actions button {
+    flex: 0 0 auto;
+    min-width: var(--blai-size-84);
+    padding: var(--blai-space-9) var(--blai-space-18);
+}
+
+.blai-plugin-dialog button.blai-danger-btn {
+    background: var(--status-danger);
+    border-color: var(--status-danger);
+    color: var(--danger-contrast);
+}
+
+.blai-related-active-icon {
+    color: var(--accent-ink);
+}
+
+.blai-persona-description-protect-toggle:not(.blai-clean-switch) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+    margin-left: var(--blai-space-8);
+    padding: var(--blai-space-2) var(--blai-space-7);
+    min-height: var(--blai-size-24);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-6);
+    background: color-mix(in srgb, var(--text-main) 7%, transparent);
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-12);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.blai-persona-description-protect-toggle:not(.blai-clean-switch).is-active {
+    border-color: var(--accent-color);
+    color: var(--accent-ink);
+    background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+}
+
+.blai-persona-description-protect-toggle:not(.blai-clean-switch):hover {
+    transform: translateY(-1px);
+}
+
+@media screen and (max-width: 600px) {
+
+.blai-select-box {
+    flex: 1 1 0%;
+    width: 100%;
+    min-width: 0;
+    max-width: calc(100vw - var(--blai-size-160));
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    height: var(--blai-size-32);
+    font-size: var(--blai-font-13);
+    padding: var(--blai-input-pad-inline-tight);
+}
+
+.blai-icon-btn {
+    min-height: var(--blai-size-36);
+}
+
+.blai-input, .blai-textarea {
+    font-size: var(--blai-font-14);
+    padding: var(--blai-input-pad-compact);
+}
+
+.blai-modal-actions {
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.blai-secondary-btn, .blai-primary-btn {
+    height: auto;
+    min-height: var(--blai-size-40);
+    max-height: var(--blai-size-48);
+}}

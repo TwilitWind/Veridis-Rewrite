@@ -1,0 +1,455 @@
+/* 首页宽屏断点。 */
+
+/* ---------------------------------------------------------------------------
+   电脑端三个弹窗（搜索 / 编辑分组 / 编辑规则）统一尺寸：更窄更高，避免松散。
+   --------------------------------------------------------------------------- */
+@media (min-width: 601px) {
+    /* 三个弹窗同一把尺子：更窄（560px）更高（整屏减 28px），避免横向松散 */
+    #blai-rule-search-modal,
+    #blai-rule-edit-modal,
+    #blai-scope-tag-editor-modal {
+        padding: var(--blai-space-14);
+    }
+
+    #blai-rule-search-modal > .blai-rule-search-card,
+    #blai-rule-edit-modal > .blai-edit-modal-card,
+    #blai-scope-tag-editor-modal > .blai-scope-tag-editor-card {
+        width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
+        max-width: var(--blai-size-560);
+        height: calc(100dvh - var(--blai-size-28));
+        max-height: calc(100dvh - var(--blai-size-28));
+        border-radius: var(--blai-radius-16);
+    }
+
+    /* 编辑规则弹窗与编辑规则分组弹窗同一把尺子：以前者为准 */
+    #blai-subrule-edit-modal {
+        padding: var(--blai-space-14);
+    }
+
+    #blai-subrule-edit-modal > .blai-subrule-modal-card {
+        width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
+        max-width: var(--blai-size-560);
+        height: calc(100dvh - var(--blai-size-28));
+        max-height: calc(100dvh - var(--blai-size-28));
+        border-radius: var(--blai-radius-16);
+        box-sizing: border-box;
+    }
+
+    #blai-rule-search-modal > .blai-rule-search-card {
+        padding: 0;
+    }
+
+    #blai-scope-tag-editor-modal > .blai-scope-tag-editor-card {
+        padding: var(--blai-space-16) var(--blai-space-20) var(--blai-space-18);
+        box-sizing: border-box;
+    }
+
+    #blai-rule-search-modal .blai-rule-search-body {
+        min-height: 0;
+    }
+
+    #blai-rule-edit-modal #blai-edit-subrules-container {
+        max-height: none;
+    }}
+
+/* 代码高亮开关：子规则弹窗挂在 body 下、不在 #blai-purifier-popup 作用域内，
+   .blai-ai-switch 的那套样式够不到，这里自带一份同样的滑动开关。 */
+#blai-subrule-edit-modal .blai-regex-highlight-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-7);
+    flex: 0 0 auto;
+    padding: var(--blai-space-6) var(--blai-space-9);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch[hidden] {
+    display: none;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch .blai-ai-switch-track {
+    position: relative;
+    display: block;
+    flex: 0 0 var(--blai-size-28);
+    width: var(--blai-size-28);
+    height: var(--blai-size-16);
+    border-radius: var(--blai-radius-full);
+    background: color-mix(in srgb, var(--text-main) 26%, var(--bg-base));
+    transition: background 160ms ease;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch .blai-ai-switch-track::after {
+    content: "";
+    position: absolute;
+    top: var(--blai-space-2);
+    left: var(--blai-space-2);
+    width: var(--blai-size-12);
+    height: var(--blai-size-12);
+    border-radius: 50%;
+    background: var(--bg-surface);
+    transition: transform 160ms ease;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch input:checked + .blai-ai-switch-track {
+    background: var(--accent-color) !important;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch input:checked + .blai-ai-switch-track::after {
+    transform: translateX(var(--blai-size-12)) !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * 三个编辑弹窗（编辑规则集 / 编辑单条规则 / 新增标签）的统一版式。
+ * 1) 三张卡片内边距用同一组数：16 / 20，标题下 12。
+ * 2) 卡片内部不画任何边框（只有输入框本身保留一圈边框）。
+ * 3) 卡片底 = 页面灰白，卡片里的每一块内容 = 纯白实色包裹，块与块靠留白分开。
+ * --------------------------------------------------------------------------- */
+/* 简易组合弹窗（界面B）在日间用纯白卡片：它的内容密度最高，白卡 + 1px 边框
+   才是这套边框式该有的底；夜间与跟随酒馆在纯白上会炸，所以只对 light 给值。 */
+#blai-subrule-edit-modal[data-theme="light"].blai-modal-shell > .blai-subrule-modal-card {
+    --blai-modal-card-bg: var(--bg-surface);
+}
+
+#blai-rule-edit-modal.blai-modal-shell > .blai-edit-modal-card,
+#blai-subrule-edit-modal.blai-modal-shell > .blai-subrule-modal-card,
+#blai-scope-tag-editor-modal.blai-modal-shell > .blai-scope-tag-editor-card {
+    padding: var(--blai-space-16) var(--blai-space-20) !important;
+    /* 卡片底色走变量：简易组合弹窗（界面B）在日间取纯白，其余主题与另外两个弹窗取 --bg-base。
+       内容密度最高的那个弹窗，灰白卡上再叠一片带边框的控件会整块发灰。 */
+    background: var(--blai-modal-card-bg, var(--bg-base)) !important;
+    border: 0 !important;
+    box-shadow: 0 14px 36px color-mix(in srgb, var(--text-main) 16%, transparent) !important;
+}
+
+/* 卡片内一律不画边框线 */
+:is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) :is(
+    .blai-subrule-modal-header,
+    .blai-subrule-header,
+    .blai-subrule-footer,
+    .blai-scope-tag-editor-actions,
+    .blai-modal-actions,
+    .blai-edit-modal-title,
+    .blai-scope-tag-editor-title,
+    .blai-edit-field,
+    .blai-subrule-field,
+    .blai-subrule-mode-block,
+    .blai-scope-tag-editor-field
+) {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 标题不加下划线，只留底部间距 */
+:is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) :is(.blai-edit-modal-title, .blai-scope-tag-editor-title) {
+    padding-bottom: 0;
+    margin-bottom: var(--blai-space-12);
+}
+
+/* 每条规则 = 一块纯白实色包裹，无边框；块与块之间留 8px */
+#blai-rule-edit-modal #blai-edit-subrules-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-8);
+}
+
+#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-card {
+    margin: 0;
+    padding: var(--blai-space-12) var(--blai-space-14);
+    background: var(--bg-surface);
+    border: 0;
+    border-radius: var(--blai-radius-12);
+    box-shadow: none;
+}
+
+:is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) .blai-regex-flags-chip {
+    border: 0;
+    background: var(--bg-surface);
+}
+
+/* 编辑规则集：每条规则保留自己的底色块（白），只去掉块外面的描边线。
+   块与块之间不加任何分隔线，靠 gap 留白分开。 */
+#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 0;
+    border-radius: var(--blai-radius-12);
+    box-shadow: none;
+    padding: var(--blai-space-14) var(--blai-space-14);
+    margin: 0;
+}
+
+/* 编辑规则集：规则正文与正文首行取消加粗，只靠颜色区分 */
+#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-preview,
+#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-preview-source {
+    font-weight: var(--blai-weight-normal);
+}
+
+/* 规则详情页的代码高亮开关与关闭按钮：去掉背景框与描边，控件直接落在弹窗底色上 */
+#blai-subrule-edit-modal .blai-regex-highlight-switch,
+#blai-subrule-edit-modal .blai-subrule-close-btn {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* 规则详情页顶栏：叉号与语法选择、代码高亮开关垂直居中 */
+#blai-subrule-edit-modal .blai-subrule-modal-header {
+    align-items: center;
+}
+
+#blai-subrule-edit-modal .blai-regex-highlight-switch,
+#blai-subrule-edit-modal .blai-subrule-close-btn {
+    align-self: center;
+    height: var(--blai-size-28);
+    min-height: var(--blai-size-28);
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 规则块内的备注行去掉上方的点线：块内不留任何线条 */
+#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-remark {
+    margin-top: var(--blai-space-6);
+    padding-top: 0;
+    border-top: 0;
+}
+
+/* 规则块内的徽标行与预览行贴紧，不留内部分隔线 */
+#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-header {
+    padding-bottom: 0;
+    margin-bottom: var(--blai-space-6);
+    border: 0;
+}
+
+/* 编辑规则集：分组名不单独成块，标签直接压在输入框上方 */
+#blai-rule-edit-modal .blai-edit-field {
+    margin: 0 0 var(--blai-space-12);
+    padding: 0;
+    background: none;
+}
+
+/* 编辑单条规则（规则详情页）：字段本身不铺垫、不加底色，
+   只有字段里的输入框有底色与边框；标题直接落在弹窗底色上。 */
+#blai-subrule-edit-modal .blai-subrule-field {
+    padding: 0 !important;
+    margin: 0 0 var(--blai-space-14) !important;
+    background: none !important;
+    border-radius: 0 !important;
+}
+
+/* 底部保存条的底色也去掉：规则详情页只有输入框带底色 */
+#blai-subrule-edit-modal .blai-subrule-footer {
+    background: none;
+    border: 0;
+    padding: var(--blai-space-10) 0 0;
+}
+
+#blai-subrule-edit-modal .blai-subrule-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+}
+
+#blai-subrule-edit-modal .blai-subrule-field[hidden] {
+    display: none !important;
+}
+
+/* 新增标签：白块只留给输入框本身，字段名（所属分组 / 输入标签 / 输入备注）
+   直接落在弹窗灰底上，与「编辑规则合集」的分组名称字段同一套排布。 */
+#blai-scope-tag-editor-modal .blai-scope-tag-editor-field {
+    padding: 0 !important;
+    margin: 0 0 var(--blai-space-16) !important;
+    background: none !important;
+    border-radius: 0 !important;
+    gap: var(--blai-space-8);
+}
+
+#blai-scope-tag-editor-modal .blai-scope-tag-editor-field .blai-field-label {
+    color: var(--text-secondary);
+}
+
+/* 三个编辑弹窗里的输入框：与主界面同一套定义（1px 边框 + 弱填充），
+   边框与焦点态由 components/02-controls.css 的 .blai-input / .blai-textarea 负责，
+   这里只覆写底色——弹窗卡片不是同一个底色，填充需要另给一档。 */
+:is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) :is(.blai-input, .blai-textarea, select) {
+    background-color: var(--field-bg);
+}
+
+/* gmu 小标同样去掉框 */
+:is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) .blai-regex-flags-chip {
+    border: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * 两个下拉（筛选 / 语法模式）只保留右侧箭头这一个 UI，去掉背景色与背景框：
+ * 外层不铺底色，控件本身也透明，文字直接落在弹窗底色上。
+ * 语法模式仍是原生 select；筛选改成与「⋯」菜单同款的自绘下拉（原生 select 的
+ * 展开列表由系统绘制，样式割裂且在 overflow: hidden 的弹窗里会被裁掉）。
+ * 前缀写成 #blai-rule-edit-modal #blai-rule-edit-modal 这类双容器会污染特异性，
+ * 这里靠具体类名取胜，不用 !important 压自家规则。
+ * --------------------------------------------------------------------------- */
+#blai-rule-edit-modal .blai-edit-filter-wrap,
+#blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    height: var(--blai-size-28);
+    padding: 0 var(--blai-space-20) 0 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-sizing: border-box;
+}
+
+#blai-subrule-edit-modal .blai-subrule-mode-select {
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: inherit !important;
+    color: var(--text-main) !important;
+    font-size: var(--blai-font-13) !important;
+    font-weight: var(--blai-weight-bold) !important;
+    line-height: 1.3 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    cursor: pointer;
+}
+
+#blai-subrule-edit-modal .blai-subrule-mode-select:focus {
+    outline: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* 语法模式是原生 select，箭头只能绝对定位压在右侧；筛选是自绘按钮，箭头走 flex 流内，
+   不再共用这条规则——绝对定位一旦失去参照就会压到文字上。 */
+#blai-subrule-edit-modal .blai-subrule-mode-arrow {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* 筛选触发器：与弹窗里其它纯文字控件同高，只有文字 + 漏斗 + 箭头，不铺底色不画框。
+   容器前缀 (1,1,0) 已经压过酒馆与主题对 button 的普通声明，全部按普通声明写。
+   箭头必须落在按钮自己的内边距里（position: relative 让绝对定位的箭头以按钮为参照），
+   否则箭头和它右侧的留白都在按钮之外，点上去没反应，看起来就像只剩半个控件。 */
+#blai-rule-edit-modal .blai-edit-filter-wrap {
+    padding: 0;
+}
+
+#blai-rule-edit-modal .blai-edit-filter-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--blai-radius-8);
+    background: none;
+    color: var(--text-main);
+    font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-bold);
+    line-height: 1.3;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#blai-rule-edit-modal .blai-edit-filter-trigger:hover,
+#blai-rule-edit-modal .blai-edit-filter-trigger.is-filtered {
+    color: var(--accent-ink);
+}
+
+#blai-rule-edit-modal .blai-edit-filter-trigger.is-filtered .blai-edit-filter-icon {
+    color: var(--accent-ink);
+}
+
+/* 漏斗、标签、箭头三个子元素都按 flex 项排队：谁也不许缩（flex: none），
+   谁也不用绝对定位，所以箭头只可能出现在「全部」右边，不会再压到字上。 */
+#blai-rule-edit-modal .blai-edit-filter-icon,
+#blai-rule-edit-modal .blai-edit-filter-label,
+#blai-rule-edit-modal .blai-edit-filter-arrow {
+    flex: none;
+    line-height: 1;
+}
+
+#blai-rule-edit-modal .blai-edit-filter-icon {
+    color: inherit;
+    font-size: var(--blai-font-11);
+    pointer-events: none;
+}
+
+#blai-rule-edit-modal .blai-edit-filter-arrow {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    pointer-events: none;
+}
+
+/* 筛选菜单是 body 级浮层（src/ui/popover.js 定位），不继承 #blai-rule-edit-modal 作用域，
+   与「⋯」菜单同一套外观：图标行高同步、10px 圆角、2px 行距。 */
+.blai-edit-filter-menu {
+    z-index: 2147483000;
+    min-width: var(--blai-size-148);
+    display: grid;
+    gap: var(--blai-dropdown-gap);
+    padding: var(--blai-dropdown-pad);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+}
+
+.blai-edit-filter-menu[hidden] {
+    display: none;
+}
+
+.blai-edit-filter-menu .blai-edit-filter-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--blai-dropdown-item-height);
+    padding: 0 var(--blai-dropdown-item-pad-x);
+    border: 0;
+    border-radius: var(--blai-dropdown-item-radius);
+    background: transparent;
+    color: var(--blai-dropdown-ink);
+    font-size: var(--blai-dropdown-item-font);
+    font-weight: var(--blai-dropdown-item-weight);
+    text-align: left;
+    cursor: pointer;
+}
+
+/* 菜单行悬停/选中统一整行蓝底反白。 */
+.blai-edit-filter-menu .blai-edit-filter-item:hover,
+.blai-edit-filter-menu .blai-edit-filter-item.is-active {
+    background: var(--blai-dropdown-active-bg);
+    color: var(--blai-dropdown-active-ink);
+    font-weight: var(--blai-dropdown-item-weight);
+}
+}

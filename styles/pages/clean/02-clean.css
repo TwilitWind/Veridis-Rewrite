@@ -1,0 +1,278 @@
+/* 深度净化：规则预设、处理模式、执行面板。 */
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option {
+    min-width: 0;
+    min-height: var(--blai-size-30);
+    padding: var(--blai-space-4) var(--blai-space-6) var(--blai-space-4) var(--blai-space-4);
+    display: grid;
+    grid-template-columns: 14px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--blai-space-9);
+    border: 0;
+    border-radius: var(--blai-radius-4);
+    background: transparent;
+    color: var(--text-secondary);
+    text-align: left;
+    cursor: pointer;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option:hover {
+    background: var(--bg-surface);
+    color: var(--text-main);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option input {
+    width: var(--blai-size-14);
+    height: var(--blai-size-14);
+    margin: 0;
+    accent-color: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-copy {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-2);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-copy strong {
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option input:checked + .blai-deep-clean-mode-copy strong {
+    color: var(--accent-ink);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-copy small {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    font-weight: var(--blai-weight-normal);
+    line-height: 1.4;
+}
+
+/* 程序 + AI 与「仅程序」并排在第一行，仅程序的子选项整行落到第二行。 */
+#blai-deep-clean-workspace .blai-deep-clean-mode-options > label:last-child {
+    order: 2;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-program-policy {
+    order: 3;
+    grid-column: 1 / -1;
+    margin: var(--blai-space-2) 0 var(--blai-space-1);
+    padding: var(--blai-space-4) var(--blai-space-8) var(--blai-space-4) var(--blai-space-10);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--blai-space-2) var(--blai-space-8);
+    border-left: var(--blai-border-1) solid var(--border-color);
+    border-radius: 0 var(--blai-radius-8) var(--blai-radius-8) 0;
+    background: var(--bg-surface);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resources {
+    min-width: 0;
+    display: block;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header {
+    min-width: 0;
+    padding: var(--blai-space-10) var(--blai-space-16) var(--blai-space-8);
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header > div:first-child {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
+    font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: -.01em;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header p {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header p strong {
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
+    min-width: 0;
+    padding: var(--blai-space-10) var(--blai-space-16) var(--blai-space-12);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-shujuku-note {
+    grid-column: 1 / -1;
+    padding: 0;
+    border-top: 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    line-height: 1.45;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-panel {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    background: var(--bg-surface);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-panel + .blai-deep-clean-resource-panel {
+    margin-top: 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
+    min-width: 0;
+    padding: var(--blai-space-9) var(--blai-space-12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-16);
+    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 68%, transparent);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-search-field {
+    width: min(var(--blai-size-340), 46%);
+    min-width: var(--blai-size-210);
+    height: var(--blai-size-34);
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    align-items: center;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-5);
+    background: var(--bg-base);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-search-field i {
+    grid-column: 1;
+    justify-self: center;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    pointer-events: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-search-field .blai-deep-clean-input {
+    grid-column: 2;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    padding: 0 var(--blai-space-10) 0 0;
+    border: 0;
+    border-radius: 0;
+    /* 输入框底色跟外壳一致：外壳已提供边框与底色，但这里仍写实色而不是 transparent，
+       否则第三方主题注入的底色会从输入框里透出来。 */
+    background: var(--bg-base);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-summary {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--blai-space-13);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    white-space: nowrap;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-summary strong {
+    color: var(--text-main);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-search-selection-actions {
+    display: inline-flex;
+    gap: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-search-selection-actions button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--accent-ink);
+    font: inherit;
+    font-size: var(--blai-font-10);
+    text-decoration: underline;
+    box-shadow: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-list {
+    min-width: 0;
+    max-height: var(--blai-size-240);
+    overflow-y: auto;
+    padding: 0 var(--blai-space-12);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice {
+    min-width: 0;
+    min-height: var(--blai-size-42);
+    padding: var(--blai-space-7) var(--blai-space-10);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--blai-space-10);
+    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 64%, transparent);
+    cursor: pointer;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice:hover {
+    background: color-mix(in srgb, var(--bg-base) 54%, var(--bg-surface));
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice input {
+    width: var(--blai-size-14);
+    height: var(--blai-size-14);
+    margin: 0;
+    accent-color: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice-copy {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--blai-space-18);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-choice-title, .blai-deep-clean-choice-meta) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice-title {
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice-meta {
+    color: var(--text-secondary);
+    font: 9px/1.3 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+
+
+#blai-deep-clean-workspace .blai-deep-clean-selection-actions {
+    min-height: var(--blai-size-52);
+    padding: var(--blai-space-8) var(--blai-space-16);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--blai-space-9);
+    border-top: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+}

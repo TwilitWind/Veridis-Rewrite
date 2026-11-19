@@ -1,0 +1,202 @@
+/* 反馈页表单控件：勾选框、按钮、状态与提交预览。 */
+
+/* 勾选框自己画：酒馆主题给 input[type=checkbox] 加了 outline/overflow:hidden，
+   方框边框画在盒子外面会被右侧栏的滚动容器裁掉左边一条。这里关掉 outline 并自带边框。 */
+#blai-feedback-workspace .blai-feedback-check input,
+#blai-feedback-workspace .blai-feedback-confirm input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex: 0 0 auto;
+    width: var(--blai-size-15);
+    height: var(--blai-size-15);
+    margin: var(--blai-space-1) 0 0;
+    border: var(--blai-border-1-5) solid color-mix(in srgb, var(--text-main) 34%, var(--border-color));
+    border-radius: var(--blai-radius-4);
+    background-color: var(--bg-surface);
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+#blai-feedback-workspace .blai-feedback-check input:checked,
+#blai-feedback-workspace .blai-feedback-confirm input:checked {
+    border-color: var(--accent-color);
+    background-color: var(--accent-color) !important;
+}
+
+#blai-feedback-workspace .blai-feedback-check input:checked::after,
+#blai-feedback-workspace .blai-feedback-confirm input:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-font-9);
+    line-height: 1;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-contrast);
+}
+
+#blai-feedback-workspace .blai-feedback-check input:disabled {
+    cursor: not-allowed;
+}
+
+#blai-feedback-workspace .blai-feedback-check small {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+}
+
+#blai-feedback-workspace .blai-feedback-check-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-3);
+}
+
+#blai-feedback-workspace .blai-feedback-check-title {
+    min-width: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-check-description {
+    display: block;
+}
+
+#blai-feedback-workspace .blai-feedback-check-status {
+    align-self: start;
+}
+
+#blai-feedback-workspace .blai-feedback-check.is-unavailable {
+    opacity: .52;
+}
+
+#blai-feedback-workspace .blai-feedback-privacy {
+    margin: 0;
+    padding: var(--blai-space-9) 0;
+    border-block: var(--blai-border-1) solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-10);
+    line-height: 1.6;
+}
+
+#blai-feedback-workspace .blai-feedback-primary,
+#blai-feedback-workspace .blai-feedback-file-trigger,
+#blai-feedback-workspace .blai-feedback-diagnostic-heading button {
+    min-height: var(--blai-size-40);
+    padding: 0 var(--blai-space-15);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-feedback-workspace .blai-feedback-primary {
+    background: var(--accent-color);
+    color: var(--accent-contrast);
+}
+
+#blai-feedback-workspace .blai-feedback-primary:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--accent-color) 88%, var(--text-main));
+}
+
+#blai-feedback-workspace .blai-feedback-file-trigger:hover,
+#blai-feedback-workspace .blai-feedback-diagnostic-heading button:hover {
+    color: var(--accent-ink);
+}
+
+#blai-feedback-workspace .blai-feedback-primary:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+#blai-feedback-workspace .blai-feedback-status {
+    min-height: var(--blai-size-20);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.45;
+}
+
+#blai-feedback-workspace .blai-feedback-status[data-status="error"] {
+    color: var(--status-danger);
+}
+
+#blai-feedback-workspace .blai-feedback-status[data-status="success"] {
+    color: var(--accent-ink);
+}
+
+#blai-feedback-workspace .blai-feedback-submit-status {
+    min-height: var(--blai-size-20);
+    margin-top: var(--blai-space-8);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.45;
+}
+
+#blai-feedback-workspace .blai-feedback-submit-status[data-status="success"] {
+    color: var(--accent-ink);
+}
+
+#blai-feedback-workspace .blai-feedback-submit-status[data-status="error"] {
+    color: var(--status-danger);
+}
+
+#blai-feedback-workspace .blai-feedback-preview {
+    min-width: 0;
+    grid-column: 1 / -1;
+    padding-top: var(--blai-space-28);
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+
+#blai-feedback-workspace .blai-feedback-preview pre {
+    max-width: 100%;
+    max-height: var(--blai-size-420);
+    margin: var(--blai-space-12) 0;
+    padding: var(--blai-feedback-box-pad);
+    overflow: auto;
+    box-sizing: border-box;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-9);
+    background: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--blai-feedback-font);
+    font-size: var(--blai-font-10);
+    line-height: 1.55;
+    white-space: pre;
+    overflow-wrap: normal;
+}
+
+#blai-feedback-workspace .blai-feedback-diagnostic-record pre {
+    max-width: 100%;
+    max-height: var(--blai-size-420);
+    margin: var(--blai-space-12) 0;
+    padding: var(--blai-feedback-box-pad);
+    overflow: auto;
+    box-sizing: border-box;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-9);
+    background: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--blai-feedback-font);
+    font-size: var(--blai-font-10);
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#blai-feedback-workspace .blai-feedback-confirm {
+    margin: var(--blai-space-14) 0;
+}
+
+/* 反馈页正文铺满可用宽度，不再用 980px 居中（左右留白过大） */
+#blai-feedback-workspace .blai-feedback-diagnostics-view,
+#blai-feedback-workspace .blai-feedback-local-view {
+    width: 100%;
+    margin: 0;
+}

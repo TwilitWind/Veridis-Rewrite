@@ -1,0 +1,26 @@
+/* 扩展入口按钮（魔法棒）与酒馆设置里的抽屉入口。 */
+
+#blai-purifier-popup, #blai-purifier-popup * {
+    text-shadow: none;
+}
+
+#blai-wand-btn {
+    cursor: pointer;
+}
+
+.blai-extension-settings-entry .inline-drawer-content {
+    padding: var(--blai-space-8) 0 var(--blai-space-12);
+}
+
+.blai-extension-open-btn {
+    width: min(var(--blai-size-260), 100%);
+    min-height: var(--blai-size-38);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--blai-space-8);
+    border-radius: var(--blai-radius-8);
+    font-size: var(--blai-font-14);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+}

@@ -1,0 +1,530 @@
+/* 反馈页：工作区、视图标签、提交表单。 */
+
+/* 反馈工作区。 */
+
+/* 反馈与诊断是底部第 5 个导航页，作为页面容器而不是浮层。 */
+#blai-purifier-popup.blai-app-shell .page-panel.blai-feedback-page {
+    padding: 0;
+    overflow: hidden;
+}
+
+#blai-purifier-popup.blai-app-shell .page-panel.blai-feedback-page.active {
+    display: block;
+}
+
+/* 反馈页正文字体：优先用酒馆主题正文（--mainFontFamily，随主题设置变化），
+   主题没定义时退到设备系统无衬线字体。日志/JSON 框以前用 monospace，
+   Windows 下等宽字体没有中文字形，中文会掉进宋体，这里一并改成正文字体。 */
+#blai-feedback-workspace {
+    --blai-feedback-font: var(--mainFontFamily, "Segoe UI Variable", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif);
+    /* 四个标签页里所有"框"（日志 / 上下文 / 诊断 JSON / 提交预览）统一内边距，
+       文字不再贴着边框：左右 16px、上下 14px。 */
+    --blai-feedback-box-pad: var(--blai-space-14) var(--blai-space-16);
+    /* 正文卡内边距：吸顶标题行用同一组值做负外边距，才能铺满整条。 */
+    --blai-feedback-page-pad-x: clamp(var(--blai-space-16), 1.6vw, var(--blai-space-22));
+    --blai-feedback-page-pad-y: clamp(var(--blai-space-16), 1.6vw, var(--blai-space-22));
+    font-family: var(--blai-feedback-font);
+    position: static;
+    inset: auto;
+    z-index: auto;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    grid-template-rows: auto minmax(0, 1fr);
+    background: transparent;
+    color: var(--text-main);
+}
+
+#blai-feedback-workspace[hidden] {
+    display: none !important;
+}
+
+/* 顶栏：四个视图直接作为标签页铺满整条，标题已由全局顶栏承担。 */
+#blai-feedback-workspace .blai-feedback-workspace-header {
+    min-width: 0;
+    padding: var(--blai-space-8) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+    display: grid;
+    gap: 0;
+    background: var(--bg-surface);
+    box-shadow: 0 6px 16px -12px color-mix(in srgb, var(--text-main) 62%, transparent);
+}
+
+#blai-feedback-workspace .blai-feedback-header-row {
+    min-width: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-header span {
+    display: block;
+    color: var(--accent-ink);
+    font-size: var(--blai-font-8);
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: .16em;
+    line-height: 1.1;
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-header button {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-main);
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-header button:hover {
+    color: var(--accent-ink);
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-nav {
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: 0;
+    border-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-nav::-webkit-scrollbar {
+    height: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-nav button {
+    width: auto;
+    min-width: 0;
+    height: auto;
+    min-height: var(--blai-size-36);
+    padding: 0 var(--blai-space-18) var(--blai-space-10);
+    border: 0;
+    border-bottom: var(--blai-border-2) solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+}
+
+/* 需求二.8：标签按钮要按文字宽度排布，不能被顶栏的 38px 图标按钮规则压成方块。 */
+#blai-feedback-workspace .blai-feedback-workspace-header .blai-feedback-workspace-nav button {
+    width: auto;
+    min-width: 0;
+    height: auto;
+    min-height: var(--blai-size-36);
+    flex: 0 0 auto;
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-nav button.is-active {
+    border-bottom-color: var(--accent-color);
+    background: transparent;
+    color: var(--text-main);
+}
+
+/* 正文是一张白色圆角卡，与外层灰白底形成分区。 */
+#blai-feedback-workspace .blai-feedback-workspace-content {
+    min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: var(--blai-space-12) var(--blai-space-12) var(--blai-space-14);
+    padding: var(--blai-feedback-page-pad-y) var(--blai-feedback-page-pad-x) var(--blai-space-32);
+    border-radius: var(--blai-radius-14);
+    background: var(--bg-surface);
+}
+
+#blai-feedback-workspace .blai-feedback-form {
+    width: min(var(--blai-size-1180), 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.75fr) minmax(250px, .85fr);
+    gap: clamp(var(--blai-space-14), 1.6vw, var(--blai-space-22));
+    align-items: start;
+}
+
+#blai-feedback-workspace .blai-feedback-form-main {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-14);
+}
+
+/* 隐私说明与提交按钮移到表单底部横条，右列只留附件清单，两列高度对齐。 */
+#blai-feedback-workspace .blai-feedback-form-footer {
+    grid-column: 1 / -1;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--blai-space-10) var(--blai-space-18);
+    margin-top: var(--blai-space-2);
+}
+
+#blai-feedback-workspace .blai-feedback-form-footer .blai-feedback-privacy {
+    padding: 0;
+    border: 0;
+    /* 隐私说明是长文本，窄窗口下会从一行折成两行。给它预留两行的高度并垂直居中，
+       使窗口宽度/字体加载变化时所在行高恒定，避免这段文字在 1 行/2 行之间跳动。 */
+    min-height: var(--blai-size-32);
+    align-self: center;
+}
+
+#blai-feedback-workspace .blai-feedback-form-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-10);
+}
+
+#blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-status {
+    text-align: right;
+}
+
+#blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-primary {
+    min-width: var(--blai-size-152);
+}
+
+/* 桌面端：表单高度随内容增长（不锁死为可视区高度）。
+   旧版把 content/form/form-main 都用 minmax(0,1fr)+height:100% 铺满，再用 textarea 吃掉剩余高度。
+   代价是「涉及区域」<details> 展开时中间块变高，textarea 顶部被推下、底部越过固定在第二行的 footer，
+   把隐私说明文字盖住——表现就是那段浅字「跑到详细说明上方 / 与文本框底部重叠」。
+   改成高度自适应后，footer 永远跟在正文之后，details 展开只会把下方内容顺势推下去，不再重叠；
+   content 本身 overflow-y:auto，内容超出可视区时正常滚动。 */
+@media (min-width: 821px) {
+    #blai-feedback-workspace .blai-feedback-workspace-content:has(#blai-feedback-form) {
+        display: grid;
+        grid-template-rows: auto;
+        padding-bottom: var(--blai-space-16);
+    }
+
+    #blai-feedback-workspace .blai-feedback-form:has(#blai-feedback-preview-section[hidden]) {
+        height: auto;
+        min-height: 0;
+        align-items: start;
+        grid-template-rows: none;
+    }
+
+    #blai-feedback-workspace .blai-feedback-form:has(#blai-feedback-preview-section[hidden]):has(.blai-feedback-update-warning) {
+        grid-template-rows: none;
+    }
+
+    #blai-feedback-workspace .blai-feedback-form:has(#blai-feedback-preview-section[hidden]) > .blai-feedback-form-main {
+        grid-template-rows: none;
+        height: auto;
+    }
+
+    #blai-feedback-workspace .blai-feedback-form-main > .blai-feedback-control:last-child {
+        grid-template-rows: auto auto;
+        min-height: 0;
+    }
+
+    #blai-feedback-workspace .blai-feedback-form-main > .blai-feedback-control:last-child textarea {
+        height: auto;
+        min-height: var(--blai-size-160);
+        resize: vertical;
+    }
+
+    #blai-feedback-workspace .blai-feedback-form:has(#blai-feedback-preview-section[hidden]) > .blai-feedback-form-side {
+        min-height: 0;
+        padding-right: var(--blai-space-2);
+    }
+}
+
+#blai-feedback-workspace .blai-feedback-form-pair {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--blai-space-14);
+}
+
+#blai-feedback-workspace .blai-feedback-form-side {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-10);
+}
+
+/* 版本提示：按文字宽度收缩，不铺满整行；行高必须够，避免被下方标签行压住。 */
+#blai-feedback-workspace .blai-feedback-update-warning {
+    grid-column: 1 / -1;
+    justify-self: start;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: var(--blai-space-7) var(--blai-space-11);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+    border-radius: var(--blai-radius-8);
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    line-height: 1.65;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    align-self: start;
+    min-height: max-content;
+}
+
+#blai-feedback-workspace .blai-feedback-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-fieldset legend,
+#blai-feedback-workspace .blai-feedback-control > span,
+#blai-feedback-workspace .blai-feedback-attachments h3,
+#blai-feedback-workspace .blai-feedback-preview h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-feedback-workspace .blai-feedback-fieldset > p,
+#blai-feedback-workspace .blai-feedback-attachments > p,
+#blai-feedback-workspace .blai-feedback-preview header p {
+    margin: var(--blai-space-4) 0 var(--blai-space-9);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.55;
+}
+
+#blai-feedback-workspace .blai-feedback-control {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-6);
+}
+
+/* 提交反馈表单里的控件背景引用统一变量 --blai-input-bg（见 tokens/02-themes.css）：
+   下拉框、输入框、文本域与「选择涉及区域」details 共用同一个底色来源，改一处即可联动。
+   主题的裸标签 !important 覆盖由 02-themes.css 的 --ui-color-sec 重定向统一处理。 */
+#blai-feedback-workspace .blai-feedback-control :is(input, textarea, select) {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    /* 主题对 input/textarea 下过 `border:1 像素 solid var(--ui-color-sec)` 的强声明，
+       重定向后边框颜色被染成控件底色（白底白框＝看不见），select 更是被清成 none。
+       主题的 box-shadow 没有强声明，用同色 inset 阴影补一圈可见边框，既不新增强制声明，
+       也与「选择涉及区域」details 的边框同源（同用 --border-color）。 */
+    box-shadow: inset 0 0 0 var(--blai-border-1) var(--border-color);
+    background-color: var(--blai-input-bg);
+    color: var(--text-main);
+    font: inherit;
+    font-size: var(--blai-font-12);
+}
+
+#blai-feedback-workspace .blai-feedback-control input {
+    min-height: var(--blai-size-38);
+    padding: var(--blai-input-pad-inline);
+}
+
+#blai-feedback-workspace .blai-feedback-control select {
+    min-height: var(--blai-size-36);
+    padding: var(--blai-input-pad-inline-compact);
+}
+
+/* 涉及区域：自绘多选下拉。触发器与图1下拉风格一致；
+   选项浮层由 popover.js 挂到 body，逃出 fieldset 的裁剪，四角不再被切。 */
+#blai-feedback-workspace .blai-feedback-area-select {
+    position: relative;
+    min-width: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-area-trigger {
+    --blai-dropdown-bg: var(--bg-surface);
+    --blai-dropdown-ink: var(--text-main);
+    --blai-dropdown-border: var(--border-color);
+    --blai-dropdown-radius: var(--blai-radius-10);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-8);
+    width: 100%;
+    min-height: var(--blai-size-36);
+    padding: 0 var(--blai-space-12);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    color: var(--blai-dropdown-ink);
+    font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-normal);
+    line-height: 1.45;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+#blai-feedback-workspace .blai-feedback-area-summary {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#blai-feedback-workspace .blai-feedback-area-summary.is-empty {
+    color: var(--text-secondary);
+}
+
+#blai-feedback-workspace .blai-feedback-area-trigger i {
+    flex: 0 0 auto;
+    font-size: var(--blai-font-10);
+    color: var(--text-secondary);
+}
+
+/* body 浮层：自带图1令牌，圆角/边框/阴影完整，不被祖先 overflow 裁切。 */
+.blai-feedback-area-options {
+    --blai-dropdown-bg: var(--bg-surface);
+    --blai-dropdown-ink: var(--text-main);
+    --blai-dropdown-border: var(--border-color);
+    --blai-dropdown-radius: var(--blai-radius-10);
+    --blai-dropdown-pad: var(--blai-space-3) 0;
+    --blai-dropdown-gap: 0;
+    --blai-dropdown-shadow: 0 4px 10px color-mix(in srgb, var(--text-main) 12%, transparent);
+    --blai-dropdown-item-radius: 0;
+    --blai-dropdown-item-pad-x: var(--blai-space-10);
+    --blai-dropdown-item-height: var(--blai-size-28);
+    position: fixed;
+    z-index: 2147483000;
+    display: grid;
+    gap: var(--blai-dropdown-gap);
+    padding: var(--blai-dropdown-pad);
+    max-height: min(var(--blai-size-240), 50vh);
+    overflow-y: auto;
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+    box-sizing: border-box;
+}
+
+.blai-feedback-area-options[hidden] {
+    display: none;
+}
+
+.blai-feedback-area-option {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    width: 100%;
+    min-height: var(--blai-dropdown-item-height);
+    padding: 0 var(--blai-dropdown-item-pad-x);
+    border: 0;
+    border-radius: var(--blai-dropdown-item-radius);
+    background: none;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-normal);
+    text-align: left;
+    cursor: pointer;
+}
+
+.blai-feedback-area-option:hover,
+.blai-feedback-area-option.is-checked {
+    background: var(--blai-dropdown-active-bg);
+    color: var(--blai-dropdown-active-ink);
+}
+
+/* 勾选框用 Font Awesome 方形 + 对勾，跨主题一致；选中态跟随整行反白。 */
+.blai-feedback-area-check {
+    flex: 0 0 var(--blai-size-12);
+    width: var(--blai-size-12);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-13);
+}
+
+.blai-feedback-area-option:hover .blai-feedback-area-check,
+.blai-feedback-area-option.is-checked .blai-feedback-area-check {
+    color: var(--blai-dropdown-active-ink);
+}
+
+.blai-feedback-area-option.is-checked {
+    color: var(--accent-ink);
+}
+
+/* checkbox 数据锚点保留在 form 内供业务读取，视觉隐藏。 */
+.blai-feedback-area-anchors {
+    display: none;
+}
+
+#blai-feedback-workspace .blai-feedback-control textarea {
+    min-height: var(--blai-size-160);
+    padding: var(--blai-input-pad-compact);
+    resize: vertical;
+    line-height: 1.55;
+}
+
+#blai-feedback-workspace .blai-feedback-attachments {
+    display: grid;
+    gap: var(--blai-space-4);
+}
+
+#blai-feedback-workspace .blai-feedback-file-picker {
+    margin-top: var(--blai-space-9);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--blai-space-12);
+}
+
+#blai-feedback-workspace .blai-feedback-file-copy {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-5);
+    overflow-wrap: anywhere;
+}
+
+#blai-feedback-workspace .blai-feedback-file-copy > span {
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-feedback-workspace .blai-feedback-file-copy > p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.55;
+}
+
+#blai-feedback-workspace .blai-feedback-file-picker input[type="file"] {
+    position: absolute;
+    width: var(--blai-size-1);
+    height: var(--blai-size-1);
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-file-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--blai-space-8);
+    white-space: nowrap;
+}
+
+#blai-feedback-workspace :is(.blai-feedback-check, .blai-feedback-confirm) {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--blai-space-9);
+    color: var(--text-main);
+    font-size: var(--blai-font-11);
+    line-height: 1.45;
+}
+
+#blai-feedback-workspace .blai-feedback-check {
+    padding: var(--blai-space-6) 0;
+    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 70%, transparent);
+}

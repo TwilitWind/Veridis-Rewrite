@@ -1,0 +1,250 @@
+/* 主题覆盖：auto / light / dark 三套主题下的背景、文字、边框、强调色。 */
+
+#blai-purifier-popup[data-theme="auto"], .blai-modal-shell[data-theme="auto"], #blai-scope-tag-editor-modal[data-theme="auto"], #blai-rule-transfer-modal[data-theme="auto"], #blai-diff-modal[data-theme="auto"], #blai-rule-search-modal[data-theme="auto"], #blai-preset-import-choice-modal[data-theme="auto"], .blai-toast[data-theme="auto"], #blai-loading-overlay[data-theme="auto"], #blai-tour-layer[data-theme="auto"] {
+    /* 跟随酒馆：底色在酒馆背景上压暗一档、卡片提亮一档，
+       浅色与深色酒馆主题下都能分出「外底 / 卡片」两层。 */
+    --bg-base: color-mix(in srgb, var(--SmartThemeBlurTintColor) 86%, #000000);
+    --bg-surface: color-mix(in srgb, var(--SmartThemeBlurTintColor) 92%, #FFFFFF);
+    /* 强调色跟随酒馆：实心块用酒馆 QuoteColor 原色；
+       浅底上的强调文字把 QuoteColor 往正文色里混（浅色酒馆正文深→变深，深色酒馆正文浅→变浅），
+       所以在任意酒馆配色下都有对比；实心块上的文字取酒馆毛玻璃底色，天然是它的反差色。 */
+    --accent-color: var(--SmartThemeQuoteColor);
+    --accent-ink: color-mix(
+        in srgb,
+        var(--SmartThemeQuoteColor) 76%,
+        var(--SmartThemeBodyColor)
+    );
+    --accent-contrast: var(--SmartThemeBlurTintColor);
+    --text-main: var(--SmartThemeBodyColor);
+    --text-secondary: color-mix(
+        in srgb,
+        var(--SmartThemeBodyColor) 68%,
+        transparent
+    );
+    /* 酒馆自带的 --SmartThemeBorderColor 经常与底色几乎同色（实测跟随酒馆下是 rgba(45,45,45,1)，
+       在深底上等于看不见）。这里改成从正文色往底色里混，任何酒馆配色下都能拉开对比。 */
+    --border-color: color-mix(
+        in srgb,
+        var(--SmartThemeBodyColor) 34%,
+        var(--bg-base)
+    );
+    /* 输入框底色：从边框色往卡片底里混，浅色酒馆下变浅灰、深色酒馆下变浅一档，
+       方向由 --border-color 自身决定，不写死明暗。改成边框式以后填充只做兜底（见下方比例说明），
+       层次由 1px 边框承担，三套主题一致。
+       混入比例必须小：--border-color 已经是从底色上拉开的一档，再按 62% 混进输入框，
+       等于把两档叠起来。实测深色酒馆主题下（BlurTint rgba(31,31,31)）得到 rgb(76,76,75)，
+       与卡片 rgb(49,49,49) 的亮度台阶是 1.51，而固定日间/夜间主题是 1.12，深色下发刺眼。
+       取 16% 后实测深色酒馆 1.11、浅色酒馆 1.14，与固定主题同一档。 */
+    --field-bg: color-mix(
+        in srgb,
+        var(--border-color) 16%,
+        var(--bg-surface)
+    );
+}
+
+#blai-purifier-popup[data-theme="light"], .blai-modal-shell[data-theme="light"], #blai-scope-tag-editor-modal[data-theme="light"], #blai-rule-transfer-modal[data-theme="light"], #blai-diff-modal[data-theme="light"], #blai-rule-search-modal[data-theme="light"], #blai-preset-import-choice-modal[data-theme="light"], .blai-toast[data-theme="light"], #blai-loading-overlay[data-theme="light"], #blai-tour-layer[data-theme="light"] {
+    /* 日间：最外层接近白的灰白画布。取纯中性灰（三通道齐平、不做蓝偏移），
+       再往上就是纯白，会和卡片糊在一起；往下压会吃掉输入框与画布的层次。 */
+    --bg-base: #F7F7F8;
+    --bg-surface: #FFFFFF;
+    /* 日间强调蓝降饱和：原 #2F6FED 饱和度 84% 压在白色卡片上刺眼，
+       改成 62% 的柔和蓝，与灰白画布的冷暖一致。 */
+    --accent-color: #4D79CB;
+    --accent-ink: #2F5AA6;
+    --accent-contrast: #FFFFFF;
+    --text-main: #33383D;
+    --text-secondary: #5F6975;
+    /* 描边同样取中性灰：原 #E3E7EF 蓝-红差 12，压在灰白画布上会透出一层冷调，
+       和「灰白」这个基调打架。改后亮度几乎不变（vs 白卡 1.24 → 1.26），只去掉色偏。 */
+    --border-color: #E5E5E8;
+    /* 输入框底色：纯白，与卡片同色。静息态的层次交给 1px 边框表达，
+       填充不再往下挖一格——灰块在白卡上面积大、比画布还深，是「显脏」的来源。 */
+    --field-bg: #FFFFFF;
+    --status-danger: #C0392B;
+    --status-success: #4C8C2B;
+}
+
+#blai-purifier-popup[data-theme="dark"], .blai-modal-shell[data-theme="dark"], #blai-scope-tag-editor-modal[data-theme="dark"], #blai-rule-transfer-modal[data-theme="dark"], #blai-diff-modal[data-theme="dark"], #blai-rule-search-modal[data-theme="dark"], #blai-preset-import-choice-modal[data-theme="dark"], .blai-toast[data-theme="dark"], #blai-loading-overlay[data-theme="dark"], #blai-tour-layer[data-theme="dark"] {
+    --bg-base: #0D1017;
+    --bg-surface: #181E2A;
+    /* 夜间蓝要降饱和、抬明度差：纯 #2F6FED 压在深底上会发荧光。
+       实心块用偏灰的浅蓝配深字，浅底上的强调文字用亮一档的蓝。 */
+    --accent-color: #7BA7F0;
+    --accent-ink: #8FB6F5;
+    --accent-contrast: #0B1526;
+    --text-main: #C7D3E0;
+    --text-secondary: #8899AA;
+    --border-color: #3A4356;
+    /* 夜间输入框底色：只比卡片 #181E2A 亮一点点，层次由 1px 边框承担。
+       原先靠填充拉开 1.12 的台阶，改成边框式以后填充只做「不透底」的兜底，
+       否则同一条边框旁边还压着一块明显更亮的方块，会显得控件凸出来。 */
+    --field-bg: #1D222D;
+    --status-danger: #D95757;
+    --status-success: #70BF56;
+    /* 夜间四来源圆点整体提亮，避免在深卡片上糊成一团。 */
+    --blai-diff-original: #A8B4C2;
+    --blai-diff-program: #7BA7F0;
+    --blai-diff-ai: #C6A2FF;
+    --blai-diff-manual: #E0A458;
+    /* 深主题遮罩更重、投影更实，避免深色卡片在黑底上失边。 */
+    --blai-scrim: rgba(0, 0, 0, 0.66);
+    --blai-modal-shadow: rgba(0, 0, 0, 0.5);
+    /* 深蓝底配白字，避免浅蓝底在深主题下发荧光。 */
+    --blai-dropdown-active-bg: #3D6FB4;
+    --re-escape: #FF8F40;
+    --re-class: #39BAE6;
+    --re-group: #D2A6FF;
+    --re-quant: #F07178;
+    --re-anchor: #AAD94C;
+    --re-error: #D95757;
+}
+
+#blai-purifier-popup[data-theme="dark"] .panel {
+    box-shadow: none;
+}
+
+#blai-purifier-popup[data-theme="dark"] .clean-row {
+    background: var(--bg-surface);
+}
+
+#blai-purifier-popup[data-theme="dark"] :is(.text-btn.accent, .mini-btn.accent) {
+    color: var(--accent-contrast);
+}
+
+/* 导航选中项已经改成「只换文字色、不铺底色」，夜间必须用强调色本身 */
+#blai-purifier-popup[data-theme="dark"] .rail-btn.active,
+#blai-purifier-popup[data-theme="dark"] .nav-item.active {
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup[data-theme="dark"] .bottom-nav {
+    background: color-mix(in srgb, var(--bg-base) 12%, transparent);
+}
+
+/* 深度净化与绑定记录等浮层同样遵循「灰白底 + 白卡」的日间分区。 */
+#blai-purifier-popup[data-theme="light"] .blai-home-toolbar,
+#blai-purifier-popup[data-theme="light"] .blai-home-batch-panel,
+#blai-purifier-popup[data-theme="light"] .blai-clean-list-toolbar
+{
+    border-color: transparent;
+}
+
+#blai-purifier-popup[data-theme="light"] :is(.panel, .field, .clean-row) {
+    background: var(--bg-surface);
+}
+
+#blai-purifier-popup[data-theme="dark"] select,
+.blai-modal-shell[data-theme="dark"] select,
+#blai-scope-tag-editor-modal[data-theme="dark"] select,
+#blai-rule-transfer-modal[data-theme="dark"] select,
+#blai-diff-modal[data-theme="dark"] select,
+#blai-preset-import-choice-modal[data-theme="dark"] select {
+    color-scheme: dark;
+}
+
+#blai-purifier-popup[data-theme="light"] select option,
+.blai-modal-shell[data-theme="light"] select option,
+#blai-scope-tag-editor-modal[data-theme="light"] select option,
+#blai-rule-transfer-modal[data-theme="light"] select option,
+#blai-diff-modal[data-theme="light"] select option,
+#blai-preset-import-choice-modal[data-theme="light"] select option {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+}
+
+#blai-purifier-popup[data-theme="dark"] select option,
+.blai-modal-shell[data-theme="dark"] select option,
+#blai-scope-tag-editor-modal[data-theme="dark"] select option,
+#blai-rule-transfer-modal[data-theme="dark"] select option,
+#blai-diff-modal[data-theme="dark"] select option,
+#blai-preset-import-choice-modal[data-theme="dark"] select option {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+}
+
+#blai-purifier-popup[data-theme="dark"] .blai-global-header {
+    /* 顶栏与首页顶栏同色（都是 --bg-surface），原来这条用底色混 12% 透明，
+       在深色下等于看不见，于是「预设下拉框上方没有分隔线」。改回统一边框色。 */
+    border-color: var(--border-color);
+    background: var(--bg-surface);
+    box-shadow: none;
+}
+
+    /* 下拉列表统一令牌：原生 select 的 option 与自绘浮层菜单共用同一组外观变量。
+       浮层菜单由 popover.js 挂到 body，主题变量由 copyThemeVars 内联到菜单元素，
+       故令牌同时挂在这组菜单选择器自身（而非只在 :root），避免 var 在 :root 处提前求值。
+       原生 option 在 #blai-purifier-popup 内解析，也依赖这里的根作用域声明。 */
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal,
+    #blai-feedback-workspace,
+    .blai-home-card-menu, .blai-subrule-menu, .blai-preset-menu,
+    .blai-rule-search-menu, .blai-edit-filter-menu,
+    .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu
+) {
+    --blai-dropdown-bg: var(--bg-surface);
+    --blai-dropdown-ink: var(--text-main);
+    /* 蓝底白字：不跟 --accent-contrast（自动主题下它可能是浅灰底），保证白字对比。 */
+    --blai-dropdown-active-bg: #4D79CB;
+    --blai-dropdown-active-ink: #FFFFFF;
+    --blai-dropdown-border: var(--border-color);
+    --blai-dropdown-radius: var(--blai-radius-10);
+    /* 高亮整行铺满菜单：左右无内边距、行间无间隙、行项无圆角。
+       保留上下 3px 留白，让菜单边框与首末行仍有呼吸感。 */
+    --blai-dropdown-pad: var(--blai-space-3) 0;
+    --blai-dropdown-gap: 0;
+    --blai-dropdown-shadow: 0 4px 10px color-mix(in srgb, var(--text-main) 12%, transparent);
+    --blai-dropdown-item-radius: 0;
+    --blai-dropdown-item-pad-x: var(--blai-space-10);
+    --blai-dropdown-item-height: var(--blai-size-28);
+    --blai-dropdown-item-font: var(--blai-font-13);
+    /* 下拉列表内的字体一律不加粗；选中态用底色 / 文字色区分，不用字重。 */
+    --blai-dropdown-item-weight: var(--blai-weight-normal);
+}
+
+:where(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal
+) :is(select option, select optgroup) {
+    font-weight: var(--blai-weight-normal);
+}
+
+/* 输入控件背景色统一入口：下拉框、单行输入框、多行文本域都引用这一个变量，
+   以后要调整控件底色只改这里，三处不会各写各的。默认等于 --field-bg（各主题已定义）。 */
+:where(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal
+) {
+    --blai-input-bg: var(--field-bg);
+}
+
+/* 酒馆主题注入的是裸标签强声明：select/input/textarea 的 background 被标成主题的 --ui-color-sec 且带强制优先级，
+   反馈页这类没挂 .blai-input/.blai-textarea 的控件会被它压成主题深色块。
+   这里在这些控件上把主题读取的 --ui-color-sec 重定向到统一变量——主题的强声明仍在，
+   但它算出的颜色由我们控制，不必再加一条强制声明去硬压（遵循「变量覆盖」优先的顺序）。 */
+:where(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal
+) :is(input, textarea, select) {
+    --ui-color-sec: var(--blai-input-bg);
+}

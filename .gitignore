@@ -1,0 +1,19 @@
+# 临时与验证产物（不进版本库）
+tmp/
+dev/
+screenshots/
+_archive/
+
+# 一次性/备份文件
+*.bak
+*.orig
+*.tmp
+*.zip
+final*.js
+
+# 构建生成的 source map（style.css / index.js 本身纳入）
+*.map
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db

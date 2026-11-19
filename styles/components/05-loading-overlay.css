@@ -1,0 +1,108 @@
+/* 全局加载浮层与进度条。跨页共用：深度净化、批量操作都会挂。 */
+
+.blai-loading-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: color-mix(in srgb, var(--bg-base) 12%, transparent);
+    z-index: 9999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-main);
+    backdrop-filter: blur(5px);
+    padding: max(var(--blai-space-18), env(safe-area-inset-top)) max(var(--blai-space-18), env(safe-area-inset-right)) max(var(--blai-space-18), env(safe-area-inset-bottom)) max(var(--blai-space-18), env(safe-area-inset-left));
+    box-sizing: border-box;
+}
+
+.blai-loading-panel {
+    width: min(var(--blai-size-620), calc(100vw - var(--blai-size-36)));
+    max-height: calc(100dvh - var(--blai-size-36));
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-14);
+    padding: var(--blai-space-22) var(--blai-space-24);
+    border-radius: var(--blai-radius-16);
+    background: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+    box-shadow: 0 22px 58px color-mix(in srgb, var(--bg-base) 12%, transparent);
+    box-sizing: border-box;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.blai-loading-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-14);
+}
+
+.blai-loading-title {
+    margin: 0;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-10);
+    font-size: var(--blai-font-20);
+    line-height: 1.35;
+    text-align: left;
+    color: var(--text-main);
+}
+
+.blai-loading-cancel {
+    flex: 0 0 auto;
+    min-width: var(--blai-size-78);
+    min-height: var(--blai-size-38);
+    padding: 0 var(--blai-space-16);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    background: color-mix(in srgb, var(--text-main) 6%, var(--bg-base));
+    color: var(--text-main);
+    font-size: var(--blai-font-14);
+    font-weight: var(--blai-weight-bold);
+    cursor: pointer;
+}
+
+.blai-loading-cancel:hover {
+    background: color-mix(in srgb, var(--text-main) 10%, var(--bg-base)) !important;
+}
+
+.blai-loading-cancel.is-disabled, .blai-loading-cancel:disabled {
+    opacity: 0.62 !important;
+    cursor: wait !important;
+}
+
+#blai-loading-status {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-14);
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+.blai-progress-track {
+    width: 100%;
+    height: var(--blai-size-12);
+    border-radius: var(--blai-radius-full);
+    overflow: hidden;
+    border: var(--blai-border-1) solid var(--border-color);
+    background: color-mix(in srgb, var(--border-color) 72%, var(--bg-base));
+    margin-top: var(--blai-space-2);
+}
+
+.blai-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--accent-color);
+    transition: width 0.2s ease;
+}
+
+.blai-progress-percent {
+    margin: 0;
+    color: var(--text-secondary);
+    font-weight: var(--blai-weight-bold);
+    text-align: right;
+}

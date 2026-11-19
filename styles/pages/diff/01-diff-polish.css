@@ -1,0 +1,60 @@
+/* 净化透视弹窗的视觉收尾：主题容器底色、顶栏布局、悬停细腻化。
+   放在 00-diff.css 之后，用于覆盖其中的媒体查询声明。 */
+
+/* 遮罩用中性黑，不用 --bg-base（它可能是接近白的表面色，混出来就是发灰的“怪色”）。 */
+#blai-diff-modal {
+    background: var(--blai-scrim);
+}
+
+/* 卡片跟随主题容器色：日间主题就是白色。 */
+#blai-diff-modal > .blai-diff-modal-card {
+    background: var(--bg-surface);
+    box-shadow: 0 12px 30px var(--blai-modal-shadow);
+}
+
+/* 顶栏两行：标题独占一行；第二行四个功能按钮贴左，⋯ 与 × 贴右。 */
+#blai-diff-modal .blai-diff-modal-header {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    row-gap: var(--blai-space-6);
+}
+
+#blai-diff-modal .blai-diff-modal-title {
+    flex: 0 0 100%;
+}
+
+#blai-diff-modal .blai-diff-header-actions {
+    flex: 1 1 100%;
+    margin-left: 0;
+    gap: 0;
+    justify-content: space-between;
+}
+
+#blai-diff-modal :is(.blai-diff-header-primary, .blai-diff-header-trailing) {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+}
+
+#blai-diff-modal .blai-diff-header-btn {
+    padding: var(--blai-space-6) var(--blai-space-8);
+}
+
+/* 悬停改为柔和底色渐显，取消整体放大（原来 scale(1.15) 显得笨重）。 */
+#blai-diff-modal :is(.blai-icon-btn, .blai-diff-modal-close) {
+    transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+#blai-diff-modal :is(.blai-icon-btn, .blai-diff-modal-close):hover {
+    background-color: color-mix(in srgb, var(--accent-color) 14%, var(--bg-surface)) !important;
+    color: var(--accent-ink) !important;
+    transform: none;
+}
+
+#blai-diff-modal .blai-diff-baseline-btn {
+    margin-left: var(--blai-space-8);
+}
+
+#blai-diff-modal .blai-diff-modal-close {
+    border-radius: var(--blai-radius-8);
+}

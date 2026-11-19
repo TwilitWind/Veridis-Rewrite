@@ -1,0 +1,365 @@
+/* 首页顶栏、卡片菜单、编辑弹窗筛选与规则搜索框。 */
+
+/* ============================================================
+ * 首页顶栏（语法块式）
+ * 行一：预设下拉 + 规则集五个操作 ---- 右侧统计
+ * ── 分隔线 ──
+ * 行二：规则分组标题    ---- 右侧四个分组工具
+ * ============================================================ */
+#blai-purifier-popup .blai-home-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    min-width: 0;
+    display: grid;
+    gap: 0;
+    /* 顶栏收薄：上下留白压到 6px/0，控件高度在下方按 30px 统一。 */
+    padding: var(--blai-space-6) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--bg-surface);
+    box-shadow: none;
+}
+
+#blai-purifier-popup .blai-home-topbar-row {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--blai-space-10) var(--blai-space-16);
+}
+
+#blai-purifier-popup .blai-home-topbar-row-primary {
+    padding-bottom: var(--blai-space-4);
+}
+
+/* 顶栏内所有控件统一 30px 高，行高与留白共同把整条压薄。 */
+#blai-purifier-popup .blai-home-topbar .blai-home-preset-select {
+    height: var(--blai-size-30);
+    margin: 0 !important;
+    padding: 0 var(--blai-space-24) 0 var(--blai-space-10) !important;
+}
+
+#blai-purifier-popup .blai-home-topbar .blai-home-preset-field::after {
+    right: var(--blai-space-11);
+}
+
+#blai-purifier-popup .blai-home-topbar .blai-home-dataset-actions button {
+    min-height: var(--blai-size-30);
+}
+
+#blai-purifier-popup .blai-home-topbar .blai-home-toolbar-button {
+    min-height: var(--blai-size-30);
+    padding: 0 var(--blai-space-9);
+}
+
+/* 行一与行二之间不再画分隔线，只靠行距分区 */
+#blai-purifier-popup .blai-home-topbar-row-secondary {
+    padding: 0 0 var(--blai-space-6);
+    border-top: 0;
+}
+
+#blai-purifier-popup .blai-home-topbar-main {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--blai-space-10);
+}
+
+#blai-purifier-popup .blai-home-topbar-title {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    gap: var(--blai-space-10);
+}
+
+#blai-purifier-popup .blai-home-topbar-title strong {
+    color: var(--text-main);
+    font-size: var(--blai-font-13);
+    /* 作为分区标题加粗，与右侧普通动作文字区分层级。 */
+    font-weight: var(--blai-weight-bold);
+    letter-spacing: .01em;
+}
+
+#blai-purifier-popup .blai-home-topbar-title span {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    line-height: 1.4;
+}
+
+#blai-purifier-popup .blai-home-topbar .blai-home-dataset-actions {
+    margin-left: 0;
+}
+
+#blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions {
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1120px) {
+    #blai-purifier-popup .blai-home-topbar-row {
+        align-items: stretch;
+        flex-direction: column;
+        gap: var(--blai-space-10);
+    }
+
+    #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions {
+        margin-left: 0;
+    }}
+
+@media (max-width: 600px) {
+    #blai-purifier-popup .blai-home-topbar {
+        padding: var(--blai-space-8) var(--blai-space-12) 0;
+    }
+
+    /* 行一：预设下拉框在左，统计信息贴最右侧并垂直居中；操作按钮独占下一行。 */
+    #blai-purifier-popup .blai-home-topbar-row-primary {
+        display: grid;
+        grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+        align-items: center;
+        gap: var(--blai-space-8) var(--blai-space-10);
+    }
+
+    #blai-purifier-popup .blai-home-topbar-main {
+        display: contents;
+    }
+
+    #blai-purifier-popup .blai-home-topbar .blai-home-preset-field {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #blai-purifier-popup .blai-home-metrics {
+        grid-column: 2;
+        grid-row: 1;
+        width: auto;
+        flex: none;
+        justify-self: end;
+        align-self: center;
+    }
+
+    #blai-purifier-popup .blai-home-topbar .blai-home-dataset-actions {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        display: grid;
+        width: 100%;
+    }
+
+    #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--blai-space-4);
+    }}
+
+/* ---------------------------------------------------------------------------
+ * 需求三 / 需求四 / 需求五 / 需求六 新增界面
+ * 1) 首页规则卡片：左侧铅笔 + 右侧下拉菜单（上移/下移/复制/移动/删除）
+ * 2) 分组详情页顶栏：AI 改写 / 程序改写筛选
+ * 3) 搜索框：放大镜常驻左侧、清空叉号右侧、实时搜索与最近搜索记录
+ * --------------------------------------------------------------------------- */
+
+#blai-purifier-popup .blai-home-card-menu-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+:is(.blai-home-card-menu, .blai-subrule-menu) {
+    z-index: 2147483000;
+    min-width: var(--blai-size-148);
+    display: grid;
+    gap: var(--blai-dropdown-gap);
+    padding: var(--blai-dropdown-pad);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+}
+
+:is(.blai-home-card-menu, .blai-subrule-menu)[hidden] {
+    display: none !important;
+}
+
+.blai-rule-menu-item,
+:is(.blai-subrule-menu) .blai-subrule-menu-item {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    width: 100%;
+    height: var(--blai-dropdown-item-height);
+    padding: 0 var(--blai-dropdown-item-pad-x);
+    border: 0;
+    border-radius: var(--blai-dropdown-item-radius);
+    background: transparent;
+    color: var(--blai-dropdown-ink);
+    font-size: var(--blai-dropdown-item-font);
+    font-weight: var(--blai-dropdown-item-weight);
+    text-align: left;
+    cursor: pointer;
+}
+
+.blai-rule-menu-item i,
+.blai-subrule-menu-item i {
+    width: var(--blai-size-14);
+    font-size: var(--blai-font-12);
+    color: var(--text-secondary);
+}
+
+.blai-rule-menu-item:hover:not(:disabled),
+.blai-subrule-menu-item:hover:not(:disabled) {
+    background: var(--blai-dropdown-active-bg) !important;
+    color: var(--blai-dropdown-active-ink) !important;
+}
+
+.blai-rule-menu-item:disabled,
+.blai-subrule-menu-item:disabled {
+    opacity: 0.42;
+    cursor: default;
+}
+
+:is(.blai-rule-menu-item--danger, .blai-subrule-menu-item--danger) {
+    color: var(--status-danger) !important;
+}
+
+/* 危险项图标跟文字同色（删除项整条红） */
+.blai-rule-menu-item--danger i,
+.blai-subrule-menu-item--danger i {
+    color: var(--status-danger);
+}
+
+.blai-rule-menu-item--danger:hover:not(:disabled),
+.blai-rule-menu-item--danger:hover:not(:disabled) i,
+.blai-subrule-menu-item--danger:hover:not(:disabled),
+.blai-subrule-menu-item--danger:hover:not(:disabled) i {
+    background-color: color-mix(in srgb, var(--status-danger) 16%, var(--bg-surface)) !important;
+    color: var(--status-danger) !important;
+}
+
+/* 编辑规则分组弹窗：筛选收进顶栏，做成下拉，省掉一整行高度 */
+#blai-rule-edit-modal .blai-edit-head-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    flex: 0 0 auto;
+}
+
+/* 筛选的几何与配色统一放在 04-home.css 的「下拉」段，这里只保留顶栏排版。 */
+
+/* 搜索框：放大镜常驻左侧、清空叉号右侧 */
+#blai-rule-search-modal .blai-rule-search-field-icon {
+    position: absolute;
+    left: var(--blai-space-14);
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-15);
+    pointer-events: none;
+    z-index: 1;
+}
+
+#blai-rule-search-modal .blai-rule-search-field.has-value .blai-rule-search-field-icon {
+    display: block;
+}
+
+#blai-rule-search-modal .blai-rule-search-input {
+    padding: 0 var(--blai-space-40) 0 var(--blai-space-40) !important;
+    background: var(--bg-surface) !important;
+    border: var(--blai-border-1) solid var(--border-color) !important;
+}
+
+#blai-rule-search-modal .blai-rule-search-field.has-value .blai-rule-search-input {
+    padding-left: var(--blai-space-40);
+}
+
+#blai-rule-search-modal .blai-rule-search-clear {
+    position: absolute;
+    right: var(--blai-space-8);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+#blai-rule-search-modal .blai-rule-search-clear[hidden] {
+    display: none;
+}
+
+/* 最近搜索记录 */
+#blai-rule-search-modal .blai-rule-search-history {
+    display: grid;
+    gap: var(--blai-space-8);
+    margin-bottom: var(--blai-space-16);
+}
+
+#blai-rule-search-modal .blai-rule-search-history-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-10);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-secondary);
+}
+
+#blai-rule-search-modal .blai-rule-search-history-clear {
+    height: var(--blai-size-24);
+    padding: 0 var(--blai-space-8);
+    border: 0;
+    border-radius: var(--blai-radius-6);
+    background: transparent;
+    color: var(--status-danger);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    cursor: pointer;
+}
+
+#blai-rule-search-modal .blai-rule-search-history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--blai-space-8);
+}
+
+#blai-rule-search-modal .blai-rule-search-history-chip {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-full);
+    background: var(--bg-surface);
+    overflow: hidden;
+}
+
+#blai-rule-search-modal .blai-rule-search-history-item {
+    max-width: var(--blai-size-200);
+    height: var(--blai-size-28);
+    padding: 0 var(--blai-space-4) 0 var(--blai-space-12);
+    border: 0;
+    background: transparent;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+#blai-rule-search-modal .blai-rule-search-history-remove {
+    width: var(--blai-size-22);
+    min-width: var(--blai-size-22);
+    height: var(--blai-size-28);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-11);
+    cursor: pointer;
+}
+
+#blai-rule-search-modal .blai-rule-search-history-remove:hover {
+    color: var(--status-danger) !important;
+}
