@@ -262,9 +262,35 @@
     font-weight: var(--blai-weight-bold);
 }
 
-/* 处理模式横向排布，避免三个选项竖排把「运行设置」撑得比左侧「处理范围」高一倍。 */
+/* 处理模式仅两项，紧凑横排即可，不需要等宽拉伸占满整行。 */
 #blai-deep-clean-workspace .blai-deep-clean-mode-options {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--blai-space-4) var(--blai-space-8);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--blai-space-6) var(--blai-space-16);
+}
+
+/* 「清理被隐藏的楼层」勾选行：与处理模式同处右侧列，文字 + 复选框一行，不加额外卡片。 */
+#blai-deep-clean-workspace .blai-deep-clean-option.blai-deep-clean-hidden-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle > span {
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-normal);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"] {
+    width: var(--blai-size-16);
+    height: var(--blai-size-16);
+    margin: 0;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+}
+
+/* 世界书只有一份、无搜索框：汇总行靠左，不再留出搜索框的空位。 */
+#blai-deep-clean-workspace .blai-deep-clean-resource-toolbar:not(:has(input[type="search"])) {
+    justify-content: flex-start;
 }

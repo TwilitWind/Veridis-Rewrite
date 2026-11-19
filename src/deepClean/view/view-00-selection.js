@@ -39,28 +39,25 @@ function renderDeepCleanChoice({ value, checked, title, detail, kind, source }) 
     `;
 }
 
-export function renderDeepCleanResourcePanel({ kind, title, items, selectionKeys, keyName, searchName, detailFor, hasCurrentSearchSelectionActions = false }) {
-    const query = deepCleanSearchValue(searchName);
-    const visibleItems = items.filter((item) => deepCleanMatchesSearch(item, query));
+export function renderDeepCleanResourcePanel({ kind, title, items, selectionKeys, keyName, searchName, detailFor, showSearch = true }) {
+    // 世界书每个角色只有一份，不需要搜索和批量选择；聊天记录有多份，保留搜索。
+    const query = showSearch ? deepCleanSearchValue(searchName) : '';
+    const visibleItems = showSearch ? items.filter((item) => deepCleanMatchesSearch(item, query)) : items;
     const orderedItems = [
         ...visibleItems.filter((item) => selectionKeys.includes(item[keyName])),
         ...visibleItems.filter((item) => !selectionKeys.includes(item[keyName])),
     ];
-    return `
-        <section id="blai-deep-clean-${kind}-panel" class="blai-deep-clean-resource-panel" aria-label="${title}">
-            <div class="blai-deep-clean-resource-toolbar">
+    const searchField = showSearch ? `
                 <div class="blai-deep-clean-search-field">
                     <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
                     <input id="blai-deep-clean-${kind}-search" class="blai-deep-clean-input" type="search" data-deep-clean-search="${searchName}" value="${deepCleanSafeHtml(query)}" placeholder="搜索${title}" aria-label="搜索${title}">
-                </div>
+                </div>` : '';
+    return `
+        <section id="blai-deep-clean-${kind}-panel" class="blai-deep-clean-resource-panel" aria-label="${title}">
+            <div class="blai-deep-clean-resource-toolbar">
+                ${searchField}
                 <div class="blai-deep-clean-resource-summary">
                     <span>已选择 <strong>${selectionKeys.length}</strong> 项 · 共 ${items.length} 项</span>
-                    ${hasCurrentSearchSelectionActions ? `
-                    <span class="blai-deep-clean-search-selection-actions" aria-label="${title}当前搜索结果选择">
-                        <button type="button" data-deep-clean-search-selection="${kind}" data-deep-clean-search-selection-action="select">选择当前结果</button>
-                        <button type="button" data-deep-clean-search-selection="${kind}" data-deep-clean-search-selection-action="deselect">取消当前结果</button>
-                    </span>
-                    ` : ''}
                 </div>
             </div>
             <div class="blai-deep-clean-resource-list" aria-label="${title}最终选择">

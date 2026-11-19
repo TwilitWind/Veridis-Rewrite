@@ -82,6 +82,7 @@ export async function startDeepCleanRun() {
         presetName: presetNames.includes(activePreset) ? activePreset : (presetNames[0] || ''),
         processingMode: 'program',
         programApplyPolicy: 'direct',
+        includeHidden: true,
         ...selectedResourceKeys(inventory, []),
     };
     logger.info('[Deep Clean] initial-selection');
@@ -127,8 +128,8 @@ export function setDeepCleanLocalOption(option, value) {
     if (option === 'processingMode' && (value === 'program' || value === 'program-ai')) {
         selection.processingMode = value;
     }
-    if (option === 'programApplyPolicy' && (value === 'direct' || value === 'review')) {
-        selection.programApplyPolicy = value;
+    if (option === 'includeHidden') {
+        selection.includeHidden = value === true;
     }
     return selection;
 }
@@ -166,6 +167,7 @@ function frozenRunInput(selection, settings) {
         worldBookKeys: [...selection.worldBookKeys],
         includeCharacterText: false,
         includeShujuku: false,
+        includeHidden: selection.includeHidden === true,
         processingSemantics: {
             scopeTags: structuredClone(settings.scopeTags || []),
             scopeTagBuiltinDismissed: structuredClone(settings.scopeTagBuiltinDismissed || []),

@@ -133,17 +133,21 @@ async function readCharacterItems(items, characterKey, fetchImpl, context, shoul
     return true;
 }
 
-function readChatMessageItems(items, characterKey, chatId, chat) {
+function readChatMessageItems(items, characterKey, chatId, chat, options = {}) {
+    const includeHidden = options.includeHidden !== false;
     chat.forEach((message, messageIndex) => {
-        // SillyTavern 会把被 /hide 隐藏的楼层标记为 is_system:true；它们仍是普通用户/助手消息。
+        // SillyTavern 会把被 /hide 隐藏的楼层标记为 is_system:true。
+        // 默认仍处理它们；勾选「清理被隐藏的楼层」关闭时跳过。
         if (!isRecord(message)) return;
         if (message.is_user !== true && message.is_user !== false) return;
+        const isHidden = message.is_system === true;
+        if (isHidden && !includeHidden) return;
         if (message.is_user === true) {
             addItem(items, 'user-message', stringValue(message.mes), {
                 characterKey,
                 chatId,
                 messageIndex,
-            }, { programEligible: true, aiEligible: true, isHidden: message.is_system === true });
+            }, { programEligible: true, aiEligible: true, isHidden });
             return;
         }
         if (!Array.isArray(message.swipes)) {
@@ -152,7 +156,7 @@ function readChatMessageItems(items, characterKey, chatId, chat) {
                 chatId,
                 messageIndex,
                 branch: 'main',
-            }, { programEligible: true, aiEligible: true, isHidden: message.is_system === true });
+            }, { programEligible: true, aiEligible: true, isHidden });
             return;
         }
         const selectedSwipeIndex = getMessageSwipeIndex(message);
@@ -166,7 +170,7 @@ function readChatMessageItems(items, characterKey, chatId, chat) {
             }, {
                 programEligible: true,
                 aiEligible: swipeIndex === selectedSwipeIndex,
-                isHidden: message.is_system === true,
+                isHidden,
             });
         });
     });
@@ -182,7 +186,7 @@ async function readChatItems(items, chatSelection, fetchImpl, context, shouldSto
     );
     if (shouldStop?.()) return false;
     if (!Array.isArray(chat)) throw new Error(`Deep Clean Chat response is invalid for ${chatSelection.chatId}`);
-    readChatMessageItems(items, chatSelection.characterKey, chatSelection.chatId, chat);
+    readChatMessageItems(items, chatSelection.characterKey, chatSelection.chatId, chat, options);
     if (shouldStop?.()) return false;
     if (options.includeShujuku !== true) return true;
     const v2Cells = await readCurrentShujukuV2Cells(chat);
@@ -261,6 +265,7 @@ export async function readDeepCleanContentItems(frozenInput, options = {}) {
         if (options.shouldStop?.()) return items;
         if (!await readChatItems(items, chatSelection, fetchImpl, context, options.shouldStop, {
             includeShujuku: frozenInput.includeShujuku === true,
+            includeHidden: frozenInput.includeHidden !== false,
         })) return items;
         current++;
         reportProgress();

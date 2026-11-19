@@ -1005,7 +1005,11 @@ to{opacity: 1;transform: none}}
 #blai-deep-clean-workspace .blai-deep-clean-options{margin-top: var(--blai-space-8);display: grid;grid-template-columns: minmax(180px,0.62fr) minmax(0,1.38fr);align-items: start;gap: var(--blai-space-8) var(--blai-space-18)}
 #blai-deep-clean-workspace .blai-deep-clean-option{margin: 0;padding: 0;border: 0;min-width: 0;display: grid;gap: var(--blai-space-6)}
 #blai-deep-clean-workspace .blai-deep-clean-option>:is(span,legend){padding: 0;color: var(--text-main);font-size: var(--blai-font-10);font-weight: var(--blai-weight-bold)}
-#blai-deep-clean-workspace .blai-deep-clean-mode-options{display: grid;grid-template-columns: repeat(2,minmax(0,1fr));gap: var(--blai-space-4) var(--blai-space-8)}
+#blai-deep-clean-workspace .blai-deep-clean-mode-options{display: flex;flex-wrap: wrap;align-items: center;gap: var(--blai-space-6) var(--blai-space-16)}
+#blai-deep-clean-workspace .blai-deep-clean-option.blai-deep-clean-hidden-toggle{display: flex;align-items: center;gap: var(--blai-space-8)}
+#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle>span{font-size: var(--blai-font-12);font-weight: var(--blai-weight-normal)}
+#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]{width: var(--blai-size-16);height: var(--blai-size-16);margin: 0;accent-color: var(--accent-color);cursor: pointer}
+#blai-deep-clean-workspace .blai-deep-clean-resource-toolbar:not(:has(input[type="search"])){justify-content: flex-start}
 #blai-deep-clean-workspace .blai-deep-clean-mode-option{min-width: 0;min-height: var(--blai-size-30);padding: var(--blai-space-4) var(--blai-space-6) var(--blai-space-4) var(--blai-space-4);display: grid;grid-template-columns: 14px minmax(0,1fr);align-items: center;gap: var(--blai-space-9);border: 0;border-radius: var(--blai-radius-4);background: transparent;color: var(--text-secondary);text-align: left;cursor: pointer}
 #blai-deep-clean-workspace .blai-deep-clean-mode-option:hover{background: var(--bg-surface);color: var(--text-main)}
 #blai-deep-clean-workspace .blai-deep-clean-mode-option input{width: var(--blai-size-14);height: var(--blai-size-14);margin: 0;accent-color: var(--accent-color)}

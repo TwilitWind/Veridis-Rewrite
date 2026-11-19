@@ -120,7 +120,6 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     const controlsOpen = $('#blai-deep-clean-controls').prop('open') !== false;
     const totalSelected = selection.characterKeys.length + selection.chatKeys.length + selection.worldBookKeys.length;
     const programModeSelected = selection.processingMode === 'program';
-    const programApplyPolicy = selection.programApplyPolicy === 'direct' ? 'direct' : 'review';
     const scopeBlocked = groupChat || !scopeCharacter;
     const scopeName = scopeCharacter?.displayLabel || '当前没有打开角色卡';
 
@@ -152,33 +151,25 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                                     <div class="blai-deep-clean-mode-options" aria-label="深度净化处理模式">
                                         <label class="blai-deep-clean-mode-option">
                                             <input type="radio" name="blai-deep-clean-processing-mode" data-deep-clean-option="processingMode" value="program" ${programModeSelected ? 'checked' : ''}>
-                                            <span class="blai-deep-clean-mode-copy"><strong>仅程序</strong></span>
+                                            <span class="blai-deep-clean-mode-copy"><strong>程序</strong></span>
                                         </label>
-                                        ${programModeSelected ? `
-                                            <div class="blai-deep-clean-program-policy" aria-label="仅程序应用方式">
-                                                <label class="blai-deep-clean-mode-option">
-                                                    <input type="radio" name="blai-deep-clean-program-apply-policy" data-deep-clean-option="programApplyPolicy" value="direct" ${programApplyPolicy === 'direct' ? 'checked' : ''}>
-                                                    <span class="blai-deep-clean-mode-copy"><strong>直接应用</strong><small>按批处理并直接保存，不进入批改</small></span>
-                                                </label>
-                                                <label class="blai-deep-clean-mode-option">
-                                                    <input type="radio" name="blai-deep-clean-program-apply-policy" data-deep-clean-option="programApplyPolicy" value="review" ${programApplyPolicy === 'review' ? 'checked' : ''}>
-                                                    <span class="blai-deep-clean-mode-copy"><strong>批改后应用</strong><small>每批处理后进入批改，可调整结果</small></span>
-                                                </label>
-                                            </div>
-                                        ` : ''}
                                         <label class="blai-deep-clean-mode-option">
                                             <input type="radio" name="blai-deep-clean-processing-mode" data-deep-clean-option="processingMode" value="program-ai" ${selection.processingMode === 'program-ai' ? 'checked' : ''}>
                                             <span class="blai-deep-clean-mode-copy"><strong>程序 + AI</strong></span>
                                         </label>
                                     </div>
                                 </fieldset>
+                                <label class="blai-deep-clean-option blai-deep-clean-hidden-toggle">
+                                    <span>清理被隐藏的楼层</span>
+                                    <input type="checkbox" data-deep-clean-option="includeHidden" ${selection.includeHidden === true ? 'checked' : ''} aria-label="清理被隐藏的楼层">
+                                </label>
                             </div>
                         </section>
                     </div>
                 </details>
                 <section class="blai-deep-clean-resources" aria-labelledby="blai-deep-clean-final-title">
                     <header class="blai-deep-clean-resource-header">
-                        <div><h3 id="blai-deep-clean-final-title">选择资源</h3><p>共选择 <strong>${totalSelected}</strong> 项 · 深度净化只处理当前角色卡的世界书与聊天记录（含被 \`/hide\` 隐藏的楼层）</p></div>
+                        <div><h3 id="blai-deep-clean-final-title">选择资源</h3><p>共选择 <strong>${totalSelected}</strong> 项 · 只处理当前角色卡的世界书与聊天记录</p></div>
                     </header>
                     <div class="blai-deep-clean-resource-workspace">
                         ${renderDeepCleanResourcePanel({
@@ -189,7 +180,7 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         keyName: 'worldBookKey',
         searchName: 'world-books',
         detailFor: (worldBook) => worldBook.worldBookKey,
-        hasCurrentSearchSelectionActions: true,
+        showSearch: false,
     })}
                         ${renderDeepCleanResourcePanel({
         kind: 'chat',
@@ -199,7 +190,7 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         keyName: 'key',
         searchName: 'chats',
         detailFor: (chat) => chat.chatId,
-        hasCurrentSearchSelectionActions: true,
+        showSearch: true,
     })}
                         <p class="blai-deep-clean-shujuku-note">角色卡正文、Persona、其它角色与外部世界书、Shujuku 单元格都不在深度净化范围内。</p>
                     </div>

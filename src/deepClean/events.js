@@ -244,8 +244,12 @@ $(document).off('click', '[data-deep-clean-search-selection]').on('click', '[dat
 });
 
 $(document).off('change', '[data-deep-clean-option]').on('change', '[data-deep-clean-option]', function() {
-    const selection = setDeepCleanLocalOption(String($(this).attr('data-deep-clean-option') || ''), $(this).val());
-    if (selection && this instanceof HTMLInputElement && this.type === 'radio') renderDeepCleanSelection(selection);
+    const option = String($(this).attr('data-deep-clean-option') || '');
+    // 复选框传 checked 布尔值；单选/下拉传 value。
+    const value = this instanceof HTMLInputElement && this.type === 'checkbox' ? this.checked : $(this).val();
+    const selection = setDeepCleanLocalOption(option, value);
+    if (selection && option === 'includeHidden') renderDeepCleanSelection(selection);
+    else if (selection && this instanceof HTMLInputElement && this.type === 'radio') renderDeepCleanSelection(selection);
 });
 
 $(document).off('click', '[data-deep-clean-option-choice]').on('click', '[data-deep-clean-option-choice]', function() {
