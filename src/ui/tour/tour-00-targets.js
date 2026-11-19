@@ -67,7 +67,7 @@ export function deepCleanLaunchTourTarget() {
 
 export function deepCleanQuickSelectionTourTarget() {
     return document.querySelector('#blai-deep-clean-scope-title')?.closest('.blai-deep-clean-section')
-        || document.querySelector('.blai-deep-clean-config');
+        || document.querySelector('.blai-deep-clean-settings');
 }
 
 export function deepCleanFinalSelectionTourTarget() {

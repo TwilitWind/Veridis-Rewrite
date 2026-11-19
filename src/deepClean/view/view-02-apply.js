@@ -116,8 +116,6 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     const scopeWorldBooks = scopeCharacter
         ? inventory.worldBooks.filter((worldBook) => worldBook.characterKeys.includes(scopeCharacter.characterKey))
         : [];
-    const workspace = $('#blai-deep-clean-workspace');
-    const controlsOpen = $('#blai-deep-clean-controls').prop('open') !== false;
     const totalSelected = selection.characterKeys.length + selection.chatKeys.length + selection.worldBookKeys.length;
     const programModeSelected = selection.processingMode === 'program';
     const scopeBlocked = groupChat || !scopeCharacter;
@@ -127,9 +125,8 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     $('#blai-deep-clean-content').html(`
         <div class="blai-deep-clean-selection">
             <div class="blai-deep-clean-selection-scroll">
-                <details id="blai-deep-clean-controls" class="blai-deep-clean-controls" ${controlsOpen ? 'open' : ''}>
-                    <summary><span><i class="fas fa-sliders" aria-hidden="true"></i>处理范围与运行设置</span><i class="fas fa-chevron-right" aria-hidden="true"></i></summary>
-                    <div class="blai-deep-clean-config">
+                <div class="blai-deep-clean-two-column">
+                    <div class="blai-deep-clean-settings">
                         <section class="blai-deep-clean-section blai-deep-clean-scope-section" aria-labelledby="blai-deep-clean-scope-title">
                             <h3 id="blai-deep-clean-scope-title">处理范围</h3>
                             <div class="blai-deep-clean-scope-card ${scopeBlocked ? 'is-blocked' : ''}">
@@ -166,12 +163,12 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                             </div>
                         </section>
                     </div>
-                </details>
-                <section class="blai-deep-clean-resources" aria-labelledby="blai-deep-clean-final-title">
-                    <header class="blai-deep-clean-resource-header">
-                        <div><h3 id="blai-deep-clean-final-title">选择资源</h3><p>共选择 <strong>${totalSelected}</strong> 项 · 只处理当前角色卡的世界书与聊天记录</p></div>
-                    </header>
-                    <div class="blai-deep-clean-resource-workspace">
+                    <section class="blai-deep-clean-resources" aria-labelledby="blai-deep-clean-final-title">
+                        <header class="blai-deep-clean-resource-header">
+                            <h3 id="blai-deep-clean-final-title">处理的文件</h3>
+                            <p>共选择 <strong>${totalSelected}</strong> 项 · 只处理当前角色卡的世界书与聊天记录</p>
+                        </header>
+                        <div class="blai-deep-clean-resource-workspace">
                         ${renderDeepCleanResourcePanel({
         kind: 'world-book',
         title: '世界书',
@@ -193,8 +190,9 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         showSearch: true,
     })}
                         <p class="blai-deep-clean-shujuku-note">角色卡正文、Persona、其它角色与外部世界书、Shujuku 单元格都不在深度净化范围内。</p>
-                    </div>
-                </section>
+                        </div>
+                    </section>
+                </div>
             </div>
             <footer class="blai-deep-clean-selection-actions">
                 <button id="blai-deep-clean-close" class="blai-deep-clean-secondary-action" type="button">取消并关闭</button>

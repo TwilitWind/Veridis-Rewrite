@@ -54,12 +54,11 @@ export function renderDeepCleanResourcePanel({ kind, title, items, selectionKeys
                 </div>` : '';
     return `
         <section id="blai-deep-clean-${kind}-panel" class="blai-deep-clean-resource-panel" aria-label="${title}">
-            <div class="blai-deep-clean-resource-toolbar">
-                ${searchField}
-                <div class="blai-deep-clean-resource-summary">
-                    <span>已选择 <strong>${selectionKeys.length}</strong> 项 · 共 ${items.length} 项</span>
-                </div>
-            </div>
+            <header class="blai-deep-clean-resource-toolbar">
+                <h4 class="blai-deep-clean-resource-title">${deepCleanSafeHtml(title)}</h4>
+                <span class="blai-deep-clean-resource-summary">已选择 <strong>${selectionKeys.length}</strong> 项 · 共 ${items.length} 项</span>
+            </header>
+            ${searchField}
             <div class="blai-deep-clean-resource-list" aria-label="${title}最终选择">
                 ${orderedItems.length
         ? orderedItems.map((item) => renderDeepCleanChoice({

@@ -7,51 +7,14 @@
     padding-inline: var(--blai-space-16);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-config {
+/* 窄屏把左右两栏改为上下堆叠，设置在上、处理文件在下。 */
+#blai-deep-clean-workspace .blai-deep-clean-two-column {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--blai-space-8);
+    gap: var(--blai-space-20);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
-    grid-template-columns: minmax(0, 1fr);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
-    min-height: var(--blai-size-44);
-    padding: 0 var(--blai-space-16);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--blai-space-12);
-    color: var(--text-main);
-    font-size: var(--blai-font-11);
-    font-weight: var(--blai-weight-bold);
-    list-style: none;
-    cursor: pointer;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary::-webkit-details-marker {
-    display: none;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary span {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--blai-space-8);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary > i {
-    color: var(--text-secondary);
-    font-size: var(--blai-font-9);
-    transition: transform .16s ease;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls[open] > summary > i {
-    transform: rotate(90deg);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-section {
-    padding: var(--blai-space-10) var(--blai-space-12);
+#blai-deep-clean-workspace .blai-deep-clean-selection-scroll {
+    padding: var(--blai-space-12) var(--blai-space-16);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-processing {
@@ -115,21 +78,12 @@
     display: none;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-section {
+#blai-deep-clean-workspace .blai-deep-clean-selection-scroll {
     padding: var(--blai-space-10) var(--blai-space-12);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-resource-header {
-    padding: var(--blai-space-10) var(--blai-space-12) var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
     font-size: var(--blai-font-13);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
-    padding: var(--blai-space-8) var(--blai-space-12) var(--blai-space-10);
-    gap: var(--blai-space-8);
 }
 
 /* 窄屏下「规则预设 + 处理模式」并排会把选项压成 56px 宽、文字竖排，改为整列堆叠。 */
@@ -149,19 +103,7 @@
 }
 }
 
-@media (max-width: 900px) {#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
-    padding: var(--blai-space-12) var(--blai-space-16);
-}}
-
 @media (max-width: 600px) {
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
-    padding: var(--blai-space-12) var(--blai-space-14);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-config {
-    padding: var(--blai-space-8) var(--blai-space-12) var(--blai-space-10);
-}
-
 #blai-deep-clean-workspace .blai-deep-clean-resource-list {
     max-height: var(--blai-size-200);
 }

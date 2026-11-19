@@ -51,10 +51,6 @@ export function removeLayer() {
 
 export function restoreTourPresentation(tour) {
     if (tour.kind === 'main' && tour.manual && tour.previousPage) showResponsivePage(tour.previousPage);
-    if (tour.kind === 'deep-clean' && tour.controlsWasOpen !== undefined) {
-        const controls = document.getElementById('blai-deep-clean-controls');
-        if (controls) controls.open = tour.controlsWasOpen;
-    }
 }
 
 function clamp(value, minimum, maximum) {

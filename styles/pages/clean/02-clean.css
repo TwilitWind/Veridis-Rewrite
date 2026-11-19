@@ -68,31 +68,21 @@
     background: var(--bg-surface);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-resources {
-    min-width: 0;
-    display: block;
-}
-
 #blai-deep-clean-workspace .blai-deep-clean-resource-header {
     min-width: 0;
-    padding: var(--blai-space-10) var(--blai-space-16) var(--blai-space-8);
-    border-top: var(--blai-border-1) solid var(--border-color);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-resource-header > div:first-child {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--blai-space-16);
+    padding: 0 0 var(--blai-space-10);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
+    margin: 0;
     font-size: var(--blai-font-13);
     font-weight: var(--blai-weight-bold);
     letter-spacing: -.01em;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header p {
+    margin-top: var(--blai-space-4);
     color: var(--text-secondary);
     font-size: var(--blai-font-11);
 }
@@ -104,49 +94,51 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
     min-width: 0;
-    padding: var(--blai-space-10) var(--blai-space-16) var(--blai-space-12);
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: var(--blai-space-10);
+    gap: var(--blai-panel-gap);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-shujuku-note {
-    grid-column: 1 / -1;
-    padding: 0;
-    border-top: 0;
+    margin: 0;
+    padding-top: var(--blai-space-10);
+    border-top: var(--blai-border-1) solid var(--border-color);
     color: var(--text-secondary);
     font-size: var(--blai-font-9);
     line-height: 1.45;
 }
 
+/* 资源面板扁平：不画独立边框和底色，靠细分隔线区分层级。 */
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel {
     min-width: 0;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    overflow: hidden;
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-10);
-    background: var(--bg-surface);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-resource-panel + .blai-deep-clean-resource-panel {
-    margin-top: 0;
+    background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
     min-width: 0;
-    padding: var(--blai-space-9) var(--blai-space-12);
+    padding: 0 0 var(--blai-space-8);
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: var(--blai-space-16);
+    gap: var(--blai-space-12);
     border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 68%, transparent);
 }
 
+#blai-deep-clean-workspace .blai-deep-clean-resource-title {
+    margin: 0;
+    color: var(--text-main);
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-panel > .blai-deep-clean-search-field {
+    width: 100%;
+    min-width: 0;
+    margin-top: var(--blai-space-10);
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-search-field {
-    width: min(var(--blai-size-340), 46%);
-    min-width: var(--blai-size-210);
     height: var(--blai-size-34);
     display: grid;
     grid-template-columns: 34px minmax(0, 1fr);
@@ -212,8 +204,9 @@
 #blai-deep-clean-workspace .blai-deep-clean-resource-list {
     min-width: 0;
     max-height: var(--blai-size-240);
+    margin-top: var(--blai-space-8);
     overflow-y: auto;
-    padding: 0 var(--blai-space-12);
+    padding: 0;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice {

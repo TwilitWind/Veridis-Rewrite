@@ -135,7 +135,7 @@
     opacity: .48;
 }
 
-/* 单栏布局：设置在上、资源列表在下，不再左右分栏 */
+/* 左右两栏：左栏设置，右栏处理的文件；沿用净化页 .blai-clean-columns 的分栏做法。 */
 #blai-deep-clean-workspace .blai-deep-clean-selection {
     height: 100%;
     min-width: 0;
@@ -150,68 +150,34 @@
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
+    padding: var(--blai-space-16) var(--blai-space-24);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-two-column {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 5fr);
+    align-items: start;
+    gap: var(--blai-column-gap);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-settings, .blai-deep-clean-resources) {
+    min-width: 0;
     display: grid;
     align-content: start;
+    gap: var(--blai-panel-gap);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-controls {
-    min-width: 0;
-    border-bottom: var(--blai-border-1) solid var(--border-color);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--blai-space-10);
-    padding: var(--blai-space-14) var(--blai-space-24);
-    cursor: pointer;
-    list-style: none;
-    color: var(--text-main);
-    font-size: var(--blai-font-12);
-    font-weight: var(--blai-weight-bold);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary::-webkit-details-marker {
-    display: none;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary > span {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--blai-space-8);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls > summary > i {
-    color: var(--text-secondary);
-    font-size: var(--blai-font-11);
-    transition: transform .18s ease;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-controls[open] > summary > i {
-    transform: rotate(90deg);
-}
-
-/* 处理范围做一条横向窄带，运行设置单独一行横排，避免两栏一高一矮留下死白。 */
-#blai-deep-clean-workspace .blai-deep-clean-config {
-    min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: var(--blai-space-8);
-    padding: var(--blai-space-10) var(--blai-space-16) var(--blai-space-12);
-}
-
-/* 两个设置区各自成为紧凑卡片，顶端对齐，避免矮的那一侧留出大片空白。 */
+/* 分区扁平：只保留标题下的细分隔线，不再套边框卡片与底色。 */
 #blai-deep-clean-workspace .blai-deep-clean-section {
     min-width: 0;
-    padding: var(--blai-space-10) var(--blai-space-12);
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-10);
-    background: var(--bg-base);
+    padding: 0 0 var(--blai-space-12);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+    background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-section h3 {
+    margin: 0 0 var(--blai-space-10);
     color: var(--text-main);
     font-size: var(--blai-font-12);
     font-weight: var(--blai-weight-bold);
@@ -239,11 +205,10 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-options {
-    margin-top: var(--blai-space-8);
     display: grid;
-    grid-template-columns: minmax(180px, 0.62fr) minmax(0, 1.38fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: var(--blai-space-8) var(--blai-space-18);
+    gap: var(--blai-space-12);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-option {
@@ -290,7 +255,3 @@
     cursor: pointer;
 }
 
-/* 世界书只有一份、无搜索框：汇总行靠左，不再留出搜索框的空位。 */
-#blai-deep-clean-workspace .blai-deep-clean-resource-toolbar:not(:has(input[type="search"])) {
-    justify-content: flex-start;
-}

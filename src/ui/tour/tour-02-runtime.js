@@ -113,10 +113,6 @@ export function renderActiveTourStep() {
     const { steps, index } = activeTour;
     const step = steps[index];
     if (step.page) showResponsivePage(step.page);
-    if (activeTour.kind === 'deep-clean' && !step.preview) {
-        const controls = document.getElementById('blai-deep-clean-controls');
-        if (controls && !controls.open) controls.open = true;
-    }
     const layer = document.getElementById('blai-tour-layer');
     layer.innerHTML = '<div class="blai-tour-spotlight" aria-hidden="true"></div>' + cardHtml(step, index, steps.length);
     annotateTauriMobileSurfaces();
@@ -140,7 +136,6 @@ export function startTour(kind, launcher, firstUse) {
         firstUse,
         manual: !firstUse,
         previousPage: kind === 'main' ? currentMainPage() : '',
-        controlsWasOpen: kind === 'deep-clean' ? document.getElementById('blai-deep-clean-controls')?.open : undefined,
     };
     const layer = createThemedTourLayer();
     layer.addEventListener('click', onTourClick);

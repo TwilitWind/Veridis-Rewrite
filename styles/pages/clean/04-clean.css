@@ -1,21 +1,20 @@
 /* 深度净化处理范围卡片。 */
 
 /* Deep Clean · 处理范围卡片（需求7：仅当前角色卡的世界书与聊天记录） */
-/* 处理范围横排成一条：标签 / 角色卡名 / 计数同处一行，省掉竖向空白。 */
+/* 处理范围横排成一条：标签 / 角色卡名 / 计数同处一行，去掉整圈边框只用左侧强调线。 */
 #blai-purifier-popup .blai-deep-clean-scope-card {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--blai-space-4) var(--blai-space-10);
     margin-top: var(--blai-space-8);
-    padding: var(--blai-space-8) var(--blai-space-12);
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-10);
-    background-color: var(--bg-surface);
+    padding: var(--blai-space-6) 0 var(--blai-space-6) var(--blai-space-10);
+    border-left: var(--blai-border-2) solid var(--accent-color);
+    background: transparent;
 }
 
 #blai-purifier-popup .blai-deep-clean-scope-card.is-blocked {
-    border-color: var(--status-danger);
+    border-left-color: var(--status-danger);
 }
 
 #blai-purifier-popup .blai-deep-clean-scope-label {
