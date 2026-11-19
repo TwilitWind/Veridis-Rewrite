@@ -21,7 +21,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--blai-space-6);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--text-main) 16%, transparent);
+    box-shadow: var(--blai-shadow-sm);
     z-index: 2147483647;
     pointer-events: none;
     transition: opacity var(--blai-duration-fast) var(--blai-ease-out), transform var(--blai-duration-fast) var(--blai-ease-out);
@@ -83,7 +83,7 @@
     /* 弹窗里的输入框与主界面同一套：1px 边框 + 弱填充，焦点态另描内阴影 */
     border: var(--blai-border-1) solid var(--border-color) !important;
     padding: var(--blai-input-pad-inline);
-    background: var(--field-bg) !important;
+    background: var(--blai-input-bg) !important;
     color: var(--text-main) !important;
     box-shadow: none !important;
 }
@@ -177,7 +177,7 @@
     border-radius: var(--blai-radius-16) !important;
     background: var(--bg-surface) !important;
     color: var(--text-main) !important;
-    box-shadow: 0 12px 32px color-mix(in srgb, var(--text-main) 16%, transparent) !important;
+    box-shadow: var(--blai-shadow-lg) !important;
     box-sizing: border-box !important;
 }
 .blai-modal-shell .blai-edit-modal-title,
@@ -234,7 +234,7 @@
 #blai-scope-tag-editor-modal .blai-scope-tag-editor-card,
 #blai-rule-edit-modal .blai-edit-modal-card,
 #blai-subrule-edit-modal .blai-subrule-modal-card {
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--text-main) 14%, transparent);
+    box-shadow: var(--blai-shadow-md);
 }
 
 /* ---------------------------------------------------------------------------

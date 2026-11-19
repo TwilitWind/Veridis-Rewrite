@@ -8,7 +8,7 @@
     padding: 0 var(--blai-space-2) !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
     border-radius: var(--blai-radius-9) !important;
-    background: var(--field-bg) !important;
+    background: var(--blai-input-bg) !important;
     box-shadow: none !important;
     color: var(--text-main);
     font-size: var(--blai-font-12);

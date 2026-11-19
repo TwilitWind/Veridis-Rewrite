@@ -13,6 +13,16 @@
     /* 遮罩与投影统一走中性黑，按主题在 02-themes.css 调整浓度。 */
     --blai-scrim: rgba(0, 0, 0, 0.52);
     --blai-modal-shadow: rgba(0, 0, 0, 0.24);
+    /* 所有浮层（下拉菜单 / 省略号菜单 / 弹窗 / toast）的投影统一用这一组黑色令牌，
+       不再用 --text-main 混色——夜间主题正文是浅色，混出来的「阴影」会发白发光。
+       数值只是浓度，颜色恒为中性黑；夜间主题在 02-themes.css 里加深。 */
+    --blai-shadow-color: rgba(0, 0, 0, 0.16);
+    --blai-shadow-xs: 0 1px 3px var(--blai-shadow-color);
+    --blai-shadow-sm: 0 4px 10px var(--blai-shadow-color);
+    --blai-shadow-md: 0 6px 18px var(--blai-shadow-color);
+    --blai-shadow-lg: 0 12px 32px var(--blai-shadow-color);
+    /* 固定栏下沿的细分隔投影，spread 收负，只留一条软边。 */
+    --blai-shadow-divider: 0 6px 16px -12px rgba(0, 0, 0, 0.62);
     /* 危险实心块（删除类按钮）上的文字色 */
     --danger-contrast: #FFFFFF;
 

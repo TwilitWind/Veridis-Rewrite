@@ -231,7 +231,7 @@
        边框色取 --border-color，三套主题各自给值，日间 / 夜间 / 跟随酒馆同为边框式。
        border-box 已声明，加边框不会顶开布局。 */
     border: var(--blai-border-1) solid var(--border-color);
-    background: var(--field-bg);
+    background: var(--blai-input-bg);
     color: var(--text-main);
     font-size: var(--blai-font-18);
     box-sizing: border-box;
@@ -312,7 +312,7 @@
 .blai-select-box {
     flex: 1 1 auto;
     min-width: 0;
-    background-color: var(--field-bg);
+    background-color: var(--blai-input-bg);
     padding: var(--blai-input-pad-inline-wide);
     border-radius: var(--blai-radius-6);
     font-size: var(--blai-font-14);
@@ -447,7 +447,7 @@
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);
     color: var(--text-main);
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--text-main) 16%, transparent);
+    box-shadow: var(--blai-shadow-lg);
 }
 
 .blai-modal-actions {

@@ -343,7 +343,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     box-sizing: border-box !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
     border-radius: var(--blai-radius-8) !important;
-    background: var(--field-bg) !important;
+    background: var(--blai-input-bg) !important;
     color: var(--text-main) !important;
     font-family: inherit !important;
     font-size: var(--blai-font-13) !important;

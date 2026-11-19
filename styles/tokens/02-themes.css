@@ -28,18 +28,7 @@
         var(--SmartThemeBodyColor) 34%,
         var(--bg-base)
     );
-    /* 输入框底色：从边框色往卡片底里混，浅色酒馆下变浅灰、深色酒馆下变浅一档，
-       方向由 --border-color 自身决定，不写死明暗。改成边框式以后填充只做兜底（见下方比例说明），
-       层次由 1px 边框承担，三套主题一致。
-       混入比例必须小：--border-color 已经是从底色上拉开的一档，再按 62% 混进输入框，
-       等于把两档叠起来。实测深色酒馆主题下（BlurTint rgba(31,31,31)）得到 rgb(76,76,75)，
-       与卡片 rgb(49,49,49) 的亮度台阶是 1.51，而固定日间/夜间主题是 1.12，深色下发刺眼。
-       取 16% 后实测深色酒馆 1.11、浅色酒馆 1.14，与固定主题同一档。 */
-    --field-bg: color-mix(
-        in srgb,
-        var(--border-color) 16%,
-        var(--bg-surface)
-    );
+    /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
 }
 
 #blai-purifier-popup[data-theme="light"], .blai-modal-shell[data-theme="light"], #blai-scope-tag-editor-modal[data-theme="light"], #blai-rule-transfer-modal[data-theme="light"], #blai-diff-modal[data-theme="light"], #blai-rule-search-modal[data-theme="light"], #blai-preset-import-choice-modal[data-theme="light"], .blai-toast[data-theme="light"], #blai-loading-overlay[data-theme="light"], #blai-tour-layer[data-theme="light"] {
@@ -57,9 +46,7 @@
     /* 描边同样取中性灰：原 #E3E7EF 蓝-红差 12，压在灰白画布上会透出一层冷调，
        和「灰白」这个基调打架。改后亮度几乎不变（vs 白卡 1.24 → 1.26），只去掉色偏。 */
     --border-color: #E5E5E8;
-    /* 输入框底色：纯白，与卡片同色。静息态的层次交给 1px 边框表达，
-       填充不再往下挖一格——灰块在白卡上面积大、比画布还深，是「显脏」的来源。 */
-    --field-bg: #FFFFFF;
+    /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
     --status-danger: #C0392B;
     --status-success: #4C8C2B;
 }
@@ -75,10 +62,7 @@
     --text-main: #C7D3E0;
     --text-secondary: #8899AA;
     --border-color: #3A4356;
-    /* 夜间输入框底色：只比卡片 #181E2A 亮一点点，层次由 1px 边框承担。
-       原先靠填充拉开 1.12 的台阶，改成边框式以后填充只做「不透底」的兜底，
-       否则同一条边框旁边还压着一块明显更亮的方块，会显得控件凸出来。 */
-    --field-bg: #1D222D;
+    /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
     --status-danger: #D95757;
     --status-success: #70BF56;
     /* 夜间四来源圆点整体提亮，避免在深卡片上糊成一团。 */
@@ -89,6 +73,8 @@
     /* 深主题遮罩更重、投影更实，避免深色卡片在黑底上失边。 */
     --blai-scrim: rgba(0, 0, 0, 0.66);
     --blai-modal-shadow: rgba(0, 0, 0, 0.5);
+    /* 投影颜色恒为中性黑，夜间只加深浓度；所有浮层共用这组令牌。 */
+    --blai-shadow-color: rgba(0, 0, 0, 0.5);
     /* 深蓝底配白字，避免浅蓝底在深主题下发荧光。 */
     --blai-dropdown-active-bg: #3D6FB4;
     --re-escape: #FF8F40;
@@ -194,12 +180,13 @@
     --blai-dropdown-active-ink: #FFFFFF;
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    /* 高亮整行铺满菜单：左右无内边距、行间无间隙、行项无圆角。
-       保留上下 3px 留白，让菜单边框与首末行仍有呼吸感。 */
+    /* 高亮整行铺满菜单：左右无内边距、行间无间隙。
+       保留上下 3px 留白，让菜单边框与首末行仍有呼吸感。
+       行项带圆角，避免高亮色块的直角顶到圆角菜单的四角。 */
     --blai-dropdown-pad: var(--blai-space-3) 0;
     --blai-dropdown-gap: 0;
-    --blai-dropdown-shadow: 0 4px 10px color-mix(in srgb, var(--text-main) 12%, transparent);
-    --blai-dropdown-item-radius: 0;
+    --blai-dropdown-shadow: var(--blai-shadow-sm);
+    --blai-dropdown-item-radius: var(--blai-radius-8);
     --blai-dropdown-item-pad-x: var(--blai-space-10);
     --blai-dropdown-item-height: var(--blai-size-28);
     --blai-dropdown-item-font: var(--blai-font-13);
@@ -219,8 +206,8 @@
     font-weight: var(--blai-weight-normal);
 }
 
-/* 输入控件背景色统一入口：下拉框、单行输入框、多行文本域都引用这一个变量，
-   以后要调整控件底色只改这里，三处不会各写各的。默认等于 --field-bg（各主题已定义）。 */
+/* 输入控件背景色统一入口：输入框、文本域、下拉框统一取当前主题的容器背景色 --bg-surface，
+   不再单独提亮一档（--field-bg）——控件与卡片同色，层次只靠 1px 边框表达，各主题一致。 */
 :where(
     #blai-purifier-popup,
     .blai-modal-shell,
@@ -230,7 +217,7 @@
     #blai-rule-search-modal,
     #blai-preset-import-choice-modal
 ) {
-    --blai-input-bg: var(--field-bg);
+    --blai-input-bg: var(--bg-surface);
 }
 
 /* 酒馆主题注入的是裸标签强声明：select/input/textarea 的 background 被标成主题的 --ui-color-sec 且带强制优先级，

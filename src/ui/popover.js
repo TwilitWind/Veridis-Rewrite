@@ -1,7 +1,7 @@
 // 负责挂载到 body 的下拉菜单：逃出祖先的溢出裁剪，并在下方空间不足时翻转到锚点上方。
 const PORTAL_CLASS = 'blai-portal-menu';
 const ANCHOR_MARK = 'data-blai-popover-anchor';
-const THEME_VARS = ['--bg-base', '--bg-surface', '--accent-color', '--text-main', '--text-secondary', '--border-color', '--status-danger', '--status-success', '--blai-dropdown-active-bg', '--blai-dropdown-active-ink'];
+const THEME_VARS = ['--bg-base', '--bg-surface', '--accent-color', '--text-main', '--text-secondary', '--border-color', '--status-danger', '--status-success', '--blai-dropdown-active-bg', '--blai-dropdown-active-ink', '--blai-shadow-color', '--blai-shadow-sm', '--blai-dropdown-shadow'];
 const CLEARED_STYLES = ['position', 'top', 'left', 'right', 'bottom', 'margin', 'transform', 'will-change', 'z-index'];
 const IMPORTANT_POSITION_PROPS = ['position', 'left', 'top', 'right', 'bottom', 'transform', 'margin', 'max-height'];
 const MENU_GAP = 6;

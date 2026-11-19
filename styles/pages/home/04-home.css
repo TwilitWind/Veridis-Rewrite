@@ -132,7 +132,7 @@
        内容密度最高的那个弹窗，灰白卡上再叠一片带边框的控件会整块发灰。 */
     background: var(--blai-modal-card-bg, var(--bg-base)) !important;
     border: 0 !important;
-    box-shadow: 0 14px 36px color-mix(in srgb, var(--text-main) 16%, transparent) !important;
+    box-shadow: var(--blai-shadow-lg) !important;
 }
 
 /* 卡片内一律不画边框线 */
@@ -284,11 +284,11 @@
     color: var(--text-secondary);
 }
 
-/* 三个编辑弹窗里的输入框：与主界面同一套定义（1px 边框 + 弱填充），
+/* 三个编辑弹窗里的输入框：与主界面同一套定义（1px 边框 + 容器底色），
    边框与焦点态由 components/02-controls.css 的 .blai-input / .blai-textarea 负责，
-   这里只覆写底色——弹窗卡片不是同一个底色，填充需要另给一档。 */
+   这里沿用统一入口变量，保证弹窗与主界面的控件底色一致。 */
 :is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) :is(.blai-input, .blai-textarea, select) {
-    background-color: var(--field-bg);
+    background-color: var(--blai-input-bg);
 }
 
 /* gmu 小标同样去掉框 */

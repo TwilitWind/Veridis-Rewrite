@@ -283,7 +283,7 @@
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-16);
     background: var(--bg-surface);
-    box-shadow: 0 12px 32px color-mix(in srgb, var(--text-main) 16%, transparent);
+    box-shadow: var(--blai-shadow-lg);
     box-sizing: border-box;
 }}
 

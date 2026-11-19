@@ -176,7 +176,7 @@
 
 /* 命中时只改变量，让共用输入框规则自然透出下层高亮，不叠加新的强声明。 */
 .blai-regex-test-input-wrap.has-matches {
-    --field-bg: transparent;
+    --blai-input-bg: transparent;
 }
 
 .blai-regex-test-highlight {
