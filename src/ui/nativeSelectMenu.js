@@ -162,11 +162,6 @@ export function enhanceNativeSelect(select, options = {}) {
     return state;
 }
 
-/** 批量包装：按选择器查找，只对尚未包装的生效。 */
-export function enhanceNativeSelects(selector, options = {}) {
-    return [...document.querySelectorAll(selector)].map((select) => enhanceNativeSelect(select, options));
-}
-
 /** select 被业务整体替换时，释放旧的观察器。 */
 export function releaseNativeSelect(select) {
     const state = registry.get(select);

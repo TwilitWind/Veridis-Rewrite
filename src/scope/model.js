@@ -132,14 +132,6 @@ export function parseScopeTagInput(input) {
     };
 }
 
-export function normalizeXmlTagNameInput(input, fallbackTagName = 'content') {
-    const parsed = parseScopeTagInput(input);
-    if (parsed.ok) return parsed.value.tagName;
-
-    const fallback = parseScopeTagInput(fallbackTagName);
-    return fallback.ok ? fallback.value.tagName : 'content';
-}
-
 function normalizeScopeTagLabel(label) {
     return String(label ?? '').trim().replace(/\s+/g, ' ');
 }

@@ -176,16 +176,6 @@ function reduceFinalOwnedRowsFromEntries(entries, messageIndex, rows, includeShe
     return rows;
 }
 
-function collectFinalRowUpsertsFromEntries(entries, messageIndex) {
-    const rows = reduceFinalOwnedRowsFromEntries(entries, messageIndex, new Map(), false);
-
-    return [...rows.values()];
-}
-
-function collectFinalRowUpserts(frame, messageIndex) {
-    return collectFinalRowUpsertsFromEntries(frame.logEntries, messageIndex);
-}
-
 function findUniqueRowIndex(content, rowId) {
     let match = -1;
     for (let index = 1; index < content.length; index++) {
@@ -245,12 +235,6 @@ function collectShujukuCellTargetsFromOperations(operations, tableData) {
         }
     }
     return targets;
-}
-
-export function collectShujukuCellTargets(message, messageIndex, tableData) {
-    const frame = readCurrentV2Frame(message);
-    if (!frame) return [];
-    return collectShujukuCellTargetsFromOperations(collectFinalRowUpserts(frame, messageIndex), tableData);
 }
 
 function readFrameHeadRevision(frame) {

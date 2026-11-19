@@ -5,35 +5,6 @@ import { loreFrameDomSelector } from '../integrations/loreFrame.js';
 import { isUserMessageDomNode } from './message.js';
 
 /** 负责分类 Veridis 可或不可视觉处理的 DOM 表面/文本节点。它不改写消息数据。 */
-export const messageBodySelector = '.mes .mes_text';
-export const excludedMessageContentSelector = [
-    'script',
-    'style',
-    'code',
-    'pre',
-    'textarea',
-    'input',
-    'select',
-    'option',
-    'button',
-    '[role="button"]',
-    '[role="menu"]',
-    '[role="menuitem"]',
-    '[role="dialog"]',
-    '[aria-controls]',
-    '[contenteditable]:not([contenteditable="false"])',
-    '.mes_reasoning',
-    '.mes_reasoning_details',
-    '.mes_buttons',
-    '.mes_controls',
-    '.swipe_left',
-    '.swipe_right',
-    '.swipeRightBlock',
-    '.blai-diff-btn',
-    '.TH-collapse-code-block-button',
-    '[class*="blai-diff"]',
-].join(', ');
-
 export const knownPluginContainerSelector = [
     '#tavern_helper',
     '#regex_editor_template',
@@ -129,15 +100,6 @@ export function isProtectedNode(node) {
     if (dataFor && dataFor.startsWith('world_entry_content_')) return true;
     if (node.tagName === 'TEXTAREA' && node.name === 'comment') return true;
     return false;
-}
-
-export function isMessageOnAllowedSurface(messageNode) {
-    if (!messageNode || !messageNode.closest) return false;
-    if (messageNode.closest('#chat')) return true;
-    const root = messageNode.getRootNode?.();
-    const host = root?.host;
-    return Boolean(host?.matches?.('#t-output-content .t-shadow-host')
-        || host?.closest?.('#t-output-content .t-shadow-host'));
 }
 
 export function isAllowedChatInputElement(element) {
