@@ -4,6 +4,14 @@
 
 ---
 
+## 3.5 增强版 r5（撤销手机画布与标签选中态配色）
+
+- 撤销手机端反馈页的深画布分层：移除深画布背景、正文卡圆角/边距覆盖、日志框压暗，恢复平坦样式。6px 的文章卡留白来自布局系统统一 token（`01-responsive.css` 的 `--blai-space-6 !important`），保留。
+- 四个标签不再全蓝：根因是 header 通用 `span { color: accent-ink }` 把标签内层 span 全染成强调色。给标签 span 加 `color: inherit` 后，未选中保持浅色 `--text-secondary`（rgb 95,105,117）、选中态文字与指示条才用强调色（rgb 47,90,166 / 77,121,203）。
+- 截图：`feedback-flat-mobile.png`。
+
+---
+
 ## 3.5 增强版 r5（标签行字号根因修复）
 
 - 四个标签的文字一直很小，根因不是按钮字号：`#blai-feedback-workspace-header span { font-size: 8px; letter-spacing: .16em }` 误伤了标签按钮的内层 `<span>`（按钮实测 15px、span 却 8px）。给标签 span 显式 `font-size/weight/letter-spacing/line-height: inherit` 后，桌面实测 15px。

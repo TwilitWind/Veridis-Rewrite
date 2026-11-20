@@ -131,17 +131,19 @@
     padding-bottom: var(--blai-space-8);
     margin-bottom: calc(-1 * var(--blai-border-1));
     border-bottom: var(--blai-border-2) solid transparent;
-    /* 上面 .blai-feedback-workspace-header span 把 header 内所有 span 压成 8px，
-       会误伤这四个标签；这里显式继承按钮字号，标签才是 15px。 */
+    /* 上面 .blai-feedback-workspace-header span 把 header 内所有 span 染成强调色，
+       会误伤这四个标签；这里显式继承按钮色，未选中保持浅色、选中才由按钮规则变强调色。 */
     font-size: inherit;
     font-weight: inherit;
+    color: inherit;
     letter-spacing: normal;
     line-height: inherit;
 }
 
+/* 只有选中的标签用强调色文字，未选中的保持 --text-secondary 浅色。 */
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active {
     background: transparent;
-    color: var(--text-main);
+    color: var(--accent-ink);
 }
 
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active > span {
