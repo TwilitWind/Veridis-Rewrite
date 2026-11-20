@@ -213,7 +213,7 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-global-actions{grid-row: 1;align-self: center}}
 @media (min-width: 601px) and (max-width: 1024px){#blai-purifier-popup .blai-global-header{--blai-header-button-size: var(--blai-size-36);padding: var(--blai-space-7) var(--blai-space-16);column-gap: var(--blai-space-8)}
 #blai-purifier-popup .blai-global-heading{font-size: var(--blai-font-17)}}
-@media (max-width: 600px){#blai-purifier-popup .blai-global-header{--blai-header-button-size: var(--blai-size-28);padding: calc(var(--blai-space-2) + env(safe-area-inset-top,0px)) var(--blai-space-8) var(--blai-space-4);column-gap: var(--blai-space-4);row-gap: 0;grid-template-rows: auto}
+@media (max-width: 600px){#blai-purifier-popup .blai-global-header{--blai-header-button-size: var(--blai-size-30);padding: calc(var(--blai-space-6) + env(safe-area-inset-top,0px)) var(--blai-space-14) var(--blai-space-8);column-gap: var(--blai-space-4);row-gap: 0;grid-template-rows: auto}
 #blai-purifier-popup .blai-global-title-group{grid-column: 1;grid-row: 1;flex-direction: row;align-items: center;justify-content: flex-start}
 #blai-purifier-popup .blai-global-heading{flex: 0 0 auto;text-align: left}
 #blai-purifier-popup .blai-global-description{display: none}
@@ -663,7 +663,7 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions{margin-left: auto;flex-wrap: wrap}
 @media (max-width: 1120px){#blai-purifier-popup .blai-home-topbar-row{align-items: stretch;flex-direction: column;gap: var(--blai-space-10)}
 #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions{margin-left: 0}}
-@media (max-width: 600px){#blai-purifier-popup .blai-home-topbar{padding: var(--blai-space-8) var(--blai-space-12) 0}
+@media (max-width: 600px){#blai-purifier-popup .blai-home-topbar{padding: var(--blai-space-8) var(--blai-space-14) 0}
 #blai-purifier-popup .blai-home-topbar-row-primary{display: grid;grid-template-columns: minmax(0,auto) minmax(0,1fr);align-items: center;gap: var(--blai-space-8) var(--blai-space-10)}
 #blai-purifier-popup .blai-home-topbar-main{display: contents}
 #blai-purifier-popup .blai-home-topbar .blai-home-preset-field{grid-column: 1;grid-row: 1}
@@ -1466,7 +1466,7 @@ to{opacity: 1;transform: none}}
 #blai-feedback-workspace .blai-feedback-no-record{margin: var(--blai-space-12) 0 0;color: var(--text-secondary);font-size: var(--blai-font-12)}
 @media (max-width: 820px){#blai-feedback-workspace .blai-feedback-form{grid-template-columns: minmax(0,1fr);gap: var(--blai-space-16)}
 #blai-feedback-workspace .blai-feedback-preview{grid-column: 1}}
-@media (max-width: 600px){#blai-feedback-workspace .blai-feedback-workspace-header{padding: calc(var(--blai-space-9) + env(safe-area-inset-top,0px)) var(--blai-space-12) 0}
+@media (max-width: 600px){#blai-feedback-workspace .blai-feedback-workspace-header{padding: calc(var(--blai-space-9) + env(safe-area-inset-top,0px)) var(--blai-space-14) 0}
 #blai-feedback-workspace .blai-feedback-workspace-nav{padding: 0;gap: var(--blai-space-2)}
 #blai-feedback-workspace .blai-feedback-workspace-content{margin: var(--blai-space-8) 0 0;padding: var(--blai-space-14) var(--blai-space-10) calc(var(--blai-space-44) + env(safe-area-inset-bottom,0px));border-radius: 0}
 #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro,.blai-feedback-diagnostic-heading,.blai-feedback-local-heading){align-items: flex-start;flex-direction: column;gap: var(--blai-space-12)}
@@ -1572,8 +1572,11 @@ body #toast-container>.blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast>.bla
 #blai-purifier-popup.blai-app-shell .blai-ai-api-preset-actions{grid-template-columns: repeat(4,32px)}
 #blai-purifier-popup.blai-app-shell .blai-ai-api-preset-actions .blai-ai-icon-button{width: var(--blai-size-32);height: var(--blai-size-36)}
 #blai-purifier-popup.blai-app-shell .blai-ai-section-header{gap: var(--blai-space-10) !important}
-#blai-purifier-popup.blai-app-shell .blai-ai-connection-header{flex-direction: column}
-#blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch{min-height: var(--blai-size-28)}
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-header{position: relative;flex-direction: row;min-height: var(--blai-size-62);gap: 0}
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-header>div:first-child{flex: 1 1 auto;align-self: flex-start;text-align: center}
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-title-row{justify-content: center}
+#blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches{position: absolute;top: 0;right: 0;flex-direction: column;align-items: flex-end;flex-wrap: nowrap;gap: var(--blai-space-3)}
+#blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch{gap: var(--blai-space-4);min-height: var(--blai-size-28);font-size: var(--blai-font-10)}
 #blai-purifier-popup.blai-app-shell .blai-ai-prompt-input{min-height: var(--blai-size-150) !important}}
 @media (min-width: 601px){#blai-ai-prompt-modal{padding: clamp(var(--blai-space-24),4vw,var(--blai-space-44));align-items: center;justify-content: center}
 #blai-ai-prompt-modal .blai-ai-prompt-modal-card{width: min(var(--blai-size-760),100%) !important;height: min(var(--blai-size-560),calc(100dvh - clamp(var(--blai-size-48),8vw,var(--blai-size-88)))) !important;max-width: var(--blai-size-760) !important;max-height: calc(100dvh - clamp(var(--blai-size-48),8vw,var(--blai-size-88))) !important;padding: var(--blai-space-18) !important;border-radius: var(--blai-radius-14) !important}}
@@ -1595,4 +1598,17 @@ body #toast-container>.blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast>.bla
 #blai-ai-additional-modal .blai-ai-additional-field>span{color: var(--text-main);font-size: var(--blai-font-12);font-weight: var(--blai-weight-bold)}
 #blai-ai-additional-modal .blai-ai-additional-field textarea{width: 100%;box-sizing: border-box;font-family: ui-monospace,SFMono-Regular,Consolas,monospace;font-size: var(--blai-font-12);line-height: 1.5;resize: vertical}
 #blai-ai-additional-modal .blai-ai-additional-modal-actions{margin: 0;justify-content: flex-end}
+@media (max-width: 600px){#blai-purifier-popup.blai-app-shell .blai-global-heading{font-size: var(--blai-mobile-type-medium)}
+#blai-purifier-popup.blai-app-shell :is(.blai-ai-section-header h2,.blai-clean-section-header h2,.blai-clean-danger-header h2,.blai-tools-section-header h2,.blai-feedback-local-heading h2,.blai-feedback-diagnostics-intro h2){font-size: var(--blai-font-13)}
+#blai-purifier-popup.blai-app-shell :is(.blai-feedback-fieldset legend,.blai-feedback-control>span,.blai-feedback-attachments h3,.blai-feedback-preview h3,.blai-feedback-file-copy>span,.blai-feedback-diagnostic-record h3){font-size: var(--blai-mobile-type-small)}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-footer{grid-template-columns: minmax(0,1fr);gap: var(--blai-space-10)}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-footer .blai-feedback-privacy{min-height: 0}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions{display: grid;grid-template-columns: minmax(0,1fr);gap: var(--blai-space-8)}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-status{min-height: 0;text-align: left}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-status:empty{display: none}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-primary{width: 100%;min-width: 0}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-file-picker{grid-template-columns: minmax(0,1fr);gap: var(--blai-space-10)}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-file-trigger{width: 100%}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-confirm{grid-template-columns: auto minmax(0,1fr)}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-preview .blai-feedback-primary{width: 100%;min-width: 0}}
 /*# sourceMappingURL=style.css.map */

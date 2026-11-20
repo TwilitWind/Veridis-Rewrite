@@ -229,6 +229,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | `components/` | 按钮、输入框、卡片、toast、统一对话框 | 新组件必须建独立文件 |
 | `layouts/` | 覆盖层骨架、顶栏、侧栏、底部导航、响应式 | 不含业务页规则 |
 | `pages/<page>/` | 单页排版 home/ai/clean/tools/feedback/diff/tour | 只写该页，禁止通用组件样式 |
+| `pages/99-mobile.css` | 手机端跨页收尾：标题降档、提交反馈单列化 | 最后加载，压过各页桌面声明；只放 `@media (max-width: 600px)` |
 
 三个令牌文件：`01-palette.css`（状态色、正则高亮 `--re-*`、差异来源色）、`02-themes.css`（auto/light/dark 的 `--bg-*` / `--text-*` / `--border-color` / `--accent-*`，及 `select option` 的三段 `!important`）、`03-scale.css`（`--blai-space-*` / `--blai-font-*` / `--blai-radius-*` / `--blai-border-*` / `--blai-size-*` 与语义层）。动效节奏也在 `03-scale.css`：`--blai-duration-fast` 120ms（菜单/toast 退场）、`--blai-duration-base` 160ms（切页/toast 进场）、`--blai-duration-slow` 180ms（弹卡进场）、`--blai-ease-out`（平滑减速不过冲）；改一处全站同步。可见滚动条在 `base/00-reset.css` 挂根容器统一设 `scrollbar-color: var(--accent-color) transparent`（可继承，刻意隐藏的不受影响）。
 
@@ -287,3 +288,6 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | 改菜单定位 | `ui/popover.js` + 对应 `*-menu` 的 CSS |
 | 改日间配色 | `styles/tokens/02-themes.css` 的 light 令牌 + `styles/layouts/00-shell.css` 的日间分区段 |
 | 改弹窗尺寸 | `styles/pages/home/04-home.css` 的 `@media (min-width: 601px)` 段（四处同一把尺子） |
+| 改手机端标题字号 / 提交反馈单列 | `styles/pages/99-mobile.css`（最后加载的跨页收尾） |
+| 改 AI 连接标题行 | `styles/pages/ai/01-ai.css` 的 `@media (max-width: 600px)` 段：开关绝对定位到最右，标题在整条栏里居中 |
+| 改手机端顶栏留白 | `styles/layouts/00-shell.css`、`styles/pages/home/03-home-topbar.css`、`styles/pages/feedback/01-feedback.css` 各自的窄屏段 |

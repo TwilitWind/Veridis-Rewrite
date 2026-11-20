@@ -251,11 +251,38 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header {
+    /* 右侧开关脱离流，标题才能在整条标题栏里真正居中；flex 占位会把标题推离中心。 */
+    position: relative;
+    flex-direction: row;
+    min-height: var(--blai-size-62);
+    gap: 0;
+}
+
+/* 标题居中、两个开关贴标题栏最右侧，不再另起一行居中 */
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-header > div:first-child {
+    flex: 1 1 auto;
+    align-self: flex-start;
+    text-align: center;
+}
+
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-title-row {
+    justify-content: center;
+}
+
+#blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches {
+    position: absolute;
+    top: 0;
+    right: 0;
     flex-direction: column;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+    gap: var(--blai-space-3);
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch {
+    gap: var(--blai-space-4);
     min-height: var(--blai-size-28);
+    font-size: var(--blai-font-10);
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-prompt-input {

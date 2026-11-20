@@ -1,0 +1,65 @@
+/* 手机端排版收尾：标题降档 + 提交反馈表单单列化。
+   放在样式表最后加载，统一压过各页桌面标题字号与两栏表单声明。 */
+
+@media (max-width: 600px) {
+    #blai-purifier-popup.blai-app-shell .blai-global-heading {
+        font-size: var(--blai-mobile-type-medium);
+    }
+
+    #blai-purifier-popup.blai-app-shell :is(.blai-ai-section-header h2, .blai-clean-section-header h2, .blai-clean-danger-header h2, .blai-tools-section-header h2, .blai-feedback-local-heading h2, .blai-feedback-diagnostics-intro h2) {
+        font-size: var(--blai-font-13);
+    }
+
+    #blai-purifier-popup.blai-app-shell :is(.blai-feedback-fieldset legend, .blai-feedback-control > span, .blai-feedback-attachments h3, .blai-feedback-preview h3, .blai-feedback-file-copy > span, .blai-feedback-diagnostic-record h3) {
+        font-size: var(--blai-mobile-type-small);
+    }
+
+    /* 提交反馈：隐私说明、状态与按钮各占整行，附件按钮铺满，
+       避免桌面端的「左说明 + 右按钮」在窄屏把文字挤成窄列。 */
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-footer {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--blai-space-10);
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-footer .blai-feedback-privacy {
+        min-height: 0;
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--blai-space-8);
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-status {
+        min-height: 0;
+        text-align: left;
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-status:empty {
+        display: none;
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-form-actions .blai-feedback-primary {
+        width: 100%;
+        min-width: 0;
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-file-picker {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--blai-space-10);
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-file-trigger {
+        width: 100%;
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-confirm {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-preview .blai-feedback-primary {
+        width: 100%;
+        min-width: 0;
+    }
+}

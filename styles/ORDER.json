@@ -39,6 +39,7 @@
   "pages/feedback/00-feedback-form.css",
   "pages/feedback/01-feedback.css",
   "pages/ai/00-ai.css",
-  "pages/ai/01-ai.css"
+  "pages/ai/01-ai.css",
+  "pages/99-mobile.css"
  ]
 }

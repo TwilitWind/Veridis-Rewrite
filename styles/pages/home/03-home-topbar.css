@@ -112,7 +112,7 @@
 
 @media (max-width: 600px) {
     #blai-purifier-popup .blai-home-topbar {
-        padding: var(--blai-space-8) var(--blai-space-12) 0;
+        padding: var(--blai-space-8) var(--blai-space-14) 0;
     }
 
     /* 行一：预设下拉框在左，统计信息贴最右侧并垂直居中；操作按钮独占下一行。 */
