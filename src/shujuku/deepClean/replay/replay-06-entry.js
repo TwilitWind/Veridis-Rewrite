@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（entry）：3 个顶层声明，6105 字节 / 128 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：entry。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { cloneJson, isRecord, readShujukuIsolatedData, collectFrameRefs, latestFullCheckpointIndex, assertCurrentWriterReplaySegment, assertCanonicalSheet } from './replay-00-sqlText.js';
 import { replayIsolationSlot, describeStateSchemas, projectBusinessColumns, compareText, compareCellIdentity, generateCurrentV2EntryId } from './replay-05-apply.js';
 

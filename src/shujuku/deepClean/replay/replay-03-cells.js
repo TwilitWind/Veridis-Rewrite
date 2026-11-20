@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（cells）：14 个顶层声明，15250 字节 / 292 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：cells。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { query, parseDdlColumnInfos, matchesHeader } from './replay-01-sqlRebind.js';
 import { canonicalizeDisplayName, toAsciiSlug, resolvePhysicalTableNames, parseDdlTableName } from './replay-00-sqlText.js';
 import { decodeSqlIdentifier, isSqlKeyword, tokenizeMutationSql, mutationTarget, mutationTableReferences, formatSqlIdentifier, splitSqlStatements, rebindMutationTables } from './replay-02-runtime.js';

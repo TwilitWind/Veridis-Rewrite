@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（runtime）：15 个顶层声明，14759 字节 / 333 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：runtime。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { META_TABLE_NAME, cloneJson, assertCanonicalState, physicalTableName, resolvePhysicalTableNames, parseDdlColumnComments, parseDdlTableName, normalizeSqlStructure, normalizeStatementValues } from './replay-00-sqlText.js';
 import { quoteIdentifier, query, tableInfo, sqlLiteral, sqliteValueToCell, parseMetadataJson, hydrateState } from './replay-01-sqlRebind.js';
 

@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（sqlRebind）：18 个顶层声明，15413 字节 / 404 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：sqlRebind。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { skipSqlTrivia, parseDdlColumnComments, createTableBody, findCreateTableBounds, META_TABLE_NAME, META_TABLE_DDL, assertCanonicalState, resolvePhysicalTableNames, normalizeSqlStructure, rebindCreateTableName, isRecord } from './replay-00-sqlText.js';
 
 function splitColumnDefinitions(body) {

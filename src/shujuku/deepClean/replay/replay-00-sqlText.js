@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（sqlText）：29 个顶层声明，15837 字节 / 414 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：sqlText。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { hasShujukuV2TableEvidence } from '../../storageEvidence.js';
 import { pinyin } from '../../../../vendor/pinyin-pro/index.mjs';
 

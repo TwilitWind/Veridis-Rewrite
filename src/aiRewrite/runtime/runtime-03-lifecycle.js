@@ -1,7 +1,4 @@
-/**
- * runtime.js 拆分产物（lifecycle）：5 个顶层声明，6386 字节 / 165 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** runtime 的分块：lifecycle。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { getAppContext } from '../../host/appContext.js';
 import { aiRewriteState } from '../state.js';
 import { isAssistantMessage } from '../../diff/tracking.js';

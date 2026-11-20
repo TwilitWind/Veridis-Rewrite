@@ -1,7 +1,4 @@
-/**
- * v1.js 拆分产物（migrate）：13 个顶层声明，14945 字节 / 300 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** v1 的分块：migrate。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { projectLateV1ShujukuCells } from '../replay.js';
 import { SCOPED_CONFIG_FIELD, SHEET_GUIDE_FIELD, isRecord, parseOwnedContainer, normalizeGuideData, buildGuideFromTemplate, readNamedTemplatePreset, readProfileTemplate, cloneJson, sortedGuideKeys, inspectLateV1Evidence, SETTINGS_NAMESPACE, PROFILE_SETTINGS_PREFIX, readRecord } from './v1-00-evidence.js';
 

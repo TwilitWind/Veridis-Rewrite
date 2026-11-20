@@ -1,7 +1,4 @@
-/**
- * tour.js 拆分产物（targets）：17 个顶层声明，3767 字节 / 97 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** tour 的分块：targets。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { getAppContext } from '../../host/appContext.js';
 import { extensionName } from '../../settings/defaults.js';
 import { annotateTauriMobileSurfaces } from '../shell.js';

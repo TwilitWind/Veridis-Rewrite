@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（apply）：15 个顶层声明，15884 字节 / 327 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：apply。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { cloneJson, isRecord, assertCanonicalState, assertCanonicalSheet, normalizeSqlStructure, parseDdlColumnComments, collectIsolationKeys, collectFrameRefs, latestFullCheckpointIndex, assertCurrentWriterReplaySegment } from './replay-00-sqlText.js';
 import { canonicalJson, sha256, runSqlOperation } from './replay-03-cells.js';
 import { descriptorSheet, assertDescriptorMatchesSheet, expectedV1Changes, buildMigratedSheetV1, buildMigratedSheetV2, validateSchemaCandidate } from './replay-04-migration.js';

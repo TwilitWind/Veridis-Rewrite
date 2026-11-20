@@ -1,7 +1,4 @@
-/**
- * view.js 拆分产物（modal）：10 个顶层声明，14998 字节 / 300 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** view 的分块：modal。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { rulesUiState, markRulesUiDirty } from '../state.js';
 import { closeMenuPopover } from '../../ui/popover.js';
 import { parseInputToWords, isRuleActivationWarningEnabled } from '../model.js';

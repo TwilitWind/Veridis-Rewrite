@@ -1,7 +1,4 @@
-/**
- * engine.js 拆分产物（patterns）：21 个顶层声明，14418 字节 / 356 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** engine 的分块：patterns。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { buildChineseVariantPattern, getChineseTextVariantLengths } from '../../zh/conversion.js';
 import { buildSimpleWildcardPattern, compileRegexTarget } from '../regex.js';
 import { extensionName } from '../../settings/defaults.js';

@@ -1,7 +1,4 @@
-/**
- * lifecycle.js 拆分产物（apply）：1 个顶层声明，2991 字节 / 60 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** lifecycle 的分块：apply。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { deepCleanRuntimeState } from '../state.js';
 import { logger } from '../../log.js';
 import { persistDeepCleanReview } from '../apply/index.js';

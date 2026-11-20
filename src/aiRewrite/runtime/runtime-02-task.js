@@ -1,7 +1,4 @@
-/**
- * runtime.js 拆分产物（task）：3 个顶层声明，13285 字节 / 279 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** runtime 的分块：task。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { defaultAiRewriteSettings } from '../../settings/defaults.js';
 import { logger } from '../../log.js';
 import { AiRewriteRequestFormatError, isBadRequestError, requestAiRewrite } from '../generation.js';

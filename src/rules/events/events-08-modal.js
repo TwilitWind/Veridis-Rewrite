@@ -1,7 +1,4 @@
-/***
- * 规则事件组：modalAction（原 bindRuleEvents 内第 50–57 段 handler）
- * 由原 src/rules/events.js 拆分；对外接口不变，调用方仍从 ./events.js 的 bindRuleEvents 进入。
- */
+/** 规则事件：modalAction。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
 import { isSearchGroupEditFlow, isSearchDirectSubruleFlow, isRelatedDirectSubruleFlow, saveCurrentEditingRule, formatRegexTargetError, clearRegexTargetValidationState, validateRegexTargetField, clearRegexTestArea } from './events-00-shared.js';
 import { runRuleTransfer } from './events-01-ui.js';
 import { refreshDiffViewer } from '../../diff/state.js';

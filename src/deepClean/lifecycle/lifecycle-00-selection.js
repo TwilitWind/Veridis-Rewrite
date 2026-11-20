@@ -1,7 +1,4 @@
-/**
- * lifecycle.js 拆分产物（selection）：14 个顶层声明，13578 字节 / 310 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** lifecycle 的分块：selection。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { deepCleanRuntimeState } from '../state.js';

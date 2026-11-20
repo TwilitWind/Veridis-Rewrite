@@ -1,7 +1,4 @@
-/***
- * 规则事件组：list（原 bindRuleEvents 内第 28–32 段 handler）
- * 由原 src/rules/events.js 拆分；对外接口不变，调用方仍从 ./events.js 的 bindRuleEvents 进入。
- */
+/** 规则事件：list。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
 import { getSelectedIndexesFromState, getBatchOperationContext, shouldBatchTransferRule, handleDeleteRule, renderTagsPreserveBatchSelection, batchMoveRules } from './events-00-shared.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';

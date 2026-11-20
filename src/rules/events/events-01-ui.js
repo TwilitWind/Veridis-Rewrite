@@ -1,7 +1,4 @@
-/***
- * 规则弹窗的模式切换与转移落盘（供事件组调用）
- * 由原 src/rules/events.js 拆分；对外接口不变，调用方仍从 ./events.js 的 bindRuleEvents 进入。
- */
+/** 规则事件：弹窗模式切换与转移落盘。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
 import { subruleModeUIMap, validateRegexTargetField, syncRegexAssistUi } from './events-00-shared.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';

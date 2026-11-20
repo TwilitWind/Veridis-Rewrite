@@ -1,7 +1,4 @@
-/**
- * matching.js 拆分产物（compile）：16 个顶层声明，14358 字节 / 334 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** matching 的分块：compile。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { omitVariableUpdates } from '../../text/variableUpdates.js';
 import { logger } from '../../log.js';
 import { buildSimpleTargetPattern, buildTargetLiteralPattern, pickReplacement, resolveProcessorReplacement } from '../../rules/engine.js';

@@ -1,7 +1,4 @@
-/**
- * v1.js 拆分产物（evidence）：21 个顶层声明，13334 字节 / 276 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** v1 的分块：evidence。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { parseShujukuIsolatedData, hasShujukuTopLevelLegacyTableEvidence, hasShujukuV1TableEvidence, hasShujukuV2TableEvidence, isSupportedLateShujukuV1Slot } from '../../storageEvidence.js';
 
 export const ISOLATED_FIELD = 'TavernDB_ACU_IsolatedData';

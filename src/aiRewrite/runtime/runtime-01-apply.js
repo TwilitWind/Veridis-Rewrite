@@ -1,7 +1,4 @@
-/**
- * runtime.js 拆分产物（apply）：10 个顶层声明，12835 字节 / 300 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** runtime 的分块：apply。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { aiRewriteState } from '../state.js';
 import { generationLifecycle } from '../../host/generationLifecycle.js';
 import { recordAiRewriteDebug } from '../debug.js';

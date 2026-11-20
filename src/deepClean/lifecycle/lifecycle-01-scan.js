@@ -1,7 +1,4 @@
-/**
- * lifecycle.js 拆分产物（scan）：11 个顶层声明，13647 字节 / 308 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** lifecycle 的分块：scan。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { deepCleanRuntimeState } from '../state.js';
 import { logger } from '../../log.js';
 import { scanDeepCleanContentItems } from '../scan.js';

@@ -1,7 +1,4 @@
-/**
- * tour.js 拆分产物（runtime）：18 个顶层声明，9776 字节 / 220 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** tour 的分块：runtime。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { annotateTauriMobileSurfaces, showResponsivePage } from '../shell.js';
 import { escapeHtml, createThemedTourLayer, requiredTarget, isPhone, currentMainPage, markGuidedTourSeen, guidedTourSeen } from './tour-00-targets.js';
 import { removeLayer, restoreTourPresentation, positionTourPopover, cardHtml, mainSteps, deepCleanSteps, welcomeHtml } from './tour-01-steps.js';

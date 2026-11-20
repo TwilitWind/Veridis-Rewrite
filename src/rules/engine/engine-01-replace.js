@@ -1,7 +1,4 @@
-/**
- * engine.js 拆分产物（replace）：12 个顶层声明，11208 字节 / 277 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** engine 的分块：replace。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { mergeScopeTagsWithBuiltins, collectMvuStatusPlaceholderRanges } from '../../scope/model.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';

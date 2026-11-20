@@ -1,7 +1,4 @@
-/**
- * tour.js 拆分产物（steps）：11 个顶层声明，15044 字节 / 133 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** tour 的分块：steps。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { showResponsivePage } from '../shell.js';
 import { activeNavigationTarget, toolsPageTourTarget, aiAdvancedGenerationTourTarget, currentRulesetTourTarget, ruleToolsTourTarget, deepCleanLaunchTourTarget, deepCleanQuickSelectionTourTarget, deepCleanFinalSelectionTourTarget, deepCleanPresetTourTarget, deepCleanOptionsTourTarget, escapeHtml } from './tour-00-targets.js';
 

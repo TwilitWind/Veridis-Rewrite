@@ -1,7 +1,4 @@
-/**
- * v1.js 拆分产物（entry）：7 个顶层声明，9223 字节 / 184 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** v1 的分块：entry。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { hasShujukuV2TableEvidence, shujukuLegacyMessageMatchesIsolation } from '../../storageEvidence.js';
 import { projectLateV1ShujukuCells } from '../replay.js';
 import { isRecord, readIsolatedData, ISOLATED_FIELD, LEGACY_CLEANUP_FIELDS, cloneJson } from './v1-00-evidence.js';

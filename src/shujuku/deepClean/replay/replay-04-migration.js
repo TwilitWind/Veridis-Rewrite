@@ -1,7 +1,4 @@
-/**
- * replay.js 拆分产物（migration）：11 个顶层声明，14643 字节 / 257 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** replay 的分块：migration。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { parseDdlTableName, isRecord, assertCanonicalState } from './replay-00-sqlText.js';
 import { stripSqlLineComments, parseDdlTableConstraints, parseDdlTableSuffix, parseSafeDefaultLiteral } from './replay-01-sqlRebind.js';
 import { requireSheetShape, canonicalJson, P1_COLUMN_CONSTRAINT_TOKENS } from './replay-03-cells.js';

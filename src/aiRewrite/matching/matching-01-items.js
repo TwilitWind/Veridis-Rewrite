@@ -1,7 +1,4 @@
-/**
- * matching.js 拆分产物（items）：11 个顶层声明，10679 字节 / 248 行。
- * 由原文件按依赖拓扑切分；对外接口不变，调用方仍从同名 barrel 导入。
- */
+/** matching 的分块：items。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { splitTextRangeIntoSentences as splitEditableRangeIntoSentences } from '../../text/sentences.js';
 import { collectSentenceWrappers, getAiProgramFallbackReplacement, collectAiScopeSegments, collectEditableRanges, getAiScopeRequestText } from './matching-00-compile.js';
 

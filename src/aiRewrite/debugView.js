@@ -253,14 +253,7 @@ const debugResultDisplayLabels = {
 const firstDebugDisplayFields = ['generationId', 'messageId', 'requestState', 'source'];
 const validationDebugDisplayFields = ['validationMode', 'validationReason'];
 
-/* ---------------------------------------------------------------------------
- * 显示层：把结构化事件排成人能读的时间线。
- * 三条约定：
- *   1. 正序 —— 先发生的事在上面，从上往下读就是时间顺序（旧版是倒序，因果读反）。
- *   2. 时间用本地时区 —— 旧版直接印 UTC，比本地慢 8 小时，会被当成旧日志。
- *   3. 连续重复的同类事件合并计数 —— 一次试运行会产生十几条一模一样的记录。
- * 阶段名、原因、模式、来源、结果全部走中文表；表里没有的值原样显示，便于反馈排查。
- * ------------------------------------------------------------------------- */
+/* 时间线排版：约定见文件头（正序 / 本地时区 / 重复事件合并计数）。 */
 
 const localizedValueFields = new Set(['source', 'result', 'reason', 'mode', 'hostGenerationType', 'tailRole']);
 
