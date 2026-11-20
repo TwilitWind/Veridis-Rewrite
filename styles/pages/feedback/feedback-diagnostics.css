@@ -59,7 +59,7 @@
     color: var(--text-main);
     font: inherit;
     font-size: var(--blai-font-13);
-    font-weight: var(--blai-weight-bold);
+    font-weight: var(--blai-weight-normal);
     line-height: 1;
 }
 

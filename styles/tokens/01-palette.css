@@ -23,7 +23,9 @@
     --blai-shadow-lg: 0 12px 32px var(--blai-shadow-color);
     /* 固定栏下沿的细分隔投影，spread 收负，只留一条软边。 */
     --blai-shadow-divider: 0 6px 16px -12px rgba(0, 0, 0, 0.62);
-    /* 滚动条统一细条 + 中性灰拇指：不用强调色，避免紫色竖条抢眼；夜色在 02-themes.css 加深。 */
+    /* 滚动条统一细条 + 中性灰拇指：不用强调色，避免紫色竖条抢眼；夜色在 02-themes.css 加深。
+       粗细走 --blai-scrollbar-size：桌面 8px、手机 4px（窄屏覆盖见 base/00-reset.css）。 */
+    --blai-scrollbar-size: 8px;
     --blai-scrollbar-thumb: rgba(0, 0, 0, 0.26);
     --blai-scrollbar-thumb-hover: rgba(0, 0, 0, 0.42);
     --blai-scrollbar-track: transparent;

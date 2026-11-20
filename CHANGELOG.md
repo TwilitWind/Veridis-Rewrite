@@ -4,6 +4,14 @@
 
 ---
 
+## 3.5 增强版 r5（滚动条粗细统一与标签字号）
+
+- 滚动条粗细统一走 token `--blai-scrollbar-size`：桌面 8px、手机（≤600px）4px。Firefox 走 `scrollbar-width: thin`（放 `@supports` 内，避免 Chrome 因标准属性整页忽略伪元素），WebKit 走 `::-webkit-scrollbar` 宽度变量。实测桌面日志框 8px、手机 4px。
+- 关键坑：伪元素规则原本用 `:where()` 包裹（特异性 0），与酒馆全局 `::-webkit-scrollbar{width:.7rem}` 同分且后加载被压，8px/4px 一直不生效；改为真实 ID 列表提升特异性后生效。手机端变量覆盖同样不能用 `:where()`（压不过 tokens 的 ID 定义 8px）。
+- 反馈页四个标签字号 13px → 15px；右侧顶栏小控件取消加粗（`font-weight: normal`）。两端均无横向溢出。
+
+---
+
 ## 3.5 增强版 r5（反馈页标签指示条与手机端画布分层）
 
 - 四个标签的指示条与标签栏底部分隔线重合：分隔线从 header 移到 nav，指示条用负 margin 压在 1px 线上；桌面实测差值 -0.48px（线宽 0.51px）、手机 0.03px。

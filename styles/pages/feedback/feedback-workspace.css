@@ -108,7 +108,7 @@
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: var(--blai-font-13);
+    font-size: var(--blai-font-15);
     font-weight: var(--blai-weight-bold);
     white-space: nowrap;
     display: inline-flex;
