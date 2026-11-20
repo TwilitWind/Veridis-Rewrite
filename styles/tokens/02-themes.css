@@ -292,13 +292,12 @@
     --blai-dropdown-active-ink: #FFFFFF;
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    /* 高亮整行铺满菜单：左右无内边距、行间无间隙。
-       保留上下 3px 留白，让菜单边框与首末行仍有呼吸感。
-       行项带圆角，避免高亮色块的直角顶到圆角菜单的四角。 */
-    --blai-dropdown-pad: var(--blai-space-3) 0;
+    /* 高亮整行铺满菜单：菜单内边距与行间距都为 0。
+       首行/末行由 07-menu-fill.css 补上与菜单一致的上/下圆角，中间行方角。 */
+    --blai-dropdown-pad: 0;
     --blai-dropdown-gap: 0;
     --blai-dropdown-shadow: var(--blai-shadow-sm);
-    --blai-dropdown-item-radius: var(--blai-radius-8);
+    --blai-dropdown-item-radius: 0;
     --blai-dropdown-item-pad-x: var(--blai-space-10);
     --blai-dropdown-item-height: var(--blai-size-28);
     --blai-dropdown-item-font: var(--blai-font-13);

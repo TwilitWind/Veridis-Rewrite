@@ -199,6 +199,7 @@
 #blai-subrule-edit-modal .blai-subrule-mode-block {
     flex: 1 1 auto;
     min-width: 0;
+    gap: var(--blai-space-2);
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
@@ -206,10 +207,11 @@
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-hint {
-    margin-top: var(--blai-space-7) !important;
+    margin-top: 0 !important;
     color: var(--text-secondary) !important;
     font-size: var(--blai-font-12) !important;
-    line-height: 1.45 !important;
+    line-height: 1.35 !important;
+    text-align: left;
 }
 
 #blai-subrule-edit-modal .blai-subrule-field {
@@ -287,10 +289,10 @@
 
 #blai-rule-edit-modal .blai-edit-head-actions .blai-modal-close-x,
 #blai-subrule-edit-modal .blai-subrule-modal-header .blai-modal-close-x {
-    width: var(--blai-size-28);
-    min-width: var(--blai-size-28);
-    height: var(--blai-size-28);
-    min-height: var(--blai-size-28);
+    width: var(--blai-size-28) !important;
+    min-width: var(--blai-size-28) !important;
+    height: var(--blai-size-28) !important;
+    min-height: var(--blai-size-28) !important;
 }
 
 #blai-rule-edit-modal .blai-modal-actions,

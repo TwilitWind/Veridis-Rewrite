@@ -1,0 +1,66 @@
+/* 下拉菜单高亮/悬停整行铺满：菜单内边距与行距由 token 归零，
+   这里补首末行圆角，让色块贴边但不顶破菜单圆角。中间行保持方角。 */
+
+:is(
+    .blai-theme-menu,
+    .blai-native-select-menu,
+    .blai-diff-actions-menu,
+    .blai-clean-tag-menu,
+    .blai-clean-group-menu,
+    .blai-edit-filter-menu,
+    .blai-feedback-area-options,
+    .blai-rule-search-menu,
+    .blai-preset-menu,
+    .blai-home-card-menu,
+    .blai-subrule-menu
+)[class] > :is([class], [role]) {
+    border-radius: 0;
+}
+
+:is(
+    .blai-theme-menu,
+    .blai-native-select-menu,
+    .blai-diff-actions-menu,
+    .blai-clean-tag-menu,
+    .blai-clean-group-menu,
+    .blai-edit-filter-menu,
+    .blai-feedback-area-options,
+    .blai-rule-search-menu,
+    .blai-preset-menu,
+    .blai-home-card-menu,
+    .blai-subrule-menu
+)[class] > :is([class], [role]):first-child {
+    border-radius: var(--blai-dropdown-radius) var(--blai-dropdown-radius) 0 0;
+}
+
+:is(
+    .blai-theme-menu,
+    .blai-native-select-menu,
+    .blai-diff-actions-menu,
+    .blai-clean-tag-menu,
+    .blai-clean-group-menu,
+    .blai-edit-filter-menu,
+    .blai-feedback-area-options,
+    .blai-rule-search-menu,
+    .blai-preset-menu,
+    .blai-home-card-menu,
+    .blai-subrule-menu
+)[class] > :is([class], [role]):last-child {
+    border-radius: 0 0 var(--blai-dropdown-radius) var(--blai-dropdown-radius);
+}
+
+:is(
+    .blai-theme-menu,
+    .blai-native-select-menu,
+    .blai-diff-actions-menu,
+    .blai-clean-tag-menu,
+    .blai-clean-group-menu,
+    .blai-edit-filter-menu,
+    .blai-feedback-area-options,
+    .blai-rule-search-menu,
+    .blai-preset-menu,
+    .blai-home-card-menu,
+    .blai-subrule-menu
+)[class] > :is([class], [role]):only-child {
+    border-radius: var(--blai-dropdown-radius);
+}

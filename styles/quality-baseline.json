@@ -74,7 +74,7 @@
     "pages/home/home-rule-edit-modal.css": {
       "hex": 0,
       "px": 6,
-      "important": 30
+      "important": 34
     },
     "pages/home/home-toolbar.css": {
       "hex": 0,
@@ -195,6 +195,11 @@
       "hex": 0,
       "px": 0,
       "important": 1
+    },
+    "components/07-menu-fill.css": {
+      "hex": 0,
+      "px": 0,
+      "important": 0
     }
   }
 }

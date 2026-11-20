@@ -415,10 +415,10 @@
     --blai-dropdown-ink: var(--text-main);
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    --blai-dropdown-pad: var(--blai-space-3) 0;
+    --blai-dropdown-pad: 0;
     --blai-dropdown-gap: 0;
     --blai-dropdown-shadow: var(--blai-shadow-sm);
-    --blai-dropdown-item-radius: var(--blai-radius-8);
+    --blai-dropdown-item-radius: 0;
     --blai-dropdown-item-pad-x: var(--blai-space-10);
     --blai-dropdown-item-height: var(--blai-size-28);
     position: fixed;

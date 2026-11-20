@@ -307,10 +307,6 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    /* 与标题行其它控件共享同一条垂直中线：flex-start 会让本控件贴顶、
-       比标题/X 高 3~6px，视觉上明显不齐。下拉浮层挂在 body 上按本控件
-       getBoundingClientRect() 定位，居中不影响展开位置。 */
-    align-self: center;
     height: var(--blai-size-28);
     padding: 0 var(--blai-space-20) 0 0;
     border: 0;
@@ -320,7 +316,16 @@
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
+    /* 桌面端标题要贴左，不能被 mode-block 的 cross-axis 居中推到中间。 */
+    align-self: flex-start;
     padding: 0;
+}
+
+@media screen and (max-width: 600px) {
+    /* 手机端标题行是 grid 第一行，控件只跟标题居中，不跟副标题整体居中。 */
+    #blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
+        align-self: center;
+    }
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-select-wrap .blai-native-select-trigger {
@@ -334,6 +339,8 @@
    箭头必须落在按钮自己的内边距里（position: relative 让绝对定位的箭头以按钮为参照），
    否则箭头和它右侧的留白都在按钮之外，点上去没反应，看起来就像只剩半个控件。 */
 #blai-rule-edit-modal .blai-edit-filter-wrap {
+    /* 筛选控件与标题/X 共享垂直中线。 */
+    align-self: center;
     padding: 0;
 }
 
