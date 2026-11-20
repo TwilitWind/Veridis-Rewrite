@@ -412,9 +412,10 @@ export function createAiSettingsCore() {
     aiMobileLayoutMedia.addEventListener('change', syncAiResponsiveLayout);
 
 
+    // 直角引号已去掉，关键词改由 <span> 承载强调色；调用处显式声明 allowHtml（文案为硬编码，非用户输入）。
     const AI_REWRITE_ORDER_NOTE = [
-        '开启「启用改写」后，插件先按规则条目顺序从上到下执行所有「AI 改写」条目，再执行「程序改写」条目。',
-        '关闭「启用改写」后，所有「AI 改写」条目会被自动过滤，只运行「程序改写」条目。',
+        '开启<span class="blai-dialog-em">启用改写</span>后，插件先按规则条目顺序从上到下执行所有<span class="blai-dialog-em">AI 改写</span>条目，再执行<span class="blai-dialog-em">程序改写</span>条目。',
+        '关闭<span class="blai-dialog-em">启用改写</span>后，所有<span class="blai-dialog-em">AI 改写</span>条目会被自动过滤，只运行<span class="blai-dialog-em">程序改写</span>条目。',
         '规则条目在列表中自上而下的排列顺序，就是实际的执行顺序。',
     ].join('\n');
 

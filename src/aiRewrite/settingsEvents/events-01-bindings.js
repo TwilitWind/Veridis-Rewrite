@@ -34,7 +34,7 @@ export function bindAiSettingHandlers(core) {
 
     $(document).off('click', '#blai-ai-connection-info').on('click', '#blai-ai-connection-info', function(event) {
         event.preventDefault();
-        showAlertModal(AI_REWRITE_ORDER_NOTE, { okText: '明白了' });
+        showAlertModal(AI_REWRITE_ORDER_NOTE, { okText: '明白了', allowHtml: true });
     });
 
 

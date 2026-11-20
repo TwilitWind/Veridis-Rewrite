@@ -159,6 +159,7 @@
     background: var(--bg-base) !important;
 }
 
+/* 编辑弹窗的规则正文保持 13px / 1.5，作为两端统一基准；首页规则卡跟随这个字号。 */
 #blai-edit-subrules-container .blai-subrule-preview {
     color: var(--text-main);
     font-size: var(--blai-font-13);

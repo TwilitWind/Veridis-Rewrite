@@ -100,6 +100,7 @@
 .blai-modal-actions .blai-secondary-btn,.blai-modal-actions .blai-primary-btn,.blai-modal-actions button{flex: 1;padding: var(--blai-space-10);font-size: var(--blai-font-14);display: flex;justify-content: center;align-items: center;gap: var(--blai-space-6);margin: 0;border-radius: var(--blai-radius-8)}
 .blai-plugin-dialog-card{display: flex;flex-direction: column;gap: var(--blai-space-14);width: min(92vw,var(--blai-size-420));max-width: var(--blai-size-420);padding: var(--blai-space-22);text-align: left}
 .blai-plugin-dialog-text{margin: 0;font-size: var(--blai-font-14);line-height: 1.6;color: var(--text-main);white-space: pre-line;word-break: break-word}
+.blai-plugin-dialog-text .blai-dialog-em{color: var(--accent-ink);font-style: normal;font-weight: var(--blai-weight-normal)}
 .blai-plugin-dialog-input{width: 100%;box-sizing: border-box;background-color: var(--bg-surface);border: var(--blai-border-1) solid var(--border-color);color: var(--text-main);padding: var(--blai-input-pad-dialog);border-radius: var(--blai-radius-8);font-size: var(--blai-font-14)}
 .blai-plugin-dialog-input:focus{outline: none !important;border-color: var(--accent-color) !important}
 .blai-plugin-dialog .blai-modal-actions{justify-content: flex-end;gap: var(--blai-space-10)}
@@ -616,12 +617,12 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-home-rule-item + .blai-home-rule-item{border-top: var(--blai-border-1) solid color-mix(in srgb,var(--border-color) 78%,transparent)}
 #blai-purifier-popup .blai-home-rule-item.blai-is-disabled{opacity: 0.48}
 #blai-purifier-popup :is(.blai-home-rule-source,.blai-home-rule-target){min-width: 0;display: grid;gap: var(--blai-space-5)}
-#blai-purifier-popup .blai-home-rule-labels{min-width: 0;min-height: var(--blai-size-18);display: flex;align-items: center;gap: var(--blai-space-5);overflow: hidden}
-#blai-purifier-popup .blai-home-rule-badge{flex: 0 0 auto;min-height: var(--blai-size-18);padding: 0;border-radius: 0;display: inline-flex;align-items: center;background: transparent;color: var(--accent-ink);font-size: var(--blai-font-10);font-weight: var(--blai-weight-normal);line-height: 1.2}
-#blai-purifier-popup :is(.blai-home-source-text,.blai-home-target-text){min-width: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;color: var(--text-main);font-size: var(--blai-font-12);font-weight: var(--blai-weight-normal);line-height: 1.35}
-#blai-purifier-popup .blai-home-preview-label{min-height: var(--blai-size-18);display: inline-flex;align-items: center;color: var(--text-main);font-size: var(--blai-font-10);font-weight: var(--blai-weight-normal);line-height: 1.2}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) .blai-home-rule-labels{min-width: 0;min-height: var(--blai-size-18);display: flex;align-items: center;gap: var(--blai-space-5);overflow: hidden}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) .blai-home-rule-badge{flex: 0 0 auto;min-height: var(--blai-size-18);padding: 0;border-radius: 0;display: inline-flex;align-items: center;background: transparent;color: var(--accent-ink);font-size: var(--blai-font-13);font-weight: var(--blai-weight-bold);line-height: 1.2}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) :is(.blai-home-source-text,.blai-home-target-text){min-width: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;color: var(--text-main);font-size: var(--blai-font-13);font-weight: var(--blai-weight-normal);line-height: 1.5}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) .blai-home-preview-label{min-height: var(--blai-size-18);display: inline-flex;align-items: center;color: var(--text-main);font-size: var(--blai-font-10);font-weight: var(--blai-weight-normal);line-height: 1.2}
 #blai-purifier-popup .blai-home-rule-arrow{color: var(--text-main);font-size: var(--blai-font-11);text-align: center}
-#blai-purifier-popup .blai-home-more-text{padding: var(--blai-space-3) 0 var(--blai-space-1);color: var(--text-secondary);font-size: var(--blai-font-10);font-weight: var(--blai-weight-normal);text-align: right}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) .blai-home-more-text{padding: var(--blai-space-3) 0 var(--blai-space-1);color: var(--text-secondary);font-size: var(--blai-font-10);font-weight: var(--blai-weight-normal);text-align: right}
 #blai-purifier-popup .blai-home-card-empty{min-height: var(--blai-size-74);padding: var(--blai-space-16);display: grid;place-items: center;color: var(--text-secondary);font-size: var(--blai-font-11)}
 #blai-purifier-popup .blai-home-empty-state{min-height: var(--blai-size-180);grid-column: 1 / -1;display: grid;place-items: center;align-content: center;gap: var(--blai-space-8);border: var(--blai-border-1) dashed var(--border-color);border-radius: var(--blai-radius-14);color: var(--text-secondary);text-align: center}
 #blai-purifier-popup .blai-home-empty-state i{color: var(--accent-ink);font-size: var(--blai-font-22)}
@@ -647,9 +648,9 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-home-batch-panel{padding: var(--blai-space-4) 0 0;gap: 0;border: 0;border-radius: 0;background: transparent}
 #blai-purifier-popup .blai-home-batch-heading{display: none}
 #blai-purifier-popup .blai-home-batch-actions button{min-height: var(--blai-size-30);padding: 0 var(--blai-space-4);gap: var(--blai-space-3);font-size: var(--blai-font-10)}
-#blai-purifier-popup .blai-home-card{background: var(--bg-surface);box-shadow: none}
-#blai-purifier-popup .blai-home-rule-item{grid-template-columns: minmax(0,1.35fr) 14px minmax(0,1fr);gap: var(--blai-space-5)}
-#blai-purifier-popup :is(.blai-home-source-text,.blai-home-target-text,.blai-home-preview-label,.blai-home-more-text){font-weight: var(--blai-weight-normal)}
+#blai-purifier-popup .blai-home-card{box-sizing: border-box;border: var(--blai-border-1) solid var(--border-color);border-radius: var(--blai-radius-14);background: var(--bg-surface);box-shadow: none}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) .blai-home-rule-item{grid-template-columns: minmax(0,1.35fr) 14px minmax(0,1fr);gap: var(--blai-space-5)}
+:is(#blai-purifier-popup,#blai-rule-edit-modal) :is(.blai-home-source-text,.blai-home-target-text,.blai-home-preview-label,.blai-home-more-text){font-weight: var(--blai-weight-normal)}
 .blai-modal-shell .blai-field-label,.blai-modal-shell .blai-edit-field>label,.blai-modal-shell .blai-subrule-field>label{font-size: var(--blai-font-14);line-height: 1.35;font-weight: var(--blai-weight-bold)}
 #blai-rule-edit-modal :is(.blai-subrule-preview,.blai-subrule-preview-source,.blai-subrule-preview-replacement,.blai-subrule-remark,.blai-subrule-empty){font-weight: var(--blai-weight-normal)}
 #blai-rule-edit-modal .blai-edit-modal-title{font-weight: var(--blai-weight-bold)}
@@ -1595,6 +1596,7 @@ body #toast-container>.blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast>.bla
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header{position: relative;flex-direction: row;min-height: var(--blai-size-62);gap: 0}
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header>div:first-child{flex: 1 1 auto;align-self: flex-start;text-align: left}
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-title-row{justify-content: flex-start}
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-note{margin-top: var(--blai-space-4);color: var(--text-secondary);font-size: var(--blai-font-11);line-height: 1.45;text-wrap: pretty}
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches{position: absolute;top: 0;right: 0;flex-direction: column;align-items: flex-end;flex-wrap: nowrap;gap: var(--blai-space-3)}
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch{gap: var(--blai-space-4);min-height: var(--blai-size-28);font-size: var(--blai-font-10)}
 #blai-purifier-popup.blai-app-shell .blai-ai-prompt-input{min-height: var(--blai-size-150) !important}}

@@ -1,6 +1,6 @@
 /* 首页规则预览文本、分组详情、搜索框与最近搜索。 */
 
-#blai-purifier-popup .blai-home-rule-labels {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) .blai-home-rule-labels {
     min-width: 0;
     min-height: var(--blai-size-18);
     display: flex;
@@ -9,7 +9,7 @@
     overflow: hidden;
 }
 
-#blai-purifier-popup .blai-home-rule-badge {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) .blai-home-rule-badge {
     flex: 0 0 auto;
     min-height: var(--blai-size-18);
     padding: 0;
@@ -18,23 +18,26 @@
     align-items: center;
     background: transparent;
     color: var(--accent-ink);
-    font-size: var(--blai-font-10);
-    font-weight: var(--blai-weight-normal);
+    /* 与编辑弹窗的标记保持同一字号和字重，形成层级（两端均为 13px / 600）。 */
+    font-size: var(--blai-font-13);
+    /* 类型标记加粗，和后面的规则正文拉开层级。 */
+    font-weight: var(--blai-weight-bold);
     line-height: 1.2;
 }
 
-#blai-purifier-popup :is(.blai-home-source-text, .blai-home-target-text) {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) :is(.blai-home-source-text, .blai-home-target-text) {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: var(--text-main);
-    font-size: var(--blai-font-12);
+    /* 规则正文统一对齐编辑弹窗的 13px / 1.5，不再首页偏小。 */
+    font-size: var(--blai-font-13);
     font-weight: var(--blai-weight-normal);
-    line-height: 1.35;
+    line-height: 1.5;
 }
 
-#blai-purifier-popup .blai-home-preview-label {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) .blai-home-preview-label {
     min-height: var(--blai-size-18);
     display: inline-flex;
     align-items: center;
@@ -50,7 +53,7 @@
     text-align: center;
 }
 
-#blai-purifier-popup .blai-home-more-text {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) .blai-home-more-text {
     padding: var(--blai-space-3) 0 var(--blai-space-1);
     color: var(--text-secondary);
     font-size: var(--blai-font-10);
@@ -214,16 +217,20 @@
 }
 
 #blai-purifier-popup .blai-home-card {
+    /* 手机端每组规则用边框收成完整卡片，避免白卡在浅色画布上显得散。 */
+    box-sizing: border-box;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-14);
     background: var(--bg-surface);
     box-shadow: none;
 }
 
-#blai-purifier-popup .blai-home-rule-item {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) .blai-home-rule-item {
     grid-template-columns: minmax(0, 1.35fr) 14px minmax(0, 1fr);
     gap: var(--blai-space-5);
 }
 
-#blai-purifier-popup :is(.blai-home-source-text, .blai-home-target-text, .blai-home-preview-label, .blai-home-more-text) {
+:is(#blai-purifier-popup, #blai-rule-edit-modal) :is(.blai-home-source-text, .blai-home-target-text, .blai-home-preview-label, .blai-home-more-text) {
     font-weight: var(--blai-weight-normal);
 }
 

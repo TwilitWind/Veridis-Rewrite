@@ -62,13 +62,16 @@ export function showRiskInfoModal(message) {
 
 // 插件内的统一对话框：原生 confirm/alert/prompt 会贴在浏览器窗口顶部，无法与插件界面对齐，
 // 因此全部改走这套自适应弹窗，永远在视口正中。
-function openPluginDialog({ message, value = null, placeholder = '', okText = '确定', cancelText = '取消', showCancel = true, danger = false }) {
+function openPluginDialog({ message, value = null, placeholder = '', okText = '确定', cancelText = '取消', showCancel = true, danger = false, allowHtml = false }) {
     return new Promise((resolve) => {
         const theme = String($('#blai-purifier-popup').attr('data-theme') || 'auto');
         const $modal = $('<div class="blai-modal-shell blai-plugin-dialog" role="presentation"></div>')
             .attr('data-theme', theme);
         const $card = $('<div class="blai-modal-card blai-plugin-dialog-card" role="dialog" aria-modal="true"></div>').appendTo($modal);
-        const $text = $('<p class="blai-plugin-dialog-text"></p>').text(String(message || '')).appendTo($card);
+        const $text = $('<p class="blai-plugin-dialog-text"></p>').appendTo($card);
+        // 只有调用方显式声明可信的硬编码文案时才渲染 HTML；默认仍走 text()，避免把用户输入当标记解析。
+        if (allowHtml) $text.html(String(message || ''));
+        else $text.text(String(message || ''));
         const $input = value === null
             ? null
             : $('<input type="text" class="blai-input blai-plugin-dialog-input">')
@@ -126,7 +129,7 @@ export function showConfirmModal(message, options = {}) {
 }
 
 export function showAlertModal(message, options = {}) {
-    return openPluginDialog({ message, okText: options.okText || '知道了', showCancel: false });
+    return openPluginDialog({ message, okText: options.okText || '知道了', showCancel: false, allowHtml: options.allowHtml === true });
 }
 
 export function showPromptModal(message, defaultValue = '', options = {}) {
