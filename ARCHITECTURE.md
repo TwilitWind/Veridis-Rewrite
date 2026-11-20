@@ -30,9 +30,10 @@ Veridis-Rewrite/
 ├── build-css.mjs           拼接压缩 + token 等价校验 + sourcemap
 ├── build-check.mjs         构建闸门
 ├── test/
-│   ├── audit.mjs           审计总入口：static / layout / all
+│   ├── audit.mjs           审计总入口：static / layout / align / all
 │   ├── style-audit.mjs     静态：字号分布/极值/裸值/双端 @media 覆盖（零依赖）
 │   ├── layout-audit.mjs    运行时：CDP 裁切/重叠/遮挡/渲染字号，桌面手机同会话
+│   ├── align-audit.mjs     运行时：UI 控件与同行文本垂直居中偏差
 │   ├── sync.mjs            运行时文件同步到装机副本
 │   └── st-*.mjs / cdp-eval.mjs  截图、手机模拟、CDP 求值
 ├── src/                    业务模块
@@ -230,6 +231,32 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 `styles/` 是唯一真源，五层。`styles/ORDER.json` 的 `order` 数组即层叠顺序：同特异性靠先后决胜，**调顺序会改视觉结果**，故顺序写在 JSON 而非脚本；新增分文件只改 ORDER.json。
 
+### 构建与审计
+
+`style.css` 是产物。改 `styles/` 或 `src/` 后执行：
+
+```bash
+node build-css.mjs     # 合并压缩 + token 级等价校验 + 生成 sourcemap
+node build-check.mjs   # 构建闸门，与上一命令相互独立，必须单独跑
+```
+
+改样式后还能跑审计：
+
+```bash
+node test/audit.mjs              # static + layout + align
+node test/audit.mjs static       # 零依赖：字号分布/极值/裸值/双端 @media
+node test/audit.mjs layout       # CDP：裁切/重叠/遮挡，需 9224 调试 Chrome
+node test/audit.mjs align        # CDP：控件与同行文本垂直居中，需 9224
+```
+
+运行时审计要先起独立调试浏览器（避开日常 9222）：
+
+```bash
+"C:/Program Files/Google/Chrome/Application/chrome.exe" --remote-debugging-port=9224 --user-data-dir="C:/Users/feng/AppData/Local/Temp/st-cdp-profile" "http://127.0.0.1:8000/"
+```
+
+三个脚本只读：只临时切视口/开弹窗，退出还原。双端几何、配色、状态用 CDP 求值，截图只确认整窗观感；完整操作流程见工作区 `docs/testing.md`。
+
 | 目录 | 职责 | 约束 |
 | --- | --- | --- |
 | `tokens/` | 调色板、五套主题、刻度 | 唯一来源，其他文件不许重定义 |
@@ -243,40 +270,21 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 令牌挂在一组**容器选择器**而非 `:root`：`#blai-purifier-popup`、`.blai-modal-shell`、`#blai-scope-tag-editor-modal`、`#blai-rule-transfer-modal`、`#blai-diff-modal`、`#blai-rule-search-modal`、`#blai-preset-import-choice-modal`、`.blai-toast`、`#blai-loading-overlay`、`#blai-tour-layer`。弹层与 toast 不在主容器内——增删容器要同步令牌、`theme.js` 的 `data-theme` 列表与 `03-scale.css` 语义层。
 
-### 配色三层（硬要求）
+### 界面令牌落点
 
-1. 最外层背景灰白 `--bg-base`（日间 `#F7F7F8`，纯中性灰不做蓝偏移）。
-2. 控件白底 `--bg-surface`（`#FFFFFF`）。
-3. 控件内输入框 / 下拉框微灰填充、无边框：`background-color: var(--field-bg) !important`（日间 `#F1F2F4`、夜间 `#222733`；跟随主题用 `color-mix(in srgb, var(--border-color) 16%, var(--bg-surface))`）。**混入比例必须小**：`--border-color` 本身已是底色上一档，大比例混会把两档叠加、深色下发刺眼（实测 62% 时深色台阶 1.51、固定主题 1.12；16% 时三套主题约 1.11~1.14 同档）。
+通用审美规则（配色层级、图标、字号档位、下拉高亮、标题组对齐）以工作区 `docs/DESIGN.md` 为准，本节只记插件令牌与坑。
 
-填充式（凸起）而非凹陷式：输入框日夜间都「比卡片更靠近正文色一档」，两主题亮度台阶对齐约 1.12（夜间填充还要收窄色相偏移，深色下发蓝会像荧光块）；台阶不一致会让同一控件日夜体积感相反。凹陷式在日间不成立（画布与白卡差太小，槽挖不出来，除非改整屏明度）。
-
-「能输入」靠填充表达，「正在输入」靠焦点态内阴影描边：`box-shadow: inset 0 0 0 1px var(--accent-color) !important`（不占位不抖动）。不画静态边框（白卡与灰白画布上同一条边框观感差很多，同一填充值却能同时压住两种容器）。禁止对输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）；hover 不加描边，focus 只用内阴影，不叠 outline 或外阴影。`.pages` / `.page-panel` 必须透明让 `--bg-base` 透上来，卡片才是唯一白块。不用半透明叠色（`color-mix(..., transparent)` 叠灰底发脏），日间用实色；选中态用 `color-mix(in srgb, var(--accent-color) 8%, var(--bg-surface))`。
-
-### 图标（统一字体图标）
-
-界面图标一律用酒馆自带 Font Awesome 6.5.2（`public/css/fontawesome.min.css`，无额外依赖）：`<i class="fas fa-*" aria-hidden="true"></i>`。禁止内联 `<svg>`、CSS 拼三角/对勾、或 `&times;` `&#10005;` `→` 等字符代替：
-
-| 场合 | 做法 |
-| --- | --- |
-| 模板与 JS 生成的按钮/标题 | `<i class="fas fa-*">`，尺寸交给容器 `> i` 规则 |
-| 伪元素必须画的勾选/下拉箭头 | `content: '\f00c'` / `'\f078'` + `font-family: 'Font Awesome 6 Free'; font-weight: 900` |
-| 复选框（`appearance: none` 自绘） | 同上 `\f00c` |
-| 纯装饰线条/圆点（时间轴竖线、流程圆点） | 保留 CSS 绘制，不算图标 |
-
-类名必须在 FA 6.5.2 存在；`fa-fw` / `fa-solid` / `fa-spin` 是修饰类，不参与校验。
-
-### 间距与布局令牌
-
-语义层在 `03-scale.css` 第二块，调疏密只改这里：`--blai-canvas-pad`（12）、`--blai-panel-pad`、`--blai-panel-pad-tight`（10）、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`（8）、`--blai-head-pad`（12）、`--blai-row-pad`（10）。没有令牌先加一行再引用，页面文件里不写 `gap: 14px`。
-
-两栏页面统一 `minmax(0, 5fr) minmax(0, 3fr)`（两端都要 `minmax(0, ...)`），一律 `align-items: stretch` 让短栏白卡拉齐长栏，不退回 `start`。断点、`box-shadow`、`grid-template-columns`、`transform` 保留字面量是刻意的。
+- 颜色三层：`--bg-base`（画布，日间 `#F7F7F8`）→ `--bg-surface`（卡片，`#FFFFFF`）→ `--field-bg`（输入框/下拉微灰填充，无静态边框）。日间 `#F1F2F4`、夜间 `#222733`；跟随主题用 `color-mix(in srgb, var(--border-color) 16%, var(--bg-surface))`。混入比例必须小：`--border-color` 本身已是底色上一档，62% 时深色亮度台阶 1.51、16% 后约 1.11，否则发刺眼。填充式而非凹陷式；日间画布与白卡差太小，挖不出槽。
+- 焦点态用 `box-shadow: inset 0 0 0 1px var(--accent-color) !important`，不占位不抖动；hover 不加描边。禁给输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）。主题对裸标签有强声明时把 `--ui-color-sec` 重定向到 `--blai-input-bg`，不新增 `!important`；副作用是边框也读该变量，反馈页三个裸标签用同色 inset 补可见边框。`.pages` / `.page-panel` 保持透明让 `--bg-base` 透上来；日间用实色，不用半透明叠灰底（发脏）。
+- 图标统一酒馆自带 Font Awesome 6.5.2，格式 `<i class="fas fa-*" aria-hidden="true"></i>`；禁止内联 `<svg>`、CSS 拼三角/对勾、字符箭头。伪元素勾选与下拉箭头用 FA 字形码加 FA 字体；装饰线条/圆点不算图标。类名必须在 FA 6.5.2 存在，`fa-fw` / `fa-solid` / `fa-spin` 是修饰类，不参与校验。
+- 字号只用 5 档语义 token（`--blai-fs-*`），旧 `--blai-font-N` 全是别名；双端档值与禁止整体缩放见 `docs/DESIGN.md` §3。间距语义层在 `03-scale.css` 第二块：`--blai-canvas-pad`(12)、`--blai-panel-pad`、`--blai-panel-pad-tight`(10)、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`(8)、`--blai-head-pad`(12)、`--blai-row-pad`(10)。页面文件不写裸 `gap: 14px`。
+- 两栏统一 `minmax(0, 5fr) minmax(0, 3fr)`（两端都要 `minmax(0, ...)`）与 `align-items: stretch`，不退回 `start`；断点、`box-shadow`、`grid-template-columns`、`transform` 保留字面量是刻意的。
 
 ### 构建闸门
 
 `build-check.mjs` 的机械校验：单文件超阈值 fail/warn；**每个 `.css` 花括号必须平衡（少 `}` 会 fail——r5 曾因此把桌面外壳规则吞进手机 `@media`，token 校验发现不了）**；`styles/` 下每个 `.css` 必须登记 ORDER（孤儿 fail）；顶层只允许 tokens/base/components/layouts/pages；ORDER 层级不得倒挂（tokens→base→components→layouts→pages）；非 tokens 文件不许重定义刻度名；禁 `@import` / `@charset`；输入框不许透明底；tokens 外不许 `#hex`；`!important` 不得比 `quality-baseline.json` 的基线值上涨（只 warn）；manifest 指向的 js/css 必须存在；根 `style.css` 必须存在且非空；`src/` 下 `.js` 有体积与行数上限。具体阈值以脚本为准，不在此抄数。
 
-输入控件背景色统一走 `02-themes.css` 的 `--blai-input-bg`（默认等于 `--field-bg`），下拉框/输入框/文本域共用一处。酒馆主题对裸标签有 `select/input/textarea{background:var(--ui-color-sec)}` 强声明，这里在控件上把 `--ui-color-sec` 重定向到 `--blai-input-bg`，让主题的强声明算出我们的颜色，不新增 `!important`；副作用是主题边框简写也读 `--ui-color-sec`，反馈页三个裸标签控件边框被染成白底同色不可见，用同色 `inset` 阴影补一圈可见边框（主题未对 `box-shadow` 下强声明）。反馈页桌面布局高度随内容增长（不用 `minmax(0,1fr)+height:100%` 锁死），否则「涉及区域」展开时详细说明框越过固定 footer 盖住隐私说明浅字；隐私说明设 `min-height` 避免换行跳动。正则高亮态 `color: transparent` 与 token 颜色必须保留强声明（同属性在控件基线规则里仍有 `!important`，加特异性压不住）。测试区命中高亮靠 overlay 叠在 textarea 之下（命中时把 `--field-bg` 置 transparent），命中统计放测试框右上角。
+反馈页桌面布局高度随内容增长（不用 `minmax(0,1fr)+height:100%` 锁死），否则「涉及区域」展开时详细说明框越过固定 footer 盖住隐私说明浅字；隐私说明设 `min-height` 避免换行跳动。正则高亮态 `color: transparent` 与 token 颜色必须保留强声明（同属性在控件基线规则里仍有 `!important`，加特异性压不住）。测试区命中高亮靠 overlay 叠在 textarea 之下（命中时把 `--field-bg` 置 transparent），命中统计放测试框右上角。
 
 两个规则弹窗顶栏叉号统一 `.blai-modal-close-x`；其中 `border: 0 !important` 是主题对裸 button 强声明用特异性压不过后的例外，已登记 `quality-baseline.json`。拆分样板见 `styles/pages/` 与各 `components/` 下的 `*-topbar.css` / `*-page.css` / `*-deep.css` / `*-processing.css` / `*-form.css` / `*-regex.css`。
 
