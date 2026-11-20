@@ -282,7 +282,7 @@
 @media (max-width: 600px) {
     #blai-purifier-popup .blai-global-header {
         --blai-header-button-size: var(--blai-size-28);
-        padding: calc(var(--blai-space-2) + env(safe-area-inset-top, 0px)) var(--blai-space-12) var(--blai-space-3);
+        padding: calc(var(--blai-space-6) + env(safe-area-inset-top, 0px)) var(--blai-space-12) var(--blai-space-8);
         column-gap: var(--blai-space-4);
         row-gap: 0;
         grid-template-rows: auto;

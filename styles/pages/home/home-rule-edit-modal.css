@@ -188,11 +188,7 @@
     padding-top: var(--blai-space-10) !important;
 }
 
-/* 子规则弹窗的标题是「处理方式」下拉，被 .blai-modal-shell .blai-select-box 的 13px 压过，
-   这里按标题字号单独放大一档。 */
-#blai-subrule-edit-modal .blai-subrule-mode-select {
-    font-size: var(--blai-font-15) !important;
-}
+/* 子规则弹窗的语法模式触发器由 nativeSelectMenu 生成，视觉规则集中在 home-overview.css。 */
 
 #blai-subrule-edit-modal .blai-subrule-modal-header {
     gap: var(--blai-space-10);
@@ -207,15 +203,6 @@
 
 #blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
     border-radius: var(--blai-radius-14);
-}
-
-/* 下拉箭头原先 right:0，正好压在输入框圆角边缘；给它留出内边距，文字同步让位。 */
-#blai-subrule-edit-modal .blai-subrule-mode-select {
-    padding: 0 var(--blai-space-36) 0 var(--blai-space-12) !important;
-}
-
-#blai-subrule-edit-modal .blai-subrule-mode-arrow {
-    right: var(--blai-space-12);
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-hint {
@@ -291,5 +278,33 @@
     height: var(--blai-size-32) !important;
     min-height: var(--blai-size-32) !important;
     padding: 0 var(--blai-space-12) !important;
+}
+
+/* 两个编辑弹窗：顶栏与底栏各压 4~8px，内容区得到更多高度。 */
+#blai-rule-edit-modal .blai-edit-modal-head {
+    margin-bottom: var(--blai-space-6);
+}
+
+#blai-rule-edit-modal .blai-edit-head-actions .blai-modal-close-x,
+#blai-subrule-edit-modal .blai-subrule-modal-header .blai-modal-close-x {
+    width: var(--blai-size-28);
+    min-width: var(--blai-size-28);
+    height: var(--blai-size-28);
+    min-height: var(--blai-size-28);
+}
+
+#blai-rule-edit-modal .blai-modal-actions,
+#blai-subrule-edit-modal .blai-subrule-footer {
+    margin-top: var(--blai-space-6) !important;
+    padding-top: 0 !important;
+}
+
+#blai-subrule-edit-modal .blai-subrule-modal-header {
+    margin-bottom: var(--blai-space-6);
+}
+
+#blai-subrule-edit-modal .blai-subrule-mode-hint {
+    margin-top: 0 !important;
+    line-height: 1.3 !important;
 }
 }

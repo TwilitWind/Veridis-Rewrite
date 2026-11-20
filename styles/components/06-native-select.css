@@ -79,6 +79,7 @@
     position: fixed;
     z-index: 2147483000;
     display: grid;
+    min-width: var(--blai-size-120);
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
     max-height: min(var(--blai-size-360), 60vh);

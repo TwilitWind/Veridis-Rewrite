@@ -137,6 +137,20 @@ const maxPx = pxValues.length ? Math.max(...pxValues) : null;
 const minPx = pxValues.length ? Math.min(...pxValues) : null;
 const outliers = rows.filter((r) => r.count === 1 && r.tokens.length === 0);
 
+/* 旧数字 token 是语义档位的别名：引用别名即等于引用语义档位。 */
+const usedFontTokens = new Set();
+for (const d of fontDecls) {
+    for (const m of d.value.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)) {
+        let token = m[1];
+        const seen = new Set();
+        while (token && !seen.has(token)) {
+            usedFontTokens.add(token);
+            seen.add(token);
+            token = aliasMap.get(token) ?? null;
+        }
+    }
+}
+
 /* 2. 双端覆盖：@media 内的 font-size 声明，列出 选择器上一个块 → 覆盖值 */
 const mediaFonts = decls.filter((d) => d.prop === 'font-size' && d.media && /max-width|min-width/.test(d.media));
 const mediaGroups = new Map();
@@ -173,7 +187,7 @@ const report = {
         outliers,
         bareFonts,
         tokenCount: tokenMap.size,
-        unusedTokens: [...tokenMap.keys()].filter((t) => !fontDecls.some((d) => d.value.includes(t))),
+        unusedTokens: [...tokenMap.keys()].filter((t) => !usedFontTokens.has(t)),
     },
     responsive: {
         mediaGroups: [...mediaGroups.entries()].map(([media, items]) => ({ media, count: items.length, items })),

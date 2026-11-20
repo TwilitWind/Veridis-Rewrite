@@ -177,11 +177,10 @@ const EXCLUDE_SELECTORS = [
     '#blai-tools-preset-select',
     '.blai-visually-hidden',
     '.blai-native-select-anchor',
-    '.blai-subrule-mode-select',   // 编辑弹窗的语法模式：原生 select + 专属箭头，保持原样
 ];
 
 // 插件自己的容器：只包装这些范围内的 select，绝不碰酒馆本体。
-const PLUGIN_SCOPE = '#blai-purifier-popup, #blai-feedback-workspace, #blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-preset-import-choice-modal, #blai-deep-clean-workspace';
+const PLUGIN_SCOPE = '#blai-purifier-popup, #blai-feedback-workspace, #blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-subrule-transfer-modal, #blai-preset-import-choice-modal, #blai-deep-clean-workspace';
 
 function isInPluginScope(node) {
     try {

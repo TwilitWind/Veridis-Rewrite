@@ -362,8 +362,8 @@
     width: auto !important;
     flex: 0 0 auto !important;
     min-width: var(--blai-size-104) !important;
-    min-height: var(--blai-size-38) !important;
-    padding: var(--blai-space-8) var(--blai-space-16) !important;
+    min-height: var(--blai-size-32) !important;
+    padding: 0 var(--blai-space-12) !important;
     border-radius: var(--blai-radius-12) !important;
     border: var(--blai-border-1) solid var(--accent-color) !important;
     background: var(--accent-color) !important;
