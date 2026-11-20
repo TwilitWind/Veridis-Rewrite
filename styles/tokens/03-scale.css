@@ -50,24 +50,33 @@
      所以页面只需普通留白，不需要再留一整个导航高度（旧值 84px 造成大空白）。 */
   --blai-page-bottom-gap: 24px;
 
-  /* 字号。 */
-  --blai-font-8: 8px;
-  --blai-font-9: 9px;
-  --blai-font-10: 10px;
-  --blai-font-11: 11px;
-  --blai-font-11-5: 11.5px;
-  --blai-font-12: 12px;
-  --blai-font-12-5: 12.5px;
-  --blai-font-13: 13px;
-  --blai-font-14: 14px;
-  --blai-font-15: 15px;
-  --blai-font-16: 16px;
-  --blai-font-17: 17px;
-  --blai-font-18: 18px;
-  --blai-font-20: 20px;
-  --blai-font-22: 22px;
-  --blai-font-24: 24px;
-  --blai-font-26: 26px;
+  /* 字号：5 档语义刻度。组件只引用语义档，档值在此唯一定义。
+     5 档 = 浅字说明 / 正文 / 容器内次级标题 / 容器标题 / 顶栏标题。
+     旧的数字 token 保留为别名指向对应档位，已有组件引用无需改动即自动收敛。 */
+  --blai-fs-note: 11px;
+  --blai-fs-body: 13px;
+  --blai-fs-sub: 14px;
+  --blai-fs-title: 15px;
+  --blai-fs-hero: 18px;
+
+  /* 旧数字 token → 5 档别名（映射见 docs/font-convergence-plan.md）。 */
+  --blai-font-8: var(--blai-fs-note);
+  --blai-font-9: var(--blai-fs-note);
+  --blai-font-10: var(--blai-fs-note);
+  --blai-font-11: var(--blai-fs-note);
+  --blai-font-11-5: var(--blai-fs-note);
+  --blai-font-12: var(--blai-fs-body);
+  --blai-font-12-5: var(--blai-fs-body);
+  --blai-font-13: var(--blai-fs-body);
+  --blai-font-14: var(--blai-fs-sub);
+  --blai-font-15: var(--blai-fs-title);
+  --blai-font-16: var(--blai-fs-title);
+  --blai-font-17: var(--blai-fs-title);
+  --blai-font-18: var(--blai-fs-hero);
+  --blai-font-20: var(--blai-fs-hero);
+  --blai-font-22: var(--blai-fs-hero);
+  --blai-font-24: var(--blai-fs-hero);
+  --blai-font-26: var(--blai-fs-hero);
 
   /* 字重：全插件正文只用两类——正常 400 与加粗 600，不再有其他字重。 */
   --blai-weight-normal: 400;
@@ -236,4 +245,15 @@
   --blai-input-pad-inline-wide: 0 var(--blai-space-14);
   /* 窄屏下拉：高度只有 32px，横向留白相应收紧 */
   --blai-input-pad-inline-tight: var(--blai-space-3) var(--blai-space-8);
+}
+
+/* 手机端 5 档字号整体收一档（浅字不再降，避免小字过小；正文/标题各降 1~2px）。 */
+@media (max-width: 600px) {
+:root {
+  --blai-fs-note: 11px;
+  --blai-fs-body: 12px;
+  --blai-fs-sub: 13px;
+  --blai-fs-title: 14px;
+  --blai-fs-hero: 16px;
+}
 }

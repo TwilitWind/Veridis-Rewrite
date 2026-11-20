@@ -14,11 +14,31 @@ const jsonMode = process.argv.includes('--json');
 
 const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
 
-/* 从 03-scale.css 取字号 token 白名单 */
-const scaleText = fs.readFileSync(path.join(STYLES, 'tokens', '03-scale.css'), 'utf8');
+/* 从 03-scale.css 取字号 token 白名单。
+   token 有两种写法：直接 px（5 档语义 --blai-fs-*）与 var() 别名（旧 --blai-font-N 指向 5 档）。
+   先收集直接 px，再解引用别名，得到每个 token 的最终 px。 */
+const scaleText = stripComments(fs.readFileSync(path.join(STYLES, 'tokens', '03-scale.css'), 'utf8'));
 const tokenMap = new Map();
-for (const m of stripComments(scaleText).matchAll(/(--blai-font-[\w-]+)\s*:\s*([\d.]+)px/g)) {
-    tokenMap.set(m[1], Number(m[2]));
+const aliasMap = new Map();
+for (const m of scaleText.matchAll(/(--(?:blai-font|blai-fs)-[\w-]+)\s*:\s*([\d.]+)px/g)) {
+    // 不覆盖已存在值：03-scale 末尾的手机 @media 会重定义 5 档，
+    // 审计以桌面档值为准（手机档在运行时审计里单独量）。
+    if (!tokenMap.has(m[1])) tokenMap.set(m[1], Number(m[2]));
+}
+for (const m of scaleText.matchAll(/(--(?:blai-font|blai-fs)-[\w-]+)\s*:\s*var\(\s*(--[\w-]+)\s*\)/g)) {
+    aliasMap.set(m[1], m[2]);
+}
+const resolvePx = (name, seen = new Set()) => {
+    if (tokenMap.has(name)) return tokenMap.get(name);
+    if (aliasMap.has(name) && !seen.has(name)) {
+        seen.add(name);
+        return resolvePx(aliasMap.get(name), seen);
+    }
+    return null;
+};
+for (const [name, target] of aliasMap) {
+    const px = resolvePx(target);
+    if (px != null) tokenMap.set(name, px);
 }
 const allowedPx = new Set(tokenMap.values());
 

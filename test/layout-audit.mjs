@@ -24,10 +24,12 @@ const NO_MOBILE = process.env.NO_MOBILE === '1';
 const PAGES = process.env.PAGES ?? 'all'; // all=遍历所有标签页；current=只测当前激活页
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/* 字号 token 白名单：用来标记「实际渲染但非设计 token」的字号 */
-const scaleText = fs.readFileSync(path.join(STYLES, 'tokens', '03-scale.css'), 'utf8');
+/* 字号 token 白名单：用来标记「实际渲染但非设计 token」的字号。
+   5 档语义 token（--blai-fs-*）在桌面 :root 与手机 @media 各定义一次，
+   两段都收进白名单，否则手机档会被误标成非 token。 */
+const scaleText = fs.readFileSync(path.join(STYLES, 'tokens', '03-scale.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 const allowedFontPx = new Set(
-    [...scaleText.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/--blai-font-[\w-]+\s*:\s*([\d.]+)px/g)]
+    [...scaleText.matchAll(/--blai-fs-[\w-]+\s*:\s*([\d.]+)px/g)]
         .map((m) => Number(m[1]))
 );
 
