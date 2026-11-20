@@ -46,11 +46,11 @@
 #blai-feedback-workspace .blai-feedback-workspace-header {
     min-width: 0;
     padding: var(--blai-space-8) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
-    border-bottom: var(--blai-border-1) solid var(--border-color);
+    border-bottom: 0;
     display: grid;
     gap: 0;
     background: var(--bg-surface);
-    box-shadow: var(--blai-shadow-divider);
+    box-shadow: none;
 }
 
 #blai-feedback-workspace .blai-feedback-header-row {
@@ -85,9 +85,9 @@
     min-width: 0;
     flex: 1 1 auto;
     padding: 0;
-    border-bottom: 0;
+    border-bottom: var(--blai-border-1) solid var(--border-color);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: var(--blai-space-2);
     overflow-x: auto;
     scrollbar-width: none;
@@ -108,9 +108,11 @@
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: var(--blai-font-12);
+    font-size: var(--blai-font-13);
     font-weight: var(--blai-weight-bold);
     white-space: nowrap;
+    display: inline-flex;
+    align-items: flex-end;
 }
 
 /* 需求二.8：标签按钮要按文字宽度排布，不能被顶栏的 38px 图标按钮规则压成方块。 */
@@ -122,10 +124,12 @@
     flex: 0 0 auto;
 }
 
-/* 指示条画在文字 span 上，长度与标题等长；按钮左右 padding 不再把线拉长。 */
+/* 指示条画在文字 span 上，长度与标题等长；按钮左右 padding 不再把线拉长。
+   margin-bottom 负值让 2px 指示条压在 nav 的 1px 分隔线上（两者重合）。 */
 #blai-feedback-workspace .blai-feedback-workspace-nav button > span {
     display: inline-block;
     padding-bottom: var(--blai-space-8);
+    margin-bottom: calc(-1 * var(--blai-border-1));
     border-bottom: var(--blai-border-2) solid transparent;
 }
 

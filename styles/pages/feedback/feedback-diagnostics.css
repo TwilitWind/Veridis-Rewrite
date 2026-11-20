@@ -58,7 +58,7 @@
     background: transparent;
     color: var(--text-main);
     font: inherit;
-    font-size: var(--blai-font-12);
+    font-size: var(--blai-font-13);
     font-weight: var(--blai-weight-bold);
     line-height: 1;
 }
@@ -66,7 +66,7 @@
 #blai-feedback-workspace .blai-feedback-heading-action i {
     flex: none;
     color: var(--accent-ink);
-    font-size: var(--blai-font-12);
+    font-size: var(--blai-font-13);
     line-height: 1;
 }
 
@@ -220,8 +220,16 @@
 }
 
 @media (max-width: 600px) {
+    /* 手机端参考桌面端分层：反馈页垫一层深画布，顶栏与正文卡作为模块浮在画布上。
+       手机主题下 --bg-base 与 --bg-surface 同色，直接用变量分不出层次，
+       因此画布基于 --bg-base 压暗、模块保持 --bg-surface。 */
+    #blai-purifier-popup.blai-app-shell .page-panel.blai-feedback-page {
+        background: color-mix(in srgb, var(--bg-base) 76%, black);
+    }
+
     #blai-feedback-workspace .blai-feedback-workspace-header {
         padding: calc(var(--blai-space-9) + env(safe-area-inset-top, 0px)) var(--blai-space-14) 0;
+        background: var(--bg-surface);
     }
 
     #blai-feedback-workspace .blai-feedback-workspace-nav {
@@ -229,10 +237,17 @@
         gap: var(--blai-space-2);
     }
 
+    /* 正文卡左右留边 + 圆角，与画布之间露出一道缝，卡片感才看得出来。 */
     #blai-feedback-workspace .blai-feedback-workspace-content {
-        margin: var(--blai-space-8) 0 0;
-        padding: var(--blai-space-14) var(--blai-space-10) calc(var(--blai-space-44) + env(safe-area-inset-bottom, 0px));
-        border-radius: 0;
+        margin: var(--blai-space-8) var(--blai-space-8) 0;
+        padding: var(--blai-space-14) var(--blai-space-12) calc(var(--blai-space-44) + env(safe-area-inset-bottom, 0px));
+        border-radius: var(--blai-radius-12);
+        background: var(--bg-surface);
+    }
+
+    /* 日志框在正文卡内再压一档，和卡片本身区分开，不必额外加边框。 */
+    #blai-feedback-workspace .blai-feedback-log-output {
+        background: color-mix(in srgb, var(--bg-surface) 92%, black);
     }
 
     #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-diagnostic-heading, .blai-feedback-local-heading) {
