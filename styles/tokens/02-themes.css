@@ -112,8 +112,8 @@
     --blai-test-match-bg: rgba(230, 170, 60, 0.42);
 }
 
-/* 暖米：参考浅色编辑器的米白画布，按护眼原则取米色底 + 深灰字（不用纯白纯黑），
-   强调色降饱和为灰蓝，长时间阅读不刺眼。 */
+/* 暖米：参考 Solarized Light 的米白画布再提亮一档，深灰字；强调色取 Solarized
+   橙的柔化版（赤陶），与米色同源不抢眼，避免与前两套主题一样用蓝。 */
 :is(
     #blai-purifier-popup,
     .blai-modal-shell,
@@ -126,25 +126,26 @@
     #blai-loading-overlay,
     #blai-tour-layer
 )[data-theme="warm"] {
-    --bg-base: #EFECE4;
-    --bg-surface: #F8F5EC;
-    --accent-color: #6C87A3;
-    --accent-ink: #405B78;
-    --accent-contrast: #F8F5EC;
-    --text-main: #3A3730;
-    --text-secondary: #6E685D;
-    --border-color: #DED8C9;
-    --status-danger: #B15F52;
+    --bg-base: #F4F1EA;
+    --bg-surface: #FBF9F3;
+    --accent-color: #A85832;
+    --accent-ink: #854426;
+    --accent-contrast: #FBF9F3;
+    --text-main: #3B3831;
+    --text-secondary: #6B655A;
+    --border-color: #E3DDD0;
+    --status-danger: #B94A42;
     --status-success: #5E8060;
     --blai-diff-original: #7A7468;
-    --blai-diff-program: #5A7C9B;
+    --blai-diff-program: #A85832;
     --blai-diff-ai: #8A6A9E;
-    --blai-diff-manual: #A88442;
+    --blai-diff-manual: #8D7A3F;
+    --blai-dropdown-active-bg: #A85832;
     --blai-test-match-bg: rgba(190, 150, 60, 0.30);
 }
 
-/* 柔灰：深灰暖调底 + 低亮度暖灰字（不是纯黑底纯白字，也不发蓝），
-   强调色取柔蓝灰，整体比墨夜更温和，适合夜间长时间使用。 */
+/* 柔灰：取 Nord 的中性冷灰底（去掉上一版暖灰的泛黄感），文字为低亮度冷灰；
+   强调色用 Nord Aurora 的柔绿，既护眼又与米色的赤陶、墨夜的蓝区分开。 */
 :is(
     #blai-purifier-popup,
     .blai-modal-shell,
@@ -157,33 +158,33 @@
     #blai-loading-overlay,
     #blai-tour-layer
 )[data-theme="dim"] {
-    --bg-base: #1C1D1B;
-    --bg-surface: #292A26;
-    --accent-color: #9FB3C4;
-    --accent-ink: #B8CAD8;
-    --accent-contrast: #1C1D1B;
-    --text-main: #CBC6B8;
-    --text-secondary: #969184;
-    --border-color: #42433C;
-    --status-danger: #C87E70;
-    --status-success: #8FAE7A;
-    --blai-diff-original: #A8A396;
-    --blai-diff-program: #9FB3C4;
-    --blai-diff-ai: #B69AC7;
-    --blai-diff-manual: #C9A96B;
+    --bg-base: #262A30;
+    --bg-surface: #31363E;
+    --accent-color: #A3BE8C;
+    --accent-ink: #BBD3A7;
+    --accent-contrast: #262A30;
+    --text-main: #D5D9E0;
+    --text-secondary: #A3AAB6;
+    --border-color: #454C57;
+    --status-danger: #BF616A;
+    --status-success: #7FBF86;
+    --blai-diff-original: #A8B0BB;
+    --blai-diff-program: #A3BE8C;
+    --blai-diff-ai: #B48EAD;
+    --blai-diff-manual: #D08770;
     --blai-scrim: rgba(0, 0, 0, 0.62);
     --blai-modal-shadow: rgba(0, 0, 0, 0.44);
     --blai-shadow-color: rgba(0, 0, 0, 0.44);
     --blai-scrollbar-thumb: rgba(255, 255, 255, 0.24);
     --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.38);
-    --blai-dropdown-active-bg: #4C6478;
-    --re-escape: #E0A464;
-    --re-class: #8FB6C9;
-    --re-group: #C6A2D8;
-    --re-quant: #D98D82;
-    --re-anchor: #AEC46E;
-    --re-error: #D98D82;
-    --blai-test-match-bg: rgba(200, 160, 70, 0.36);
+    --blai-dropdown-active-bg: #4A6147;
+    --re-escape: #EBCB8B;
+    --re-class: #A3BE8C;
+    --re-group: #B48EAD;
+    --re-quant: #BF616A;
+    --re-anchor: #8FBCBB;
+    --re-error: #BF616A;
+    --blai-test-match-bg: rgba(235, 203, 139, 0.32);
 }
 
 #blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .panel {
@@ -286,7 +287,7 @@
 ) {
     --blai-dropdown-bg: var(--bg-surface);
     --blai-dropdown-ink: var(--text-main);
-    /* 蓝底白字：不跟 --accent-contrast（自动主题下它可能是浅灰底），保证白字对比。 */
+    /* 强调色底白字：不跟 --accent-contrast（自动主题下它可能是浅灰底），保证白字对比。 */
     --blai-dropdown-active-bg: #4D79CB;
     --blai-dropdown-active-ink: #FFFFFF;
     --blai-dropdown-border: var(--border-color);
