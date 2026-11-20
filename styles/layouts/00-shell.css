@@ -285,23 +285,31 @@
         padding: calc(var(--blai-space-2) + env(safe-area-inset-top, 0px)) var(--blai-space-8) var(--blai-space-4);
         column-gap: var(--blai-space-4);
         row-gap: 0;
+        grid-template-rows: auto;
+    }
+
+    /* 手机端标题独占一行居左、与右侧三个图标垂直居中；隐藏浅字副标题。 */
+    #blai-purifier-popup .blai-global-title-group {
+        grid-column: 1;
+        grid-row: 1;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    #blai-purifier-popup .blai-global-heading {
+        flex: 0 0 auto;
+        text-align: left;
+    }
+
+    #blai-purifier-popup .blai-global-description {
+        display: none;
     }
 
     #blai-purifier-popup .blai-global-actions {
         grid-row: 1;
+        align-self: center;
     }
-
-    #blai-purifier-popup .blai-global-icon-button {
-        font-size: var(--blai-font-16);
-    }
-
-    #blai-purifier-popup .blai-global-heading {
-        font-size: var(--blai-font-16);
-    }
-
-    #blai-purifier-popup .blai-global-description {
-        grid-column: 1 / -1;
-    }}
 
 #blai-purifier-popup.blai-app-shell {
     position: fixed;
@@ -467,10 +475,13 @@
 }
 
 #blai-purifier-popup.blai-app-shell .bottom-nav {
+    --blai-nav-minh: var(--blai-size-54);
+    --blai-nav-pad-y: var(--blai-space-4);
+    --blai-nav-pad-x: var(--blai-space-8);
     width: 100% !important;
-    min-height: var(--blai-size-54) !important;
+    min-height: var(--blai-nav-minh) !important;
     margin: 0 !important;
-    padding: var(--blai-space-4) var(--blai-space-8) !important;
+    padding: var(--blai-nav-pad-y) var(--blai-nav-pad-x) !important;
     display: grid !important;
     grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     gap: 0 !important;
@@ -503,7 +514,23 @@
 }
 
 #blai-purifier-popup.blai-app-shell .bottom-nav .nav-item > i {
-    font-size: var(--blai-font-18);
+    font-size: var(--blai-font-16);
+}}
+
+@media (max-width: 600px) {
+#blai-purifier-popup.blai-app-shell .bottom-nav {
+    --blai-nav-minh: var(--blai-size-48);
+    --blai-nav-pad-y: var(--blai-space-2);
+    --blai-nav-pad-x: var(--blai-space-6);
+}
+
+#blai-purifier-popup.blai-app-shell .bottom-nav .nav-item {
+    min-height: var(--blai-size-40);
+    font-size: var(--blai-font-9);
+}
+
+#blai-purifier-popup.blai-app-shell .bottom-nav .nav-item > i {
+    font-size: var(--blai-font-15);
 }}
 
 @media (min-width: 601px) {

@@ -149,10 +149,34 @@
         width: 100%;
     }
 
+    /* 行二：隐藏浅字副标题，标题居左；四个分组控件移到同一行最右侧并垂直居中。 */
+    #blai-purifier-popup .blai-home-topbar-row-secondary {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--blai-space-8);
+    }
+
+    #blai-purifier-popup .blai-home-topbar-title {
+        align-items: center;
+    }
+
+    #blai-purifier-popup .blai-home-topbar-title span {
+        display: none;
+    }
+
     #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        display: flex;
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        margin-left: auto;
         gap: var(--blai-space-4);
+    }
+
+    #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-button {
+        min-width: 0;
+        padding: 0 var(--blai-space-6);
+        font-size: var(--blai-font-10);
     }}
 
 /* ---------------------------------------------------------------------------

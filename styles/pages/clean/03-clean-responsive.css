@@ -221,7 +221,7 @@
 @media (max-width: 700px) {
 #blai-purifier-popup .blai-clean-page {
     gap: var(--blai-space-20);
-    padding: var(--blai-space-12) var(--blai-space-16) var(--blai-space-84);
+    padding: var(--blai-space-12) var(--blai-space-6) var(--blai-space-84);
     box-sizing: border-box;
 }
 

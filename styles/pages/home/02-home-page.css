@@ -395,6 +395,11 @@
     font-weight: var(--blai-weight-bold);
 }
 
+@media (max-width: 600px) {
+#blai-purifier-popup .blai-home-card-title {
+    font-size: var(--blai-font-12);
+}}
+
 #blai-purifier-popup .blai-home-card-count {
     flex: 0 0 auto;
     padding: var(--blai-space-3) var(--blai-space-7);

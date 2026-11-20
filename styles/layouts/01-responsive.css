@@ -189,4 +189,10 @@
     #blai-purifier-popup .blai-home-page .blai-home-rules,
     #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
         margin: var(--blai-space-6) !important;
+    }
+
+    /* 五页背景左右内边距统一：.pages 不留白，AI/净化/工具内容容器自己收 6px，
+       与首页卡片、反馈页的 6px 边距一致。 */
+    #blai-purifier-popup.blai-app-shell .pages {
+        padding: 0;
     }}

@@ -213,11 +213,11 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-global-actions{grid-row: 1;align-self: center}}
 @media (min-width: 601px) and (max-width: 1024px){#blai-purifier-popup .blai-global-header{--blai-header-button-size: var(--blai-size-36);padding: var(--blai-space-7) var(--blai-space-16);column-gap: var(--blai-space-8)}
 #blai-purifier-popup .blai-global-heading{font-size: var(--blai-font-17)}}
-@media (max-width: 600px){#blai-purifier-popup .blai-global-header{--blai-header-button-size: var(--blai-size-28);padding: calc(var(--blai-space-2) + env(safe-area-inset-top,0px)) var(--blai-space-8) var(--blai-space-4);column-gap: var(--blai-space-4);row-gap: 0}
-#blai-purifier-popup .blai-global-actions{grid-row: 1}
-#blai-purifier-popup .blai-global-icon-button{font-size: var(--blai-font-16)}
-#blai-purifier-popup .blai-global-heading{font-size: var(--blai-font-16)}
-#blai-purifier-popup .blai-global-description{grid-column: 1 / -1}}
+@media (max-width: 600px){#blai-purifier-popup .blai-global-header{--blai-header-button-size: var(--blai-size-28);padding: calc(var(--blai-space-2) + env(safe-area-inset-top,0px)) var(--blai-space-8) var(--blai-space-4);column-gap: var(--blai-space-4);row-gap: 0;grid-template-rows: auto}
+#blai-purifier-popup .blai-global-title-group{grid-column: 1;grid-row: 1;flex-direction: row;align-items: center;justify-content: flex-start}
+#blai-purifier-popup .blai-global-heading{flex: 0 0 auto;text-align: left}
+#blai-purifier-popup .blai-global-description{display: none}
+#blai-purifier-popup .blai-global-actions{grid-row: 1;align-self: center}
 #blai-purifier-popup.blai-app-shell{position: fixed;top: 0;left: 0;right: 0;bottom: 0;transform: none;width: 100vw;max-width: 100vw;height: 100dvh;max-height: 100dvh;padding: 0;gap: 0;border: 0;border-radius: 0;box-shadow: none;overflow: hidden;display: grid;grid-template-rows: 42px minmax(0,1fr)}
 #blai-purifier-popup.blai-app-shell .app-main{min-height: 0;overflow: hidden;display: grid;grid-template-columns: 184px minmax(0,1fr);grid-template-rows: minmax(0,1fr)}
 #blai-purifier-popup.blai-app-shell .pages{min-height: 0;overflow: hidden;padding: var(--blai-space-14)}
@@ -240,10 +240,13 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup.blai-app-shell .page-panel{background: var(--bg-surface);font-size: var(--blai-mobile-type-small);scrollbar-width: none}
 #blai-purifier-popup.blai-app-shell .page-panel:not([data-page="overview"]){gap: 0;padding: 0}
 #blai-purifier-popup.blai-app-shell .page-panel::-webkit-scrollbar{display: none}
-#blai-purifier-popup.blai-app-shell .bottom-nav{width: 100% !important;min-height: var(--blai-size-54) !important;margin: 0 !important;padding: var(--blai-space-4) var(--blai-space-8) !important;display: grid !important;grid-template-columns: repeat(5,minmax(0,1fr)) !important;gap: 0 !important;border: 0 !important;border-top: var(--blai-border-1) solid var(--border-color) !important;border-radius: 0 !important;background: var(--bg-surface) !important;box-shadow: none !important;box-sizing: content-box !important}
+#blai-purifier-popup.blai-app-shell .bottom-nav{--blai-nav-minh: var(--blai-size-54);--blai-nav-pad-y: var(--blai-space-4);--blai-nav-pad-x: var(--blai-space-8);width: 100% !important;min-height: var(--blai-nav-minh) !important;margin: 0 !important;padding: var(--blai-nav-pad-y) var(--blai-nav-pad-x) !important;display: grid !important;grid-template-columns: repeat(5,minmax(0,1fr)) !important;gap: 0 !important;border: 0 !important;border-top: var(--blai-border-1) solid var(--border-color) !important;border-radius: 0 !important;background: var(--bg-surface) !important;box-shadow: none !important;box-sizing: content-box !important}
 #blai-purifier-popup.blai-app-shell .bottom-nav .nav-item{min-height: var(--blai-size-46);padding: var(--blai-space-2) 0;display: grid;place-items: center;gap: var(--blai-space-1);border: 0;border-radius: 0;background: transparent;color: var(--text-secondary);box-shadow: none;font-size: var(--blai-mobile-type-tiny);font-weight: var(--blai-weight-bold)}
 #blai-purifier-popup.blai-app-shell .bottom-nav .nav-item.active{color: var(--accent-ink);font-weight: var(--blai-weight-bold)}
-#blai-purifier-popup.blai-app-shell .bottom-nav .nav-item>i{font-size: var(--blai-font-18)}}
+#blai-purifier-popup.blai-app-shell .bottom-nav .nav-item>i{font-size: var(--blai-font-16)}}
+@media (max-width: 600px){#blai-purifier-popup.blai-app-shell .bottom-nav{--blai-nav-minh: var(--blai-size-48);--blai-nav-pad-y: var(--blai-space-2);--blai-nav-pad-x: var(--blai-space-6)}
+#blai-purifier-popup.blai-app-shell .bottom-nav .nav-item{min-height: var(--blai-size-40);font-size: var(--blai-font-9)}
+#blai-purifier-popup.blai-app-shell .bottom-nav .nav-item>i{font-size: var(--blai-font-15)}}
 @media (min-width: 601px){#blai-purifier-popup.blai-app-shell{grid-template-columns: 82px minmax(0,1fr);grid-template-rows: auto minmax(0,1fr);background: var(--bg-base)}
 #blai-purifier-popup.blai-app-shell .app-main{display: contents}
 #blai-purifier-popup.blai-app-shell .rail{grid-column: 1;grid-row: 1 / -1;min-width: 0;min-height: 0;padding: var(--blai-space-2) var(--blai-space-10) var(--blai-space-14);display: flex;flex-direction: column;gap: var(--blai-space-6);border-right: var(--blai-border-1) solid var(--border-color);background: var(--bg-surface);align-content: start}
@@ -286,7 +289,8 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace{padding: 0;border-radius: 0;background: transparent;box-shadow: none}
 #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header{background: var(--bg-surface)}
 #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content{background: var(--bg-surface);border-radius: var(--blai-radius-14)}
-@media (max-width: 600px){#blai-purifier-popup .blai-home-page .blai-home-rules,#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content{margin: var(--blai-space-6) !important}}
+@media (max-width: 600px){#blai-purifier-popup .blai-home-page .blai-home-rules,#blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content{margin: var(--blai-space-6) !important}
+#blai-purifier-popup.blai-app-shell .pages{padding: 0}}
 #blai-tour-layer{--blai-tour-scrim: color-mix(in srgb,var(--bg-base) 66%,transparent);position: fixed;z-index: 1000001;inset: 0;pointer-events: auto;color: var(--text-main)}
 #blai-tour-layer::before{position: absolute;inset: 0;content: '';background: var(--blai-tour-scrim)}
 #blai-tour-layer.blai-tour-has-spotlight::before{display: none}
@@ -588,6 +592,7 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-home-selection-control input:checked + .blai-home-selection-indicator,#blai-purifier-popup .blai-home-enabled-control input:checked + .blai-home-enabled-indicator{border-color: var(--accent-color);background: var(--accent-color)}
 #blai-purifier-popup .blai-home-selection-control input:checked + .blai-home-selection-indicator::after,#blai-purifier-popup .blai-home-enabled-control input:checked + .blai-home-enabled-indicator::after{content: '\f00c';position: absolute;inset: 0;display: flex;align-items: center;justify-content: center;font-family: 'Font Awesome 6 Free';font-size: var(--blai-font-9);font-weight: var(--blai-weight-icon);line-height: 1;color: var(--bg-base)}
 #blai-purifier-popup .blai-home-card-title{min-width: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;color: var(--text-main);font-size: var(--blai-font-14);font-weight: var(--blai-weight-bold)}
+@media (max-width: 600px){#blai-purifier-popup .blai-home-card-title{font-size: var(--blai-font-12)}}
 #blai-purifier-popup .blai-home-card-count{flex: 0 0 auto;padding: var(--blai-space-3) var(--blai-space-7);border-radius: var(--blai-radius-7);background: var(--bg-surface);color: var(--accent-ink);font-size: var(--blai-font-10);font-weight: var(--blai-weight-bold);line-height: 1.2}
 #blai-purifier-popup .blai-home-card-actions{flex: 0 0 auto;display: inline-flex;align-items: center;gap: var(--blai-space-4)}
 #blai-purifier-popup :is(.blai-home-card-menu-toggle,.blai-home-card-pencil,.blai-home-card-risk){width: var(--blai-size-32);min-width: var(--blai-size-32);height: var(--blai-size-32);padding: 0;display: inline-grid;place-items: center;border: 0;border-radius: var(--blai-radius-10);background: transparent;color: var(--text-main);font-size: var(--blai-font-14)}
@@ -664,7 +669,11 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-home-topbar .blai-home-preset-field{grid-column: 1;grid-row: 1}
 #blai-purifier-popup .blai-home-metrics{grid-column: 2;grid-row: 1;width: auto;flex: none;justify-self: end;align-self: center}
 #blai-purifier-popup .blai-home-topbar .blai-home-dataset-actions{grid-column: 1 / -1;grid-row: 2;grid-template-columns: repeat(5,minmax(0,1fr));display: grid;width: 100%}
-#blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions{display: grid;grid-template-columns: repeat(4,minmax(0,1fr));gap: var(--blai-space-4)}}
+#blai-purifier-popup .blai-home-topbar-row-secondary{flex-direction: row;align-items: center;justify-content: space-between;gap: var(--blai-space-8)}
+#blai-purifier-popup .blai-home-topbar-title{align-items: center}
+#blai-purifier-popup .blai-home-topbar-title span{display: none}
+#blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions{display: flex;flex: 0 0 auto;flex-wrap: nowrap;margin-left: auto;gap: var(--blai-space-4)}
+#blai-purifier-popup .blai-home-topbar .blai-home-toolbar-button{min-width: 0;padding: 0 var(--blai-space-6);font-size: var(--blai-font-10)}}
 #blai-purifier-popup .blai-home-card-menu-wrap{position: relative;display: inline-flex;align-items: center}
 :is(.blai-home-card-menu,.blai-subrule-menu){z-index: 2147483000;min-width: var(--blai-size-148);display: grid;gap: var(--blai-dropdown-gap);padding: var(--blai-dropdown-pad);border: var(--blai-border-1) solid var(--blai-dropdown-border);border-radius: var(--blai-dropdown-radius);background: var(--blai-dropdown-bg);box-shadow: var(--blai-dropdown-shadow)}
 :is(.blai-home-card-menu,.blai-subrule-menu)[hidden]{display: none !important}
@@ -1191,7 +1200,7 @@ to{opacity: 1;transform: none}}
 @media (max-width: 920px){#blai-purifier-popup .blai-clean-columns{grid-template-columns: minmax(0,1.58fr) minmax(250px,1fr);gap: var(--blai-column-gap)}
 #blai-purifier-popup .blai-clean-mode-card{min-height: var(--blai-size-96);padding-inline: var(--blai-space-13)}
 #blai-purifier-popup .blai-clean-mode-title>i{width: var(--blai-size-19);font-size: var(--blai-font-16)}}
-@media (max-width: 700px){#blai-purifier-popup .blai-clean-page{gap: var(--blai-space-20);padding: var(--blai-space-12) var(--blai-space-16) var(--blai-space-84);box-sizing: border-box}
+@media (max-width: 700px){#blai-purifier-popup .blai-clean-page{gap: var(--blai-space-20);padding: var(--blai-space-12) var(--blai-space-6) var(--blai-space-84);box-sizing: border-box}
 #blai-purifier-popup .blai-clean-columns{grid-template-columns: minmax(0,1fr);gap: var(--blai-space-28)}
 #blai-purifier-popup .blai-clean-mode-cards{grid-template-columns: repeat(2,minmax(0,1fr));gap: var(--blai-space-8)}
 #blai-purifier-popup .blai-clean-mode-card{min-height: var(--blai-size-84);padding: var(--blai-space-11)}
@@ -1304,7 +1313,7 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-tools-primary-button:hover{background: color-mix(in srgb,var(--accent-color) 88%,var(--text-main))}
 #blai-purifier-popup .blai-tools-primary-button:active{transform: translateY(1px) scale(.985)}
 @media (max-width: 720px){#blai-purifier-popup .blai-tools-columns{grid-template-columns: minmax(0,1fr);gap: var(--blai-panel-gap)}}
-@media (max-width: 600px){#blai-purifier-popup .blai-tools-page{gap: var(--blai-space-20);padding: var(--blai-space-12) var(--blai-space-16) var(--blai-space-84);box-sizing: border-box}
+@media (max-width: 600px){#blai-purifier-popup .blai-tools-page{gap: var(--blai-space-20);padding: var(--blai-space-12) var(--blai-space-6) var(--blai-space-84);box-sizing: border-box}
 #blai-purifier-popup .blai-tools-version-update-action{grid-column: 1;grid-row: auto;justify-self: start}
 #blai-purifier-popup .blai-tools-version-body{grid-template-columns: minmax(0,1fr)}
 #blai-purifier-popup .blai-tools-version-error{grid-row: auto}
@@ -1543,7 +1552,7 @@ body #toast-container>.blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast>.bla
 #blai-purifier-popup.blai-app-shell .blai-ai-parameter-grid .blai-ai-control-heading{min-height: var(--blai-size-32);align-items: flex-end}
 #blai-purifier-popup.blai-app-shell .blai-ai-generation-open{display: none}
 @media (max-width: 1024px){#blai-purifier-popup.blai-app-shell .blai-ai-columns{grid-template-columns: minmax(0,1fr)}}
-@media (max-width: 600px){#blai-purifier-popup.blai-app-shell .blai-ai-settings{padding: var(--blai-space-12) var(--blai-space-16) var(--blai-space-84);gap: var(--blai-space-18);box-sizing: border-box}
+@media (max-width: 600px){#blai-purifier-popup.blai-app-shell .blai-ai-settings{padding: var(--blai-space-12) var(--blai-space-6) var(--blai-space-84);gap: var(--blai-space-18);box-sizing: border-box}
 #blai-purifier-popup.blai-app-shell :is(.blai-ai-primary-column,.blai-ai-secondary-column){gap: var(--blai-space-24) !important}
 #blai-purifier-popup.blai-app-shell .blai-ai-generation-host{display: none}
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-grid{grid-template-columns: minmax(0,1fr);gap: var(--blai-space-14) var(--blai-space-12)}
