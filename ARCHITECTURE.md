@@ -266,7 +266,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 ### 构建闸门
 
-`build-check.mjs` 的机械校验：单文件超阈值 fail/warn；`styles/` 下每个 `.css` 必须登记 ORDER（孤儿 fail）；顶层只允许 tokens/base/components/layouts/pages；ORDER 层级不得倒挂（tokens→base→components→layouts→pages）；非 tokens 文件不许重定义刻度名；禁 `@import` / `@charset`；输入框不许透明底；tokens 外不许 `#hex`；`!important` 不得比 `quality-baseline.json` 的基线值上涨（只 warn）；manifest 指向的 js/css 必须存在；根 `style.css` 必须存在且非空；`src/` 下 `.js` 有体积与行数上限。具体阈值以脚本为准，不在此抄数。
+`build-check.mjs` 的机械校验：单文件超阈值 fail/warn；**每个 `.css` 花括号必须平衡（少 `}` 会 fail——r5 曾因此把桌面外壳规则吞进手机 `@media`，token 校验发现不了）**；`styles/` 下每个 `.css` 必须登记 ORDER（孤儿 fail）；顶层只允许 tokens/base/components/layouts/pages；ORDER 层级不得倒挂（tokens→base→components→layouts→pages）；非 tokens 文件不许重定义刻度名；禁 `@import` / `@charset`；输入框不许透明底；tokens 外不许 `#hex`；`!important` 不得比 `quality-baseline.json` 的基线值上涨（只 warn）；manifest 指向的 js/css 必须存在；根 `style.css` 必须存在且非空；`src/` 下 `.js` 有体积与行数上限。具体阈值以脚本为准，不在此抄数。
 
 输入控件背景色统一走 `02-themes.css` 的 `--blai-input-bg`（默认等于 `--field-bg`），下拉框/输入框/文本域共用一处。酒馆主题对裸标签有 `select/input/textarea{background:var(--ui-color-sec)}` 强声明，这里在控件上把 `--ui-color-sec` 重定向到 `--blai-input-bg`，让主题的强声明算出我们的颜色，不新增 `!important`；副作用是主题边框简写也读 `--ui-color-sec`，反馈页三个裸标签控件边框被染成白底同色不可见，用同色 `inset` 阴影补一圈可见边框（主题未对 `box-shadow` 下强声明）。反馈页桌面布局高度随内容增长（不用 `minmax(0,1fr)+height:100%` 锁死），否则「涉及区域」展开时详细说明框越过固定 footer 盖住隐私说明浅字；隐私说明设 `min-height` 避免换行跳动。正则高亮态 `color: transparent` 与 token 颜色必须保留强声明（同属性在控件基线规则里仍有 `!important`，加特异性压不住）。测试区命中高亮靠 overlay 叠在 textarea 之下（命中时把 `--field-bg` 置 transparent），命中统计放测试框右上角。
 

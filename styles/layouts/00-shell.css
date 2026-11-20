@@ -310,6 +310,7 @@
         grid-row: 1;
         align-self: center;
     }
+}
 
 #blai-purifier-popup.blai-app-shell {
     position: fixed;

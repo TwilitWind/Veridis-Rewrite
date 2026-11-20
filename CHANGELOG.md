@@ -4,6 +4,17 @@
 
 ---
 
+## 3.5 增强版 r5（修复）
+
+### 桌面端全面屏布局被压成窄条
+
+- r5 手机端顶栏留白改动时，`styles/layouts/00-shell.css` 的 `@media (max-width: 600px)` 段少了一个闭合括号，把紧随其后的桌面外壳规则 `#blai-purifier-popup.blai-app-shell`（`width:100vw` / `grid-template-rows:42px minmax(0,1fr)`）吞进了手机媒体查询。
+- 后果：桌面端读到 560px 默认宽度和错误的网格行高，插件从全面屏缩成居中的窄竖条，左侧 rail 还在但内容被压扁；手机端无感知。
+- 修复：补回闭合括号。修复后桌面实测面板宽 1313px 铺满视口、顶栏 52px、左栏 82px；390×844 手机端仍为底部导航，双端均恢复。
+- `build-check.mjs` 增加花括号平衡检查（少 `}` 直接 fail）；顺带清掉 `styles/pages/home/04-home.css` 末尾一个多余 `}`。这类错误此前 token 校验发现不了。
+
+---
+
 ## 3.5 增强版 r5
 
 ### 手机端顶栏与标题字号

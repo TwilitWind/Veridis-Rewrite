@@ -79,14 +79,32 @@ for (const rel of allFiles) {
   }
 }
 
-/* 7. 禁止 @import 与 @charset（合并单元必须自包含） */
+/* 7. 花括号必须平衡（少一个 } 会把后续桌面规则吞进手机 @media，token 校验发现不了） */
+for (const rel of allFiles) {
+  const raw = fs.readFileSync(path.join(STYLES, rel), 'utf8');
+  const text = raw.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
+  let depth = 0;
+  let line = 1;
+  let openedAt = 0;
+  for (const c of text) {
+    if (c === '\n') { line += 1; continue; }
+    if (c === '{') { if (depth === 0) openedAt = line; depth += 1; }
+    else if (c === '}') {
+      depth -= 1;
+      if (depth < 0) { fail(`styles/${rel} 第 ${line} 行有多余的 }`); depth = 0; }
+    }
+  }
+  if (depth > 0) fail(`styles/${rel} 从第 ${openedAt} 行起有 ${depth} 个 { 没有闭合`);
+}
+
+/* 8. 禁止 @import 与 @charset（合并单元必须自包含） */
 for (const rel of allFiles) {
   const text = fs.readFileSync(path.join(STYLES, rel), 'utf8');
   if (/@import\b/.test(text)) fail(`styles/${rel} 里有 @import，合并单元必须自包含`);
   if (/@charset\b/.test(text)) fail(`styles/${rel} 里有 @charset`);
 }
 
-/* 8. 输入框底色不许透明（第三方主题会注入带 !important 的底色） */
+/* 9. 输入框底色不许透明（第三方主题会注入带 !important 的底色） */
 for (const rel of allFiles) {
   const text = fs.readFileSync(path.join(STYLES, rel), 'utf8');
   const re = /(?:^|[;{\s])(?:background|background-color)\s*:\s*transparent\s*(?:!important)?\s*(?=;|})/g;
@@ -100,7 +118,7 @@ for (const rel of allFiles) {
   }
 }
 
-/* 9. 硬编码颜色不许出现在 tokens/ 之外 */
+/* 10. 硬编码颜色不许出现在 tokens/ 之外 */
 for (const rel of allFiles) {
   if (rel.startsWith('tokens/')) continue;
   const text = fs.readFileSync(path.join(STYLES, rel), 'utf8');
@@ -108,7 +126,7 @@ for (const rel of allFiles) {
   if (hits.length) fail(`styles/${rel} 里有硬编码颜色 ${[...new Set(hits)].join(' ')}，应改用 var(--token)`);
 }
 
-/* 10. !important 增量不得高于基线 */
+/* 11. !important 增量不得高于基线 */
 const baselinePath = path.join(STYLES, 'quality-baseline.json');
 if (fs.existsSync(baselinePath)) {
   const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
@@ -123,18 +141,18 @@ if (fs.existsSync(baselinePath)) {
   }
 }
 
-/* 11. manifest.json 指向的 js / css 必须存在 */
+/* 12. manifest.json 指向的 js / css 必须存在 */
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'manifest.json'), 'utf8'));
 for (const key of ['js', 'css']) {
   if (manifest[key] && !fs.existsSync(path.join(ROOT, manifest[key]))) fail(`manifest.json 指向的 ${key} 不存在：${manifest[key]}`);
 }
 
-/* 12. 根 style.css 必须存在且非空 */
+/* 13. 根 style.css 必须存在且非空 */
 const produced = path.join(ROOT, 'style.css');
 if (!fs.existsSync(produced)) fail('根目录 style.css 不存在，先跑 node build-css.mjs');
 else if (fs.statSync(produced).size < 1000) fail('根目录 style.css 小得不像话，构建可能中途失败');
 
-/* 13. 源码体积阈值：src 下的 .js 25KB 起警告、30KB 直接拦截，防止巨型文件 */
+/* 14. 源码体积阈值：src 下的 .js 25KB 起警告、30KB 直接拦截，防止巨型文件 */
 const JS_MAX_BYTES = 30 * 1024;
 const JS_TARGET_BYTES = 25 * 1024;
 const JS_MAX_LINES = 600;
