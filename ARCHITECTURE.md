@@ -184,9 +184,9 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **层级阶梯**：插件内弹窗占 `10000004`~`10000008`（卡片菜单/搜索/编辑规则/编辑分组/编辑子规则/移动/预设导入）；`.blai-plugin-dialog`（备注、删除、重命名等由弹窗内按钮触发者）及 `#blai-risk-confirm-modal`、`#blai-risk-info-modal` 一律 `10000020`——它们从别的弹窗里弹出，必须压在上面，否则遮罩盖住按钮像点了没反应。首页规则卡菜单 `.blai-home-card-menu` 与子规则菜单 `.blai-subrule-menu` 需 `10000060`。新增弹窗要么落在 `10000004`~`10000008` 且后弹的更高，要么沿用 `10000020`。
 
-四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(100dvh - 28px)` 高、16px 圆角（`styles/pages/home/04-home.css`）；600px 以下整屏（`100vw/100dvh`）、去圆角、适配安全区。
+四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(100dvh - 28px)` 高、16px 圆角（`styles/pages/home/home-breakpoints.css`）；600px 以下整屏（`100vw/100dvh`）、去圆角、适配安全区。
 
-**`[hidden]` 失效**：`.blai-subrule-field{display:flex!important}` 会压掉默认 `[hidden]{display:none}`，靠 `prop('hidden', …)` 切换的块都要补 `.X[hidden]{display:none!important}`（`styles/pages/home/00-home.css` 有先例）。
+**`[hidden]` 失效**：`.blai-subrule-field{display:flex!important}` 会压掉默认 `[hidden]{display:none}`，靠 `prop('hidden', …)` 切换的块都要补 `.X[hidden]{display:none!important}`（`styles/pages/home/home-overview.css` 有先例）。
 
 **下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。
 
@@ -287,7 +287,34 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | 改对话框外观 | `ui/notifications.js` + `styles/components/02-controls.css` 的 `.blai-plugin-dialog-card` 段 |
 | 改菜单定位 | `ui/popover.js` + 对应 `*-menu` 的 CSS |
 | 改日间配色 | `styles/tokens/02-themes.css` 的 light 令牌 + `styles/layouts/00-shell.css` 的日间分区段 |
-| 改弹窗尺寸 | `styles/pages/home/04-home.css` 的 `@media (min-width: 601px)` 段（四处同一把尺子） |
+| 改弹窗尺寸 | `styles/pages/home/home-breakpoints.css` 的 `@media (min-width: 601px)` 段（四处同一把尺子） |
 | 改手机端标题字号 / 提交反馈单列 | `styles/pages/99-mobile.css`（最后加载的跨页收尾） |
 | 改 AI 连接标题行 | `styles/pages/ai/01-ai.css` 的 `@media (max-width: 600px)` 段：开关绝对定位到最右，标题在整条栏里居中 |
-| 改手机端顶栏留白 | `styles/layouts/00-shell.css`、`styles/pages/home/03-home-topbar.css`、`styles/pages/feedback/01-feedback.css` 各自的窄屏段 |
+| 改手机端顶栏留白 | `styles/layouts/00-shell.css`、`styles/pages/home/home-topbar.css`、`styles/pages/feedback/feedback-diagnostics.css` 各自的窄屏段 |
+
+### 样式文件职责速查
+
+目录名只分层，不表职责；`pages/` 下用职责名，改样式前按此表定位。`styles/ORDER.json` 的 `order` 数组即层叠顺序，下表按顺序列出。
+
+| 文件 | 管什么 |
+|---|---|
+| `pages/home/home-overview.css` | 首页规则卡、分组卡、批量操作、子规则字段（含 `[hidden]` 先例） |
+| `pages/home/home-regex-highlight.css` | 正则语法高亮、标志提示、匹配测试区 |
+| `pages/home/home-import-transfer.css` | 规则导入选择与转移弹窗 |
+| `pages/home/home-rule-edit-modal.css` | 规则编辑弹窗：头部、字段、语法模式、测试区 |
+| `pages/home/home-toolbar.css` | 首页页头、预设下拉、工具栏、批量面板 |
+| `pages/home/home-preview-search.css` | 规则预览文本、分组详情、搜索框与最近搜索 |
+| `pages/home/home-topbar.css` | 首页顶栏、卡片菜单、编辑弹窗筛选、手机窄屏 |
+| `pages/home/home-breakpoints.css` | 首页宽屏断点；四个大弹窗尺寸统一在此 |
+| `pages/clean/clean-main.css` | 净化页主列、模式卡、标签分组列表与分组开关 |
+| `pages/clean/clean-scope-tags.css` | 标签（分组详情）编辑器弹窗 |
+| `pages/clean/clean-tag-list.css` | 净化页标签列表、分组开关、下拉菜单 |
+| `pages/clean/clean-deep-shell.css` | 深度净化外壳：遮罩、头部、内容区、选择与配置 |
+| `pages/clean/clean-deep-modes.css` | 深度净化：规则预设、处理模式、执行面板 |
+| `pages/clean/clean-deep-processing.css` | 深度净化：批处理进度、扫描与完成态 |
+| `pages/clean/clean-deep-results.css` | 深度净化：进度、结果、完成态 |
+| `pages/clean/clean-deep-responsive.css` | 深度净化响应式：900 / 600 / 920 / 700 四档媒体查询 |
+| `pages/clean/clean-deep-scope.css` | 深度净化处理范围卡片 |
+| `pages/feedback/feedback-workspace.css` | 反馈页工作区、视图标签、提交表单 |
+| `pages/feedback/feedback-form.css` | 反馈页表单控件：勾选框、按钮、状态与提示 |
+| `pages/feedback/feedback-diagnostics.css` | 反馈页本地诊断与预览、手机窄屏顶栏 |

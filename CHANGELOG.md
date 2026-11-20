@@ -4,6 +4,14 @@
 
 ---
 
+## 3.5 增强版 r5（样式文件名整理）
+
+- `styles/pages/` 下 21 个同号不同后缀文件改为职责名（如 `02-home.css` → `home-rule-edit-modal.css`、`03-clean-responsive.css` → `clean-deep-responsive.css`），目录一眼可读，不再靠数字猜职责。
+- 同步 `ORDER.json` 顺序（顺序未变，只改路径）、`quality-baseline.json` 的 20 个 key、`ARCHITECTURE.md` 的路径引用；ARCHITECTURE 新增「样式文件职责速查」表，覆盖全部改名文件。
+- 验证：`build-css.mjs` 重建后 `style.css` SHA-256 与改名前完全相同（`b109679f…`），零视觉变化；`build-check.mjs` 40 文件通过、无 `!important` 基线警告；全仓库无旧名残留（CHANGELOG 历史条目保留旧名，属当时快照，不改写）。
+
+---
+
 ## 3.5 增强版 r5（反馈页与状态标签）
 
 ### AI 改写状态标签
