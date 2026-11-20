@@ -221,7 +221,7 @@
 
 @media (max-width: 600px) {
     #blai-feedback-workspace .blai-feedback-workspace-header {
-        padding: calc(var(--blai-space-6) + env(safe-area-inset-top, 0px)) var(--blai-space-12) 0;
+        padding: calc(var(--blai-space-2) + env(safe-area-inset-top, 0px)) var(--blai-space-12) 0;
     }
 
     #blai-feedback-workspace .blai-feedback-workspace-nav {

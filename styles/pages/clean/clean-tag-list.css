@@ -291,17 +291,14 @@
     min-width: 0;
 }
 
+/* 深度净化标题与其他模块同色，标题下不画分隔线（用户要求）。 */
 #blai-purifier-popup .blai-clean-danger-header {
-    padding-bottom: var(--blai-space-11);
-    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--status-danger) 32%, var(--border-color));
-}
-
-#blai-purifier-popup .blai-clean-danger-header h2 {
-    color: var(--status-danger);
+    padding-bottom: var(--blai-space-8);
+    border-bottom: 0;
 }
 
 #blai-purifier-popup .blai-clean-danger-content {
-    padding-top: var(--blai-space-15);
+    padding-top: var(--blai-space-8);
 }
 
 #blai-purifier-popup .blai-clean-danger-content h3 {

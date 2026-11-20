@@ -45,7 +45,7 @@
 /* 顶栏：四个视图直接作为标签页铺满整条，标题已由全局顶栏承担。 */
 #blai-feedback-workspace .blai-feedback-workspace-header {
     min-width: 0;
-    padding: var(--blai-space-6) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
+    padding: var(--blai-space-2) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
     border-bottom: 0;
     display: grid;
     gap: 0;

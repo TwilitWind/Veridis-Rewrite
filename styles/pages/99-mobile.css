@@ -76,6 +76,17 @@
         font-size: var(--blai-font-12);
     }
 
+    /* 手机单列时不该沿用桌面「两栏等高」：标签少时首卡会被撑到 400px+，
+       内部留出一大片空白。改成按内容高度排布，不必新增标签页层级。 */
+    #blai-purifier-popup .blai-clean-primary-column > .blai-clean-section {
+        grid-template-rows: auto auto auto auto;
+        align-content: start;
+    }
+
+    #blai-purifier-popup .blai-clean-primary-column > .blai-clean-section > .blai-clean-group-list {
+        min-height: 0;
+    }
+
     /* AI 改写吐司：桌面用 calc(14pt/12.5pt + 1pt) ≈ 13.5px，手机上比正文高一档。
        标题 12px、正文 11px，与面板内标签/说明同级。 */
     body #toast-container > .blai-ai-rewrite-toast,
