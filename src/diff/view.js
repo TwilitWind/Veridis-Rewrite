@@ -4,6 +4,28 @@ import { getMessageDomNode, resolveMessageIndexFromDomNode, isTrackableMessageDo
 import { isAssistantMessage, getLatestTrackableDiffIndices } from './tracking.js';
 
 // 只负责实时 Diff 按钮的 DOM 投影；可见性来自跟踪与设置。
+// 让尾部按钮永远贴在分支计数左侧：按实际渲染宽度让位，1/3 与 99/99 共用同一套算法。
+function syncBottomDiffButtonOffset(button, swipeBlock) {
+    const apply = () => {
+        if (!button.isConnected) return;
+        const counter = swipeBlock?.querySelector('.swipes-counter') || swipeBlock;
+        if (!counter) return;
+        const b = button.getBoundingClientRect();
+        const c = counter.getBoundingClientRect();
+        if (!b.width || !c.width) return;
+
+        const style = getComputedStyle(button);
+        const currentRight = parseFloat(style.right) || 48;
+        const currentBottom = parseFloat(style.bottom) || 6;
+        const nextRight = Math.max(8, currentRight + (b.right - (c.left - 8)));
+        const nextBottom = Math.max(0, currentBottom + ((b.top + b.height / 2) - (c.top + c.height / 2)));
+        button.style.setProperty('--blai-diff-swipe-offset', `${nextRight.toFixed(1)}px`);
+        button.style.setProperty('--blai-diff-bottom-offset', `${nextBottom.toFixed(1)}px`);
+    };
+    apply();
+    requestAnimationFrame(apply);
+}
+
 export function ensureMessageDiffButton(index, messageNode) {
     if (!messageNode || !Number.isInteger(index) || index < 0) return;
     const { chat } = getAppContext();
@@ -74,8 +96,10 @@ export function ensureMessageDiffButton(index, messageNode) {
             btnBottom.setAttribute('tabindex', '0');
             btnBottom.setAttribute('role', 'button');
             parent.insertBefore(btnBottom, swipeBlock);
+            syncBottomDiffButtonOffset(btnBottom, swipeBlock);
         } else if (existingBottom) {
             existingBottom.setAttribute('data-index', String(index));
+            syncBottomDiffButtonOffset(existingBottom, swipeBlock);
         }
     }
 }

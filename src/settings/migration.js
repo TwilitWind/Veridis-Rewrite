@@ -4,7 +4,7 @@
 import * as extensionsModule from "../../../../../extensions.js";
 import { saveSettingsDebounced } from "../../../../../../script.js";
 
-import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsCustomGlobalPromptMigrationConfirmation, normalizeAiSamplingSettings, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
+import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsCustomGlobalPromptMigrationConfirmation, normalizeAiSamplingSettings, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { logger } from '../log.js';
 import { cleanupInvalidPresetBindings } from '../presets/bindings.js';
@@ -151,6 +151,8 @@ export function maybeCopyLegacySettings() {
         'scopeTagMode',
         'enableVisualDiff',
         'diffViewMode',
+        'diffLineHeight',
+        'diffParagraphGap',
         'diffButtonInExtraMenu',
         'showBottomDiffButton',
         'diffTrackedMessageLimit',
@@ -188,6 +190,8 @@ export function ensureSettingsShape() {
     if (!['protect', 'cleanse-inside'].includes(settings.scopeTagMode)) settings.scopeTagMode = 'protect';
     settings.enableVisualDiff = true;
     if (!['snippet', 'full'].includes(settings.diffViewMode)) settings.diffViewMode = 'snippet';
+    settings.diffLineHeight = normalizeDiffLineHeight(settings.diffLineHeight);
+    settings.diffParagraphGap = normalizeDiffParagraphGap(settings.diffParagraphGap);
     if (settings.diffButtonInExtraMenu === undefined) settings.diffButtonInExtraMenu = false;
     if (settings.showBottomDiffButton === undefined) settings.showBottomDiffButton = true;
     settings.diffTrackedMessageLimit = normalizeDiffTrackedMessageLimit(settings.diffTrackedMessageLimit);

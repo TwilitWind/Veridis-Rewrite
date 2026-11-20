@@ -2,7 +2,7 @@
  * 负责按需的差异弹窗渲染、操作，以及现有 DOM 绑定。
  */
 import { getAppContext } from '../../host/appContext.js';
-import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages } from '../../settings/defaults.js';
+import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages, diffLineHeightOptions, diffParagraphGapOptions } from '../../settings/defaults.js';
 import { openSingleRuleModal, openEditModal } from '../../rules/view.js';
 import { diffRuntimeState, getCurrentDiffIndex, refreshDiffViewer } from '../state.js';
 import { injectDiffButtons } from '../view.js';
@@ -91,6 +91,24 @@ diffRuntimeState.diffModalClose = closeDiffModal;
         syncDiffPreferenceMenuState();
         closeDiffActionsMenu();
         injectDiffButtons();
+    });
+
+
+    $(document).off('click', '#blai-diff-line-height-toggle').on('click', '#blai-diff-line-height-toggle', function() {
+        const settings = extension_settings[extensionName];
+        const index = Math.max(0, diffLineHeightOptions.indexOf(Number(settings.diffLineHeight)));
+        settings.diffLineHeight = diffLineHeightOptions[(index + 1) % diffLineHeightOptions.length];
+        saveSettingsDebounced();
+        syncDiffPreferenceMenuState();
+    });
+
+
+    $(document).off('click', '#blai-diff-paragraph-gap-toggle').on('click', '#blai-diff-paragraph-gap-toggle', function() {
+        const settings = extension_settings[extensionName];
+        const index = Math.max(0, diffParagraphGapOptions.indexOf(Number(settings.diffParagraphGap)));
+        settings.diffParagraphGap = diffParagraphGapOptions[(index + 1) % diffParagraphGapOptions.length];
+        saveSettingsDebounced();
+        syncDiffPreferenceMenuState();
     });
 
 

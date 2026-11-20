@@ -1,7 +1,7 @@
 /**
  * 负责按需的差异弹窗渲染、操作，以及现有 DOM 绑定。
  */
-import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages, normalizeDiffTrackedMessageLimit } from '../../settings/defaults.js';
+import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages, diffLineHeightOptions, diffParagraphGapOptions, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { cleanseMessageDataAtIndex } from '../../chat/cleanse.js';
 import { refreshMessageDisplay } from '../../chat/display.js';
@@ -148,15 +148,36 @@ export function createDiffEventsCore() {
     };
 
 
+    const diffGapLabels = ['紧凑', '标准', '宽松'];
+
+    const syncDiffTypographyState = () => {
+        const settings = extension_settings[extensionName];
+        const lineHeight = normalizeDiffLineHeight(settings.diffLineHeight);
+        const gap = normalizeDiffParagraphGap(settings.diffParagraphGap);
+        settings.diffLineHeight = lineHeight;
+        settings.diffParagraphGap = gap;
+
+        const modal = document.getElementById('blai-diff-modal');
+        modal?.style.setProperty('--blai-diff-body-line-height', String(lineHeight));
+        modal?.style.setProperty('--blai-diff-body-paragraph-gap', `${gap}px`);
+
+        $('#blai-diff-line-height-text').text(`正文行距：${lineHeight}`);
+        const gapIndex = Math.max(0, diffParagraphGapOptions.indexOf(gap));
+        $('#blai-diff-paragraph-gap-text').text(`段落间距：${diffGapLabels[gapIndex]}`);
+    };
+
+
     const syncDiffPreferenceMenuState = () => {
         const settings = extension_settings[extensionName];
         syncDiffLimitControlState();
         syncDiffRelatedModeState();
         syncDiffPositionMenuState(settings);
         syncDiffBottomMenuState(settings);
+        syncDiffTypographyState();
     };
 
     syncDiffLimitControlState();
+    syncDiffTypographyState();
 
 
     const syncDiffRevertToggleState = (msg) => {

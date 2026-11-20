@@ -5,7 +5,18 @@ export const modifiedExtensionName = "ultimate_purifier_ai_rewrite_modified";
 export const minTrackedDiffMessages = 1;
 export const defaultTrackedDiffMessages = 3;
 export const maxTrackedDiffMessages = 20;
+export const diffLineHeightOptions = [1.5, 1.8];
+export const diffParagraphGapOptions = [4, 8, 12];
 export const aiRewritePromptProtocolVersion = 8;
+
+export function normalizeDiffLineHeight(value) {
+    return diffLineHeightOptions.includes(Number(value)) ? Number(value) : diffLineHeightOptions[0];
+}
+
+export function normalizeDiffParagraphGap(value) {
+    const gap = Number(value);
+    return diffParagraphGapOptions.includes(gap) ? gap : 8;
+}
 
 export const previousDefaultAiRewritePrompt = `身份确认: 你是文本改写助手。你需要严格按照以下的要求修改指定的文本。
 
@@ -336,6 +347,8 @@ export const defaultSettings = {
     scopeTagMode: "protect",
     enableVisualDiff: true,
     diffViewMode: "snippet",
+    diffLineHeight: 1.5,
+    diffParagraphGap: 8,
     diffButtonInExtraMenu: false,
     showBottomDiffButton: true,
     diffTrackedMessageLimit: defaultTrackedDiffMessages,

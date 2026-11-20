@@ -816,6 +816,14 @@
                                     <i id="blai-diff-related-mode-icon" class="fa-solid fa-crosshairs"></i>
                                     <span id="blai-diff-related-mode-text">相关规则：关闭</span>
                                 </button>
+                                <button id="blai-diff-line-height-toggle" type="button" class="blai-diff-actions-item" title="切换全文模式的正文行距">
+                                    <i class="fa-solid fa-text-height"></i>
+                                    <span id="blai-diff-line-height-text">正文行距：1.5</span>
+                                </button>
+                                <button id="blai-diff-paragraph-gap-toggle" type="button" class="blai-diff-actions-item" title="切换全文模式的段落间距">
+                                    <i class="fa-solid fa-grip-lines"></i>
+                                    <span id="blai-diff-paragraph-gap-text">段落间距：标准</span>
+                                </button>
                                 <button id="blai-diff-menu-pos-toggle" type="button" class="blai-diff-actions-item" title="将顶部按钮收纳进菜单">
                                     <i id="blai-diff-menu-pos-icon" class="fa-solid fa-ellipsis"></i>
                                     <span id="blai-diff-menu-pos-text">顶部按钮：收纳</span>
@@ -836,11 +844,11 @@
                     <span class="blai-diff-legend-item" data-source="ai"><i></i>AI 改写</span>
                     <span class="blai-diff-legend-item" data-source="manual"><i></i>手动改写</span>
                 </div>
-                <div id="blai-diff-stats" class="blai-diff-stats" aria-label="改写次数统计">
-                    <span class="blai-diff-stat"><i class="fa-solid fa-arrows-rotate"></i>本次改写 <strong id="blai-diff-stat-total">0</strong></span>
-                    <span class="blai-diff-stat" data-kind="program"><i></i>程序改写 <strong id="blai-diff-stat-program">0</strong></span>
-                    <span class="blai-diff-stat" data-kind="ai"><i></i>AI 改写 <strong id="blai-diff-stat-ai">0</strong></span>
-                </div>
+                                <div id="blai-diff-stats" class="blai-diff-stats" aria-label="改写次数统计">
+                                    <span class="blai-diff-stat"><i class="fa-solid fa-arrows-rotate"></i><strong id="blai-diff-stat-total">0</strong><span>本次改写</span></span>
+                                    <span class="blai-diff-stat" data-kind="program"><i></i><strong id="blai-diff-stat-program">0</strong><span>程序改写</span></span>
+                                    <span class="blai-diff-stat" data-kind="ai"><i></i><strong id="blai-diff-stat-ai">0</strong><span>AI 改写</span></span>
+                                </div>
                 <div id="blai-diff-pick-bar" class="blai-diff-pick-bar" hidden>
                     <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击差异片段勾选要撤回的项</span>
                     <button id="blai-diff-pick-confirm" type="button" class="blai-icon-btn blai-diff-pick-confirm" disabled>

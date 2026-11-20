@@ -13,6 +13,8 @@
     --blai-diff-source-ai-background: color-mix(in srgb, var(--blai-diff-source-ai-color) 16%, transparent);
     --blai-diff-source-manual-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-manual));
     --blai-diff-source-manual-background: color-mix(in srgb, var(--blai-diff-source-manual-color) 16%, transparent);
+    --blai-diff-body-line-height: 1.5;
+    --blai-diff-body-paragraph-gap: 8px;
     position: fixed;
     inset: 0;
     z-index: 10000000;
@@ -451,7 +453,7 @@
 
 .blai-diff-snippet {
     display: block;
-    line-height: 1.8;
+    line-height: var(--blai-diff-body-line-height);
     white-space: pre-wrap;
     word-break: break-word;
     padding: var(--blai-space-12) var(--blai-space-14);
@@ -485,28 +487,29 @@
     padding: var(--blai-space-8);
     display: flex;
     flex-direction: column;
-    gap: var(--blai-space-12);
+    gap: var(--blai-diff-body-paragraph-gap);
 }
 
 .blai-diff-full-normal {
     font-size: var(--blai-font-14);
-    line-height: 1.5;
+    line-height: var(--blai-diff-body-line-height);
     white-space: pre-wrap;
     word-break: break-word;
     opacity: 0.85;
 }
 
 .blai-diff-full-modified {
-    font-size: var(--blai-font-16);
-    line-height: 1.8;
+    font-size: var(--blai-font-15);
+    line-height: var(--blai-diff-body-line-height);
     white-space: pre-wrap;
     word-break: break-word;
 }
 
 .blai-diff-btn-bottom {
     position: absolute;
-    bottom: var(--blai-space-6);
-    right: var(--blai-space-48);
+    /* 由 JS 按分支计数实际矩形反推，保证和 1/1 同行且右侧留 8px。 */
+    bottom: var(--blai-diff-bottom-offset, 6px);
+    right: var(--blai-diff-swipe-offset, 48px);
     z-index: 10;
     display: inline-flex;
     align-items: center;

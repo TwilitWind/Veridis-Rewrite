@@ -134,6 +134,8 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex` |
 | `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
 | `diff/tracking.js` / `retention.js` / `relatedRules.js` | 谁被记录、按设置裁剪历史、反查改动来源规则 |
+| `diff/view.js` | 尾部透视按钮投影；`syncBottomDiffButtonOffset` 按 `.swipes-counter` 实测矩形反推 `right/bottom`，与分支计数同行并留 8px，兼容 99/99 |
+| `settings/defaults.js` | `diffLineHeight`（1.5 / 1.8）与 `diffParagraphGap`（4 / 8 / 12）唯一默认与归一化来源，菜单切换后写回并持久化 |
 | `dom/protection.js` | `isProtectedNode`、`isMessageOnAllowedSurface`、`isAllowedChatInputElement`：哪些节点可净化 |
 | `dom/message.js` / `observer.js` / `streaming.js` | DOM 取节点与原子换文、观察器、流式投影 |
 | `deepClean/` | `inventory`、`contentItems`、`scan`、`programProcessing` / `aiProcessing`、`review`、`apply/`（chat / worldBook / character / persona / io 分批落盘）、`lifecycle`（`startDeepCleanRun` / `runDeepCleanScan` / `runDeepCleanApply`、冻结 `frozenRunInput`）、`view`、`events`、`diagnostics` |
