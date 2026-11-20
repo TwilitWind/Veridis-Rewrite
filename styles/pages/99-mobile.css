@@ -62,4 +62,28 @@
         width: 100%;
         min-width: 0;
     }
+
+    /* 扫描发现的非标题偏大项：下拉标签、净化按钮标签、版本数值。 */
+    #blai-purifier-popup .blai-native-select-trigger {
+        font-size: var(--blai-font-11);
+    }
+
+    #blai-purifier-popup .blai-clean-toolbar-button-label {
+        font-size: var(--blai-font-11);
+    }
+
+    #blai-purifier-popup .blai-tools-version-value {
+        font-size: var(--blai-font-12);
+    }
+
+    /* AI 改写吐司：桌面用 calc(14pt/12.5pt + 1pt) ≈ 13.5px，手机上比正文高一档。
+       标题 12px、正文 11px，与面板内标签/说明同级。 */
+    body #toast-container > .blai-ai-rewrite-toast,
+    body #toast-container > .blai-ai-rewrite-toast > .toast-title {
+        font-size: var(--blai-font-12);
+    }
+
+    body #toast-container > .blai-ai-rewrite-toast > .toast-message {
+        font-size: var(--blai-font-11);
+    }
 }

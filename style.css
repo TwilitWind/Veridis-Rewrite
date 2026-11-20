@@ -1573,8 +1573,8 @@ body #toast-container>.blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast>.bla
 #blai-purifier-popup.blai-app-shell .blai-ai-api-preset-actions .blai-ai-icon-button{width: var(--blai-size-32);height: var(--blai-size-36)}
 #blai-purifier-popup.blai-app-shell .blai-ai-section-header{gap: var(--blai-space-10) !important}
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header{position: relative;flex-direction: row;min-height: var(--blai-size-62);gap: 0}
-#blai-purifier-popup.blai-app-shell .blai-ai-connection-header>div:first-child{flex: 1 1 auto;align-self: flex-start;text-align: center}
-#blai-purifier-popup.blai-app-shell .blai-ai-connection-title-row{justify-content: center}
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-header>div:first-child{flex: 1 1 auto;align-self: flex-start;text-align: left}
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-title-row{justify-content: flex-start}
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches{position: absolute;top: 0;right: 0;flex-direction: column;align-items: flex-end;flex-wrap: nowrap;gap: var(--blai-space-3)}
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch{gap: var(--blai-space-4);min-height: var(--blai-size-28);font-size: var(--blai-font-10)}
 #blai-purifier-popup.blai-app-shell .blai-ai-prompt-input{min-height: var(--blai-size-150) !important}}
@@ -1610,5 +1610,10 @@ body #toast-container>.blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast>.bla
 #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-file-picker{grid-template-columns: minmax(0,1fr);gap: var(--blai-space-10)}
 #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-file-trigger{width: 100%}
 #blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-confirm{grid-template-columns: auto minmax(0,1fr)}
-#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-preview .blai-feedback-primary{width: 100%;min-width: 0}}
+#blai-purifier-popup.blai-app-shell #blai-feedback-workspace .blai-feedback-preview .blai-feedback-primary{width: 100%;min-width: 0}
+#blai-purifier-popup .blai-native-select-trigger{font-size: var(--blai-font-11)}
+#blai-purifier-popup .blai-clean-toolbar-button-label{font-size: var(--blai-font-11)}
+#blai-purifier-popup .blai-tools-version-value{font-size: var(--blai-font-12)}
+body #toast-container>.blai-ai-rewrite-toast,body #toast-container>.blai-ai-rewrite-toast>.toast-title{font-size: var(--blai-font-12)}
+body #toast-container>.blai-ai-rewrite-toast>.toast-message{font-size: var(--blai-font-11)}}
 /*# sourceMappingURL=style.css.map */
