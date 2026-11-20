@@ -97,6 +97,8 @@ export function renderSubrulesToModal() {
 }
 
 export function openSingleRuleModal(index, options = {}) {
+    const { extension_settings } = getAppContext();
+    const settings = extension_settings[extensionName] || {};
     rulesUiState.currentSubruleEditIndex = index;
     let mode = 'simple';
     let tStr = '';
@@ -113,6 +115,10 @@ export function openSingleRuleModal(index, options = {}) {
         remark = sub.remark || '';
         rewriteMode = getRewriteMode(sub);
         aiPromptTemplate = String(sub.aiPromptTemplate || '');
+    } else {
+        // 新建条目沿用上次使用的语法模式，减少反复切换；编辑已有条目仍用条目自身模式。
+        const remembered = String(settings.subruleEditorMode || 'simple');
+        mode = ['simple', 'text', 'regex'].includes(remembered) ? remembered : 'simple';
     }
 
     $('#blai-modal-sub-mode').val(mode).data('current-mode', mode);
@@ -121,6 +127,15 @@ export function openSingleRuleModal(index, options = {}) {
     setSingleRuleReplacementEditor(mode, replacements);
     $('#blai-modal-sub-remark').val(remark);
     $('#blai-modal-sub-ai-prompt').val(aiPromptTemplate);
+
+    // 测试区文本不缓存：每次打开都从空开始；展开状态沿用上次选择。
+    $('#blai-regex-test-text').val('');
+    $('#blai-regex-test-highlight').empty().prop('hidden', true);
+    $('#blai-regex-test-stat').empty().prop('hidden', true).removeClass('is-hit is-error');
+    $('#blai-regex-test-input-wrap').removeClass('has-matches');
+    const testOpen = settings.subruleTestPanelOpen === true;
+    $('#blai-regex-test-panel').prop('hidden', !testOpen);
+    $('#blai-regex-test-toggle').attr('aria-expanded', testOpen ? 'true' : 'false').toggleClass('is-open', testOpen);
 
     $('#blai-modal-sub-mode').trigger('change');
     $('#blai-modal-sub-rewrite-mode').trigger('change');

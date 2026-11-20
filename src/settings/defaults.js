@@ -341,6 +341,8 @@ export const defaultSettings = {
     diffTrackedMessageLimit: defaultTrackedDiffMessages,
     themeMode: "auto",
     regexHighlightEnabled: true,
+    subruleEditorMode: "simple",
+    subruleTestPanelOpen: false,
     logLevel: 2,  // 0=关闭, 1=错误, 2=警告(默认), 3=信息, 4=调试
     skipUserMessages: false,
     showComposerAiRewriteButton: false,

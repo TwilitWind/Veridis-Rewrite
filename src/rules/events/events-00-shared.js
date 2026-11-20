@@ -7,7 +7,9 @@ import { getAppContext } from '../../host/appContext.js';
 import { markRulesDataDirty, rulesUiState } from '.././state.js';
 import { getRuleActivationWarning, isRuleActivationWarningEnabled, normalizeRuleActivationSafety } from '.././model.js';
 import { compileRegexTarget, validateRegexTargetInput } from '.././regex.js';
-import { renderRegexHighlightHtml } from '.././regexHighlight.js';
+import { renderRegexHighlightHtml, renderSimpleHighlightHtml } from '.././regexHighlight.js';
+import { buildSimpleTargetPattern, buildTargetLiteralPattern } from '../engine/engine-00-patterns.js';
+import { parseInputToWords } from '.././model.js';
 import { showToast } from '../../ui/notifications.js';
 import { clearRuleSearchEditFlow, pushRuleSearchHistory, focusLatestRuleCard, openEditModal, openSingleRuleModal, renderRuleSearchModal, renderTags } from '.././view.js';
 
@@ -303,16 +305,19 @@ export function syncRegexHighlightScroll() {
     $preview.scrollLeft($input.scrollLeft());
 }
 
-function clearRegexHighlightOverlay() {
-    $('#blai-regex-target-highlight').empty().prop('hidden', true);
-    $('#blai-regex-input-wrap, .blai-regex-input-wrap').removeClass('is-highlighting');
-}
-
 export function renderRegexHighlightPreview() {
     const $preview = $('#blai-regex-target-highlight');
     if (!$preview.length) return;
     const $wrap = $preview.closest('.blai-regex-input-wrap');
-    const html = isRegexHighlightEnabled() ? renderRegexHighlightHtml($('#blai-modal-sub-target').val()) : '';
+    const mode = String($('#blai-modal-sub-mode').val() || 'simple');
+    // 普通文本没有语法符号，即便开关开着也不着色（开关本身仍显示，见 syncRegexAssistUi）。
+    const source = $('#blai-modal-sub-target').val();
+    let html = '';
+    if (isRegexHighlightEnabled() && (mode === 'regex' || mode === 'simple')) {
+        html = mode === 'regex'
+            ? renderRegexHighlightHtml(source)
+            : renderSimpleHighlightHtml(source);
+    }
     if (!html) {
         $preview.empty().prop('hidden', true);
         $wrap.removeClass('is-highlighting');
@@ -367,6 +372,40 @@ function renderRegexTestOverlay(sample, matches) {
     syncRegexTestScroll();
 }
 
+/**
+ * 按当前语法模式把查找内容编译成一组「字面区间」匹配器。
+ * regex 走 compileRegexTarget；simple 走通配符模式；text 走逗号/空格分词 + 字面转义。
+ */
+function buildTestMatchers(mode, lines) {
+    const matchers = [];
+    if (mode === 'text') {
+        const words = parseInputToWords(lines.join(' '), 'text').slice(0, REGEX_TEST_MAX_LINES);
+        for (const word of words) {
+            const pattern = buildTargetLiteralPattern(word);
+            try {
+                matchers.push(new RegExp(pattern, 'gmu'));
+            } catch (e) {
+                // 字面转义理论上不会产生非法正则，忽略即可
+            }
+        }
+        return { matchers, errors: 0 };
+    }
+    for (const line of lines) {
+        if (mode === 'simple') {
+            try {
+                matchers.push(new RegExp(buildSimpleTargetPattern(line), 'gmu'));
+            } catch (e) {
+                // 简易模式由安全转义拼装，异常概率极低
+            }
+            continue;
+        }
+        const compiled = compileRegexTarget(line);
+        if (!compiled.ok) continue;
+        matchers.push(compiled.value.regex);
+    }
+    return { matchers, errors: 0 };
+}
+
 export function runRegexTestPreview() {
     const $panel = $('#blai-regex-test-panel');
     if (!$panel.length || $panel.prop('hidden')) return;
@@ -378,6 +417,7 @@ export function runRegexTestPreview() {
         return;
     }
 
+    const mode = String($('#blai-modal-sub-mode').val() || 'simple');
     const lines = String($('#blai-modal-sub-target').val() ?? '')
         .split(/\r?\n/)
         .map((line) => line.trim())
@@ -390,15 +430,10 @@ export function runRegexTestPreview() {
         return;
     }
 
+    const { matchers } = buildTestMatchers(mode, lines);
     const matches = [];
-    let errors = 0;
-    let valid = 0;
     let capped = false;
-    for (const line of lines) {
-        const compiled = compileRegexTarget(line);
-        if (!compiled.ok) { errors += 1; continue; }
-        valid += 1;
-        const { regex } = compiled.value;
+    for (const regex of matchers) {
         let match;
         let count = 0;
         regex.lastIndex = 0;
@@ -413,9 +448,14 @@ export function runRegexTestPreview() {
     }
 
     renderRegexTestOverlay(sample, matches);
-    if (errors) setRegexTestStat('正则错误 ' + errors, 'is-error', errors + ' 条正则无法编译');
-    else if (matches.length) setRegexTestStat('命中 ' + matches.length + (capped ? '+' : ''), 'is-hit', valid + ' 条正则 / ' + matches.length + ' 处命中');
-    else setRegexTestStat('未命中', '', valid + ' 条正则均未命中');
+    if (matches.length) setRegexTestStat('命中 ' + matches.length + (capped ? '+' : ''), 'is-hit', matchers.length + ' 条规则 / ' + matches.length + ' 处命中');
+    else setRegexTestStat('未命中', '', matchers.length + ' 条规则均未命中');
+}
+
+export function clearRegexTestArea() {
+    $('#blai-regex-test-text').val('');
+    renderRegexTestOverlay('', []);
+    setRegexTestStat('', '', '');
 }
 
 function escapeRegexTestHtml(value) {
@@ -426,17 +466,12 @@ function escapeRegexTestHtml(value) {
 }
 
 export function syncRegexAssistUi() {
-    const isRegex = String($('#blai-modal-sub-mode').val() || '') === 'regex';
-    $('#blai-regex-flags-hint').prop('hidden', !isRegex);
-    $('#blai-regex-test-block').prop('hidden', !isRegex);
-    $('#blai-regex-highlight-switch').prop('hidden', !isRegex);
-    $('#blai-regex-highlight-toggle').prop('checked', isRegexHighlightEnabled()).prop('disabled', !isRegex);
-    if (!isRegex) {
-        clearRegexHighlightOverlay();
-        renderRegexTestOverlay('', []);
-        setRegexTestStat('', '', '');
-        return;
-    }
+    const mode = String($('#blai-modal-sub-mode').val() || 'simple');
+    $('#blai-regex-flags-hint').prop('hidden', mode !== 'regex');
+    // 测试区与代码高亮开关三个模式都显示；开关状态由各自 setter 记忆，不随模式重置。
+    $('#blai-regex-test-block').prop('hidden', false);
+    $('#blai-regex-highlight-switch').prop('hidden', false);
+    $('#blai-regex-highlight-toggle').prop('checked', isRegexHighlightEnabled()).prop('disabled', false);
     renderRegexHighlightPreview();
     runRegexTestPreview();
 }

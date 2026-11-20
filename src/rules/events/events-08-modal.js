@@ -2,7 +2,7 @@
  * 规则事件组：modalAction（原 bindRuleEvents 内第 50–57 段 handler）
  * 由原 src/rules/events.js 拆分；对外接口不变，调用方仍从 ./events.js 的 bindRuleEvents 进入。
  */
-import { isSearchGroupEditFlow, isSearchDirectSubruleFlow, isRelatedDirectSubruleFlow, saveCurrentEditingRule, formatRegexTargetError, clearRegexTargetValidationState, validateRegexTargetField } from './events-00-shared.js';
+import { isSearchGroupEditFlow, isSearchDirectSubruleFlow, isRelatedDirectSubruleFlow, saveCurrentEditingRule, formatRegexTargetError, clearRegexTargetValidationState, validateRegexTargetField, clearRegexTestArea } from './events-00-shared.js';
 import { runRuleTransfer } from './events-01-ui.js';
 import { refreshDiffViewer } from '../../diff/state.js';
 import { rulesUiState } from '.././state.js';
@@ -68,6 +68,7 @@ export function bindRuleModalActionEvents() {
         }
 
         clearRegexTargetValidationState();
+        clearRegexTestArea();
         if (isDirectSearchFlow || isRelatedFlow) {
             const saveResult = saveCurrentEditingRule({ toastMessage: '条目保存成功', focusLatest: false });
             if (!saveResult.ok) return;
@@ -91,6 +92,7 @@ export function bindRuleModalActionEvents() {
 
     $(document).off('click', '#blai-modal-sub-cancel').on('click', '#blai-modal-sub-cancel', () => {
         clearRegexTargetValidationState();
+        clearRegexTestArea();
         if (isSearchDirectSubruleFlow() || isRelatedDirectSubruleFlow()) {
             const shouldReturnSearch = isSearchDirectSubruleFlow();
             $('#blai-subrule-edit-modal').fadeOut(150, () => {

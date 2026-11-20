@@ -113,6 +113,29 @@ export function tokenizeRegexSource(source) {
     return tokens;
 }
 
+/**
+ * 简易组合语法高亮：只标 `{` `}` `,` 分组、`,` 或分支、`*` 与 `?` 通配，
+ * 其余按文本色输出。普通文本没有语法符号，因此调用方不会用本函数。
+ */
+export function renderSimpleHighlightHtml(source) {
+    const text = String(source ?? '');
+    if (!text.trim()) return '';
+    return text.split(/\r?\n/).map((line) => {
+        if (!line.trim()) return '<div class="blai-regex-hl-line">&nbsp;</div>';
+        let body = '';
+        for (let i = 0; i < line.length; i += 1) {
+            const char = line[i];
+            let type = 'literal';
+            if (char === '{' || char === '}') type = 'group';
+            else if (char === ',') type = 'alternation';
+            else if (char === '*' || char === '?') type = 'quantifier';
+            const label = TOKEN_LABELS[type] || '';
+            body += '<span class="blai-regex-tok blai-regex-tok--' + type + '" title="' + label + '">' + escapeHighlightHtml(char) + '</span>';
+        }
+        return '<div class="blai-regex-hl-line">' + body + '</div>';
+    }).join('');
+}
+
 function splitLiteralFormFlags(tokens) {
     const last = tokens[tokens.length - 1];
     if (!last || last.type !== 'literal') return '';

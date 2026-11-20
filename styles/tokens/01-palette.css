@@ -37,6 +37,8 @@
     --re-quant: #C4463F;
     --re-anchor: #5C7D00;
     --re-error: #C4433F;
+    /* 匹配测试区命中高亮：柔和琥珀，日间压低浓度，避免盖住文字 */
+    --blai-test-match-bg: rgba(214, 158, 46, 0.32);
     /* 强调色拆三个角色，不可混用：
        --accent-color    实心块底色（按钮/开关/选中条）
        --accent-ink      浅底上的强调文字与图标

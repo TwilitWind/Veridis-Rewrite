@@ -193,6 +193,8 @@ export function ensureSettingsShape() {
     settings.diffTrackedMessageLimit = normalizeDiffTrackedMessageLimit(settings.diffTrackedMessageLimit);
     if (!['auto', 'light', 'dark'].includes(settings.themeMode)) settings.themeMode = 'auto';
     if (settings.regexHighlightEnabled === undefined) settings.regexHighlightEnabled = true;
+    if (!['simple', 'text', 'regex'].includes(settings.subruleEditorMode)) settings.subruleEditorMode = 'simple';
+    if (settings.subruleTestPanelOpen === undefined) settings.subruleTestPanelOpen = false;
     if (settings.logLevel === undefined) settings.logLevel = 2;
     if (settings.skipUserMessages === undefined) settings.skipUserMessages = false;
     settings.showComposerAiRewriteButton = settings.showComposerAiRewriteButton === true;

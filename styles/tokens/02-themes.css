@@ -86,6 +86,8 @@
     --re-quant: #F07178;
     --re-anchor: #AAD94C;
     --re-error: #D95757;
+    /* 深底上适当提高浓度，柔和不刺眼 */
+    --blai-test-match-bg: rgba(230, 170, 60, 0.42);
 }
 
 #blai-purifier-popup[data-theme="dark"] .panel {

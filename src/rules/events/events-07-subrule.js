@@ -110,8 +110,15 @@ export function bindRuleSubruleEditorEvents() {
 
     $(document).off('click', '#blai-subrule-transfer-cancel').on('click', '#blai-subrule-transfer-cancel', () => closeSubruleTransferModal());
 
-    $(document).off('change', '#blai-modal-sub-mode').on('change', '#blai-modal-sub-mode', function() {
-        applySubruleModeUI(String($(this).val() || 'simple'));
+    $(document).off('change', '#blai-modal-sub-mode').on('change', '#blai-modal-sub-mode', function(e) {
+        const mode = String($(this).val() || 'simple');
+        applySubruleModeUI(mode);
+        // 只在用户主动切换时记忆（排除开弹窗时的程序 trigger），新建条目时沿用。
+        const settings = extension_settings[extensionName];
+        if (e.originalEvent && settings && settings.subruleEditorMode !== mode) {
+            settings.subruleEditorMode = mode;
+            saveSettingsDebounced();
+        }
     });
 
     $(document).off('change', '#blai-modal-sub-rewrite-mode').on('change', '#blai-modal-sub-rewrite-mode', function() {
@@ -119,7 +126,6 @@ export function bindRuleSubruleEditorEvents() {
     });
 
     $(document).off('input', '#blai-modal-sub-target').on('input', '#blai-modal-sub-target', () => {
-        if ($('#blai-modal-sub-mode').val() !== 'regex') return;
         validateRegexTargetField();
         renderRegexHighlightPreview();
         runRegexTestPreview();
@@ -144,6 +150,13 @@ export function bindRuleSubruleEditorEvents() {
         $panel.prop('hidden', !nextOpen);
         $(this).attr('aria-expanded', nextOpen ? 'true' : 'false');
         $(this).toggleClass('is-open', nextOpen);
+        // 记忆文本测试开关状态。
+        const { extension_settings, saveSettingsDebounced } = getAppContext();
+        const settings = extension_settings[extensionName];
+        if (settings && settings.subruleTestPanelOpen !== nextOpen) {
+            settings.subruleTestPanelOpen = nextOpen;
+            saveSettingsDebounced();
+        }
         if (nextOpen) {
             $('#blai-regex-test-text').trigger('focus');
             runRegexTestPreview();
