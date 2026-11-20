@@ -150,7 +150,7 @@
 #blai-purifier-popup .blai-global-header {
     --blai-header-button-size: var(--blai-size-32);
     min-width: 0;
-    padding: var(--blai-space-8) var(--blai-space-20);
+    padding: var(--blai-space-6) var(--blai-space-20);
     display: grid;
     grid-template-columns: minmax(0, 1fr) max-content;
     grid-template-rows: auto auto;
@@ -236,7 +236,7 @@
         grid-row: 1;
         grid-template-rows: auto;
         align-items: center;
-        padding: var(--blai-space-10) var(--blai-space-20);
+        padding: var(--blai-space-7) var(--blai-space-20);
     }
 
     #blai-purifier-popup .blai-global-title-group {
@@ -271,7 +271,7 @@
 @media (min-width: 601px) and (max-width: 1024px) {
     #blai-purifier-popup .blai-global-header {
         --blai-header-button-size: var(--blai-size-36);
-        padding: var(--blai-space-7) var(--blai-space-16);
+        padding: var(--blai-space-5) var(--blai-space-16);
         column-gap: var(--blai-space-8);
     }
 
@@ -281,8 +281,8 @@
 
 @media (max-width: 600px) {
     #blai-purifier-popup .blai-global-header {
-        --blai-header-button-size: var(--blai-size-30);
-        padding: calc(var(--blai-space-6) + env(safe-area-inset-top, 0px)) var(--blai-space-14) var(--blai-space-8);
+        --blai-header-button-size: var(--blai-size-28);
+        padding: calc(var(--blai-space-4) + env(safe-area-inset-top, 0px)) var(--blai-space-12) var(--blai-space-5);
         column-gap: var(--blai-space-4);
         row-gap: 0;
         grid-template-rows: auto;

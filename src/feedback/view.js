@@ -183,7 +183,7 @@ export function renderFeedbackForm(slots = {}) {
     updateFeedbackAreaSummary();
 }
 
-// 顶栏动作按钮统一由这里生成：图标 + 文字，四个按钮同一套外观。
+// 顶栏动作按钮统一由这里生成：图标 + 文字，与「清空记录」同一套外观。
 function logActionButton(id, icon, label, { pressed = null, danger = false, title = '' } = {}) {
     const pressedAttr = pressed === null ? '' : ` aria-pressed="${pressed}"`;
     const dangerClass = danger ? ' is-danger' : '';
@@ -210,8 +210,6 @@ export function renderRuntimeLog() {
                         pressed: descending,
                         title: descending ? '当前为日期倒序，点击切换为日期正序' : '当前为日期正序，点击切换为日期倒序',
                     })}
-                    ${logActionButton('blai-feedback-copy-log', 'far fa-copy', '复制日志')}
-                    ${logActionButton('blai-feedback-export-log', 'fas fa-file-export', '导出日志')}
                     ${logActionButton('blai-feedback-clear-log', 'fas fa-eraser', '清空日志', { danger: true })}
                 </div>
             </header>

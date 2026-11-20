@@ -44,8 +44,8 @@
     line-height: 1.55;
 }
 
-/* 标题行右侧动作按钮：图标 + 文字的同一种样式，四个标签页共用
-   （运行日志「复制日志」、AI 上下文「清空」、深度清理诊断「清空」）。 */
+/* 标题行右侧动作按钮：图标 + 文字的同一种样式，三个标签页共用
+   （运行日志「日期排序 / 清空日志」、AI 上下文与深度清理诊断「清空记录」）。 */
 #blai-feedback-workspace .blai-feedback-heading-action {
     min-height: var(--blai-size-32);
     padding: 0 var(--blai-space-10);
@@ -75,8 +75,8 @@
     color: var(--accent-ink);
 }
 
-/* 运行日志顶栏一排动作：顺序、复制、导出、清空。
-   四个按钮同一个外观，只有「清空」是对抗性操作，图标与悬停转红。 */
+/* 运行日志标题行右侧动作：日期排序 + 清空日志，与另两个标签的「清空记录」同一行右对齐。
+   两个按钮同一外观，只有「清空」是对抗性操作，图标与悬停转红。 */
 #blai-feedback-workspace .blai-feedback-heading-actions {
     min-width: 0;
     flex: none;
@@ -221,7 +221,7 @@
 
 @media (max-width: 600px) {
     #blai-feedback-workspace .blai-feedback-workspace-header {
-        padding: calc(var(--blai-space-9) + env(safe-area-inset-top, 0px)) var(--blai-space-14) 0;
+        padding: calc(var(--blai-space-6) + env(safe-area-inset-top, 0px)) var(--blai-space-12) 0;
     }
 
     #blai-feedback-workspace .blai-feedback-workspace-nav {
@@ -242,10 +242,38 @@
         border-radius: 0;
     }
 
-    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-diagnostic-heading, .blai-feedback-local-heading) {
+    /* 页面级标题行在手机端也保持「标题在左、动作在右」，与桌面一致：
+       删掉复制/导出后只剩两个按钮，390px 放得下，不必换行占高。 */
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) {
+        align-items: center;
+        flex-direction: row;
+        gap: var(--blai-space-8);
+        padding-bottom: var(--blai-space-10);
+    }
+
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) > div {
+        min-width: 0;
+    }
+
+    /* 副标题是说明文字，留在标题行会挤压右侧动作；手机端收起，信息仍在日志正文里。 */
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) p {
+        display: none;
+    }
+
+    /* 诊断记录卡内的小标题保持上下排列，避免「展开安全 JSON」挤掉标题。 */
+    #blai-feedback-workspace .blai-feedback-diagnostic-heading {
         align-items: flex-start;
         flex-direction: column;
         gap: var(--blai-space-12);
+    }
+
+    #blai-feedback-workspace .blai-feedback-heading-actions {
+        flex-wrap: nowrap;
+        gap: var(--blai-space-2);
+    }
+
+    #blai-feedback-workspace .blai-feedback-heading-action {
+        padding: 0 var(--blai-space-8);
     }
 
     #blai-feedback-workspace .blai-feedback-diagnostic-record dl {

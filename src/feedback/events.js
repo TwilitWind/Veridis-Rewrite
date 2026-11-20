@@ -22,12 +22,9 @@ import {
 import {
     applyDebugDisplayOrder,
     clearAiRewriteDebugEvents,
-    getAiRewriteDebugDisplayText,
-    getAiRewriteDebugLogText,
     readDebugDisplayOrderPreference,
 } from '../aiRewrite/debug.js';
 import { clearAiCommunicationRecords } from '../aiRewrite/communicationMonitor.js';
-import { logger } from '../log.js';
 import { showConfirmModal } from '../ui/notifications.js';
 import { showToast } from '../ui/notifications.js';
 
@@ -223,45 +220,10 @@ export function bindFeedbackEvents() {
         document.getElementById('blai-feedback-files')?.click();
     });
 
-    // 复制给的是屏幕上看到的那份排版文本；要拿结构化数据去提 issue 的用「导出日志」。
-    $(document).off('click', '#blai-feedback-copy-log').on('click', '#blai-feedback-copy-log', async () => {
-        const logText = getAiRewriteDebugDisplayText();
-        if (!logText || logText === '暂无运行事件。') {
-            showToast('还没有可复制的日志。');
-            return;
-        }
-        try {
-            const tavernHelper = globalThis.TavernHelper || globalThis.parent?.TavernHelper;
-            if (typeof tavernHelper?.builtin?.copyText !== 'function') throw new Error('TavernHelper.builtin.copyText 不可用');
-            await tavernHelper.builtin.copyText(logText);
-            showToast('运行日志已复制。');
-        } catch (error) {
-            logger.warn('复制运行日志失败', error);
-            showToast('复制失败，请改用「导出日志」。');
-        }
-    });
-
     $(document).off('click', '#blai-feedback-log-order').on('click', '#blai-feedback-log-order', function() {
         const next = readDebugDisplayOrderPreference() === 'desc' ? 'asc' : 'desc';
         applyDebugDisplayOrder(next);
         renderRuntimeLog();
-    });
-
-    $(document).off('click', '#blai-feedback-export-log').on('click', '#blai-feedback-export-log', () => {
-        const data = getAiRewriteDebugLogText();
-        if (!data || data === '[]') {
-            showToast('还没有可导出的日志。');
-            return;
-        }
-        const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `veridis-rewrite-log-${stamp}.json`;
-        link.click();
-        URL.revokeObjectURL(url);
-        showToast('运行日志已导出。');
     });
 
     $(document).off('click', '#blai-feedback-clear-log').on('click', '#blai-feedback-clear-log', async () => {

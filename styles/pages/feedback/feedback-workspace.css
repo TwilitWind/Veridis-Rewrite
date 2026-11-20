@@ -45,7 +45,7 @@
 /* 顶栏：四个视图直接作为标签页铺满整条，标题已由全局顶栏承担。 */
 #blai-feedback-workspace .blai-feedback-workspace-header {
     min-width: 0;
-    padding: var(--blai-space-8) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
+    padding: var(--blai-space-6) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
     border-bottom: 0;
     display: grid;
     gap: 0;
@@ -101,7 +101,7 @@
     width: auto;
     min-width: 0;
     height: auto;
-    min-height: var(--blai-size-36);
+    min-height: var(--blai-size-34);
     padding: 0 var(--blai-space-18);
     border: 0;
     border-radius: 0;
@@ -120,7 +120,7 @@
     width: auto;
     min-width: 0;
     height: auto;
-    min-height: var(--blai-size-36);
+    min-height: var(--blai-size-34);
     flex: 0 0 auto;
 }
 

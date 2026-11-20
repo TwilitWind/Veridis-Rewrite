@@ -1,5 +1,5 @@
 /**
- * AI 改写诊断的对外入口：记录事件、导出日志文本。
+ * AI 改写诊断的对外入口：记录事件、提供展示文本与结构化事件。
  * 存储与常量在 debugStore.js，中文排版在 debugView.js。
  */
 import { logger } from '../log.js';
@@ -87,10 +87,6 @@ export function recordAiRewriteRuntimeDebug(stage, details = {}, level = 'info')
 
 export function getAiRewriteDebugDisplayText() {
     return formatDebugDisplayEvents(getMergedAiRewriteDebugEvents());
-}
-
-export function getAiRewriteDebugLogText() {
-    return JSON.stringify(getMergedAiRewriteDebugEvents(), null, 2);
 }
 
 export function getAiRewriteRuntimeLog() {

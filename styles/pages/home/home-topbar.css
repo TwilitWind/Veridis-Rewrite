@@ -13,8 +13,8 @@
     min-width: 0;
     display: grid;
     gap: 0;
-    /* 顶栏收薄：上下留白压到 6px/0，控件高度在下方按 30px 统一。 */
-    padding: var(--blai-space-6) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
+    /* 顶栏只压留白不压字号：上下留白 4px/0，控件高度仍按 30px 保证可点。 */
+    padding: var(--blai-space-4) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
     border: 0;
     border-radius: 0;
     background: var(--bg-surface);
@@ -27,11 +27,11 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--blai-space-10) var(--blai-space-16);
+    gap: var(--blai-space-8) var(--blai-space-12);
 }
 
 #blai-purifier-popup .blai-home-topbar-row-primary {
-    padding-bottom: var(--blai-space-4);
+    padding-bottom: var(--blai-space-2);
 }
 
 /* 顶栏内所有控件统一 30px 高，行高与留白共同把整条压薄。 */
@@ -56,7 +56,7 @@
 
 /* 行一与行二之间不再画分隔线，只靠行距分区 */
 #blai-purifier-popup .blai-home-topbar-row-secondary {
-    padding: 0 0 var(--blai-space-6);
+    padding: 0 0 var(--blai-space-4);
     border-top: 0;
 }
 
@@ -112,7 +112,7 @@
 
 @media (max-width: 600px) {
     #blai-purifier-popup .blai-home-topbar {
-        padding: var(--blai-space-8) var(--blai-space-14) 0;
+        padding: var(--blai-space-5) var(--blai-space-12) 0;
     }
 
     /* 行一：预设下拉框在左，统计信息贴最右侧并垂直居中；操作按钮独占下一行。 */
@@ -120,7 +120,7 @@
         display: grid;
         grid-template-columns: minmax(0, auto) minmax(0, 1fr);
         align-items: center;
-        gap: var(--blai-space-8) var(--blai-space-10);
+        gap: var(--blai-space-6) var(--blai-space-8);
     }
 
     #blai-purifier-popup .blai-home-topbar-main {
