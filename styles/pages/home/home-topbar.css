@@ -118,7 +118,7 @@
     /* 行一：预设下拉框在左，统计信息贴最右侧并垂直居中；操作按钮独占下一行。 */
     #blai-purifier-popup .blai-home-topbar-row-primary {
         display: grid;
-        grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+        grid-template-columns: minmax(0, auto) auto minmax(0, 1fr);
         align-items: center;
         gap: var(--blai-space-6) var(--blai-space-8);
     }
@@ -132,8 +132,26 @@
         grid-row: 1;
     }
 
-    #blai-purifier-popup .blai-home-metrics {
+    /* 省略号触发器放在预设下拉框右侧，和统计同一行。 */
+    #blai-purifier-popup .blai-preset-actions-toggle {
         grid-column: 2;
+        grid-row: 1;
+        width: var(--blai-size-30);
+        min-width: var(--blai-size-30);
+        height: var(--blai-size-30);
+        padding: 0;
+        display: inline-grid;
+        place-items: center;
+        border: var(--blai-border-1) solid var(--border-color);
+        border-radius: var(--blai-radius-10);
+        background: var(--blai-input-bg);
+        color: var(--text-main);
+        font-size: var(--blai-font-13);
+        line-height: 1;
+    }
+
+    #blai-purifier-popup .blai-home-metrics {
+        grid-column: 3;
         grid-row: 1;
         width: auto;
         flex: none;
@@ -141,12 +159,9 @@
         align-self: center;
     }
 
+    /* 五个动作按钮在手机端由省略号菜单承接，不再独占第二行。 */
     #blai-purifier-popup .blai-home-topbar .blai-home-dataset-actions {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        display: grid;
-        width: 100%;
+        display: none;
     }
 
     /* 行二：隐藏浅字副标题，标题居左；四个分组控件移到同一行最右侧并垂直居中。 */

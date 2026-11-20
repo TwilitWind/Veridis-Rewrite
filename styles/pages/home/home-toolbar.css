@@ -65,6 +65,24 @@
     white-space: nowrap;
 }
 
+/* 手机端把五个规则集动作收进省略号菜单；桌面保持整排按钮，触发器不出现。 */
+#blai-purifier-popup .blai-preset-actions-toggle {
+    display: none;
+}
+
+.blai-preset-actions-menu {
+    min-width: var(--blai-size-148);
+}
+
+.blai-preset-actions-menu .blai-preset-menu-item {
+    gap: var(--blai-space-8);
+}
+
+.blai-preset-actions-menu .blai-preset-action-danger,
+.blai-preset-actions-menu .blai-preset-action-danger i {
+    color: var(--status-danger);
+}
+
 /* 自绘规则集下拉菜单：与卡片菜单同一套弹层风格（白底/圆角/边框/阴影），宽度铺满触发器。 */
 #blai-purifier-popup .blai-preset-menu,
 .blai-preset-menu {

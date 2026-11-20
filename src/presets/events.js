@@ -14,6 +14,7 @@ import { showAlertModal, showConfirmModal, showPromptModal, showToast } from '..
 import { getCurrentCharacterContext, getCurrentChatCompletionPresetName } from '../host/context.js';
 import { getPresetBindingUsage } from './bindings.js';
 import { bindPresetSelectMenu } from './presetSelectMenu.js';
+import { bindPresetActionsMenu } from './presetActionsMenu.js';
 import {
     buildCurrentPresetEntry,
     buildPresetExportPayload,
@@ -51,6 +52,7 @@ export function bindPresetEvents() {
 
     // 自绘规则集下拉：浮层开合与选项切换（切换逻辑复用上面的 switchPreset）。
     bindPresetSelectMenu(switchPreset);
+    bindPresetActionsMenu();
 
     $(document).off('click', '#blai-default-toggle').on('click', '#blai-default-toggle', function() {
         const settings = extension_settings[extensionName];

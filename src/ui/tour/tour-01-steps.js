@@ -1,11 +1,11 @@
 /** tour 的分块：steps。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { showResponsivePage } from '../shell.js';
-import { activeNavigationTarget, toolsPageTourTarget, aiAdvancedGenerationTourTarget, currentRulesetTourTarget, ruleToolsTourTarget, deepCleanLaunchTourTarget, deepCleanQuickSelectionTourTarget, deepCleanFinalSelectionTourTarget, deepCleanPresetTourTarget, deepCleanOptionsTourTarget, escapeHtml } from './tour-00-targets.js';
+import { activeNavigationTarget, toolsPageTourTarget, aiAdvancedGenerationTourTarget, currentRulesetTourTarget, presetImportTourTarget, ruleToolsTourTarget, deepCleanLaunchTourTarget, deepCleanQuickSelectionTourTarget, deepCleanFinalSelectionTourTarget, deepCleanPresetTourTarget, deepCleanOptionsTourTarget, escapeHtml } from './tour-00-targets.js';
 
 export const mainSteps = [
     { title: 'Veridis Rewrite 的四个区域', badge: '基础', body: '首页用于管理规则集和规则；AI 页面配置模型改写；净化页面包含标签作用范围和深度净化；工具页面包含按需使用的附加功能。', target: activeNavigationTarget },
     { page: 'overview', title: '当前规则集', badge: '基础', body: '这里显示当前查看和使用的净化规则集。\n\n规则集中的规则可以在下方添加、编辑、启用或停用。', target: currentRulesetTourTarget },
-    { page: 'overview', title: '导入预设', badge: '基础', body: '可直接导入 AI 改写预设。预设可在帖子内下载，下载后在这里导入即可。', target: '[data-blai-click-proxy="#blai-preset-import"]' },
+    { page: 'overview', title: '导入预设', badge: '基础', body: '可直接导入 AI 改写预设。预设可在帖子内下载；手机端点预设框右侧「⋯」，在菜单里选择导入。', target: presetImportTourTarget },
     { page: 'overview', title: '编辑规则', badge: '基础', body: '「添加」用于建立新的规则组，现有规则显示在下方。\n\n规则改动会在关闭插件或切换规则集时提示保存；搜索、批量编辑和反序排序用于规则管理。', target: ruleToolsTourTarget },
     { page: 'ai', title: 'AI 改写', badge: '按需', body: 'AI 页面包含 API、API Key、模型和「启用改写」设置。\n\n启用 AI 改写的规则会使用这里配置的连接和模型。', target: '#blai-ai-connection-title' },
     { page: 'ai', title: '其他生成参数', badge: '高级', body: '这里包含 Top P、Top K、Max Tokens、惩罚参数、重试、超时、单次条目和 Context 等生成与请求参数。\n\n它们分别控制采样范围、输出长度、请求行为和单次处理规模。', target: aiAdvancedGenerationTourTarget },

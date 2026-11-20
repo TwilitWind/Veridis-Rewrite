@@ -49,6 +49,14 @@
                                         <div id="blai-preset-menu" class="blai-preset-menu" role="listbox" hidden></div>
                                         <select id="blai-preset-select" class="blai-visually-hidden" aria-label="当前规则集（数据锚点）" tabindex="-1"></select>
                                     </div>
+                                    <button type="button" id="blai-preset-actions-toggle" class="blai-preset-actions-toggle" aria-label="规则集操作" aria-haspopup="menu" aria-expanded="false"><i class="fas fa-ellipsis" aria-hidden="true"></i></button>
+                                    <div id="blai-preset-actions-menu" class="blai-preset-menu blai-preset-actions-menu" role="menu" aria-label="规则集操作" hidden>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>新建</span></button>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-rename"><i class="fas fa-pen-to-square" aria-hidden="true"></i><span>重命名</span></button>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-import"><i class="fas fa-file-import" aria-hidden="true"></i><span>导入</span></button>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-export"><i class="fas fa-file-export" aria-hidden="true"></i><span>导出</span></button>
+                                        <button type="button" class="blai-preset-menu-item blai-preset-action-danger" role="menuitem" data-blai-preset-action="#blai-preset-delete"><i class="fas fa-trash" aria-hidden="true"></i><span>删除</span></button>
+                                    </div>
                                     <div class="blai-home-dataset-actions" aria-label="规则集操作">
                                         <button type="button" data-blai-click-proxy="#blai-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>新建</span></button>
                                         <button type="button" data-blai-click-proxy="#blai-preset-rename"><i class="fas fa-pen-to-square" aria-hidden="true"></i><span>重命名</span></button>

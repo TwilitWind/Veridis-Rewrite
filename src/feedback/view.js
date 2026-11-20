@@ -4,7 +4,6 @@ import {
     applyDebugDisplayOrder,
     getAiRewriteDebugDisplayText,
     getAiRewriteDebugEventCount,
-    getDebugLogTimeZoneLabel,
     readDebugDisplayOrderPreference,
 } from '../aiRewrite/debug.js';
 import { formatAiCommunicationRecords } from '../aiRewrite/communicationMonitor.js';
@@ -197,13 +196,12 @@ export function renderRuntimeLog() {
     const order = readDebugDisplayOrderPreference();
     applyDebugDisplayOrder(order);
     const descending = order === 'desc';
-    const deviceTimeZone = getDebugLogTimeZoneLabel();
     content.innerHTML = `
         <section class="blai-feedback-local-view">
             <header class="blai-feedback-local-heading">
                 <div>
                     <h2>运行日志<span class="blai-feedback-log-badge"><b id="blai-feedback-log-count">${getAiRewriteDebugEventCount()}</b> 条</span></h2>
-                    <p>${descending ? '按发生时间倒序' : '按发生顺序'}记录最近 100 条运行事件，时间取设备当前时区${deviceTimeZone ? `（${deviceTimeZone}）` : ''}。同一秒内连续重复的空转事件会合并成一行。</p>
+                    <p>${descending ? '按发生时间倒序' : '按发生顺序'}记录最近 100 条运行事件，时间取设备当前时区。同一秒内连续重复的空转事件会合并成一行。</p>
                 </div>
                 <div class="blai-feedback-heading-actions">
                     ${logActionButton('blai-feedback-log-order', 'fas fa-arrow-down-wide-short', descending ? '日期倒序' : '日期正序', {

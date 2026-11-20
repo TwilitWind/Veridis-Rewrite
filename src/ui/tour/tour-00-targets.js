@@ -54,6 +54,13 @@ export function currentRulesetTourTarget() {
         || document.querySelector('.blai-home-topbar');
 }
 
+// 手机端五个规则集动作收进了省略号菜单，导览不能继续指向已隐藏的「导入」按钮。
+export function presetImportTourTarget() {
+    return isPhone()
+        ? document.getElementById('blai-preset-actions-toggle')
+        : document.querySelector('#blai-purifier-popup [data-blai-click-proxy="#blai-preset-import"]');
+}
+
 export function ruleToolsTourTarget() {
     return document.querySelector('#blai-open-new-rule-btn')?.closest('.blai-home-toolbar-actions')
         || document.querySelector('.blai-home-topbar');

@@ -224,9 +224,25 @@
         padding: calc(var(--blai-space-2) + env(safe-area-inset-top, 0px)) var(--blai-space-12) 0;
     }
 
+    /* 页内顶栏的上内边距另有一条高特异性规则（layouts/01-responsive.css），
+       这里用同样的完整选择器压回去，只收紧手机端反馈页，首页顶栏不变。 */
+    #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header {
+        padding-top: var(--blai-space-2);
+    }
+
     #blai-feedback-workspace .blai-feedback-workspace-nav {
         padding: 0;
         gap: var(--blai-space-2);
+    }
+
+    #blai-feedback-workspace .blai-feedback-workspace-nav button > span {
+        padding-bottom: var(--blai-space-5);
+    }
+
+    /* 标签行整体压薄：按钮 28px + 指示条留白 5px，仍压在 nav 的分隔线上。
+       选择器必须带上 .blai-feedback-workspace-header，否则压不过 workspace.css 的同名规则。 */
+    #blai-feedback-workspace .blai-feedback-workspace-header .blai-feedback-workspace-nav button {
+        min-height: var(--blai-size-28);
     }
 
     /* 手机端 390px 放不下四个 15px 标签，字号降一档到 13px，同时把按钮左右
@@ -255,6 +271,13 @@
         grid-template-columns: minmax(0, 1fr) auto;
         grid-template-rows: auto auto;
         column-gap: var(--blai-space-8);
+        /* 行间距归零：副标题的间距只由下面的 margin-top 决定。 */
+        row-gap: var(--blai-space-0);
+    }
+
+    /* 标题行右侧动作压到 28px，行高随之下降，标题与副标题不再被动作撑开。 */
+    #blai-feedback-workspace .blai-feedback-heading-action {
+        min-height: var(--blai-size-28);
     }
 
     /* 只打散左侧「标题+副标题」块（第一个子 div），右侧 actions 块必须保持自身盒子。
@@ -288,7 +311,7 @@
         display: block;
         grid-column: 1 / -1;
         grid-row: 2;
-        margin-top: var(--blai-space-4);
+        margin-top: var(--blai-space-2);
     }
 
     /* 诊断记录卡内的小标题保持上下排列，避免「展开安全 JSON」挤掉标题。 */
