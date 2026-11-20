@@ -882,9 +882,9 @@ to{opacity: 1;transform: none}}
 #blai-diff-modal .blai-diff-stat:last-child{border-right: 0;padding-right: 0}
 #blai-diff-modal .blai-diff-stat strong{font-size: var(--blai-font-14)}
 #blai-diff-modal .blai-diff-stat>span{color: var(--text-secondary)}
-.blai-diff-full-modified:not(.blai-deep-clean-review-modified){padding: var(--blai-space-12) var(--blai-space-14);background: var(--bg-surface);border-left: 4px solid var(--accent-color);border-radius: var(--blai-radius-6)}
-.blai-diff-full-modified:not(.blai-deep-clean-review-modified) del{color: var(--blai-diff-stage-color,var(--status-danger));background: transparent;text-decoration: line-through;padding: 0 var(--blai-space-3);border-radius: var(--blai-radius-3)}
-.blai-diff-full-modified:not(.blai-deep-clean-review-modified) ins{color: var(--blai-diff-stage-color,var(--status-success));background: var(--blai-diff-stage-background,color-mix(in srgb,var(--bg-base) 12%,transparent));text-decoration: none;padding: 0 var(--blai-space-3);border-radius: var(--blai-radius-3);font-weight: var(--blai-weight-bold)}
+#blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified){padding: var(--blai-space-12) var(--blai-space-14);background: var(--bg-surface);border-left: 4px solid var(--accent-color);border-radius: var(--blai-radius-6)}
+#blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified) del{color: var(--blai-diff-stage-color,var(--status-danger));background: transparent;text-decoration: line-through;padding: 0 var(--blai-space-3);border-radius: var(--blai-radius-3)}
+#blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified) ins{color: var(--blai-diff-stage-color,var(--status-success));background: var(--blai-diff-stage-background,color-mix(in srgb,var(--bg-base) 12%,transparent));text-decoration: none;padding: 0 var(--blai-space-3);border-radius: var(--blai-radius-3);font-weight: var(--blai-weight-bold)}
 #blai-purifier-popup .blai-clean-page{width: 100%;min-width: 0;display: grid;align-content: start;gap: var(--blai-space-24);color: var(--text-main)}
 #blai-purifier-popup .blai-clean-page :is(h2,h3,p){margin: 0}
 #blai-purifier-popup .blai-clean-columns{min-width: 0;display: grid;grid-template-columns: minmax(0,5fr) minmax(0,3fr);align-items: stretch;gap: var(--blai-column-gap)}

@@ -254,8 +254,13 @@ export function renderDiffDocument(pairs, mode) {
             : getSnippetPairOperations(pair, operations))
             .map(operation => ({ ...operation, section: pair.section }));
         if (mode === 'full') {
-            const changed = runs.some(run => run.type !== 'equal');
-            blocks.push(`<div class="${changed ? 'blai-diff-full-modified' : 'blai-diff-full-normal'}">${renderDiffOperations(runs)}</div>`);
+            // 按换行拆成独立段落块，段落间距（flex gap）才能作用到段落之间。
+            // 旧实现每个 pair 只出一个 div、换行靠 white-space:pre-wrap，
+            // 导致整段文本只有一个子块，三档段距设置完全看不出变化。
+            blocks.push(...renderFullTextDiffBlocks(
+                operations,
+                (operation) => renderDiffOperation(operation, pair.section),
+            ));
             continue;
         }
         // 句子边界只提供局部上下文；被省略的换行间隔

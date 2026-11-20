@@ -4,6 +4,14 @@
 
 ---
 
+## 3.5 增强版 r14（全文模式段落真正拆分、段距设置可见、去掉误伤竖线）
+
+- 段落间距设置此前在全文模式看不出变化，根因是整段文本只渲染成 **1 个块**、换行靠 `white-space:pre-wrap`，flex `gap` 只在多个子块之间生效，所以三档设置对单块无效。改为全文模式复用 `renderFullTextDiffBlocks` 按换行拆成独立段落块（差异坐标属性保留，单条撤回定位不受影响）。实测同一消息从 1 块变 7 块，三档段距的块间距分别为 **4 / 8 / 12px**。
+- 去掉全文模式正文左侧的高亮竖线：根因是 `clean-main.css` 里 `.blai-diff-full-modified:not(.blai-deep-clean-review-modified)` 这条全局选择器本意只服务深度净化预览，却误伤了透视弹窗的同类块（4px 强调色左边框 + 卡片背景 + padding）。给三条规则加 `#blai-deep-clean-workspace` 作用域限定，深度净化页行为不变。
+- 验证：全文块 `border-left:0px none`、背景透明；单条撤回进入勾选态后点击 del 正常选中（`blai-diff-item-0`）。截图 `r13-diff-paragraphs.png`。
+
+---
+
 ## 3.5 增强版 r13（透视弹窗两种模式字号统一、段距设置全模式生效）
 
 - 片段模式与全文模式的正文统一到同一令牌 `--blai-diff-body-font-size`（15px）：此前片段片段继承到宿主 13.5px、全文 15px，视觉上一小一大；现在两者都是 `15px / 22.5px`（1.5 行距）。

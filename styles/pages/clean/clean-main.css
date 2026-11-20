@@ -1,13 +1,14 @@
 /* 净化页主列、模式卡、标签分组列表与分组开关。 */
 
-.blai-diff-full-modified:not(.blai-deep-clean-review-modified) {
+/* 这几条只给深度净化的全文预览；限定作用域，避免误伤透视弹窗的同类块。 */
+#blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified) {
     padding: var(--blai-space-12) var(--blai-space-14);
     background: var(--bg-surface);
     border-left: 4px solid var(--accent-color);
     border-radius: var(--blai-radius-6);
 }
 
-.blai-diff-full-modified:not(.blai-deep-clean-review-modified) del {
+#blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified) del {
     color: var(--blai-diff-stage-color, var(--status-danger));
     background: transparent;
     text-decoration: line-through;
@@ -15,7 +16,7 @@
     border-radius: var(--blai-radius-3);
 }
 
-.blai-diff-full-modified:not(.blai-deep-clean-review-modified) ins {
+#blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified) ins {
     color: var(--blai-diff-stage-color, var(--status-success));
     background: var(--blai-diff-stage-background, color-mix(in srgb, var(--bg-base) 12%, transparent));
     text-decoration: none;
