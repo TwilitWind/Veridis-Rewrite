@@ -4,6 +4,18 @@
 
 ---
 
+## 3.5 增强版 r16（底部留白收敛、反馈副标题归位、标题层级与弹窗头部对齐）
+
+- 手机端多个页面底部大空白：根因是内容页 padding-bottom 硬编码 84px，而底部导航是文档流里独立占位（不覆盖滚动区），这 84px 纯属多余。新增语义 token `--blai-page-bottom-gap: 24px`，首页/AI/净化/工具/反馈五处统一替换，84→24px。
+- 反馈页手机端副标题浅色说明此前被 `display:none` 隐藏。改为显示并用 grid 把「标题+右侧控件」放第一行、「副标题」放第二行跨栏——既不挤压按钮、按钮也不换行；实测副标题 358px 通栏、标题与控件同处一行。
+- 首页分组标题层级倒挂：手机端分组标题被压到 12px，比内部「简易」小标题（13px）还小。提回 14px，形成 `14 分组标题 > 13 小标题 = 13 正文（小标题加粗、正文不加粗）`。
+- 「编辑规则集」「简易组合」两个弹窗头部垂直居中：根因是 `.blai-edit-filter-wrap` / `.blai-subrule-mode-select-wrap` 的 `align-self:flex-start` 让控件贴顶，比标题/X 高 3~6px。filter-wrap 改 `center`；子规则头部用 grid + `display:contents` 把「select+hint」两行块打散，让 select / 代码高亮 / X 同处第一行居中、hint 落第二行。实测两弹窗所有头部元素中线一致（cy 差 0）。
+- 新增 `test/align-audit.mjs`：追踪所有 UI 控件是否与同行文本垂直居中（中线偏差 > 2px 报出），桌面/手机同会话、逐页+弹窗覆盖，接入 `audit.mjs`（新增 `align` 模式、`all` 三项）。用注入旧样式的回归样本验证：脚本能精确报出 `-3px` 偏差，修复后归零。
+- 修复上一条 grid 方案引入的回归：`.blai-subrule-mode-select-wrap` 被 `grid-column:1` 默认 stretch 拉满到 217px（select 本身仅 87px），箭头贴外层右缘飞到离文字 120px。加 `justify-self:start` 让外层回到内容宽度，箭头回到文字右侧 10px。
+- 手机端两类按钮收紧：编辑规则集底部「新增规则/保存合集」原被 `flex:1 1 0` 等分成各 171px 通栏，改回内容宽度各 104px、高 36→32px；净化「启动深度净化」高 38→32px。三类截图 `r17-arrow-fixed / r17-edit-buttons / r17-clean-button.png` 已确认。
+
+---
+
 ## 3.5 增强版 r15（修复手机端 AI 连接区重叠、审计脚本覆盖全页）
 
 - 修复手机端「API 连接」说明文字与「启用改写」开关重叠：根因是 `@media (max-width:600px)` 里开关用了 `position:absolute` 脱离文档流，而左侧说明 `flex:1 1 auto` 铺满整行，窄屏下文字右端钻到开关底下（实测 X 重叠 111.6px、Y 重叠 17.1px）。改为开关回归正常 flex 流（`position:static` + `flex:0 0 auto`），说明区 `min-width:0` 收缩换行。修复后实测重叠 `-10px`（无交叠），桌面端不受影响。

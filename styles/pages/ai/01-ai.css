@@ -128,7 +128,7 @@
 
 @media (max-width: 600px) {
 #blai-purifier-popup.blai-app-shell .blai-ai-settings {
-    padding: var(--blai-space-12) var(--blai-space-6) var(--blai-space-84);
+    padding: var(--blai-space-12) var(--blai-space-6) var(--blai-page-bottom-gap);
     gap: var(--blai-space-18);
     box-sizing: border-box;
 }

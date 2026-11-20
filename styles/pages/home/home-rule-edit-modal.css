@@ -244,3 +244,52 @@
     max-height: calc(100dvh - var(--blai-size-20));
     padding: var(--blai-space-12);
 }}
+
+/* 手机端「简易组合」头部：标题下拉、代码高亮、关闭三者必须落在同一条中线。
+   原结构是「select + hint」两行块 + 单行控件，控件相对两行整体居中会与 select 错开。
+   用 contents 打散纯布局用的 mode-block，grid 第一行放三者（align-items:center），
+   hint 落到第二行跨栏——不改变 DOM，也不影响桌面端。 */
+@media screen and (max-width: 600px) {
+#blai-subrule-edit-modal .blai-subrule-modal-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: var(--blai-space-10);
+}
+#blai-subrule-edit-modal .blai-subrule-mode-block {
+    display: contents;
+}
+#blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    /* grid-column:1 默认 stretch 会把外层拉满 1fr（实测 217px），而 select 本身只有 87px，
+       箭头贴外层右缘就飞到离文字 120px 远。justify-self:start 让外层回到内容宽度。 */
+    justify-self: start;
+}
+#blai-subrule-edit-modal .blai-regex-highlight-switch {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+}
+#blai-subrule-edit-modal .blai-subrule-close-btn {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+}
+#blai-subrule-edit-modal .blai-subrule-mode-hint {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-top: var(--blai-space-2);
+}
+}
+
+/* 手机端编辑弹窗底部按钮收紧：高度 32px、左右内边距 12px，按内容宽度排列不铺满。 */
+@media screen and (max-width: 600px) {
+#blai-rule-edit-modal .blai-modal-actions > button {
+    height: var(--blai-size-32) !important;
+    min-height: var(--blai-size-32) !important;
+    padding: 0 var(--blai-space-12) !important;
+}
+}

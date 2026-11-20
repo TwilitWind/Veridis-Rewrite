@@ -401,7 +401,8 @@
 
 @media (max-width: 600px) {
 #blai-purifier-popup .blai-home-card-title {
-    font-size: var(--blai-font-12);
+    /* 分组标题保持 14px：它是分组内的最高层级，不能比内部「简易」小标题（13px）还小。 */
+    font-size: var(--blai-font-14);
 }}
 
 #blai-purifier-popup .blai-home-card-count {

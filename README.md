@@ -32,13 +32,15 @@ node build-check.mjs   # 构建闸门，十三条机械校验（与上一步相�
 改样式后除了构建闸门，还能跑审计脚本查「字号是否合理、有没有文字被裁/重叠/遮挡、双端差异是否异常」：
 
 ```bash
-node test/audit.mjs              # 一条命令跑完静态 + 运行时
+node test/audit.mjs              # 一条命令跑完静态 + 运行时布局 + 垂直居中
 node test/audit.mjs static       # 只跑静态：零依赖、无需浏览器
-node test/audit.mjs layout       # 只跑运行时：需要先启动 9224 调试 Chrome
+node test/audit.mjs layout       # 只跑运行时布局：需要先启动 9224 调试 Chrome
+node test/audit.mjs align        # 只跑控件垂直居中审计：需要 9224
 ```
 
 - **静态审计**（`style-audit.mjs`）：扫全部 `styles/*.css`，给出字号分布柱状图、最大/最小/跨度、离群字号、裸写 px、双端 `@media` 覆盖对照，以及 `overflow:hidden`、`line-height<1` 等裁切信号。
 - **运行时审计**（`layout-audit.mjs`）：通过 CDP 在真实浏览器里量几何，检测文字裁切、元素重叠、中心点遮挡，并把「省略号截断 / 无障碍隐藏 / 滚动容器 / 固定导航覆盖 / toast 压盖」自动归为良性，不混进问题清单。默认**遍历全部 5 个标签页**（`PAGES=current` 可只测当前页），避免只测首页漏掉 AI/净化等区块；重叠检测覆盖所有可见文本元素、包含 `absolute/fixed`（这类正是窄屏文字压盖开关的高发来源）。桌面与手机在**同一会话**内连续测量，避免模拟状态污染；结果存 `tmp/layout-report.json`。
+- **垂直居中审计**（`align-audit.mjs`）：追踪每个 UI 控件（按钮/开关/下拉等）是否与所在行的文本垂直居中——比较二者垂直中线，偏差超过阈值（`TOL`，默认 2px）即报出。覆盖全部标签页与两个编辑弹窗，桌面/手机同会话。结果存 `tmp/align-report.json`。这能挡住「控件比标题高几像素」这类肉眼可见但容易被忽略的对齐问题。
 
 运行时审计需要先启动独立调试浏览器（避开占用你日常用的 9222）：
 
@@ -46,7 +48,7 @@ node test/audit.mjs layout       # 只跑运行时：需要先启动 9224 调试
 "C:/Program Files/Google/Chrome/Application/chrome.exe" --remote-debugging-port=9224 --user-data-dir="C:/Users/feng/AppData/Local/Temp/st-cdp-profile" "http://127.0.0.1:8000/"
 ```
 
-两个脚本都只读：不改源码，只在页面里临时切视口，退出时还原。
+三个脚本都只读：不改源码，只在页面里临时切视口/开弹窗，退出时还原。
 
 ---
 

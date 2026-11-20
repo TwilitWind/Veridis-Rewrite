@@ -411,8 +411,10 @@
 }
 
 #blai-rule-edit-modal .blai-modal-actions > :is(#blai-add-subrule-btn, #blai-edit-save) {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
+    /* 不再 flex:1 等分撑满整行：那会让两个按钮各占 171px，手机端显得又宽又空。
+       交回 home-rule-edit-modal.css 的 flex:0 0 auto + min-width:104px，按内容收窄。 */
+    flex: 0 0 auto !important;
+    min-width: var(--blai-size-104) !important;
 }
 
 .blai-subrule-mode-block, .blai-subrule-mode-select-wrap {

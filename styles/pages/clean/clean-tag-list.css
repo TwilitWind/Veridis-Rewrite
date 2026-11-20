@@ -367,3 +367,11 @@
     font-size: var(--blai-font-12);
     text-align: center;
 }
+
+/* 手机端「启动深度净化」按钮收紧：高度从 38px 收到 32px、上边距缩小。 */
+@media (max-width: 600px) {
+#blai-purifier-popup .blai-clean-danger-button {
+    min-height: var(--blai-size-32);
+    margin-top: var(--blai-space-10);
+}
+}

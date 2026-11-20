@@ -238,7 +238,7 @@
 
     #blai-feedback-workspace .blai-feedback-workspace-content {
         margin: var(--blai-space-8) 0 0;
-        padding: var(--blai-space-14) var(--blai-space-10) calc(var(--blai-space-44) + env(safe-area-inset-bottom, 0px));
+        padding: var(--blai-space-14) var(--blai-space-10) var(--blai-page-bottom-gap);
         border-radius: 0;
     }
 
@@ -246,18 +246,49 @@
        删掉复制/导出后只剩两个按钮，390px 放得下，不必换行占高。 */
     #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) {
         align-items: center;
-        flex-direction: row;
         gap: var(--blai-space-8);
         padding-bottom: var(--blai-space-10);
+        /* 副标题独立成第二行、跨满整宽；标题与右侧控件同处第一行垂直居中。
+           若用 flex + align-items:center，控件会相对「标题+副标题」整体居中，
+           掉到副标题旁边与标题错开约 28px。用 grid + contents 打散纯布局的标题块。 */
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: auto auto;
+        column-gap: var(--blai-space-8);
     }
 
-    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) > div {
+    /* 只打散左侧「标题+副标题」块（第一个子 div），右侧 actions 块必须保持自身盒子。
+       若把右侧 actions 也 display:contents，里面的多个按钮会散成独立 grid 项、布局崩掉。 */
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) > div:first-child {
         min-width: 0;
+        display: contents;
     }
 
-    /* 副标题是说明文字，留在标题行会挤压右侧动作；手机端收起，信息仍在日志正文里。 */
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) h2 {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) h2 {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    /* 右侧控件：local 视图是 .blai-feedback-heading-actions 包装，
+       diagnostics 视图是裸 button，统一用 :last-child 命中，落到 grid 第 2 列第一行。 */
+    #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) > :last-child {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+    }
+
+    /* 副标题独立成行：堆到标题下方通栏显示浅色说明，不挤压右侧按钮。
+       各视图副标题选择器统一覆盖（本地视图是 p，诊断视图是 .blai-feedback-diagnostics-intro 内的说明）。 */
     #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro, .blai-feedback-local-heading) p {
-        display: none;
+        display: block;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        margin-top: var(--blai-space-4);
     }
 
     /* 诊断记录卡内的小标题保持上下排列，避免「展开安全 JSON」挤掉标题。 */
