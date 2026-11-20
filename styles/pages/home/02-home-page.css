@@ -132,8 +132,12 @@
     font-weight: var(--blai-weight-bold);
 }
 
-/* AI 改写开启态：用当前主题关键色强调，关闭态保持常规文字色。 */
-#blai-purifier-popup #blai-ai-enabled-status.is-on {
+/* AI 改写状态：整段不加粗，只有开启时的「开启」一词用主题强调色。 */
+#blai-purifier-popup #blai-ai-enabled-status {
+    font-weight: var(--blai-weight-normal);
+}
+
+#blai-purifier-popup #blai-ai-enabled-status .blai-ai-state-word.is-on {
     color: var(--accent-color);
 }
 

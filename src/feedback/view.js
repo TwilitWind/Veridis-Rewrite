@@ -228,7 +228,7 @@ export function renderAiContext() {
         <section class="blai-feedback-local-view">
             <header class="blai-feedback-local-heading">
                 <div><h2>AI 上下文</h2><p>查看 Veridis 实际发送给 AI 的请求上下文及返回结果。其中可能包含提示词、上下文和 AI 回复，仅在本地显示。</p></div>
-                <button id="blai-ai-monitor-clear" class="blai-feedback-heading-action" type="button"><i class="fas fa-eraser" aria-hidden="true"></i><span>清空</span></button>
+                <button id="blai-ai-monitor-clear" class="blai-feedback-heading-action" type="button"><i class="fas fa-eraser" aria-hidden="true"></i><span>清空记录</span></button>
             </header>
             <pre id="blai-ai-monitor-output" class="blai-feedback-log-output" tabindex="0" aria-label="AI 上下文"></pre>
         </section>
@@ -291,7 +291,7 @@ export function renderDeepCleanDiagnostics(slots = {}) {
                     <h2>深度清理诊断</h2>
                     <p>仅显示本地保存的安全执行信息。</p>
                 </div>
-                <button id="blai-feedback-clear-deep-clean" class="blai-feedback-heading-action" type="button"><i class="fas fa-eraser" aria-hidden="true"></i><span>清空</span></button>
+                <button id="blai-feedback-clear-deep-clean" class="blai-feedback-heading-action" type="button"><i class="fas fa-eraser" aria-hidden="true"></i><span>清空记录</span></button>
             </header>
             ${diagnosticSlot('latestFailure', '最近一次失败', slots.latestFailure)}
             ${diagnosticSlot('previousFailure', '上一次失败', slots.previousFailure)}

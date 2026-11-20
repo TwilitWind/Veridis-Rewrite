@@ -102,9 +102,8 @@
     min-width: 0;
     height: auto;
     min-height: var(--blai-size-36);
-    padding: 0 var(--blai-space-18) var(--blai-space-10);
+    padding: 0 var(--blai-space-18);
     border: 0;
-    border-bottom: var(--blai-border-2) solid transparent;
     border-radius: 0;
     background: transparent;
     color: var(--text-secondary);
@@ -123,10 +122,20 @@
     flex: 0 0 auto;
 }
 
+/* 指示条画在文字 span 上，长度与标题等长；按钮左右 padding 不再把线拉长。 */
+#blai-feedback-workspace .blai-feedback-workspace-nav button > span {
+    display: inline-block;
+    padding-bottom: var(--blai-space-8);
+    border-bottom: var(--blai-border-2) solid transparent;
+}
+
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active {
-    border-bottom-color: var(--accent-color);
     background: transparent;
     color: var(--text-main);
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-nav button.is-active > span {
+    border-bottom-color: var(--accent-color);
 }
 
 /* 正文是一张白色圆角卡，与外层灰白底形成分区。 */

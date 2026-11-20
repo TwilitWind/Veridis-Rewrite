@@ -8,17 +8,23 @@ if (!src || !dst) {
     console.error('用法: node sync.mjs <源目录> <目标目录> [扩展名过滤]');
     process.exit(1);
 }
-const exts = new Set((extArg ?? 'js,css,json,md').split(',').map(e => '.' + e.replace(/^\./, '')));
+const exts = new Set((extArg ?? 'js,css,json,md,html').split(',').map(e => '.' + e.replace(/^\./, '')));
 
 if (!fs.existsSync(dst)) {
     console.error('目标目录不存在:', dst);
     process.exit(1);
 }
 
-// 开发产物不同步：源码目录、构建脚本、测试与临时目录里的文件永远不该出现在安装副本里。
-// src/ 是打包前的源码，装机目录只认 manifest 指向的产物；拷过去只会污染扩展目录。
-// test/ 是正式测试、tmp/ 与 _tmp/ 是临时产物，同理不进装机目录。
-const SKIP = new Set(['.git', 'node_modules', 'dev', 'src', 'test', 'tmp', '_tmp', '_archive', 'shots', 'css-backup']);
+// 开发产物不同步：构建脚本、测试与临时目录里的文件不进安装副本。
+// src/ 在本项目是运行时源码：index.js 用相对 import 直接引用 ./src/...，
+// 没有打包步骤，所以装机副本必须有一份；仅当目标已存在该目录时才同步，
+// 避免给真正「打包后单文件」的插件凭空塞源码目录。
+// html 是模板（templates/purifier.html）在运行时 fetch，必须同步。
+const SKIP = new Set(['.git', 'node_modules', 'dev', 'test', 'tmp', '_tmp', '_archive', 'shots', 'css-backup']);
+function skipDir(rel) {
+    if (rel !== 'src') return false;
+    return !fs.existsSync(path.join(dst, 'src'));
+}
 
 // 构建脚本也不是运行时文件。
 const SKIP_NAME = /^(?:build-.*\.mjs|package(?:-lock)?\.json|AGENTS\.md|MODULES\.md|CHANGELOG\.md|todo\.md)$/i;
@@ -29,7 +35,7 @@ const SKIP_FILE = /\.(png|jpe?g|gif|webp|zip|bak|orig|tmp|log)$/i;
 function walk(rel) {
     const from = path.join(src, rel);
     for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
-        if (SKIP.has(entry.name)) continue;
+        if (SKIP.has(entry.name) || skipDir(rel ? rel + '/' + entry.name : entry.name)) continue;
         const childRel = path.join(rel, entry.name);
         if (entry.isDirectory()) {
             walk(childRel);

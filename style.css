@@ -558,7 +558,8 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-home-preset-select:hover{color: var(--accent-ink)}
 #blai-purifier-popup .blai-home-metrics{display: inline-flex;align-items: center;flex: 0 0 auto;gap: var(--blai-space-14);color: var(--text-main);font-size: var(--blai-font-12);white-space: nowrap}
 #blai-purifier-popup .blai-home-metric b{color: var(--text-main);font-size: var(--blai-font-13);font-weight: var(--blai-weight-bold)}
-#blai-purifier-popup #blai-ai-enabled-status.is-on{color: var(--accent-color)}
+#blai-purifier-popup #blai-ai-enabled-status{font-weight: var(--blai-weight-normal)}
+#blai-purifier-popup #blai-ai-enabled-status .blai-ai-state-word.is-on{color: var(--accent-color)}
 #blai-purifier-popup .blai-home-dataset-actions{margin-left: auto;flex: 0 0 auto;display: inline-flex;align-items: center;justify-content: flex-end;gap: var(--blai-space-2)}
 #blai-purifier-popup .blai-home-dataset-actions button{min-height: var(--blai-size-36);padding: 0 var(--blai-space-8);display: inline-flex;align-items: center;justify-content: center;gap: var(--blai-space-6);border: 0;border-radius: var(--blai-radius-10);background: transparent;color: var(--text-main);font: inherit;font-size: var(--blai-font-12);font-weight: var(--blai-weight-normal);white-space: nowrap}
 #blai-purifier-popup .blai-home-dataset-actions button:hover{background: var(--bg-surface);color: var(--text-main)}
@@ -1357,9 +1358,11 @@ to{opacity: 1;transform: none}}
 #blai-feedback-workspace .blai-feedback-workspace-header button:hover{color: var(--accent-ink)}
 #blai-feedback-workspace .blai-feedback-workspace-nav{min-width: 0;flex: 1 1 auto;padding: 0;border-bottom: 0;display: flex;align-items: center;gap: var(--blai-space-2);overflow-x: auto;scrollbar-width: none}
 #blai-feedback-workspace .blai-feedback-workspace-nav::-webkit-scrollbar{height: 0}
-#blai-feedback-workspace .blai-feedback-workspace-nav button{width: auto;min-width: 0;height: auto;min-height: var(--blai-size-36);padding: 0 var(--blai-space-18) var(--blai-space-10);border: 0;border-bottom: var(--blai-border-2) solid transparent;border-radius: 0;background: transparent;color: var(--text-secondary);font: inherit;font-size: var(--blai-font-12);font-weight: var(--blai-weight-bold);white-space: nowrap}
+#blai-feedback-workspace .blai-feedback-workspace-nav button{width: auto;min-width: 0;height: auto;min-height: var(--blai-size-36);padding: 0 var(--blai-space-18);border: 0;border-radius: 0;background: transparent;color: var(--text-secondary);font: inherit;font-size: var(--blai-font-12);font-weight: var(--blai-weight-bold);white-space: nowrap}
 #blai-feedback-workspace .blai-feedback-workspace-header .blai-feedback-workspace-nav button{width: auto;min-width: 0;height: auto;min-height: var(--blai-size-36);flex: 0 0 auto}
-#blai-feedback-workspace .blai-feedback-workspace-nav button.is-active{border-bottom-color: var(--accent-color);background: transparent;color: var(--text-main)}
+#blai-feedback-workspace .blai-feedback-workspace-nav button>span{display: inline-block;padding-bottom: var(--blai-space-8);border-bottom: var(--blai-border-2) solid transparent}
+#blai-feedback-workspace .blai-feedback-workspace-nav button.is-active{background: transparent;color: var(--text-main)}
+#blai-feedback-workspace .blai-feedback-workspace-nav button.is-active>span{border-bottom-color: var(--accent-color)}
 #blai-feedback-workspace .blai-feedback-workspace-content{min-width: 0;min-height: 0;overflow-x: hidden;overflow-y: auto;margin: var(--blai-space-12) var(--blai-space-12) var(--blai-space-14);padding: var(--blai-feedback-page-pad-y) var(--blai-feedback-page-pad-x) var(--blai-space-32);border-radius: var(--blai-radius-14);background: var(--bg-surface)}
 #blai-feedback-workspace .blai-feedback-workspace-content:has(.blai-feedback-log-output){scrollbar-width: none}
 #blai-feedback-workspace .blai-feedback-workspace-content:has(.blai-feedback-log-output)::-webkit-scrollbar{display: none}
@@ -1442,8 +1445,8 @@ to{opacity: 1;transform: none}}
 #blai-feedback-workspace .blai-feedback-local-heading :is(h2,p){margin: 0}
 #blai-feedback-workspace :is(.blai-feedback-local-heading h2,.blai-feedback-diagnostics-intro h2){margin: 0;color: var(--text-main);font-size: var(--blai-font-15);font-weight: var(--blai-weight-bold);line-height: 1.3}
 #blai-feedback-workspace .blai-feedback-local-heading p{margin-top: var(--blai-space-5);color: var(--text-secondary);font-size: var(--blai-font-11);line-height: 1.55}
-#blai-feedback-workspace .blai-feedback-heading-action{min-height: var(--blai-size-32);padding: 0 var(--blai-space-10);flex: none;display: inline-flex;align-items: center;gap: var(--blai-space-6);border: 0;border-radius: var(--blai-radius-8);background: transparent;color: var(--text-main);font: inherit;font-size: var(--blai-font-10);font-weight: var(--blai-weight-bold);line-height: 1}
-#blai-feedback-workspace .blai-feedback-heading-action i{flex: none;color: var(--accent-ink);font-size: var(--blai-font-10);line-height: 1}
+#blai-feedback-workspace .blai-feedback-heading-action{min-height: var(--blai-size-32);padding: 0 var(--blai-space-10);flex: none;display: inline-flex;align-items: center;gap: var(--blai-space-6);border: 0;border-radius: var(--blai-radius-8);background: transparent;color: var(--text-main);font: inherit;font-size: var(--blai-font-12);font-weight: var(--blai-weight-bold);line-height: 1}
+#blai-feedback-workspace .blai-feedback-heading-action i{flex: none;color: var(--accent-ink);font-size: var(--blai-font-12);line-height: 1}
 #blai-feedback-workspace .blai-feedback-heading-action:hover{background: color-mix(in srgb,var(--text-main) 6%,transparent);color: var(--accent-ink)}
 #blai-feedback-workspace .blai-feedback-heading-actions{min-width: 0;flex: none;display: flex;align-items: center;flex-wrap: wrap;justify-content: flex-end;gap: var(--blai-space-4)}
 #blai-feedback-workspace .blai-feedback-heading-action.is-danger{color: var(--status-danger)}

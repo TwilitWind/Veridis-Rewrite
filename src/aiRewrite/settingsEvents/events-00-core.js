@@ -323,8 +323,7 @@ export function createAiSettingsCore() {
             .text(additionalFilled ? '已填写' : '未填写');
         const aiEnabled = aiSettings.enabled === true;
         $('#blai-ai-enabled-status')
-            .text(aiEnabled ? 'AI改写 开启' : 'AI改写 关闭')
-            .toggleClass('is-on', aiEnabled);
+            .html(aiEnabled ? 'AI改写 <span class="blai-ai-state-word is-on">开启</span>' : 'AI改写 <span class="blai-ai-state-word">关闭</span>');
         syncAiAutoTriggerAvailability(aiSettings);
         if (aiSettings.enabled !== true) setAiApiCheckState('disabled', 'AI 改写未启用，开启后再拉取模型列表。');
         $('#blai-ai-http-warning').prop('hidden', isLocalHttpUrl(aiSettings.baseUrl));
