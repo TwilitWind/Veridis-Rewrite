@@ -1,5 +1,5 @@
 /* 基础调色板：状态色、危险色、正则语法高亮色。
-   这些值被三套主题共同继承；主题相关的覆盖见 02-themes.css。
+   这些值被五套主题共同继承；主题相关的覆盖见 02-themes.css。
    间距/字号/圆角/尺寸刻度见 03-scale.css。 */
 
 #blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {

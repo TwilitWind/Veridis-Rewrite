@@ -2,6 +2,7 @@
 import { getAppContext } from '../../host/appContext.js';
 import { extensionName } from '../../settings/defaults.js';
 import { annotateTauriMobileSurfaces } from '../shell.js';
+import { normalizeThemeMode } from '../theme.js';
 
 export function guidedTourSeen(kind) {
     const { extension_settings } = getAppContext();
@@ -80,8 +81,9 @@ export function deepCleanOptionsTourTarget() {
 }
 
 export function createThemedTourLayer() {
-    const theme = document.getElementById('blai-purifier-popup')?.getAttribute('data-theme');
-    if (!['auto', 'light', 'dark'].includes(theme)) {
+    const rawTheme = document.getElementById('blai-purifier-popup')?.getAttribute('data-theme');
+    const theme = normalizeThemeMode(rawTheme);
+    if (theme !== rawTheme) {
         throw new Error('Veridis Rewrite 主界面未提供有效主题，无法创建导览图层。');
     }
     const layer = document.createElement('div');

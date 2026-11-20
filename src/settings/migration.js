@@ -191,7 +191,7 @@ export function ensureSettingsShape() {
     if (settings.diffButtonInExtraMenu === undefined) settings.diffButtonInExtraMenu = false;
     if (settings.showBottomDiffButton === undefined) settings.showBottomDiffButton = true;
     settings.diffTrackedMessageLimit = normalizeDiffTrackedMessageLimit(settings.diffTrackedMessageLimit);
-    if (!['auto', 'light', 'dark'].includes(settings.themeMode)) settings.themeMode = 'auto';
+    if (!['auto', 'light', 'warm', 'dark', 'dim'].includes(settings.themeMode)) settings.themeMode = 'auto';
     if (settings.regexHighlightEnabled === undefined) settings.regexHighlightEnabled = true;
     if (!['simple', 'text', 'regex'].includes(settings.subruleEditorMode)) settings.subruleEditorMode = 'simple';
     if (settings.subruleTestPanelOpen === undefined) settings.subruleTestPanelOpen = false;

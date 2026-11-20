@@ -93,7 +93,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `ui/shell.js` | `setupUI`：清旧容器 → 注入 `#blai-wand-btn` / `#blai-extension-settings-entry` → 载入模板 → 建路由。导出 `showResponsivePage`、`updateLegacyPurifierWarning`、`annotateTauriMobileSurfaces` |
 | `ui/notifications.js` | `showToast` / `showConfirmModal` / `showAlertModal` / `showPromptModal` / `showRiskConfirmModal` / `showRiskInfoModal`。**全插件唯一对话框入口** |
 | `ui/popover.js` | `openMenuPopover` 等：菜单挂 body，纯手动按视口定位（不用 Popper.js）；关闭时复位锚点标记与活动 id |
-| `ui/theme.js` | `bindThemeEvents`：给容器写 `data-theme`（auto/light/dark） |
+| `ui/theme.js` | `bindThemeEvents`：主题清单 `THEME_MODES`（ auto/light/warm/dark/dim）、顶栏图标点开下拉选择、给容器写 `data-theme`；新增主题时同步 `migration.js` 的合法值 |
 | `ui/tour.js`、`ui/personaProtection.js`、`ui/html.js` | 导览定位、人设保护开关同步、`safeHtml` |
 
 ### 文本内核
@@ -224,7 +224,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 | 目录 | 职责 | 约束 |
 | --- | --- | --- |
-| `tokens/` | 调色板、三套主题、刻度 | 唯一来源，其他文件不许重定义 |
+| `tokens/` | 调色板、五套主题、刻度 | 唯一来源，其他文件不许重定义 |
 | `base/` | 重置与元素级默认值 | 只放元素级 |
 | `components/` | 按钮、输入框、卡片、toast、统一对话框 | 新组件必须建独立文件 |
 | `layouts/` | 覆盖层骨架、顶栏、侧栏、底部导航、响应式 | 不含业务页规则 |
@@ -286,7 +286,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | 改深度净化范围 | `inventory.js`（列什么）+ `contentItems.js`（读什么）+ `apply/`（写回什么）+ `view.js`（界面说明） |
 | 改对话框外观 | `ui/notifications.js` + `styles/components/02-controls.css` 的 `.blai-plugin-dialog-card` 段 |
 | 改菜单定位 | `ui/popover.js` + 对应 `*-menu` 的 CSS |
-| 改日间配色 | `styles/tokens/02-themes.css` 的 light 令牌 + `styles/layouts/00-shell.css` 的日间分区段 |
+| 改主题配色 | `styles/tokens/02-themes.css` 对应主题的令牌段 + 该主题的特殊分区规则；新主题还要扩展 `select option` 与 `data-theme` 容器列表 |
 | 改弹窗尺寸 | `styles/pages/home/home-breakpoints.css` 的 `@media (min-width: 601px)` 段（四处同一把尺子） |
 | 改手机端标题字号 / 提交反馈单列 | `styles/pages/99-mobile.css`（最后加载的跨页收尾） |
 | 改 AI 连接标题行 | `styles/pages/ai/01-ai.css` 的 `@media (max-width: 600px)` 段：开关绝对定位到最右，标题在整条栏里居中 |

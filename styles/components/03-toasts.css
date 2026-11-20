@@ -241,7 +241,7 @@
  * 需求一：下拉菜单（原生 select 的 option 列表）跟随插件主题。
  * 酒馆本体 public/style.css 对 `select option` 写了半透明黑底
  * （--black70a），没有 !important，展开后会把列表画成黑块；
- * 这里用带 !important 的规则把它压回去，并按三套主题分别取色。
+ * 这里用带 !important 的规则把它压回去，各主题由 --blai-dropdown-* 统一取色。
  * --------------------------------------------------------------------------- */
 #blai-purifier-popup select,
 .blai-modal-shell select,

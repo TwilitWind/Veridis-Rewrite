@@ -1,4 +1,4 @@
-/* 主题覆盖：auto / light / dark 三套主题下的背景、文字、边框、强调色。 */
+/* 主题覆盖：auto / light / warm / dark / dim 五套主题下的背景、文字、边框、强调色。 */
 
 #blai-purifier-popup[data-theme="auto"], .blai-modal-shell[data-theme="auto"], #blai-scope-tag-editor-modal[data-theme="auto"], #blai-rule-transfer-modal[data-theme="auto"], #blai-diff-modal[data-theme="auto"], #blai-rule-search-modal[data-theme="auto"], #blai-preset-import-choice-modal[data-theme="auto"], .blai-toast[data-theme="auto"], #blai-loading-overlay[data-theme="auto"], #blai-tour-layer[data-theme="auto"] {
     /* 跟随酒馆：底色在酒馆背景上压暗一档、卡片提亮一档，
@@ -31,7 +31,18 @@
     /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
 }
 
-#blai-purifier-popup[data-theme="light"], .blai-modal-shell[data-theme="light"], #blai-scope-tag-editor-modal[data-theme="light"], #blai-rule-transfer-modal[data-theme="light"], #blai-diff-modal[data-theme="light"], #blai-rule-search-modal[data-theme="light"], #blai-preset-import-choice-modal[data-theme="light"], .blai-toast[data-theme="light"], #blai-loading-overlay[data-theme="light"], #blai-tour-layer[data-theme="light"] {
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal,
+    .blai-toast,
+    #blai-loading-overlay,
+    #blai-tour-layer
+):is([data-theme="light"], [data-theme="warm"]) {
     /* 日间：最外层接近白的灰白画布。取纯中性灰（三通道齐平、不做蓝偏移），
        再往上就是纯白，会和卡片糊在一起；往下压会吃掉输入框与画布的层次。 */
     --bg-base: #F7F7F8;
@@ -51,7 +62,18 @@
     --status-success: #4C8C2B;
 }
 
-#blai-purifier-popup[data-theme="dark"], .blai-modal-shell[data-theme="dark"], #blai-scope-tag-editor-modal[data-theme="dark"], #blai-rule-transfer-modal[data-theme="dark"], #blai-diff-modal[data-theme="dark"], #blai-rule-search-modal[data-theme="dark"], #blai-preset-import-choice-modal[data-theme="dark"], .blai-toast[data-theme="dark"], #blai-loading-overlay[data-theme="dark"], #blai-tour-layer[data-theme="dark"] {
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal,
+    .blai-toast,
+    #blai-loading-overlay,
+    #blai-tour-layer
+):is([data-theme="dark"], [data-theme="dim"]) {
     --bg-base: #0D1017;
     --bg-surface: #181E2A;
     /* 夜间蓝要降饱和、抬明度差：纯 #2F6FED 压在深底上会发荧光。
@@ -90,70 +112,153 @@
     --blai-test-match-bg: rgba(230, 170, 60, 0.42);
 }
 
-#blai-purifier-popup[data-theme="dark"] .panel {
+/* 暖米：参考浅色编辑器的米白画布，按护眼原则取米色底 + 深灰字（不用纯白纯黑），
+   强调色降饱和为灰蓝，长时间阅读不刺眼。 */
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal,
+    .blai-toast,
+    #blai-loading-overlay,
+    #blai-tour-layer
+)[data-theme="warm"] {
+    --bg-base: #EFECE4;
+    --bg-surface: #F8F5EC;
+    --accent-color: #6C87A3;
+    --accent-ink: #405B78;
+    --accent-contrast: #F8F5EC;
+    --text-main: #3A3730;
+    --text-secondary: #6E685D;
+    --border-color: #DED8C9;
+    --status-danger: #B15F52;
+    --status-success: #5E8060;
+    --blai-diff-original: #7A7468;
+    --blai-diff-program: #5A7C9B;
+    --blai-diff-ai: #8A6A9E;
+    --blai-diff-manual: #A88442;
+    --blai-test-match-bg: rgba(190, 150, 60, 0.30);
+}
+
+/* 柔灰：深灰暖调底 + 低亮度暖灰字（不是纯黑底纯白字，也不发蓝），
+   强调色取柔蓝灰，整体比墨夜更温和，适合夜间长时间使用。 */
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal,
+    .blai-toast,
+    #blai-loading-overlay,
+    #blai-tour-layer
+)[data-theme="dim"] {
+    --bg-base: #1C1D1B;
+    --bg-surface: #292A26;
+    --accent-color: #9FB3C4;
+    --accent-ink: #B8CAD8;
+    --accent-contrast: #1C1D1B;
+    --text-main: #CBC6B8;
+    --text-secondary: #969184;
+    --border-color: #42433C;
+    --status-danger: #C87E70;
+    --status-success: #8FAE7A;
+    --blai-diff-original: #A8A396;
+    --blai-diff-program: #9FB3C4;
+    --blai-diff-ai: #B69AC7;
+    --blai-diff-manual: #C9A96B;
+    --blai-scrim: rgba(0, 0, 0, 0.62);
+    --blai-modal-shadow: rgba(0, 0, 0, 0.44);
+    --blai-shadow-color: rgba(0, 0, 0, 0.44);
+    --blai-scrollbar-thumb: rgba(255, 255, 255, 0.24);
+    --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.38);
+    --blai-dropdown-active-bg: #4C6478;
+    --re-escape: #E0A464;
+    --re-class: #8FB6C9;
+    --re-group: #C6A2D8;
+    --re-quant: #D98D82;
+    --re-anchor: #AEC46E;
+    --re-error: #D98D82;
+    --blai-test-match-bg: rgba(200, 160, 70, 0.36);
+}
+
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .panel {
     box-shadow: none;
 }
 
-#blai-purifier-popup[data-theme="dark"] .clean-row {
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .clean-row {
     background: var(--bg-surface);
 }
 
-#blai-purifier-popup[data-theme="dark"] :is(.text-btn.accent, .mini-btn.accent) {
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) :is(.text-btn.accent, .mini-btn.accent) {
     color: var(--accent-contrast);
 }
 
 /* 导航选中项已经改成「只换文字色、不铺底色」，夜间必须用强调色本身 */
-#blai-purifier-popup[data-theme="dark"] .rail-btn.active,
-#blai-purifier-popup[data-theme="dark"] .nav-item.active {
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .rail-btn.active,
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .nav-item.active {
     color: var(--accent-ink);
 }
 
-#blai-purifier-popup[data-theme="dark"] .bottom-nav {
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .bottom-nav {
     background: color-mix(in srgb, var(--bg-base) 12%, transparent);
 }
 
 /* 深度净化与绑定记录等浮层同样遵循「灰白底 + 白卡」的日间分区。 */
-#blai-purifier-popup[data-theme="light"] .blai-home-toolbar,
-#blai-purifier-popup[data-theme="light"] .blai-home-batch-panel,
-#blai-purifier-popup[data-theme="light"] .blai-clean-list-toolbar
+#blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) .blai-home-toolbar,
+#blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) .blai-home-batch-panel,
+#blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) .blai-clean-list-toolbar
 {
     border-color: transparent;
 }
 
-#blai-purifier-popup[data-theme="light"] :is(.panel, .field, .clean-row) {
+#blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) :is(.panel, .field, .clean-row) {
     background: var(--bg-surface);
 }
 
-#blai-purifier-popup[data-theme="dark"] select,
-.blai-modal-shell[data-theme="dark"] select,
-#blai-scope-tag-editor-modal[data-theme="dark"] select,
-#blai-rule-transfer-modal[data-theme="dark"] select,
-#blai-diff-modal[data-theme="dark"] select,
-#blai-preset-import-choice-modal[data-theme="dark"] select {
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal
+):is([data-theme="dark"], [data-theme="dim"]) select {
     color-scheme: dark;
 }
 
-#blai-purifier-popup[data-theme="light"] select option,
-.blai-modal-shell[data-theme="light"] select option,
-#blai-scope-tag-editor-modal[data-theme="light"] select option,
-#blai-rule-transfer-modal[data-theme="light"] select option,
-#blai-diff-modal[data-theme="light"] select option,
-#blai-preset-import-choice-modal[data-theme="light"] select option {
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal
+):is([data-theme="light"], [data-theme="warm"]) select option {
     background-color: var(--bg-surface);
     color: var(--text-main);
 }
 
-#blai-purifier-popup[data-theme="dark"] select option,
-.blai-modal-shell[data-theme="dark"] select option,
-#blai-scope-tag-editor-modal[data-theme="dark"] select option,
-#blai-rule-transfer-modal[data-theme="dark"] select option,
-#blai-diff-modal[data-theme="dark"] select option,
-#blai-preset-import-choice-modal[data-theme="dark"] select option {
+:is(
+    #blai-purifier-popup,
+    .blai-modal-shell,
+    #blai-scope-tag-editor-modal,
+    #blai-rule-transfer-modal,
+    #blai-diff-modal,
+    #blai-rule-search-modal,
+    #blai-preset-import-choice-modal
+):is([data-theme="dark"], [data-theme="dim"]) select option {
     background-color: var(--bg-surface);
     color: var(--text-main);
 }
 
-#blai-purifier-popup[data-theme="dark"] .blai-global-header {
+#blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .blai-global-header {
     /* 顶栏与首页顶栏同色（都是 --bg-surface），原来这条用底色混 12% 透明，
        在深色下等于看不见，于是「预设下拉框上方没有分隔线」。改回统一边框色。 */
     border-color: var(--border-color);
@@ -176,7 +281,8 @@
     #blai-feedback-workspace,
     .blai-home-card-menu, .blai-subrule-menu, .blai-preset-menu,
     .blai-rule-search-menu, .blai-edit-filter-menu,
-    .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu
+    .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu,
+    .blai-theme-menu
 ) {
     --blai-dropdown-bg: var(--bg-surface);
     --blai-dropdown-ink: var(--text-main);

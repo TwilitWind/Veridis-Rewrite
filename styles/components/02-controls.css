@@ -611,3 +611,72 @@
     min-height: var(--blai-size-40);
     max-height: var(--blai-size-48);
 }}
+
+/* 主题下拉：点顶栏主题图标弹出，选项复用统一下拉令牌（popover.js 挂到 body，
+   主题变量由它内联到菜单，故这里只引用 --blai-dropdown-* 与被复制的 --accent-color）。 */
+.blai-theme-menu {
+    z-index: 2147483000;
+    min-width: var(--blai-size-148);
+    display: none;
+    grid-template-columns: 1fr;
+    gap: var(--blai-dropdown-gap);
+    padding: var(--blai-dropdown-pad);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-dropdown-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+    box-sizing: border-box;
+}
+
+.blai-theme-menu:not([hidden]) {
+    display: grid;
+}
+
+.blai-theme-menu button {
+    width: 100%;
+    min-height: var(--blai-dropdown-item-height);
+    padding: 0 var(--blai-dropdown-item-pad-x);
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    border: 0;
+    border-radius: var(--blai-dropdown-item-radius);
+    background: transparent;
+    color: var(--blai-dropdown-ink);
+    font-size: var(--blai-dropdown-item-font);
+    font-weight: var(--blai-dropdown-item-weight);
+    text-align: left;
+    cursor: pointer;
+}
+
+.blai-theme-menu button > i:first-child {
+    flex: 0 0 var(--blai-size-14);
+    width: var(--blai-size-14);
+    color: var(--accent-color);
+    font-size: var(--blai-font-12);
+}
+
+.blai-theme-menu button > span {
+    flex: 1 1 auto;
+}
+
+.blai-theme-menu button > i.blai-theme-menu-check {
+    flex: 0 0 auto;
+    font-size: var(--blai-font-10);
+    opacity: 0;
+}
+
+.blai-theme-menu button.is-active > i.blai-theme-menu-check {
+    opacity: 1;
+}
+
+.blai-theme-menu button:hover,
+.blai-theme-menu button:focus-visible {
+    background: var(--blai-dropdown-active-bg);
+    color: var(--blai-dropdown-active-ink);
+}
+
+.blai-theme-menu button:hover > i:first-child,
+.blai-theme-menu button:focus-visible > i:first-child {
+    color: inherit;
+}
