@@ -15,6 +15,8 @@
     --blai-diff-source-manual-background: color-mix(in srgb, var(--blai-diff-source-manual-color) 16%, transparent);
     --blai-diff-body-line-height: 1.5;
     --blai-diff-body-paragraph-gap: 8px;
+    /* 两种模式正文的唯一字号来源：片段与全文必须一样大。 */
+    --blai-diff-body-font-size: var(--blai-font-15);
     position: fixed;
     inset: 0;
     z-index: 10000000;
@@ -453,6 +455,7 @@
 
 .blai-diff-snippet {
     display: block;
+    font-size: var(--blai-diff-body-font-size);
     line-height: var(--blai-diff-body-line-height);
     white-space: pre-wrap;
     word-break: break-word;
@@ -460,6 +463,14 @@
     background: var(--bg-surface);
     border-radius: var(--blai-radius-8);
     border-left: var(--blai-border-3) solid var(--border-color);
+}
+
+/* 片段模式的段落间隔：让「段落间距」设置对片段也生效，与全文 flex gap 同一变量。 */
+#blai-diff-modal .blai-diff-divider {
+    height: 0;
+    border: 0;
+    margin: calc(var(--blai-diff-body-paragraph-gap) / 2) 0;
+    background: none;
 }
 
 .blai-diff-snippet del {
@@ -491,7 +502,7 @@
 }
 
 .blai-diff-full-normal {
-    font-size: var(--blai-font-14);
+    font-size: var(--blai-diff-body-font-size);
     line-height: var(--blai-diff-body-line-height);
     white-space: pre-wrap;
     word-break: break-word;
@@ -499,7 +510,7 @@
 }
 
 .blai-diff-full-modified {
-    font-size: var(--blai-font-15);
+    font-size: var(--blai-diff-body-font-size);
     line-height: var(--blai-diff-body-line-height);
     white-space: pre-wrap;
     word-break: break-word;
