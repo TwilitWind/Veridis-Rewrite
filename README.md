@@ -27,6 +27,27 @@ node build-check.mjs   # 构建闸门，十三条机械校验（与上一步相�
 
 两步都通过才算改完，随后刷新酒馆页面——ESM 与 CSS 都走浏览器缓存。
 
+### 样式审计（检查字号层级与布局隐患）
+
+改样式后除了构建闸门，还能跑审计脚本查「字号是否合理、有没有文字被裁/重叠/遮挡、双端差异是否异常」：
+
+```bash
+node test/audit.mjs              # 一条命令跑完静态 + 运行时
+node test/audit.mjs static       # 只跑静态：零依赖、无需浏览器
+node test/audit.mjs layout       # 只跑运行时：需要先启动 9224 调试 Chrome
+```
+
+- **静态审计**（`style-audit.mjs`）：扫全部 `styles/*.css`，给出字号分布柱状图、最大/最小/跨度、离群字号、裸写 px、双端 `@media` 覆盖对照，以及 `overflow:hidden`、`line-height<1` 等裁切信号。
+- **运行时审计**（`layout-audit.mjs`）：通过 CDP 在真实浏览器里量几何，检测文字裁切、元素重叠、中心点遮挡，并把「省略号截断 / 无障碍隐藏 / 滚动容器 / 固定导航覆盖」自动归为良性，不混进问题清单。桌面与手机在**同一会话**内连续测量，避免模拟状态污染；结果存 `tmp/layout-report.json`。
+
+运行时审计需要先启动独立调试浏览器（避开占用你日常用的 9222）：
+
+```bash
+"C:/Program Files/Google/Chrome/Application/chrome.exe" --remote-debugging-port=9224 --user-data-dir="C:/Users/feng/AppData/Local/Temp/st-cdp-profile" "http://127.0.0.1:8000/"
+```
+
+两个脚本都只读：不改源码，只在页面里临时切视口，退出时还原。
+
 ---
 
 ## 快速开始

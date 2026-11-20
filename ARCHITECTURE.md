@@ -29,6 +29,12 @@ Veridis-Rewrite/
 ├── style.css(.map)         构建产物，勿手改
 ├── build-css.mjs           拼接压缩 + token 等价校验 + sourcemap
 ├── build-check.mjs         构建闸门
+├── test/
+│   ├── audit.mjs           审计总入口：static / layout / all
+│   ├── style-audit.mjs     静态：字号分布/极值/裸值/双端 @media 覆盖（零依赖）
+│   ├── layout-audit.mjs    运行时：CDP 裁切/重叠/遮挡/渲染字号，桌面手机同会话
+│   ├── sync.mjs            运行时文件同步到装机副本
+│   └── st-*.mjs / cdp-eval.mjs  截图、手机模拟、CDP 求值
 ├── src/                    业务模块
 ├── styles/                 样式唯一真源：tokens/ base/ components/ layouts/ pages/
 ├── templates/purifier.html 工作台全部 DOM（五页 + 弹窗）
