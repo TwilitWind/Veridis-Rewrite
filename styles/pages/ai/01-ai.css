@@ -251,16 +251,18 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header {
-    /* 右侧开关脱离流，标题行按自身内容排布，不被开关挤偏。 */
+    /* 标题与说明居左、开关居右，二者都在正常 flex 流中；开关不再 absolute，
+       否则窄屏下说明文字会铺满整行、右端钻到开关底下造成重叠。 */
     position: relative;
     flex-direction: row;
     min-height: var(--blai-size-62);
-    gap: 0;
+    gap: var(--blai-space-8);
 }
 
 /* 标题与副标题居左，两个开关贴标题栏最右侧 */
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header > div:first-child {
     flex: 1 1 auto;
+    min-width: 0;
     align-self: flex-start;
     text-align: left;
 }
@@ -279,9 +281,10 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches {
-    position: absolute;
-    top: 0;
-    right: 0;
+    /* 回到正常 flex 流：flex:0 0 auto 固定在右，左侧文字 min-width:0 收缩换行，
+       避免 absolute 定位导致的说明文字与开关重叠。 */
+    position: static;
+    flex: 0 0 auto;
     flex-direction: column;
     align-items: flex-end;
     flex-wrap: nowrap;

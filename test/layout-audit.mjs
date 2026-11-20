@@ -6,8 +6,10 @@
 //   OUT=report.json      另存结构化结果
 //   MOBILE_W=390 MOBILE_H=844  手机视口
 //   NO_MOBILE=1          只测桌面
-// 只读：不改源文件；只在页面里临时打开面板、切视口，退出时还原。
+//   PAGES=all(default)|current  默认遍历所有标签页；current 只测当前激活页
+// 只读：不改源文件；只在页面里临时打开面板、切页、切视口，退出时还原。
 // 信噪比设计：故意裁切（省略号 / 无障碍隐藏 / 滚动容器）归入 intentional，不进问题清单。
+// 覆盖设计：默认逐页激活每个 .page-panel 再测，避免「只测当前页」漏掉 AI/净化等非首页区块。
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +21,7 @@ const SCOPE = process.env.SCOPE ?? '#blai-purifier-popup';
 const MOBILE_W = Number(process.env.MOBILE_W ?? 390);
 const MOBILE_H = Number(process.env.MOBILE_H ?? 844);
 const NO_MOBILE = process.env.NO_MOBILE === '1';
+const PAGES = process.env.PAGES ?? 'all'; // all=遍历所有标签页；current=只测当前激活页
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* 字号 token 白名单：用来标记「实际渲染但非设计 token」的字号 */
@@ -132,33 +135,48 @@ const AUDIT = function (scopeSelector) {
         else suspicious.push(row);
     }
 
-    /* 2) 重叠：同父兄弟文本元素显著相交，排除绝对/固定定位 */
-    const groups = new Map();
-    for (const el of all) {
-        if (!hasDirectText(el)) continue;
-        const p = el.parentElement;
-        if (!p) continue;
-        if (!groups.has(p)) groups.set(p, []);
-        groups.get(p).push(el);
-    }
+    /* 2) 重叠：全局可见文本元素两两相交（不再按父分组、不再排除 absolute/fixed）。
+       历史教训：旧版按 parentElement 分组且跳过绝对定位，导致「说明文字铺满整行、
+       absolute 开关压在上面」这类重叠完全漏检（r15 AI 连接区 bug）。
+       降噪只保留两条：祖先-后代关系跳过；交集面积需 > 较小元素的 25%。
+       absolute/fixed 参与的重叠标注 inFlow:'absolute/fixed'，仍计入问题清单——
+       这类正是窄屏浮层压盖的高发来源，宁可多报让人看，也不能再漏。 */
+    const textEls = all.filter(hasDirectText);
     const overlap = [];
-    for (const [parent, items] of groups) {
-        if (items.length < 2) continue;
-        for (let i = 0; i < items.length; i++) {
-            for (let j = i + 1; j < items.length; j++) {
-                const a = items[i], b = items[j];
-                if (a.contains(b) || b.contains(a)) continue;
-                const sa = cs(a), sb = cs(b);
-                if (/absolute|fixed/.test(sa.position) || /absolute|fixed/.test(sb.position)) continue;
-                const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
-                const iw = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
-                const ih = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
-                if (iw <= 2 || ih <= 2) continue;
-                const minArea = Math.min(ra.width * ra.height, rb.width * rb.height);
-                if (!minArea) continue;
-                const ratio = (iw * ih) / minArea;
-                if (ratio > 0.25) overlap.push({ a: desc(a), b: desc(b), rectA: rectOf(a), rectB: rectOf(b), ratio: +ratio.toFixed(2) });
-            }
+    const overlapBenign = [];
+    for (let i = 0; i < textEls.length; i++) {
+        for (let j = i + 1; j < textEls.length; j++) {
+            const a = textEls[i], b = textEls[j];
+            if (a.contains(b) || b.contains(a)) continue;
+            const sa = cs(a), sb = cs(b);
+            const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+            const iw = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+            const ih = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+            if (iw <= 2 || ih <= 2) continue;
+            const minArea = Math.min(ra.width * ra.height, rb.width * rb.height);
+            if (!minArea) continue;
+            const ratio = (iw * ih) / minArea;
+            if (ratio <= 0.25) continue;
+            const row = {
+                a: desc(a), b: desc(b), rectA: rectOf(a), rectB: rectOf(b),
+                ratio: +ratio.toFixed(2),
+                inFlow: /absolute|fixed/.test(sa.position) || /absolute|fixed/.test(sb.position)
+                    ? 'absolute/fixed' : 'normal',
+            };
+            // 良性压盖：装饰浮层（toast/overlay），或位于 fixed/sticky 祖先内
+            //（如手机底部导航栏）——这类滚动后可见，和 occlusion 的 fixed 层判定一致。
+            const deco = (el) => {
+                if (/toast|overlay|mask|backdrop/i.test(el.className || '')) return true;
+                if (el.closest && el.closest('[class*="toast"],[class*="overlay"],[class*="bottom-nav"],[class*="rail-nav"]')) return true;
+                let p = el.parentElement;
+                while (p && p !== document.body) {
+                    if (/fixed|sticky/.test(cs(p).position)) return true;
+                    p = p.parentElement;
+                }
+                return false;
+            };
+            if (deco(a) || deco(b)) overlapBenign.push({ ...row, why: '固定导航/装饰浮层压盖，滚动后可见' });
+            else overlap.push(row);
         }
     }
 
@@ -205,6 +223,7 @@ const AUDIT = function (scopeSelector) {
             clippingSuspicious: suspicious.length,
             clippingIntentional: intentional.length,
             overlap: overlap.length,
+            overlapBenign: overlapBenign.length,
             occlusion: occlusion.length,
             occlusionBenign: occludedBenign.length,
         },
@@ -212,6 +231,7 @@ const AUDIT = function (scopeSelector) {
         clippingSuspicious: suspicious.slice(0, 50),
         clippingIntentional: intentional.slice(0, 20),
         overlap: overlap.slice(0, 50),
+        overlapBenign: overlapBenign.slice(0, 20),
         occlusion: occlusion.slice(0, 50),
         occlusionBenign: occludedBenign.slice(0, 20),
     };
@@ -239,7 +259,53 @@ if (await evaluate(`getComputedStyle(document.getElementById('blai-purifier-popu
 
 const evalAudit = `(${AUDIT.toString()})(${JSON.stringify(SCOPE)})`;
 
-const desktop = await evaluate(evalAudit);
+/* 页面列表 + 逐页审计：默认遍历每个 .page-panel，避免只测当前页漏掉 AI/净化等区块。 */
+const pageTargets = PAGES === 'all'
+    ? await evaluate(`[...document.querySelectorAll('.page-panel')].map(p=>p.dataset.page).filter(Boolean)`)
+    : [];
+const originalPage = await evaluate(`document.querySelector('.page-panel.active')?.dataset.page || ''`);
+
+const activatePage = async (name) => {
+    await evaluate(`(() => { const b=[...document.querySelectorAll('[data-page-target]')].find(x=>x.dataset.pageTarget===${JSON.stringify(name)}); if(b) b.click(); return true; })()`);
+    await sleep(150);
+};
+
+/* 合并多页结果：counts 求和、问题列表拼接并标注 page、fonts 累加；保留每页明细。 */
+const mergePages = (results) => {
+    const base = results.find((x) => x.r && !x.r.error)?.r;
+    if (!base) return { error: '所有页面审计均失败', _pages: results.map((x) => ({ page: x.page, error: x.r?.error })) };
+    const LIST_KEYS = ['clippingSuspicious', 'clippingIntentional', 'overlap', 'overlapBenign', 'occlusion', 'occlusionBenign'];
+    const merged = {
+        viewport: base.viewport, scope: base.scope,
+        textElementCount: 0,
+        counts: { elements: 0, clippingSuspicious: 0, clippingIntentional: 0, overlap: 0, overlapBenign: 0, occlusion: 0, occlusionBenign: 0 },
+        _pages: results.map((x) => ({ page: x.page, error: x.r?.error || null, counts: x.r?.counts || null })),
+    };
+    for (const key of LIST_KEYS) merged[key] = [];
+    const fontAcc = new Map();
+    for (const { page, r } of results) {
+        if (!r || r.error) continue;
+        merged.textElementCount += r.textElementCount || 0;
+        for (const k of Object.keys(merged.counts)) merged.counts[k] += r.counts?.[k] || 0;
+        for (const key of LIST_KEYS) for (const item of (r[key] || [])) merged[key].push({ page, ...item });
+        for (const [size, count] of (r.fonts || [])) fontAcc.set(size, (fontAcc.get(size) || 0) + count);
+    }
+    merged.fonts = [...fontAcc.entries()].sort((a, b) => parseFloat(b[0]) - parseFloat(a[0]));
+    return merged;
+};
+
+const auditViewport = async () => {
+    if (PAGES !== 'all' || !pageTargets.length) return await evaluate(evalAudit);
+    const results = [];
+    for (const p of pageTargets) {
+        await activatePage(p);
+        results.push({ page: p, r: await evaluate(evalAudit) });
+    }
+    if (originalPage) await activatePage(originalPage);
+    return mergePages(results);
+};
+
+const desktop = await auditViewport();
 let mobile = null;
 if (!NO_MOBILE) {
     await send('Emulation.setDeviceMetricsOverride', {
@@ -247,7 +313,7 @@ if (!NO_MOBILE) {
         screenOrientation: { type: 'portraitPrimary', angle: 0 },
     });
     await sleep(600);
-    mobile = await evaluate(evalAudit);
+    mobile = await auditViewport();
     await send('Emulation.clearDeviceMetricsOverride');
 }
 
@@ -294,7 +360,11 @@ for (const [label, r] of [['桌面', desktop], ['手机', mobile]]) {
     if (r.error) { console.log(`${label}：${r.error}`); continue; }
     const c = r.counts;
     console.log(`${label}  ${r.viewport.w}×${r.viewport.h}  面板 ${r.scope.w}×${r.scope.h}  元素 ${c.elements}（直接文本 ${r.textElementCount}）`);
-    console.log(`  可疑裁切 ${c.clippingSuspicious} · 重叠 ${c.overlap} · 遮挡 ${c.occlusion}   |   已排除：故意裁切 ${c.clippingIntentional} / 良性遮挡 ${c.occlusionBenign}`);
+    console.log(`  可疑裁切 ${c.clippingSuspicious} · 重叠 ${c.overlap} · 遮挡 ${c.occlusion}   |   已排除：故意裁切 ${c.clippingIntentional} / 良性重叠 ${c.overlapBenign} / 良性遮挡 ${c.occlusionBenign}`);
+    if (PAGES === 'all' && r._pages?.length) {
+        const pg = r._pages.map((p) => `${p.page}:裁${p.counts?.clippingSuspicious ?? '?'}重${p.counts?.overlap ?? '?'}遮${p.counts?.occlusion ?? '?'}`).join('  ');
+        console.log(`  逐页  ${pg}`);
+    }
 }
 console.log();
 console.log('实际渲染字号（标注 * 表示不在 token 白名单）：');
@@ -314,13 +384,18 @@ for (const [label, r] of [['桌面', desktop], ['手机', mobile]]) {
         console.log(`${label}可疑裁切（需看）：`);
         for (const c of r.clippingSuspicious.slice(0, 8)) console.log(`  ${c.el}  dx=${c.dx} dy=${c.dy}`);
     }
+    if (r?.overlap?.length) {
+        console.log();
+        console.log(`${label}可疑重叠（需看）：`);
+        for (const o of r.overlap.slice(0, 8)) console.log(`  [${o.page}] ${o.a} × ${o.b}  交叠 ${(o.ratio * 100).toFixed(0)}% (${o.inFlow})`);
+    }
     if (r?.occlusion?.length) {
         console.log();
         console.log(`${label}可疑遮挡（需看）：`);
-        for (const o of r.occlusion.slice(0, 8)) console.log(`  ${o.el} <= ${o.hit}`);
+        for (const o of r.occlusion.slice(0, 8)) console.log(`  [${o.page}] ${o.el} <= ${o.hit}`);
     }
 }
 console.log();
-console.log('说明：已把省略号截断、无障碍隐藏、滚动容器、固定导航覆盖归为良性；保留项为启发式结果。');
+console.log('说明：省略号截断/无障碍隐藏/滚动容器/固定导航覆盖/toast 压盖归为良性；重叠检测覆盖全部标签页且包含 absolute/fixed，保留项为启发式结果。');
 if (out) console.log(`结构化结果：${out}`);
 ws.close();
