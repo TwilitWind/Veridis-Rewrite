@@ -4,6 +4,15 @@
 
 ---
 
+## 3.5 增强版 r5（标签行字号根因修复）
+
+- 四个标签的文字一直很小，根因不是按钮字号：`#blai-feedback-workspace-header span { font-size: 8px; letter-spacing: .16em }` 误伤了标签按钮的内层 `<span>`（按钮实测 15px、span 却 8px）。给标签 span 显式 `font-size/weight/letter-spacing/line-height: inherit` 后，桌面实测 15px。
+- 之前多轮只调按钮 `font-size` 无效，就是被这条通用 span 规则压住；以后改这类"标题行内文字"要同时核对内层 span 的计算样式。
+- 手机端 390px 放不下四个 15px 标签，窄屏降为 13px 并把按钮左右 padding 从 18px 收到 11px，实测内容宽 362 = 可用宽 362，四标签一行不滚动。
+- 截图：`feedback-tabs-fixed.png`（桌面）、`feedback-tabs-fixed-mobile.png`（手机）。
+
+---
+
 ## 3.5 增强版 r5（滚动条粗细统一与标签字号）
 
 - 滚动条粗细统一走 token `--blai-scrollbar-size`：桌面 8px、手机（≤600px）4px。Firefox 走 `scrollbar-width: thin`（放 `@supports` 内，避免 Chrome 因标准属性整页忽略伪元素），WebKit 走 `::-webkit-scrollbar` 宽度变量。实测桌面日志框 8px、手机 4px。

@@ -131,6 +131,12 @@
     padding-bottom: var(--blai-space-8);
     margin-bottom: calc(-1 * var(--blai-border-1));
     border-bottom: var(--blai-border-2) solid transparent;
+    /* 上面 .blai-feedback-workspace-header span 把 header 内所有 span 压成 8px，
+       会误伤这四个标签；这里显式继承按钮字号，标签才是 15px。 */
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: normal;
+    line-height: inherit;
 }
 
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active {

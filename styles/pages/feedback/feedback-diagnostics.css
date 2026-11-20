@@ -237,6 +237,13 @@
         gap: var(--blai-space-2);
     }
 
+    /* 手机端 390px 放不下四个 15px 标签，字号降一档到 13px，同时把按钮左右
+       padding 从 18px 收到 11px（四项共省 56px），保证整行不横向滚动。 */
+    #blai-feedback-workspace .blai-feedback-workspace-nav button {
+        font-size: var(--blai-font-13);
+        padding: 0 var(--blai-space-11);
+    }
+
     /* 正文卡左右留边 + 圆角，与画布之间露出一道缝，卡片感才看得出来。 */
     #blai-feedback-workspace .blai-feedback-workspace-content {
         margin: var(--blai-space-8) var(--blai-space-8) 0;

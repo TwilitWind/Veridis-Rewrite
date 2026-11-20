@@ -1361,7 +1361,7 @@ to{opacity: 1;transform: none}}
 #blai-feedback-workspace .blai-feedback-workspace-nav::-webkit-scrollbar{height: 0}
 #blai-feedback-workspace .blai-feedback-workspace-nav button{width: auto;min-width: 0;height: auto;min-height: var(--blai-size-36);padding: 0 var(--blai-space-18);border: 0;border-radius: 0;background: transparent;color: var(--text-secondary);font: inherit;font-size: var(--blai-font-15);font-weight: var(--blai-weight-bold);white-space: nowrap;display: inline-flex;align-items: flex-end}
 #blai-feedback-workspace .blai-feedback-workspace-header .blai-feedback-workspace-nav button{width: auto;min-width: 0;height: auto;min-height: var(--blai-size-36);flex: 0 0 auto}
-#blai-feedback-workspace .blai-feedback-workspace-nav button>span{display: inline-block;padding-bottom: var(--blai-space-8);margin-bottom: calc(-1 * var(--blai-border-1));border-bottom: var(--blai-border-2) solid transparent}
+#blai-feedback-workspace .blai-feedback-workspace-nav button>span{display: inline-block;padding-bottom: var(--blai-space-8);margin-bottom: calc(-1 * var(--blai-border-1));border-bottom: var(--blai-border-2) solid transparent;font-size: inherit;font-weight: inherit;letter-spacing: normal;line-height: inherit}
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active{background: transparent;color: var(--text-main)}
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active>span{border-bottom-color: var(--accent-color)}
 #blai-feedback-workspace .blai-feedback-workspace-content{min-width: 0;min-height: 0;overflow-x: hidden;overflow-y: auto;margin: var(--blai-space-12) var(--blai-space-12) var(--blai-space-14);padding: var(--blai-feedback-page-pad-y) var(--blai-feedback-page-pad-x) var(--blai-space-32);border-radius: var(--blai-radius-14);background: var(--bg-surface)}
@@ -1473,6 +1473,7 @@ to{opacity: 1;transform: none}}
 @media (max-width: 600px){#blai-purifier-popup.blai-app-shell .page-panel.blai-feedback-page{background: color-mix(in srgb,var(--bg-base) 76%,black)}
 #blai-feedback-workspace .blai-feedback-workspace-header{padding: calc(var(--blai-space-9) + env(safe-area-inset-top,0px)) var(--blai-space-14) 0;background: var(--bg-surface)}
 #blai-feedback-workspace .blai-feedback-workspace-nav{padding: 0;gap: var(--blai-space-2)}
+#blai-feedback-workspace .blai-feedback-workspace-nav button{font-size: var(--blai-font-13);padding: 0 var(--blai-space-11)}
 #blai-feedback-workspace .blai-feedback-workspace-content{margin: var(--blai-space-8) var(--blai-space-8) 0;padding: var(--blai-space-14) var(--blai-space-12) calc(var(--blai-space-44) + env(safe-area-inset-bottom,0px));border-radius: var(--blai-radius-12);background: var(--bg-surface)}
 #blai-feedback-workspace .blai-feedback-log-output{background: color-mix(in srgb,var(--bg-surface) 92%,black)}
 #blai-feedback-workspace :is(.blai-feedback-diagnostics-intro,.blai-feedback-diagnostic-heading,.blai-feedback-local-heading){align-items: flex-start;flex-direction: column;gap: var(--blai-space-12)}
