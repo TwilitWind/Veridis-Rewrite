@@ -124,8 +124,8 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
             <div class="blai-deep-clean-selection-scroll">
                 <div class="blai-deep-clean-two-column">
                     <div class="blai-deep-clean-settings">
-                        <section class="blai-deep-clean-section blai-deep-clean-scope-section" aria-labelledby="blai-deep-clean-scope-title">
-                            <h3 id="blai-deep-clean-scope-title">处理范围</h3>
+                        <section class="blai-deep-clean-section blai-deep-clean-options-section" aria-labelledby="blai-deep-clean-options-title">
+                            <h3 id="blai-deep-clean-options-title">处理范围与运行设置</h3>
                             <div class="blai-deep-clean-scope-card ${scopeBlocked ? 'is-blocked' : ''}">
                                 <span class="blai-deep-clean-scope-label">当前角色卡</span>
                                 <strong class="blai-deep-clean-scope-name">${deepCleanSafeHtml(scopeName)}</strong>
@@ -133,9 +133,6 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         ? (groupChat ? '当前处于群聊，深度净化不处理群聊。' : '请先在酒馆里打开一张角色卡并进入聊天。')
         : `${scopeChats.length} 个聊天 · ${scopeWorldBooks.length} 个世界书`}</span>
                             </div>
-                        </section>
-                        <section class="blai-deep-clean-section blai-deep-clean-options-section" aria-labelledby="blai-deep-clean-options-title">
-                            <h3 id="blai-deep-clean-options-title">运行设置</h3>
                             <div class="blai-deep-clean-options">
                                 <label class="blai-deep-clean-option"><span>规则预设</span><select class="blai-deep-clean-select" data-deep-clean-option="presetName" aria-label="深度净化规则预设">${presetNames.length
         ? presetNames.map((name) => `<option value="${deepCleanSafeHtml(name)}" ${name === selection.presetName ? 'selected' : ''}>${deepCleanSafeHtml(name)}</option>`).join('')

@@ -271,6 +271,13 @@
     box-sizing: border-box;
 }
 
+/* 酒馆主题给原生复选框注入 ::before 勾（实测 content:"" / 8.77px），
+   与 background 的 SVG 勾叠成两个——必须一并清掉伪元素。 */
+#blai-deep-clean-workspace .blai-deep-clean-choice input::before,
+#blai-deep-clean-workspace .blai-deep-clean-choice input::after {
+    content: none;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-choice input:checked {
     border-color: var(--accent-color);
     background-color: var(--accent-color);

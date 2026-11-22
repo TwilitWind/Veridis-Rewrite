@@ -1092,6 +1092,7 @@ to{opacity: 1;transform: none}}
 #blai-deep-clean-workspace .blai-deep-clean-option.blai-deep-clean-hidden-toggle{display: flex;align-items: center;gap: var(--blai-space-8)}
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle>span{font-size: var(--blai-font-12);font-weight: var(--blai-weight-normal)}
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]{width: var(--blai-size-16);height: var(--blai-size-16);min-width: var(--blai-size-16);margin: 0;flex: 0 0 var(--blai-size-16);appearance: none;-webkit-appearance: none;border: var(--blai-border-1) solid var(--border-color);border-radius: var(--blai-radius-sm);background: var(--bg-surface);background-repeat: no-repeat;background-position: center;background-size: var(--blai-size-10);cursor: pointer;box-sizing: border-box}
+#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]::before,#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]::after{content: none}
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]:checked{border-color: var(--accent-color);background-color: var(--accent-color);background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 #blai-deep-clean-workspace .blai-deep-clean-mode-option{min-width: 0;min-height: var(--blai-size-30);padding: var(--blai-space-4) var(--blai-space-6) var(--blai-space-4) var(--blai-space-4);display: grid;grid-template-columns: 14px minmax(0,1fr);align-items: center;gap: var(--blai-space-9);border: 0;border-radius: var(--blai-radius-4);background: transparent;color: var(--text-secondary);text-align: left;cursor: pointer}
 #blai-deep-clean-workspace .blai-deep-clean-mode-option:hover{background: var(--bg-surface);color: var(--text-main)}
@@ -1125,6 +1126,7 @@ to{opacity: 1;transform: none}}
 #blai-deep-clean-workspace .blai-deep-clean-choice{min-width: 0;min-height: var(--blai-size-42);padding: var(--blai-space-7) var(--blai-space-10);display: grid;grid-template-columns: auto minmax(0,1fr);align-items: center;gap: var(--blai-space-10);border-bottom: var(--blai-border-1) solid color-mix(in srgb,var(--border-color) 64%,transparent);cursor: pointer}
 #blai-deep-clean-workspace .blai-deep-clean-choice:hover{background: color-mix(in srgb,var(--bg-base) 54%,var(--bg-surface))}
 #blai-deep-clean-workspace .blai-deep-clean-choice input{width: var(--blai-size-16);height: var(--blai-size-16);min-width: var(--blai-size-16);margin: 0;flex: 0 0 var(--blai-size-16);appearance: none;-webkit-appearance: none;border: var(--blai-border-1) solid var(--border-color);border-radius: var(--blai-radius-sm);background: var(--bg-surface);background-repeat: no-repeat;background-position: center;background-size: var(--blai-size-10);cursor: pointer;box-sizing: border-box}
+#blai-deep-clean-workspace .blai-deep-clean-choice input::before,#blai-deep-clean-workspace .blai-deep-clean-choice input::after{content: none}
 #blai-deep-clean-workspace .blai-deep-clean-choice input:checked{border-color: var(--accent-color);background-color: var(--accent-color);background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 #blai-deep-clean-workspace .blai-deep-clean-choice-copy{min-width: 0;display: flex;align-items: baseline;justify-content: space-between;gap: var(--blai-space-18)}
 #blai-deep-clean-workspace :is(.blai-deep-clean-choice-title,.blai-deep-clean-choice-meta){overflow: hidden;text-overflow: ellipsis;white-space: nowrap}
@@ -1290,12 +1292,12 @@ to{opacity: 1;transform: none}}
 #blai-purifier-popup .blai-clean-mode-desc{font-size: var(--blai-font-10);line-height: 1.4}
 #blai-purifier-popup .blai-clean-group-list{max-height: none;overflow: visible}
 #blai-purifier-popup .blai-clean-secondary-column{gap: var(--blai-space-28)}}
-#blai-purifier-popup .blai-deep-clean-scope-card{display: flex;flex-wrap: wrap;align-items: baseline;gap: var(--blai-space-4) var(--blai-space-10);margin-top: var(--blai-space-8);padding: var(--blai-space-6) 0 var(--blai-space-6) var(--blai-space-10);border-left: var(--blai-border-2) solid var(--accent-color);background: transparent}
-#blai-purifier-popup .blai-deep-clean-scope-card.is-blocked{border-left-color: var(--status-danger)}
-#blai-purifier-popup .blai-deep-clean-scope-label{font-size: var(--blai-font-11);font-weight: var(--blai-weight-bold);color: var(--text-secondary)}
-#blai-purifier-popup .blai-deep-clean-scope-name{font-size: var(--blai-font-14);font-weight: var(--blai-weight-bold);color: var(--text-main);overflow-wrap: anywhere}
-#blai-purifier-popup .blai-deep-clean-scope-detail{margin-left: auto;font-size: var(--blai-font-11);line-height: 1.5;color: var(--text-secondary)}
-#blai-purifier-popup .blai-deep-clean-scope-card.is-blocked .blai-deep-clean-scope-detail{color: var(--status-danger)}
+#blai-deep-clean-workspace .blai-deep-clean-scope-card{display: flex;flex-wrap: wrap;align-items: baseline;gap: var(--blai-space-4) var(--blai-space-10);margin-top: var(--blai-space-8);padding: var(--blai-space-6) 0 var(--blai-space-6) var(--blai-space-10);border-left: var(--blai-border-2) solid var(--accent-color);background: transparent}
+#blai-deep-clean-workspace .blai-deep-clean-scope-card.is-blocked{border-left-color: var(--status-danger)}
+#blai-deep-clean-workspace .blai-deep-clean-scope-label{font-size: var(--blai-font-11);font-weight: var(--blai-weight-bold);color: var(--text-secondary)}
+#blai-deep-clean-workspace .blai-deep-clean-scope-name{font-size: var(--blai-font-14);font-weight: var(--blai-weight-bold);color: var(--text-main);overflow-wrap: anywhere}
+#blai-deep-clean-workspace .blai-deep-clean-scope-detail{margin-left: auto;font-size: var(--blai-font-11);line-height: 1.5;color: var(--text-secondary)}
+#blai-deep-clean-workspace .blai-deep-clean-scope-card.is-blocked .blai-deep-clean-scope-detail{color: var(--status-danger)}
 .blai-zh-dict-card{width: min(var(--blai-size-480),94vw);padding: var(--blai-space-22);border-radius: var(--blai-radius-lg);text-align: left}
 .blai-zh-dict-header{display: flex;align-items: center;justify-content: space-between;gap: var(--blai-space-12);margin-bottom: var(--blai-space-12)}
 .blai-zh-dict-title{margin: 0;display: inline-flex;align-items: center;gap: var(--blai-space-8);font-size: var(--blai-font-18);line-height: 1.3;color: var(--text-main)}
