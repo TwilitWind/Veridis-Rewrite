@@ -1123,7 +1123,7 @@ to{opacity: 1;transform: none}}
 #blai-deep-clean-workspace .blai-deep-clean-search-selection-actions{display: inline-flex;gap: var(--blai-space-8)}
 #blai-deep-clean-workspace .blai-deep-clean-search-selection-actions button{padding: 0;border: 0;background: transparent;color: var(--accent-ink);font: inherit;font-size: var(--blai-font-10);text-decoration: underline;box-shadow: none}
 #blai-deep-clean-workspace .blai-deep-clean-resource-list{min-width: 0;max-height: var(--blai-size-240);margin-top: var(--blai-space-8);overflow-y: auto;padding: 0}
-#blai-deep-clean-workspace .blai-deep-clean-choice{min-width: 0;min-height: var(--blai-size-42);padding: var(--blai-space-7) var(--blai-space-10);display: grid;grid-template-columns: auto minmax(0,1fr);align-items: center;gap: var(--blai-space-10);border-bottom: var(--blai-border-1) solid color-mix(in srgb,var(--border-color) 64%,transparent);cursor: pointer}
+#blai-deep-clean-workspace .blai-deep-clean-choice{min-width: 0;min-height: var(--blai-size-42);padding: var(--blai-space-7) var(--blai-space-10);display: grid;grid-template-columns: auto minmax(0,1fr);align-items: center;gap: var(--blai-space-10);cursor: pointer}
 #blai-deep-clean-workspace .blai-deep-clean-choice:hover{background: color-mix(in srgb,var(--bg-base) 54%,var(--bg-surface))}
 #blai-deep-clean-workspace .blai-deep-clean-choice input{width: var(--blai-size-15);height: var(--blai-size-15);min-width: var(--blai-size-15);margin: var(--blai-space-1) 0 0;flex: 0 0 var(--blai-size-15);appearance: none;-webkit-appearance: none;border: var(--blai-border-1-5) solid color-mix(in srgb,var(--text-main) 34%,var(--border-color));border-radius: var(--blai-radius-4);background: var(--bg-surface);background-repeat: no-repeat;background-position: center;background-size: var(--blai-size-10);outline: none;box-shadow: none;cursor: pointer;box-sizing: border-box}
 #blai-deep-clean-workspace .blai-deep-clean-choice input::before,#blai-deep-clean-workspace .blai-deep-clean-choice input::after{content: none}
@@ -1131,7 +1131,7 @@ to{opacity: 1;transform: none}}
 #blai-deep-clean-workspace .blai-deep-clean-choice-copy{min-width: 0;display: flex;align-items: baseline;justify-content: space-between;gap: var(--blai-space-18)}
 #blai-deep-clean-workspace :is(.blai-deep-clean-choice-title,.blai-deep-clean-choice-meta){overflow: hidden;text-overflow: ellipsis;white-space: nowrap}
 #blai-deep-clean-workspace .blai-deep-clean-choice-title{color: var(--text-main);font-size: var(--blai-font-11);font-weight: var(--blai-weight-bold)}
-#blai-deep-clean-workspace .blai-deep-clean-choice-meta{color: var(--text-secondary);font: 9px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace}
+#blai-deep-clean-workspace .blai-deep-clean-choice-meta{color: var(--text-secondary);font-size: var(--blai-font-10);line-height: 1.3}
 #blai-deep-clean-workspace .blai-deep-clean-selection-actions{min-height: var(--blai-size-52);padding: var(--blai-space-8) var(--blai-space-16);display: flex;align-items: center;justify-content: flex-end;gap: var(--blai-space-9);border-top: var(--blai-border-1) solid var(--border-color);background: var(--bg-surface)}
 #blai-deep-clean-workspace .blai-deep-clean-processing{height: 100%;min-width: 0;min-height: 0;display: grid;grid-template-columns: minmax(0,1fr) 330px;overflow: hidden}
 #blai-deep-clean-workspace .blai-deep-clean-processing-main{min-width: 0;min-height: 0;padding: clamp(var(--blai-space-28),5vw,var(--blai-space-64));overflow-y: auto}

@@ -72,16 +72,13 @@ const updateDeepCleanFinalSelection = (kind, value, checked) => {
 $(document).off('click', '#blai-deep-clean-btn').on('click', '#blai-deep-clean-btn', async () => {
     const activeSession = getDeepCleanReviewSession();
     const activePhase = ['frozen', 'scan-result', 'batch-processing', 'review', 'apply', 'stopping'].includes(deepCleanRuntimeState.deepCleanPhase);
-    openDeepCleanInitialSelection({ preserveContent: activePhase || deepCleanRuntimeState.deepCleanPhase === 'initial-selection' });
+    openDeepCleanInitialSelection({ preserveContent: activePhase || Boolean(activeSession) });
     if (activeSession) {
         await withReadyReview(session => renderDeepCleanReview(session, getDeepCleanLookaheadProgress()));
         return;
     }
-    if (deepCleanRuntimeState.deepCleanPhase === 'initial-selection') {
-        renderDeepCleanSelection();
-        return;
-    }
     if (activePhase) return;
+    // 每次进入初始选择都重新读取资源清单：绑定的世界书/知识书可能在外部变动过，不能复用旧快照。
     try {
         renderDeepCleanSelection(await startDeepCleanRun());
     } catch (error) {

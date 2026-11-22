@@ -113,7 +113,9 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     const scopeWorldBooks = scopeCharacter
         ? inventory.worldBooks.filter((worldBook) => worldBook.characterKeys.includes(scopeCharacter.characterKey))
         : [];
-    const totalSelected = selection.characterKeys.length + selection.chatKeys.length + selection.worldBookKeys.length;
+    // 角色卡正文是固定处理项、UI 上无可勾选控件，不计入「共选择 N 项」；
+    // 这里只数用户真正能勾选的世界书与聊天记录。
+    const totalSelected = selection.chatKeys.length + selection.worldBookKeys.length;
     const programModeSelected = selection.processingMode === 'program';
     const scopeBlocked = groupChat || !scopeCharacter;
     const scopeName = scopeCharacter?.displayLabel || '当前没有打开角色卡';
@@ -142,11 +144,11 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                                     <div class="blai-deep-clean-mode-options" aria-label="深度净化处理模式">
                                         <label class="blai-deep-clean-mode-option">
                                             <input type="radio" name="blai-deep-clean-processing-mode" data-deep-clean-option="processingMode" value="program" ${programModeSelected ? 'checked' : ''}>
-                                            <span class="blai-deep-clean-mode-copy"><strong>程序</strong></span>
+                                            <span class="blai-deep-clean-mode-copy"><strong>程序改写</strong></span>
                                         </label>
                                         <label class="blai-deep-clean-mode-option">
                                             <input type="radio" name="blai-deep-clean-processing-mode" data-deep-clean-option="processingMode" value="program-ai" ${selection.processingMode === 'program-ai' ? 'checked' : ''}>
-                                            <span class="blai-deep-clean-mode-copy"><strong>程序 + AI</strong></span>
+                                            <span class="blai-deep-clean-mode-copy"><strong>程序 + AI 改写</strong></span>
                                         </label>
                                     </div>
                                 </fieldset>
@@ -170,7 +172,8 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         selectionKeys: selection.worldBookKeys,
         keyName: 'worldBookKey',
         searchName: 'world-books',
-        detailFor: (worldBook) => worldBook.worldBookKey,
+        // 右侧小字只标资源类型：被某个聊天绑定的 world_info 是「知识书」，其余是角色卡「世界书」。
+        detailFor: (worldBook) => (Array.isArray(worldBook.chatKeys) && worldBook.chatKeys.length ? '知识书' : '世界书'),
         showSearch: false,
     })}
                         ${renderDeepCleanResourcePanel({
@@ -180,7 +183,8 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         selectionKeys: selection.chatKeys,
         keyName: 'key',
         searchName: 'chats',
-        detailFor: (chat) => chat.chatId,
+        // 右侧小字标当前分支：当前打开的聊天 vs 该角色卡的其它历史对话。
+        detailFor: (chat) => (chat.key === inventory.current.chatKey ? '当前对话' : '其他对话'),
         showSearch: true,
     })}
                         <p class="blai-deep-clean-shujuku-note">角色卡正文、Persona、其它角色与外部世界书、Shujuku 单元格都不在深度净化范围内。</p>
