@@ -4,7 +4,7 @@ import { getAppContext } from '../../host/appContext.js';
 import { markRulesDataDirty, rulesUiState } from '.././state.js';
 import { getRuleActivationWarning, isRuleActivationWarningEnabled, normalizeRuleActivationSafety } from '.././model.js';
 import { compileRegexTarget, validateRegexTargetInput } from '.././regex.js';
-import { renderRegexHighlightHtml, renderSimpleHighlightHtml } from '.././regexHighlight.js';
+import { findBracketPairAt, renderRegexHighlightHtml, renderSimpleHighlightHtml } from '.././regexHighlight.js';
 import { buildSimpleTargetPattern, buildTargetLiteralPattern } from '../engine/engine-00-patterns.js';
 import { parseInputToWords } from '.././model.js';
 import { showToast } from '../../ui/notifications.js';
@@ -302,7 +302,9 @@ export function syncRegexHighlightScroll() {
     $preview.scrollLeft($input.scrollLeft());
 }
 
-export function renderRegexHighlightPreview() {
+let activeBracketPairKey = '';
+
+export function renderRegexHighlightPreview(pairRange = null) {
     const $preview = $('#blai-regex-target-highlight');
     if (!$preview.length) return;
     const $wrap = $preview.closest('.blai-regex-input-wrap');
@@ -312,9 +314,10 @@ export function renderRegexHighlightPreview() {
     let html = '';
     if (isRegexHighlightEnabled() && (mode === 'regex' || mode === 'simple')) {
         html = mode === 'regex'
-            ? renderRegexHighlightHtml(source)
-            : renderSimpleHighlightHtml(source);
+            ? renderRegexHighlightHtml(source, pairRange)
+            : renderSimpleHighlightHtml(source, pairRange);
     }
+    activeBracketPairKey = pairRange ? pairRange.start + '-' + pairRange.end : '';
     if (!html) {
         $preview.empty().prop('hidden', true);
         $wrap.removeClass('is-highlighting');
@@ -323,6 +326,20 @@ export function renderRegexHighlightPreview() {
     $preview.html(html).prop('hidden', false);
     $wrap.addClass('is-highlighting');
     syncRegexHighlightScroll();
+}
+
+/** 光标贴着括号时给整对闭合范围加底纹；只在范围真的变化时才重绘高亮层。
+    只在真实的 click/keyup/select 里调用：打开弹窗时 `.val()` 会把光标留在开头符号上，
+    若此时调用会被误判成「光标贴着括号」而自动高亮。 */
+export function syncRegexBracketPairHighlight() {
+    const $input = $('#blai-modal-sub-target');
+    const $preview = $('#blai-regex-target-highlight');
+    if (!$input.length || !$preview.length || $preview.prop('hidden')) return;
+    const caret = Number($input.get(0)?.selectionStart ?? 0);
+    const pair = findBracketPairAt($input.val(), caret);
+    const key = pair ? pair.start + '-' + pair.end : '';
+    if (key === activeBracketPairKey) return;
+    renderRegexHighlightPreview(pair);
 }
 
 export function syncRegexTestScroll() {
@@ -469,6 +486,8 @@ export function syncRegexAssistUi() {
     $('#blai-regex-test-block').prop('hidden', false);
     $('#blai-regex-highlight-switch').prop('hidden', false);
     $('#blai-regex-highlight-toggle').prop('checked', isRegexHighlightEnabled()).prop('disabled', false);
+    // 打开/切模式时先清掉配对底纹：此时光标是浏览器默认位置，贴到开头符号上并非用户意图。
+    activeBracketPairKey = '';
     renderRegexHighlightPreview();
     runRegexTestPreview();
 }

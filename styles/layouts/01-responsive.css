@@ -186,9 +186,19 @@
 }
 
 @media (max-width: 600px) {
+    /* 手机端首页规则卡左右留白加大到 10px，避免规则分组贴着屏幕左右边缘；
+       反馈页仍沿用紧凑的 6px 边距。用变量合并为单条强制声明，不抬高闸门基线。 */
+    #blai-purifier-popup .blai-home-page .blai-home-rules {
+        --blai-mobile-content-margin: var(--blai-space-10);
+    }
+
+    #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
+        --blai-mobile-content-margin: var(--blai-space-6);
+    }
+
     #blai-purifier-popup .blai-home-page .blai-home-rules,
     #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
-        margin: var(--blai-space-6) !important;
+        margin: var(--blai-mobile-content-margin, var(--blai-space-6)) !important;
     }
 
     /* 五页背景左右内边距统一：.pages 不留白，AI/净化/工具内容容器自己收 6px，

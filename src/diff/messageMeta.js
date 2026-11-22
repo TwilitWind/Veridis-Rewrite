@@ -1,6 +1,7 @@
 /** 负责每个分支可替换的阶段记录，以及文本被清除后的无文本撤回保护。 */
 import { getMessageDiffBranchKey } from '../chat/messageBranch.js';
 import { extensionName } from '../settings/defaults.js';
+import { clearMessageRuleHitTrace, shiftRuleHitTraceAfterSwipeDelete } from './ruleHitTrace.js';
 
 const branchMetaKey = '__blai_diff_branch_meta';
 const messageProtectionKey = 'message';
@@ -84,6 +85,7 @@ export function pruneChatDiffMetadata(chat, retainedIndices) {
             delete msg[branchMetaKey];
             if (firstChanged < 0) firstChanged = index;
         }
+        if (clearMessageRuleHitTrace(msg) && firstChanged < 0) firstChanged = index;
     }
     return firstChanged;
 }
@@ -112,6 +114,7 @@ export function deleteMessageDiffSwipe(msg, deletedIndex) {
         changed = true;
     }
     if (Object.keys(container).length === 0) delete msg[branchMetaKey];
+    if (shiftRuleHitTraceAfterSwipeDelete(msg, deletedIndex)) changed = true;
     return changed;
 }
 

@@ -4,6 +4,7 @@ import { buildSimpleWildcardPattern, compileRegexTarget } from '../regex.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { programRuntimeState } from '../state.js';
+import { computeRuleFingerprint } from '../ruleIdentity.js';
 import { logger } from '../../log.js';
 import { getZhVariantCompatOptions, isZhDictionaryReady } from '../../zh/dictionary.js';
 
@@ -111,13 +112,16 @@ function createProcessorBucket() {
     return {
         textTargets: [],
         wordToReplacements: Object.create(null),
+        // 文本规则会聚合成一个 processor，必须逐查找词记住来源指纹，命中时才能定位到具体规则。
+        wordToSources: Object.create(null),
         processors: [],
     };
 }
 
-function addTextTargetToBucket(bucket, target, replacements) {
+function addTextTargetToBucket(bucket, target, replacements, source) {
     bucket.textTargets.push(target);
     bucket.wordToReplacements[target] = replacements;
+    (bucket.wordToSources[target] ||= []).push(source);
 }
 
 function addProcessorToBucket(bucket, processor) {
@@ -137,12 +141,25 @@ function finalizeProcessorBucket(bucket, useZhVariantCompat, zhVariantOptions) {
         processors.unshift({
             regex: textRegex,
             replacerMap: bucket.wordToReplacements,
+            wordToSources: bucket.wordToSources,
             targetEntries: useZhVariantCompat ? targetEntries : undefined,
             targetEntriesByLength: useZhVariantCompat ? groupTextTargetEntriesByLength(targetEntries) : undefined,
             kind: 'text',
         });
     }
     return processors;
+}
+
+/** 命中的查找词 → 来源指纹列表；中文变体命中时用 targetEntries 找回原始查找词。 */
+export function getProcessorHitSources(processor, matchedText = '') {
+    if (!processor) return [];
+    if (processor.kind === 'regex' || processor.kind === 'simple') {
+        return processor.source ? [processor.source] : [];
+    }
+    const direct = processor.wordToSources?.[matchedText];
+    if (direct) return direct;
+    const entry = findTextTargetEntryForMatch(processor, matchedText);
+    return (entry && processor.wordToSources?.[entry.target]) || [];
 }
 
 function compileReplacementProcessors(rules, options, includeAi) {
@@ -163,11 +180,18 @@ function compileReplacementProcessors(rules, options, includeAi) {
             const mode = sub.mode || 'text';
             const targets = Array.isArray(sub.targets) ? [...sub.targets] : [];
             const replacements = Array.isArray(sub.replacements) ? [...sub.replacements] : [];
+            const fingerprint = computeRuleFingerprint(rule, sub);
+            const source = {
+                fingerprint,
+                ruleName: String(rule?.name || ''),
+                remark: String(sub?.remark || ''),
+                mode,
+            };
 
             if (mode === 'text') {
                 for (const t of targets) {
                     if (t) {
-                        addTextTargetToBucket(dataBucket, t, replacements);
+                        addTextTargetToBucket(dataBucket, t, replacements, source);
                     }
                 }
             } else if (mode === 'regex') {
@@ -181,6 +205,7 @@ function compileReplacementProcessors(rules, options, includeAi) {
                         const processorBase = {
                             replacements,
                             kind: 'regex',
+                            source,
                         };
                         addProcessorToBucket(dataBucket, {
                             ...processorBase,
@@ -199,7 +224,7 @@ function compileReplacementProcessors(rules, options, includeAi) {
                                 continue;
                             }
 
-                            addProcessorToBucket(dataBucket, { regex: new RegExp(pattern, 'gmu'), replacements, kind: 'simple' });
+                            addProcessorToBucket(dataBucket, { regex: new RegExp(pattern, 'gmu'), replacements, kind: 'simple', source });
                         } catch (e) {
                             warn(`简易规则解析失败: ${t}`);
                         }

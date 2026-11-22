@@ -36,10 +36,19 @@
     z-index: 10000007;
 }
 
-/* 卡片自身已提供边框、底色与内边距；里面的 .blai-transfer-content 原先是独立一张卡（固定 420px 宽 + 自己一圈边框），
-   套进卡片后两层框重叠，窄屏下 420px 的固定宽度还会顶破卡片右边缘。这里让它变成纯内容层，宽度跟随卡片。 */
+/* 卡片自身提供统一内边距；里面的 .blai-transfer-content 只是内容层，不再画第二层框。 */
 #blai-subrule-transfer-modal > .blai-subrule-transfer-card {
-    padding: 0;
+    padding: var(--blai-space-22);
+}
+
+/* 操作区按内容宽度右对齐，避免两个等宽按钮看起来像分段控件。 */
+#blai-subrule-transfer-modal .blai-transfer-actions {
+    justify-content: flex-end;
+    margin-top: var(--blai-space-16);
+}
+
+#blai-subrule-transfer-modal .blai-modal-actions button {
+    flex: 0 0 auto;
 }
 
 #blai-subrule-transfer-modal .blai-transfer-content {
@@ -52,11 +61,16 @@
     box-sizing: border-box;
 }
 
-/* 说明文字与下拉框之间留一点呼吸，原来紧贴标题 */
+/* 说明文字与下拉框之间留一点呼吸，字号走共享的 body 档。 */
 .blai-subrule-transfer-hint {
-    margin: 0 0 var(--blai-space-8);
+    margin: 0 0 var(--blai-space-12);
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
+}
+
+/* 两步选择：隐藏非当前步骤；用 hidden 属性而非 display 切换，语义与可访问性一致。 */
+.blai-transfer-step[hidden] {
+    display: none;
 }
 
 .blai-edit-modal-card {

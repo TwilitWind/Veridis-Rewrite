@@ -253,13 +253,16 @@
     color: var(--accent-ink);
 }
 
+/* 批量面板不再嵌套一张卡：分组靠间距，避免卡片套卡片。
+   底部保留一档留白，让按钮边框不贴着下方分隔线。 */
 #blai-purifier-popup .blai-home-batch-panel {
-    padding: var(--blai-space-13);
-    display: grid;
+    padding: 0 0 var(--blai-space-12);
+    display: flex;
+    flex-direction: column;
     gap: var(--blai-space-10);
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-14);
-    background: color-mix(in srgb, var(--bg-surface) 58%, transparent);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
 #blai-purifier-popup:not(.blai-is-batch-mode) .blai-home-batch-panel {
@@ -280,16 +283,18 @@
     font-weight: var(--blai-weight-bold);
 }
 
+/* 操作按钮按内容宽度左对齐成组，不铺满整行；低频操作不靠等宽格子充场面。 */
 #blai-purifier-popup .blai-home-batch-actions {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--blai-space-8);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: var(--blai-space-10);
 }
 
 #blai-purifier-popup .blai-home-batch-actions button {
-    min-width: 0;
+    flex: 0 0 auto;
     min-height: var(--blai-size-38);
-    padding: 0 var(--blai-space-10);
+    padding: 0 var(--blai-space-12);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -300,7 +305,6 @@
     color: var(--text-main);
     font: inherit;
     font-size: var(--blai-font-12);
-    font-weight: var(--blai-weight-bold);
     white-space: nowrap;
 }
 

@@ -193,16 +193,12 @@
 }
 
 #blai-purifier-popup .blai-home-batch-actions {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--blai-space-4);
+    gap: var(--blai-space-8);
 }
 
 #blai-purifier-popup .blai-home-batch-panel {
-    padding: var(--blai-space-4) 0 0;
-    gap: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
+    padding: var(--blai-space-2) 0 var(--blai-space-10);
+    gap: var(--blai-space-8);
 }
 
 #blai-purifier-popup .blai-home-batch-heading {
@@ -210,10 +206,10 @@
 }
 
 #blai-purifier-popup .blai-home-batch-actions button {
-    min-height: var(--blai-size-30);
-    padding: 0 var(--blai-space-4);
-    gap: var(--blai-space-3);
-    font-size: var(--blai-font-10);
+    min-height: var(--blai-size-34);
+    padding: 0 var(--blai-space-10);
+    gap: var(--blai-space-5);
+    font-size: var(--blai-font-12);
 }
 
 #blai-purifier-popup .blai-home-card {

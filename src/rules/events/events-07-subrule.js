@@ -1,11 +1,11 @@
 /** 规则事件：subruleEditor。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
-import { validateRegexTargetField, syncRegexHighlightScroll, renderRegexHighlightPreview, runRegexTestPreview, syncRegexTestScroll } from './events-00-shared.js';
+import { validateRegexTargetField, syncRegexHighlightScroll, renderRegexHighlightPreview, syncRegexBracketPairHighlight, runRegexTestPreview, syncRegexTestScroll } from './events-00-shared.js';
 import { applySubruleModeUI, applySubruleRewriteModeUI } from './events-01-ui.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { rulesUiState } from '.././state.js';
 import { showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
-import { closeSubruleTransferModal, openSingleRuleModal, openSubruleTransferModal, runSubruleTransfer, recognizeRegexReplacementInput, removeRegexReplacementInput, renderSubrulesToModal, startEditingRegexReplacementInput } from '.././view.js';
+import { closeSubruleTransferModal, openSingleRuleModal, openSubruleTransferModal, runSubruleTransfer, goSubruleTransferGroupStep, backSubruleTransferPresetStep, recognizeRegexReplacementInput, removeRegexReplacementInput, renderSubrulesToModal, startEditingRegexReplacementInput } from '.././view.js';
 import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
 import { deepClone } from '../../presets/model.js';
 
@@ -107,6 +107,10 @@ export function bindRuleSubruleEditorEvents() {
 
     $(document).off('click', '#blai-subrule-transfer-cancel').on('click', '#blai-subrule-transfer-cancel', () => closeSubruleTransferModal());
 
+    $(document).off('click', '#blai-subrule-transfer-next').on('click', '#blai-subrule-transfer-next', () => goSubruleTransferGroupStep());
+
+    $(document).off('click', '#blai-subrule-transfer-back').on('click', '#blai-subrule-transfer-back', () => backSubruleTransferPresetStep());
+
     $(document).off('change', '#blai-modal-sub-mode').on('change', '#blai-modal-sub-mode', function(e) {
         const mode = String($(this).val() || 'simple');
         applySubruleModeUI(mode);
@@ -128,6 +132,10 @@ export function bindRuleSubruleEditorEvents() {
         runRegexTestPreview();
     });
 
+    // 点击 / 键盘移动光标到括号左侧或右侧时，整对闭合范围加底纹。
+    $(document).off('click.bracketPair keyup.bracketPair select.bracketPair', '#blai-modal-sub-target')
+        .on('click.bracketPair keyup.bracketPair select.bracketPair', '#blai-modal-sub-target', syncRegexBracketPairHighlight);
+
     $(document).off('scroll', '#blai-modal-sub-target').on('scroll', '#blai-modal-sub-target', syncRegexHighlightScroll);
 
     $(document).off('scroll', '#blai-regex-test-text').on('scroll', '#blai-regex-test-text', syncRegexTestScroll);
@@ -145,6 +153,8 @@ export function bindRuleSubruleEditorEvents() {
         const $panel = $('#blai-regex-test-panel');
         const nextOpen = $panel.prop('hidden');
         $panel.prop('hidden', !nextOpen);
+        // 计数跟着测试框走：收起时一并隐藏，展开时由 runRegexTestPreview 重新显示。
+        if (!nextOpen) $('#blai-regex-test-stat').prop('hidden', true);
         $(this).attr('aria-expanded', nextOpen ? 'true' : 'false');
         $(this).toggleClass('is-open', nextOpen);
         // 记忆文本测试开关状态。

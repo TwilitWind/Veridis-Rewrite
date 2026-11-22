@@ -63,7 +63,13 @@ function bindDocumentClose() {
         closeAllMenuPopovers();
     }, true);
     window.addEventListener('resize', () => closeAllMenuPopovers());
-    document.addEventListener('scroll', () => closeAllMenuPopovers(), true);
+    // 菜单自身也在滚动容器里（长列表）。滚动菜单内部不能把自己关掉，
+    // 否则「想滑到下面的分组 → 菜单消失」。只有外部滚动才关闭。
+    document.addEventListener('scroll', (event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest(`.${PORTAL_CLASS}`)) return;
+        closeAllMenuPopovers();
+    }, true);
 }
 
 export function openMenuPopover(anchor, menu) {

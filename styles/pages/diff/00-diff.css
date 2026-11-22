@@ -109,6 +109,10 @@
     height: var(--blai-size-9);
     border-radius: var(--blai-radius-full);
     background: var(--blai-diff-original);
+    /* flex 的 align-items:center 对齐的是行盒中线，中文字形因上下留白不对称
+       视觉中线比行盒低约 0.5px，实测色点比文字高 0.52px；相对定位下移抵消。 */
+    position: relative;
+    top: 0.5px;
 }
 
 .blai-diff-legend-item[data-source="program"] {
@@ -175,7 +179,7 @@
     background: var(--blai-diff-source-ai-color);
 }
 
-/* 单条撤回操作条：只在勾选模式出现。 */
+/* 撤回所选操作条：只在勾选模式出现。 */
 .blai-diff-pick-bar {
     display: flex;
     align-items: center;
@@ -202,33 +206,52 @@
     border-color: var(--accent-color);
 }
 
-/* 勾选模式：差异片段变成可点击的复选项，用纯 CSS 画方框，不依赖图标字体。 */
+/* 勾选模式：差异片段变成可点击的复选项。方框与对勾走内容与字体 token，
+   与原生的复选框同款视觉，避免淡边框看不出勾选态。 */
 .blai-diff-pick-mode .blai-diff-change {
     cursor: pointer;
 }
 
+/* 未勾选与已勾选两态的 ::before 必须同 display、同行高，否则空框按 inherited
+   line-height 排、字形按 line-height:1 排，基线不同会让勾选后复选框往下跳。 */
 .blai-diff-pick-mode .blai-diff-change::before {
     content: '';
-    display: inline-block;
-    width: var(--blai-size-12);
-    height: var(--blai-size-12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--blai-size-16);
+    height: var(--blai-size-16);
     margin-right: var(--blai-space-6);
-    border: var(--blai-border-1) solid var(--border-color);
+    border: var(--blai-border-2) solid var(--text-secondary);
     border-radius: var(--blai-radius-4);
     background: var(--bg-surface);
-    vertical-align: baseline;
+    vertical-align: -3px;
+    line-height: var(--blai-size-16);
     text-decoration: none;
+    box-sizing: border-box;
 }
 
 .blai-diff-pick-mode .blai-diff-change-picked::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-font-10);
+    color: var(--accent-contrast);
     background: var(--accent-color);
     border-color: var(--accent-color);
-    box-shadow: inset 0 0 0 2px var(--bg-surface);
 }
 
+/* 勾选态用下划线标记，不用 outline 包裹：差异片段常在句中换行，
+   outline 按盒模型逐行断开会割裂；下划线随文字逐行连续。del 保留删除线。 */
 .blai-diff-pick-mode .blai-diff-change-picked {
-    outline: var(--blai-border-2) solid var(--accent-color);
-    outline-offset: 2px;
+    text-decoration: underline;
+    text-decoration-color: var(--accent-color);
+    text-decoration-thickness: var(--blai-border-2);
+    text-underline-offset: var(--blai-space-2);
+}
+
+.blai-diff-pick-mode del.blai-diff-change-picked {
+    text-decoration: line-through underline;
 }
 
 .blai-diff-header-actions {
@@ -415,6 +438,16 @@
     background: var(--bg-surface) !important;
 }
 
+/* 规则已被删除或修改：置灰且不可点击，明确告知无法定位。 */
+.blai-diff-related-candidate.is-missing {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.blai-diff-rule-missing-tag {
+    color: var(--status-danger);
+}
+
 .blai-diff-related-candidate-main {
     display: flex;
     align-items: center;
@@ -473,24 +506,31 @@
     background: none;
 }
 
-.blai-diff-snippet del {
-    color: var(--blai-diff-stage-color, var(--status-danger));
+/* 改写片段着色：片段与全文共用同一组 stage 变量。
+   data-blai-diff-section 写在 del/ins 自身，颜色由上面的属性选择器注入，
+   因此全文模式里每个 del/ins 都会取到与图例同色的阶段色与底纹。 */
+.blai-diff-modal-content del,
+.blai-diff-modal-content ins {
+    color: var(--blai-diff-stage-color, var(--text-main));
+}
+
+.blai-diff-modal-content del {
     background: transparent;
     text-decoration: line-through;
     text-decoration-thickness: 2px;
-    padding: var(--blai-space-2) var(--blai-space-4);
-    border-radius: var(--blai-radius-4);
-    margin: 0 var(--blai-space-2);
 }
 
-.blai-diff-snippet ins {
-    color: var(--blai-diff-stage-color, var(--status-success));
-    background: var(--blai-diff-stage-background, color-mix(in srgb, var(--status-success) 16%, transparent));
+.blai-diff-modal-content ins {
+    background: var(--blai-diff-stage-background, transparent);
     text-decoration: none;
+    font-weight: var(--blai-weight-bold);
+}
+
+/* 片段模式的 del/ins 额外留一点内边距与圆角；全文模式不加，避免行内撑开行高。 */
+.blai-diff-snippet :is(del, ins) {
     padding: var(--blai-space-2) var(--blai-space-4);
     border-radius: var(--blai-radius-4);
     margin: 0 var(--blai-space-2);
-    font-weight: var(--blai-weight-bold);
 }
 
 .blai-diff-full-text {

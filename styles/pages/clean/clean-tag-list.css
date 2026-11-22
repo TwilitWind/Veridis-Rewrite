@@ -348,7 +348,7 @@
     justify-content: center;
     gap: var(--blai-space-8);
     border: var(--blai-border-1) solid var(--status-danger);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-full);
     background: var(--status-danger);
     color: var(--danger-contrast);
     font: inherit;

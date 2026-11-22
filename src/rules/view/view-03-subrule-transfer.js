@@ -1,6 +1,7 @@
 /**
  * 子规则（映射条目）的复制与跨分组 / 跨预设移动。
- * 移动目标用「预设 + 分组」两级下拉选择，值编码为 <预设序号>::<分组序号>。
+ * 目标分两步选：先选预设，确认后只列出该预设的分组。
+ * 分组值编码为 <预设序号>::<分组序号>，写入逻辑保持不变。
  */
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
@@ -9,6 +10,7 @@ import { buildPresetEntry, deepClone, getCurrentPresetAiRewriteSettings, getPres
 import { safeHtml } from '../../ui/html.js';
 import { renderSubrulesToModal } from './view-02-panels.js';
 import { showToast } from '../../ui/notifications.js';
+import { syncNativeSelect } from '../../ui/nativeSelectMenu.js';
 
 function collectTransferTargets() {
     const { extension_settings } = getAppContext();
@@ -28,37 +30,83 @@ function collectTransferTargets() {
             targets.push({
                 value: `${presetIndex}::${groupIndex}`,
                 presetName,
+                presetIndex,
                 groupIndex,
                 groupName,
                 isActive,
-                isActivePreset: isActive,
             });
         });
     });
     return { targets, presetNames, activePreset };
 }
 
+/** 切换两步显隐，并同步标题、说明与按钮。 */
+function showTransferStep(step) {
+    const isPreset = step === 'preset';
+    $('#blai-subrule-transfer-step-preset').prop('hidden', !isPreset);
+    $('#blai-subrule-transfer-step-group').prop('hidden', isPreset);
+    $('#blai-subrule-transfer-back').prop('hidden', isPreset);
+    $('#blai-subrule-transfer-next').prop('hidden', !isPreset);
+    $('#blai-subrule-transfer-confirm').prop('hidden', isPreset);
+    $('#blai-subrule-transfer-title').text(isPreset
+        ? '移动规则 · 第 1/2 步：选择预设'
+        : '移动规则 · 第 2/2 步：选择分组');
+}
+
 export function openSubruleTransferModal(index) {
     const position = Number(index);
     if (!Number.isInteger(position) || position < 0 || position >= rulesUiState.currentEditingSubrules.length) return;
-    const { targets, presetNames } = collectTransferTargets();
+    const { targets, presetNames, activePreset } = collectTransferTargets();
     if (targets.length === 0) {
         showToast('没有可用的目标分组。请先新建一个分组或预设。');
         return;
     }
     rulesUiState.currentTransferSubruleIndex = position;
-    const groups = presetNames.map((presetName) => {
-        const entries = targets.filter((target) => target.presetName === presetName);
-        if (entries.length === 0) return '';
-        const options = entries
-            .map((target) => `<option value="${safeHtml(target.value)}">${safeHtml(target.groupName)} ${target.isActive ? '（当前预设）' : ''}</option>`)
-            .join('');
-        return `<optgroup label="${safeHtml(presetName || '未命名预设')}">${options}</optgroup>`;
+
+    // 第一步只列有可用分组的预设；默认选当前预设，省去重复点击。
+    const availableIndexes = [...new Set(targets.map(target => target.presetIndex))];
+    const options = availableIndexes.map((presetIndex) => {
+        const name = presetNames[presetIndex] || '未命名预设';
+        const label = name === activePreset ? `${name}（当前预设）` : name;
+        return `<option value="${presetIndex}">${safeHtml(label)}</option>`;
     }).join('');
-    $('#blai-subrule-transfer-target').html(groups);
+    const $preset = $('#blai-subrule-transfer-preset');
+    $preset.removeAttr('data-blai-select-two-level').html(options);
+    const activeIndex = presetNames.indexOf(activePreset);
+    $preset.val(String(availableIndexes.includes(activeIndex) ? activeIndex : availableIndexes[0]));
+    syncNativeSelect($preset.get(0));
+
+    $('#blai-subrule-transfer-hint').text('先选预设，下一步只列出该预设里的分组。');
+    showTransferStep('preset');
     $('#blai-subrule-transfer-modal').css('display', 'flex');
-    const first = targets[0];
-    if (first) $('#blai-subrule-transfer-target').val(first.value);
+}
+
+/** 第一步确认后，只填当前预设的分组，避免一次性弹出所有预设的分组。 */
+export function goSubruleTransferGroupStep() {
+    const presetIndex = Number($('#blai-subrule-transfer-preset').val());
+    const { targets, presetNames } = collectTransferTargets();
+    const presetName = presetNames[presetIndex];
+    const groups = targets.filter(target => target.presetIndex === presetIndex);
+    if (!presetName || groups.length === 0) {
+        showToast('该预设没有可用的目标分组，请换一个预设。');
+        return;
+    }
+    const options = groups
+        .map(target => `<option value="${safeHtml(target.value)}">${safeHtml(target.groupName)}</option>`)
+        .join('');
+    const $select = $('#blai-subrule-transfer-target');
+    // 分组已限定在单个预设内，收起时仍显示「预设名 / 分组名」，与既有设计一致。
+    $select.attr('data-blai-select-two-level', 'true')
+        .html(`<optgroup label="${safeHtml(presetName)}">${options}</optgroup>`);
+    $select.val(groups[0].value);
+    syncNativeSelect($select.get(0));
+    $('#blai-subrule-transfer-hint').text(`已选择预设「${presetName}」，选择要移动到的分组。`);
+    showTransferStep('group');
+}
+
+/** 返回第一步重选预设。 */
+export function backSubruleTransferPresetStep() {
+    showTransferStep('preset');
 }
 
 export function closeSubruleTransferModal() {

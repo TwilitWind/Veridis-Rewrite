@@ -11,7 +11,7 @@ SillyTavern 扩展，无打包器、无 npm 依赖。`manifest.json` 只声明�
 | `index.js` | 手写 | ESM 入口，直接 `import` `src/` 模块，源码即产物 |
 | `style.css` | `build-css.mjs` 按 `styles/ORDER.json` 拼接压缩 `styles/` 分文件 | 产物勿手改，附 `style.css.map` |
 
-写产物前做 token 级等价校验（源码与产物 token 序列逐项相同），不一致即报错、不写文件——压缩丢内容不可能悄悄发生。`build-check.mjs` 是构建闸门（见第五节）。
+写产物前做 token 级等价校验（源码与产物 token 序列逐项相同），不一致即报错、不写文件——压缩丢内容不可能悄悄发生。构建闸门与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。
 
 四条硬约束：
 
@@ -29,13 +29,7 @@ Veridis-Rewrite/
 ├── style.css(.map)         构建产物，勿手改
 ├── build-css.mjs           拼接压缩 + token 等价校验 + sourcemap
 ├── build-check.mjs         构建闸门
-├── test/
-│   ├── audit.mjs           审计总入口：static / layout / align / all
-│   ├── style-audit.mjs     静态：字号分布/极值/裸值/双端 @media 覆盖（零依赖）
-│   ├── layout-audit.mjs    运行时：CDP 裁切/重叠/遮挡/渲染字号，桌面手机同会话
-│   ├── align-audit.mjs     运行时：UI 控件与同行文本垂直居中偏差
-│   ├── sync.mjs            运行时文件同步到装机副本
-│   └── st-*.mjs / cdp-eval.mjs  截图、手机模拟、CDP 求值
+├── test/                   构建、审计与同步脚本，入口见 DEVELOPMENT.md
 ├── src/                    业务模块
 ├── styles/                 样式唯一真源：tokens/ base/ components/ layouts/ pages/
 ├── templates/purifier.html 工作台全部 DOM（五页 + 弹窗）
@@ -70,7 +64,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 
 ## 三、分层与模块索引
 
-页面内部统一三层：`model.js` 纯数据与规范化 → `view.js` 只碰 DOM → `events.js` 绑事件、调 model 与 view。运行时状态放各目录 `state.js`（`programRuntimeState`、`rulesUiState`、`aiRewriteState`、`presetsRuntimeState` 等），脏标记（`markRulesUiDirty` 等）触发重渲染。
+页面内部统一三层：`model.js` 纯数据与规范化 → `view.js` 只碰 DOM → `events.js` 绑事件、调 model 与 view。运行时状态放各目录 `state.js`（`programRuntimeState`、`rulesUiState`、`aiRewriteState`、`presetsRuntimeState` 等），脏标记（`markRulesUiDirty` 等）触发重渲染。`rules/rulesUiState.editGroupBaseline` 在打开分组编辑弹窗时记录名称+规则快照（`captureEditGroupBaseline`），关闭前由 `hasUnsavedEditGroupChanges` 比对是否触发未保存提醒（忽略纯 UI 的 `isEditing`）。
 
 | 层 | 目录 | 职责 |
 | --- | --- | --- |
@@ -98,7 +92,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | 模块 | 说明 |
 | --- | --- |
 | `ui/shell.js` | `setupUI`：清旧容器 → 注入 `#blai-wand-btn` / `#blai-extension-settings-entry` → 载入模板 → 建路由。导出 `showResponsivePage`、`updateLegacyPurifierWarning`、`annotateTauriMobileSurfaces` |
-| `ui/notifications.js` | `showToast` / `showConfirmModal` / `showAlertModal` / `showPromptModal` / `showRiskConfirmModal` / `showRiskInfoModal`。**全插件唯一对话框入口** |
+| `ui/notifications.js` | `showToast` / `showConfirmModal` / `showAlertModal` / `showPromptModal` / `showRiskConfirmModal` / `showRiskInfoModal` / `showUnsavedChangesModal`（三选一：继续编辑 / 放弃 / 保存，返回 `cancel`/`discard`/`save`）。**全插件唯一对话框入口** |
 | `ui/popover.js` | `openMenuPopover` 等：菜单挂 body，纯手动按视口定位（不用 Popper.js）；关闭时复位锚点标记与活动 id |
 | `ui/theme.js` | `bindThemeEvents`：主题清单 `THEME_MODES`（ auto/light/warm/dark/dim）、顶栏图标点开下拉选择、给容器写 `data-theme`；新增主题时同步 `migration.js` 的合法值 |
 | `ui/tour.js`、`ui/personaProtection.js`、`ui/html.js` | 导览定位、人设保护开关同步、`safeHtml` |
@@ -109,7 +103,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | --- | --- |
 | `rules/engine.js` | `compileProcessors`（永不含 AI 规则）、内部 `compileReplacementProcessors(rules, options, includeAi)`、`buildProcessors`、`applyCompiledReplacements` / `WithTrackedRanges` 变体、`applyScopedReplacements` 系列、`countProcessorMatches`、`applyStreamingProgram`、`pickReplacement`、`buildTargetLiteralPattern`、`buildSimpleTargetPattern` |
 | `rules/regex.js` | `compileRegexTarget`、`validateRegexTargetInput`、`translateRegexError`（英文错误 → 中文）、`buildSimpleWildcardPattern` |
-| `rules/regexHighlight.js` | `tokenizeRegexSource`、`renderRegexHighlightHtml` 行内高亮 |
+| `rules/regexHighlight.js` | `tokenizeRegexSource`、`renderRegexHighlightHtml` 行内高亮、`findBracketPairAt(source, caret)` 取光标侧括号与配对符号的两个下标；底纹只加在这两个符号字符上，不覆盖中间文本。配对高亮只由真实 `click/keyup/select` 触发（见下方「配对高亮触发时机」） |
 | `rules/view.js` | 规则卡片与顶栏、编辑弹窗（`syncRuleEditFilterUi`）、规则搜索（`buildRuleSearchResults(keyword, scope)`、`syncRuleSearchScopeUi`、历史四件套；`localStorage blai-rule-search-history` 保留 10 条）。barrel 后接 `view-00-search` / `view-01-modal` / `view-02-panels` / `view-03-subrule-transfer`（子规则跨分组、跨预设移动） |
 | `text/sentences.js`、`text/variableUpdates.js` | 句子切分；`collectVariableUpdateRanges` / `omitVariableUpdates` 剥离完整变量块 |
 
@@ -138,9 +132,13 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `chat/persistence.js` / `chat/display.js` | 串行保存队列、写回后刷新 DOM |
 | `diff/messageMeta.js` | `{originalMes, aiMes, programMes, reverted}` 存在 `msg.__blai_diff_branch_meta[branchKey]`；`migrateChatDiffMetadata` 处理旧字段 |
 | `diff/revertMerge.js` | `computeRevertedText(currentText, programText, originalText)`：撤回唯一入口 |
+| `diff/pickRevert.js` | 撤回所选的 DOM 采集与计算：`assignDiffRevertItemIds` 编号相邻 del/ins，`collectPickedDiffItems` 用 `Map<itemId, 节点[]>` 索引回查勾选项（避免 O(n×m)），`computePickedRevert` 换算阶段文本 |
+| `diff/preferences.js` | 透视「更多操作」菜单偏好的单一入口：`SPECS`（取值序列 + read/write）+ `cycleDiffPreference(key)` 统一切换并写 settings + `syncRelatedRuleRuntime` 打开弹窗时从 settings 恢复相关规则开关。模板按钮用 `data-blai-pref`（值必须等于 SPECS 键） |
 | `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex` |
 | `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
-| `diff/tracking.js` / `retention.js` / `relatedRules.js` | 谁被记录、按设置裁剪历史、反查改动来源规则 |
+| `diff/tracking.js` / `retention.js` | 谁被记录、按设置裁剪历史 |
+| `rules/ruleIdentity.js` | 规则稳定身份：`computeRuleFingerprint(rule, sub)` 用「分组名+模式+查找词+替换词」算指纹（备注不纳入），`findRuleByFingerprint(rules, fp)` 精确回查。不往用户数据写 id，删改规则后指纹自然失配 |
+| `diff/ruleHitTrace.js` | 命中痕迹：净化时用 `collectRuleHits` 采集，存 `msg.__blai_diff_rule_trace[branchKey]`（独立于 diff 阶段元数据）；`findHitsForChange` 按删除/插入文本或原文坐标匹配，`renderHitCandidate` 渲染可点击候选。窗口外消息与删 Swipe 时同步清理 |
 | `diff/view.js` | 尾部透视按钮投影；`syncBottomDiffButtonOffset` 按 `.swipes-counter` 实测矩形反推 `right/bottom`，与分支计数同行并留 8px，兼容 99/99 |
 | `settings/defaults.js` | `diffLineHeight`（1.5 / 1.8）与 `diffParagraphGap`（4 / 8 / 12）唯一默认与归一化来源，菜单切换后写回并持久化 |
 | `dom/protection.js` | `isProtectedNode`、`isMessageOnAllowedSurface`、`isAllowedChatInputElement`：哪些节点可净化 |
@@ -159,6 +157,8 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 ### 净化管道
 
 `buildProcessors()` 每条规则编译成一个 processor。`compileProcessors` 调 `compileReplacementProcessors(rules, options, false)`——**永不收 AI 规则**，供最终写回；流式路径传 `settings.aiRewrite?.enabled === true` 作为 `includeAi`，只影响实时视觉投影。内层判断 `if (rewriteMode !== 'program' && !includeAi) continue;`。顺序固定：**先 AI 局部改写，再程序规则净化**；AI 结果经 `WithTrackedRanges` 变体精确写回命中范围，不重排整段文本。
+
+编译时每个 processor 携带 `source`（指纹+分组名+备注+模式）；文本规则被聚合成一个 processor，靠 `wordToSources[查找词]` 逐词记住来源，`getProcessorHitSources` 取回。替换回调在真实命中（非保护段）时按 `options.onRuleHit` 上报 `collectRuleHits` 收集。`collectRuleHits` 是纯采集、不消费流式随机候选，故只在 `chat/cleanse.js` 提交时写入痕迹，不接流式路径。
 
 ### 撤回净化
 
@@ -231,31 +231,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 `styles/` 是唯一真源，五层。`styles/ORDER.json` 的 `order` 数组即层叠顺序：同特异性靠先后决胜，**调顺序会改视觉结果**，故顺序写在 JSON 而非脚本；新增分文件只改 ORDER.json。
 
-### 构建与审计
-
-`style.css` 是产物。改 `styles/` 或 `src/` 后执行：
-
-```bash
-node build-css.mjs     # 合并压缩 + token 级等价校验 + 生成 sourcemap
-node build-check.mjs   # 构建闸门，与上一命令相互独立，必须单独跑
-```
-
-改样式后还能跑审计：
-
-```bash
-node test/audit.mjs              # static + layout + align
-node test/audit.mjs static       # 零依赖：字号分布/极值/裸值/双端 @media
-node test/audit.mjs layout       # CDP：裁切/重叠/遮挡，需 9224 调试 Chrome
-node test/audit.mjs align        # CDP：控件与同行文本垂直居中，需 9224
-```
-
-运行时审计要先起独立调试浏览器（避开日常 9222）：
-
-```bash
-"C:/Program Files/Google/Chrome/Application/chrome.exe" --remote-debugging-port=9224 --user-data-dir="C:/Users/feng/AppData/Local/Temp/st-cdp-profile" "http://127.0.0.1:8000/"
-```
-
-三个脚本只读：只临时切视口/开弹窗，退出还原。双端几何、配色、状态用 CDP 求值，截图只确认整窗观感；完整操作流程见工作区 `docs/testing.md`。
+构建命令、审计入口、调试与发布流程见 [DEVELOPMENT.md](DEVELOPMENT.md)，本节不重复。
 
 | 目录 | 职责 | 约束 |
 | --- | --- | --- |
@@ -272,19 +248,21 @@ node test/audit.mjs align        # CDP：控件与同行文本垂直居中，需
 
 ### 界面令牌落点
 
-通用审美规则（配色层级、图标、字号档位、下拉高亮、标题组对齐）以工作区 `docs/DESIGN.md` 为准，本节只记插件令牌与坑。
+通用规则以工作区 `docs/design.md` 为准，双端布局与浮层形态见 `docs/design-responsive.md`，配色基准见 `docs/extension-api.md`「配色基准」；本项目的偏好、术语与字号档位见根目录 `DESIGN.md`。本节只记插件令牌与坑。
 
 - 颜色三层：`--bg-base`（画布，日间 `#F7F7F8`）→ `--bg-surface`（卡片，`#FFFFFF`）→ `--field-bg`（输入框/下拉微灰填充，无静态边框）。日间 `#F1F2F4`、夜间 `#222733`；跟随主题用 `color-mix(in srgb, var(--border-color) 16%, var(--bg-surface))`。混入比例必须小：`--border-color` 本身已是底色上一档，62% 时深色亮度台阶 1.51、16% 后约 1.11，否则发刺眼。填充式而非凹陷式；日间画布与白卡差太小，挖不出槽。
 - 焦点态用 `box-shadow: inset 0 0 0 1px var(--accent-color) !important`，不占位不抖动；hover 不加描边。禁给输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）。主题对裸标签有强声明时把 `--ui-color-sec` 重定向到 `--blai-input-bg`，不新增 `!important`；副作用是边框也读该变量，反馈页三个裸标签用同色 inset 补可见边框。`.pages` / `.page-panel` 保持透明让 `--bg-base` 透上来；日间用实色，不用半透明叠灰底（发脏）。
 - 图标统一酒馆自带 Font Awesome 6.5.2，格式 `<i class="fas fa-*" aria-hidden="true"></i>`；禁止内联 `<svg>`、CSS 拼三角/对勾、字符箭头。伪元素勾选与下拉箭头用 FA 字形码加 FA 字体；装饰线条/圆点不算图标。类名必须在 FA 6.5.2 存在，`fa-fw` / `fa-solid` / `fa-spin` 是修饰类，不参与校验。
-- 字号只用 5 档语义 token（`--blai-fs-*`），旧 `--blai-font-N` 全是别名；双端档值与禁止整体缩放见 `docs/DESIGN.md` §3。间距语义层在 `03-scale.css` 第二块：`--blai-canvas-pad`(12)、`--blai-panel-pad`、`--blai-panel-pad-tight`(10)、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`(8)、`--blai-head-pad`(12)、`--blai-row-pad`(10)。页面文件不写裸 `gap: 14px`。
+- 字号只用 5 档语义 token（`--blai-fs-*`），旧 `--blai-font-N` 全是别名；双端档值与禁止整体缩放见根目录 `DESIGN.md`「字号档位」。间距语义层在 `03-scale.css` 第二块：`--blai-canvas-pad`(12)、`--blai-panel-pad`、`--blai-panel-pad-tight`(10)、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`(8)、`--blai-head-pad`(12)、`--blai-row-pad`(10)。页面文件不写裸 `gap: 14px`。
 - 两栏统一 `minmax(0, 5fr) minmax(0, 3fr)`（两端都要 `minmax(0, ...)`）与 `align-items: stretch`，不退回 `start`；断点、`box-shadow`、`grid-template-columns`、`transform` 保留字面量是刻意的。
 
-### 构建闸门
+### 反馈页与高亮的实现约束
 
-`build-check.mjs` 的机械校验：单文件超阈值 fail/warn；**每个 `.css` 花括号必须平衡（少 `}` 会 fail——r5 曾因此把桌面外壳规则吞进手机 `@media`，token 校验发现不了）**；`styles/` 下每个 `.css` 必须登记 ORDER（孤儿 fail）；顶层只允许 tokens/base/components/layouts/pages；ORDER 层级不得倒挂（tokens→base→components→layouts→pages）；非 tokens 文件不许重定义刻度名；禁 `@import` / `@charset`；输入框不许透明底；tokens 外不许 `#hex`；`!important` 不得比 `quality-baseline.json` 的基线值上涨（只 warn）；manifest 指向的 js/css 必须存在；根 `style.css` 必须存在且非空；`src/` 下 `.js` 有体积与行数上限。具体阈值以脚本为准，不在此抄数。
+反馈页桌面布局高度随内容增长（不用 `minmax(0,1fr)+height:100%` 锁死），否则「涉及区域」展开时详细说明框越过固定 footer 盖住隐私说明浅字；隐私说明设 `min-height` 避免换行跳动。查找区正则高亮态 `color: transparent` 与 token 颜色必须保留强声明（同属性在控件基线规则里仍有 `!important`，加特异性压不住）。
 
-反馈页桌面布局高度随内容增长（不用 `minmax(0,1fr)+height:100%` 锁死），否则「涉及区域」展开时详细说明框越过固定 footer 盖住隐私说明浅字；隐私说明设 `min-height` 避免换行跳动。正则高亮态 `color: transparent` 与 token 颜色必须保留强声明（同属性在控件基线规则里仍有 `!important`，加特异性压不住）。测试区命中高亮靠 overlay 叠在 textarea 之下（命中时把 `--field-bg` 置 transparent），命中统计放测试框右上角。
+测试区命中高亮的固定做法：overlay 叠在 textarea 之下，命中时只把输入框自身背景 `--blai-input-bg` 置 transparent；**可见文字与光标始终由 textarea 自己渲染**，overlay 的文字（含 `<mark>`）一律 `color: transparent`、`mark` 不加水平 padding，只画匹配底色块。切勿反过来把 textarea 文字转透明、让 overlay 重画整段文字——那样 mark 的 padding 会把重画的字推离原生光标，光标就叠进字形里。overlay 与 textarea 必须有完全相同的边框和内边距（不要一边有边框一边又给 padding 补 1px），否则高亮块整体偏移。命中统计放测试框右上角。
+
+配对高亮的触发时机：只有 `#blai-modal-sub-target` 上真实的 `click/keyup/select` 才调用 `syncRegexBracketPairHighlight()`。打开弹窗 / 切模式 / 改高亮开关 / 输入内容一律走无参 `renderRegexHighlightPreview()`，绝不读 `selectionStart` 去配对——刚 `.val()` 进去光标停在开头符号上（或旧值末尾），会被误判为「光标贴着括号」而自动加底纹。
 
 两个规则弹窗顶栏叉号统一 `.blai-modal-close-x`；其中 `border: 0 !important` 是主题对裸 button 强声明用特异性压不过后的例外，已登记 `quality-baseline.json`。拆分样板见 `styles/pages/` 与各 `components/` 下的 `*-topbar.css` / `*-page.css` / `*-deep.css` / `*-processing.css` / `*-form.css` / `*-regex.css`。
 
@@ -298,7 +276,13 @@ node test/audit.mjs align        # CDP：控件与同行文本垂直居中，需
 | 改正则报错文案 | `rules/regex.js` 的 `translateRegexError` |
 | 改 AI 改写调度 | `aiRewrite/runtime.js`；写回范围在 `matching.js`；终稿合并与 `chat/cleanse.js` 一起看 |
 | 改撤回算法 | 只改 `diff/revertMerge.js` |
+| 改撤回所选交互 / 性能 | `diff/pickRevert.js`（编号 + 采集索引）+ `diff/events/events-00-core.js`（计数缓存、apply 提交）+ `events-01-bindings.js`（勾选事件） |
+| 改「更多操作」菜单偏好 | `diff/preferences.js` 的 `SPECS` 加一项（取值 + read/write）→ 模板按钮加 `data-blai-pref="<键>"`；键名必须与 SPECS 一致，否则点击无效 |
+| 改移动规则弹窗步骤 | `rules/view/view-03-subrule-transfer.js`（步骤切换）+ `templates/purifier.html` 的 `#blai-subrule-transfer-*` + `styles/pages/home/home-overview.css`（`.blai-transfer-step`） |
+| 改下拉滚动关闭行为 | `ui/popover.js` 的 scroll 捕获：portal 菜单内部滚动必须 return，外部才 `closeAllMenuPopovers` |
 | 改差异记录 | `diff/tracking.js`（谁被记录）+ `messageMeta.js`（存取）+ `view.js` / `compare.js`（渲染） |
+| 改命中规则定位 | `rules/ruleIdentity.js`（指纹）+ `rules/engine/engine-00-patterns.js`（processor 带来源）+ `engine-01-replace.js`（命中回调）+ `diff/ruleHitTrace.js`（存取回查）+ `diff/events/diffRelatedRules.js`（UI） |
+| 改全文改写上色 | `styles/pages/diff/00-diff.css`（`.blai-diff-modal-content ins/del` 用 `--blai-diff-stage-*`，片段/全文共用），改后须跑 `build-css.mjs` |
 | 改深度净化范围 | `inventory.js`（列什么）+ `contentItems.js`（读什么）+ `apply/`（写回什么）+ `view.js`（界面说明） |
 | 改对话框外观 | `ui/notifications.js` + `styles/components/02-controls.css` 的 `.blai-plugin-dialog-card` 段 |
 | 改菜单定位 | `ui/popover.js` + 对应 `*-menu` 的 CSS |

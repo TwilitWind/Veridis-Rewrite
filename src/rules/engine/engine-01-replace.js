@@ -3,7 +3,7 @@ import { mergeScopeTagsWithBuiltins, collectMvuStatusPlaceholderRanges } from '.
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { programRuntimeState } from '../state.js';
-import { resolveProcessorReplacement, projectTrackedRangesThroughReplacement, getReplaceCallbackOffset, buildProcessors } from './engine-00-patterns.js';
+import { resolveProcessorReplacement, projectTrackedRangesThroughReplacement, getReplaceCallbackOffset, getProcessorHitSources, buildProcessors } from './engine-00-patterns.js';
 
 export function applyCompiledReplacementsWithTrackedRanges(originalText, processors = [], ranges = [], options = {}) {
     const source = String(originalText ?? '');
@@ -22,6 +22,7 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
         && range.end <= source.length);
     if (!valid) return { text: source, ranges: trackedRanges, valid: false };
 
+    const onHit = typeof options.onRuleHit === 'function' ? options.onRuleHit : null;
     (Array.isArray(processors) ? processors : []).forEach((proc) => {
         if (!proc?.regex) return;
         let priorReplacementDelta = 0;
@@ -38,6 +39,21 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
                 ...options,
                 occurrenceStart: sourceStart,
             }) ?? '');
+            if (onHit) {
+                for (const source of getProcessorHitSources(proc, match)) {
+                    onHit({
+                        fingerprint: source.fingerprint,
+                        ruleName: source.ruleName,
+                        remark: source.remark,
+                        mode: source.mode,
+                        matchedText: String(match),
+                        replacement,
+                        scopeStart: Number(options.scopeStart) || 0,
+                        start,
+                        end,
+                    });
+                }
+            }
             protectedRanges = projectTrackedRangesThroughReplacement(protectedRanges, start, end, replacement.length);
             trackedRanges = projectTrackedRangesThroughReplacement(trackedRanges, start, end, replacement.length);
             priorReplacementDelta += replacement.length - String(match).length;
@@ -280,5 +296,23 @@ export function applyScopedReplacementsWithTrackedRanges(originalText, ranges = 
 
 export function applyScopedReplacements(originalText, options = {}) {
     return applyScopedReplacementsWithTrackedRanges(originalText, [], options).text;
+}
+
+/**
+ * 对原文跑一次替换，仅采集实际命中的规则来源，供差异片段精确回查。
+ * 不消费流式随机选择，所以具体替换文本可能与渲染结果不同，但命中规则一致。
+ */
+export function collectRuleHits(originalText) {
+    const hits = [];
+    const source = String(originalText ?? '');
+    if (!source) return hits;
+    applyScopedReplacements(source, { onRuleHit: (hit) => hits.push(hit) });
+    const seen = new Set();
+    return hits.filter((hit) => {
+        const key = `${hit.fingerprint}|${hit.scopeStart}|${hit.start}|${hit.matchedText}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 }
 

@@ -347,6 +347,7 @@ export const defaultSettings = {
     scopeTagMode: "protect",
     enableVisualDiff: true,
     diffViewMode: "snippet",
+    diffRelatedRuleEnabled: false,
     diffLineHeight: 1.5,
     diffParagraphGap: 8,
     diffButtonInExtraMenu: false,

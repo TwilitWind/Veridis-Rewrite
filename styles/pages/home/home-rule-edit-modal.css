@@ -1,15 +1,31 @@
 /* 规则编辑弹窗：头部、字段、语法模式、测试区。 */
 
-/* 需求（首页 2）：编辑规则弹窗顶栏——减字号、压高度 */
+/* 需求（首页 2）：编辑规则弹窗顶栏——减字号、压高度。
+   头尾收紧后中间规则列表多出约 40px（实测 343→383，视口高 615）。 */
 #blai-rule-edit-modal .blai-edit-modal-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--blai-space-10);
-    margin: 0 0 var(--blai-space-10);
+    margin: 0 0 var(--blai-space-6);
     padding: 0;
     border-bottom: 0;
     flex-shrink: 0;
+}
+
+/* 顶栏两枚图标压到 28px：标题才 18px，控件不应把整行撑到 34px。
+   关闭按钮用强声明压过公用 .blai-icon-btn 的 min-height。 */
+#blai-rule-edit-modal .blai-edit-head-actions .blai-edit-filter-trigger,
+#blai-rule-edit-modal .blai-edit-head-actions .blai-modal-close-x {
+    height: var(--blai-size-28);
+    min-height: var(--blai-size-28);
+}
+
+:is(#blai-rule-edit-modal .blai-edit-head-actions, #blai-subrule-edit-modal .blai-subrule-modal-header) .blai-modal-close-x {
+    width: var(--blai-size-28) !important;
+    min-width: var(--blai-size-28) !important;
+    height: var(--blai-size-28) !important;
+    min-height: var(--blai-size-28) !important;
 }
 
 #blai-rule-edit-modal .blai-edit-modal-head #blai-edit-modal-title {
@@ -27,10 +43,10 @@
 /* 两个规则弹窗顶栏的关闭叉号统一：无边框、无背景，靠 flex 与顶栏内容垂直居中。
    用 id+class 链提高特异性压过主题裸 button 的边框/尺寸强声明，不新增强声明。 */
 :is(#blai-rule-edit-modal .blai-edit-head-actions, #blai-subrule-edit-modal .blai-subrule-modal-header) .blai-modal-close-x {
-    width: var(--blai-size-30);
-    min-width: var(--blai-size-30);
-    height: var(--blai-size-30);
-    min-height: var(--blai-size-30);
+    width: var(--blai-size-28);
+    min-width: var(--blai-size-28);
+    height: var(--blai-size-28);
+    min-height: var(--blai-size-28);
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -50,14 +66,18 @@
 #blai-rule-edit-modal .blai-modal-actions {
     justify-content: flex-end;
     gap: var(--blai-space-10);
-    padding-top: var(--blai-space-10);
+    margin-top: var(--blai-space-6);
+    padding-top: 0;
     border-top: 0;
 }
 
+/* 底栏按钮压到 32px：原 38px 上下 padding 占掉一整行高度。 */
 #blai-rule-edit-modal .blai-modal-actions > button {
     flex: 0 0 auto !important;
     min-width: var(--blai-size-104) !important;
-    padding: var(--blai-space-8) var(--blai-space-16) !important;
+    height: var(--blai-size-32) !important;
+    min-height: var(--blai-size-32) !important;
+    padding: 0 var(--blai-space-16) !important;
     font-size: var(--blai-font-13) !important;
 }
 
@@ -68,6 +88,26 @@
     padding: var(--blai-space-9) var(--blai-space-12) !important;
     height: auto !important;
     min-height: var(--blai-size-36) !important;
+}
+
+/* 名称字段与「映射规则列表」标签的上下留白收紧，让出高度给规则列表。 */
+#blai-rule-edit-modal .blai-edit-field {
+    margin-bottom: var(--blai-space-8);
+}
+
+#blai-rule-edit-modal .blai-edit-field .blai-field-label {
+    line-height: 1.2;
+}
+
+#blai-rule-edit-modal #blai-edit-name {
+    padding-top: var(--blai-space-6);
+    padding-bottom: var(--blai-space-6);
+    min-height: var(--blai-size-32);
+}
+
+#blai-rule-edit-modal #blai-edit-subrules-container {
+    margin-top: var(--blai-space-6);
+    margin-bottom: var(--blai-space-6);
 }
 
 #blai-rule-edit-modal .blai-edit-modal-title, #blai-subrule-edit-modal .blai-edit-modal-title {
@@ -274,11 +314,9 @@
 }
 }
 
-/* 手机端编辑弹窗底部按钮收紧：高度 32px、左右内边距 12px，按内容宽度排列不铺满。 */
+/* 手机端：底栏左右内边距进一步收到 12px。高度 32px 与 actions 收紧已提为全局规则。 */
 @media screen and (max-width: 600px) {
 #blai-rule-edit-modal .blai-modal-actions > button {
-    height: var(--blai-size-32) !important;
-    min-height: var(--blai-size-32) !important;
     padding: 0 var(--blai-space-12) !important;
 }
 
@@ -287,15 +325,6 @@
     margin-bottom: var(--blai-space-6);
 }
 
-#blai-rule-edit-modal .blai-edit-head-actions .blai-modal-close-x,
-#blai-subrule-edit-modal .blai-subrule-modal-header .blai-modal-close-x {
-    width: var(--blai-size-28) !important;
-    min-width: var(--blai-size-28) !important;
-    height: var(--blai-size-28) !important;
-    min-height: var(--blai-size-28) !important;
-}
-
-#blai-rule-edit-modal .blai-modal-actions,
 #blai-subrule-edit-modal .blai-subrule-footer {
     margin-top: var(--blai-space-6) !important;
     padding-top: 0 !important;

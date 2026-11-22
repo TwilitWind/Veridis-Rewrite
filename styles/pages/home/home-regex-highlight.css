@@ -34,9 +34,10 @@
     border-radius: var(--blai-radius-8);
     background: transparent;
     box-sizing: border-box;
-    /* 字体必须与输入框一致，否则高亮字形与光标位置对不齐 */
+    /* 字体必须与输入框一致，否则高亮字形与光标位置对不齐。
+       弹窗输入框被 .blai-modal-shell 的 13px 强声明接管，这里同档，开高亮不会把字放大。 */
     font-family: inherit;
-    font-size: var(--blai-font-14);
+    font-size: var(--blai-font-13);
     line-height: 1.55;
     letter-spacing: normal;
     word-spacing: normal;
@@ -101,6 +102,14 @@
     font-weight: var(--blai-weight-bold) !important;
 }
 
+/* 括号配对底纹：光标贴着 []、()、{} 任一侧时，整对闭合范围铺主题强调色。
+   只用背景与内阴影，不加 padding/border/字号，避免高亮字形与输入框里的真字错位。 */
+.blai-regex-bracket-pair {
+    background: color-mix(in srgb, var(--accent-color) 22%, transparent);
+    border-radius: var(--blai-radius-4);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 42%, transparent);
+}
+
 .blai-regex-flags-hint {
     display: flex;
     align-items: center;
@@ -146,6 +155,14 @@
     border-color: var(--accent-color);
 }
 
+/* 展开按钮与命中计数同一行：计数在测试框外的右上角，不压在样本输入框上。 */
+.blai-regex-test-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-8);
+}
+
 .blai-regex-test-panel {
     margin-top: var(--blai-space-8);
     padding: 0;
@@ -163,9 +180,6 @@
 .blai-regex-test-input-wrap {
     position: relative;
     display: block;
-    /* 命中时元素上的 --text-main 会被重定向为 transparent 消除重影，
-       这里先把真实文字色留给光标使用。 */
-    --blai-regex-test-caret: var(--text-main);
 }
 
 .blai-regex-test-input-wrap .blai-textarea {
@@ -177,15 +191,13 @@
     line-height: 1.55;
 }
 
-/* 命中时：输入框背景透明让下层高亮透出，文字本身转透明，由下层高亮层统一渲染整段文本，
-   避免两层文字叠加成重影；光标保留，选中态仍可见。
+/* 命中时只把输入框背景转透明，让下层高亮块的底色透出；文字仍由输入框自己渲染，
+   这样光标、选区、字形位置天然一致（旧做法把文字转透明、由高亮层重画整段文本，
+   高亮块的 padding 会把重画的文字整体推右，导致光标叠到文字里）。
    注意 .blai-modal-shell .blai-textarea 上有 color:var(--text-main) 的强声明，
-   光写 color:transparent 压不过，这里改在元素上重定向 --text-main 变量，让那条强声明算出透明。 */
+   输入框文字保持原色即可，不需要再重定向 --text-main。 */
 .blai-regex-test-input-wrap.has-matches .blai-textarea {
     --blai-input-bg: transparent;
-    --text-main: transparent;
-    color: transparent;
-    caret-color: var(--blai-regex-test-caret);
 }
 
 .blai-regex-test-input-wrap.has-matches .blai-textarea::selection {
@@ -196,14 +208,19 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    padding: calc(var(--blai-space-10) + var(--blai-border-1)) calc(var(--blai-space-12) + var(--blai-border-1));
+    /* 与输入框同为 1px 边框 + 同样内边距，高亮块才能和真实字形逐像素对齐；
+       旧代码在已有边框的基础上又给 padding 补 1px，导致高亮块整体右下偏 1px。 */
+    padding: var(--blai-space-10) var(--blai-space-12);
     border: var(--blai-border-1) solid transparent;
     border-radius: var(--blai-radius-12);
     background: transparent;
+    /* 高亮层只负责画匹配块的底色：文字自身透明，可见文字与光标都来自上层输入框，
+       两者位置天然对齐，光标不会再叠进字形里。 */
+    color: transparent;
     box-sizing: border-box;
-    /* 字体必须与输入框一致（14px / line-height 1.55），否则高亮字形与光标位置对不齐 */
+    /* 字体必须与输入框一致（13px / line-height 1.55），否则高亮字形与光标位置对不齐 */
     font-family: inherit;
-    font-size: var(--blai-font-14);
+    font-size: var(--blai-font-13);
     line-height: 1.55;
     letter-spacing: normal;
     word-spacing: normal;
@@ -220,18 +237,17 @@
 
 .blai-regex-test-mark {
     border-radius: var(--blai-radius-4);
-    padding: 0 var(--blai-space-2);
+    /* 不设水平 padding：高亮块必须与实际文字严格同宽同位，否则后面每个匹配块都会累积右移。
+       文字本身透明（可见文字来自上层输入框），这里只画底色。 */
+    padding: 0;
     background: var(--blai-test-match-bg);
-    color: var(--text-main);
+    color: transparent;
     box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--blai-test-match-bg) 180%, var(--text-main) 12%);
 }
 
 .blai-regex-test-stat {
-    position: absolute;
-    top: var(--blai-space-6);
-    right: var(--blai-space-8);
-    z-index: 4;
-    max-width: calc(100% - var(--blai-space-24));
+    flex: 0 1 auto;
+    max-width: 60%;
     padding: var(--blai-space-2) var(--blai-space-8);
     border-radius: var(--blai-radius-full);
     background: var(--bg-surface);
@@ -420,25 +436,28 @@
     background: var(--bg-surface);
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-12);
-    padding: var(--blai-space-14);
+    /* 内层控件离卡片边缘留一档呼吸，避免边框贴边的拥挤压迫感。
+       移动规则弹窗由 #blai-subrule-transfer-modal 的 ID 规则覆盖为 0。 */
+    padding: var(--blai-space-22);
     box-shadow: 0 12px 24px color-mix(in srgb, var(--bg-base) 12%, transparent);
 }
 
 .blai-transfer-title {
-    margin-bottom: var(--blai-space-10);
-    font-size: var(--blai-font-16);
+    margin-bottom: var(--blai-space-8);
+    font-size: var(--blai-fs-title);
 }
 
 .blai-transfer-target {
-    font-size: var(--blai-font-14) !important;
+    font-size: var(--blai-fs-body) !important;
     padding: var(--blai-space-8) var(--blai-space-36) var(--blai-space-8) var(--blai-space-10) !important;
     margin-bottom: var(--blai-space-12) !important;
 }
 
 .blai-transfer-actions {
     display: flex;
-    gap: var(--blai-space-8);
+    gap: var(--blai-space-12);
     flex-wrap: nowrap;
+    margin-top: var(--blai-space-6);
 }
 
 .blai-transfer-btn {

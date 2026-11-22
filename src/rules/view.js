@@ -7,4 +7,4 @@
 export { clearRuleSearchEditFlow, syncRuleSearchInputUi, RULE_SEARCH_HISTORY_LIMIT, syncRuleEditFilterUi, closeRuleEditFilterMenu, toggleRuleEditFilterMenu, RULE_EDIT_FILTER_LABELS, focusLatestRuleCard, openTransferModal, closeTransferModal, closeRuleSearchPopover, resetRuleSearchState, normalizeRuleSearchHistory, hydrateRuleSearchHistory, pushRuleSearchHistory, removeRuleSearchHistoryItem, clearRuleSearchHistory } from './view/view-00-search.js';
 export { renderRuleSearchModal, openRuleSearchModal, closeRuleSearchModal, removeRegexReplacementInput, startEditingRegexReplacementInput, recognizeRegexReplacementInput, hasPendingRegexReplacementInput, setSingleRuleReplacementEditor, getSingleRuleReplacementValues, renderTags } from './view/view-01-modal.js';
 export { renderSubrulesToModal, openSingleRuleModal, openEditModal } from './view/view-02-panels.js';
-export { openSubruleTransferModal, closeSubruleTransferModal, runSubruleTransfer } from './view/view-03-subrule-transfer.js';
+export { openSubruleTransferModal, closeSubruleTransferModal, runSubruleTransfer, goSubruleTransferGroupStep, backSubruleTransferPresetStep } from './view/view-03-subrule-transfer.js';

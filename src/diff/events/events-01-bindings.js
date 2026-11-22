@@ -2,10 +2,12 @@
  * 负责按需的差异弹窗渲染、操作，以及现有 DOM 绑定。
  */
 import { getAppContext } from '../../host/appContext.js';
-import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages, diffLineHeightOptions, diffParagraphGapOptions } from '../../settings/defaults.js';
+import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages } from '../../settings/defaults.js';
 import { openSingleRuleModal, openEditModal } from '../../rules/view.js';
 import { diffRuntimeState, getCurrentDiffIndex, refreshDiffViewer } from '../state.js';
+import { cycleDiffPreference } from '../preferences.js';
 import { injectDiffButtons } from '../view.js';
+import { showToast } from '../../ui/notifications.js';
 
 export function bindDiffEventHandlers(core) {
     const { extension_settings, saveSettingsDebounced } = getAppContext();
@@ -16,7 +18,6 @@ export function bindDiffEventHandlers(core) {
         syncDiffLimitControlState,
         applyDiffLimitDraft,
         closeDiffRelatedModal,
-        syncDiffRelatedModeState,
         showRelatedRulesForDiffElement,
         syncDiffPreferenceMenuState,
         toggleCurrentDiffRevert,
@@ -74,41 +75,28 @@ diffRuntimeState.diffModalClose = closeDiffModal;
     });
 
 
-    $(document).off('click', '#blai-diff-menu-pos-toggle').on('click', '#blai-diff-menu-pos-toggle', function() {
-        const settings = extension_settings[extensionName];
-        settings.diffButtonInExtraMenu = !settings.diffButtonInExtraMenu;
+    // 更多操作菜单的偏好项统一走一个入口：按 data-blai-pref 循环取值并持久化。
+    // 顶部/尾部按钮位置需要重建消息按钮，其余只回显菜单文案。
+    $(document).off('click', '#blai-diff-actions-menu [data-blai-pref]').on('click', '#blai-diff-actions-menu [data-blai-pref]', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const key = $(this).attr('data-blai-pref');
+        if (cycleDiffPreference(key) === null) return;
         saveSettingsDebounced();
         syncDiffPreferenceMenuState();
         closeDiffActionsMenu();
-        injectDiffButtons();
+        if (key === 'diffButtonInExtraMenu' || key === 'showBottomDiffButton') injectDiffButtons();
     });
 
-
-    $(document).off('click', '#blai-diff-menu-bottom-toggle').on('click', '#blai-diff-menu-bottom-toggle', function() {
-        const settings = extension_settings[extensionName];
-        settings.showBottomDiffButton = settings.showBottomDiffButton === false;
-        saveSettingsDebounced();
-        syncDiffPreferenceMenuState();
+    // 顶栏动作在窄屏收进 ⋮：镜像项触发同一个顶栏按钮的 click，复用原有业务绑定，
+    // 不复制 setDiffPickMode / AI 改写等逻辑；只在打开菜单前同步动态文案。
+    $(document).off('click', '#blai-diff-actions-menu [data-blai-header-action]').on('click', '#blai-diff-actions-menu [data-blai-header-action]', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = $(this).attr('data-blai-header-action');
         closeDiffActionsMenu();
-        injectDiffButtons();
-    });
-
-
-    $(document).off('click', '#blai-diff-line-height-toggle').on('click', '#blai-diff-line-height-toggle', function() {
-        const settings = extension_settings[extensionName];
-        const index = Math.max(0, diffLineHeightOptions.indexOf(Number(settings.diffLineHeight)));
-        settings.diffLineHeight = diffLineHeightOptions[(index + 1) % diffLineHeightOptions.length];
-        saveSettingsDebounced();
-        syncDiffPreferenceMenuState();
-    });
-
-
-    $(document).off('click', '#blai-diff-paragraph-gap-toggle').on('click', '#blai-diff-paragraph-gap-toggle', function() {
-        const settings = extension_settings[extensionName];
-        const index = Math.max(0, diffParagraphGapOptions.indexOf(Number(settings.diffParagraphGap)));
-        settings.diffParagraphGap = diffParagraphGapOptions[(index + 1) % diffParagraphGapOptions.length];
-        saveSettingsDebounced();
-        syncDiffPreferenceMenuState();
+        const button = document.getElementById(target);
+        if (button && !button.disabled) button.click();
     });
 
 
@@ -117,15 +105,6 @@ diffRuntimeState.diffModalClose = closeDiffModal;
         settings.diffViewMode = settings.diffViewMode === 'full' ? 'snippet' : 'full';
         saveSettingsDebounced();
         refreshDiffViewer();
-    });
-
-
-    $(document).off('click', '#blai-diff-related-mode-toggle').on('click', '#blai-diff-related-mode-toggle', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        diffRuntimeState.diffRelatedRuleMode = diffRuntimeState.diffRelatedRuleMode !== true;
-        syncDiffRelatedModeState();
-        closeDiffActionsMenu();
     });
 
 
@@ -192,8 +171,11 @@ diffRuntimeState.diffModalClose = closeDiffModal;
             const targets = id
                 ? $(`#blai-diff-modal-content [data-blai-revert-item="${id}"]`)
                 : $(this);
+            const willPick = !targets.first().hasClass('blai-diff-change-picked');
             targets.toggleClass('blai-diff-change-picked');
-            syncDiffPickConfirmState();
+            // 用缓存计数，避免每次勾选都全表扫描；重渲染路径仍走无参全量重算。
+            const current = Number(String($('#blai-diff-pick-hint').text()).match(/已勾选\s*(\d+)/)?.[1] || 0);
+            syncDiffPickConfirmState(Math.max(0, current + (willPick ? 1 : -1)));
             return;
         }
         if (diffRuntimeState.diffRelatedRuleMode !== true) return;
@@ -208,6 +190,10 @@ diffRuntimeState.diffModalClose = closeDiffModal;
     $(document).off('click', '.blai-diff-related-candidate').on('click', '.blai-diff-related-candidate', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        if ($(this).attr('data-missing') === 'true') {
+            showToast('这条规则已被删除或修改，无法打开。');
+            return;
+        }
         const ruleIndex = Number($(this).attr('data-rule-index'));
         const subRuleIndex = Number($(this).attr('data-subrule-index'));
         const rules = extension_settings[extensionName]?.rules || [];

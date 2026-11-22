@@ -26,6 +26,8 @@ export const rulesUiState = {
     currentEditingIndex: -1,
     currentEditingFilter: 'all',
     currentEditingSubrules: [],
+    // 打开分组编辑弹窗时的原始快照（名称 + 规则），用于关闭前判断是否有未保存改动。
+    editGroupBaseline: null,
     currentSubruleEditIndex: -1,
     batchSelectedRuleIds: [],
     currentTransferRuleIndexes: [],
@@ -45,4 +47,42 @@ export function markRulesDataDirty(options = {}) {
     markRegexDirty(true);
     if (rulesUi) markRulesUiDirty(true);
     if (presetsUi) markPresetsUiDirty(true);
+}
+
+// 分组编辑弹窗的未保存改动检测：把名称与规则列表归一化成可比较的字符串。
+// isEditing 是纯 UI 标记（打开时统一置 false、保存后重建对象时可能丢失），不参与比较，
+// 否则「打开→原样关闭」也会被误判为改动。
+function canonicalizeGroupValue(value) {
+    if (Array.isArray(value)) return value.map(canonicalizeGroupValue);
+    if (value && typeof value === 'object') {
+        const out = {};
+        Object.keys(value).filter(k => k !== 'isEditing').sort().forEach((k) => {
+            out[k] = canonicalizeGroupValue(value[k]);
+        });
+        return out;
+    }
+    return value;
+}
+
+function readCurrentGroupSnapshot() {
+    const name = typeof $ !== 'undefined' && $('#blai-edit-name').length
+        ? String($('#blai-edit-name').val() || '')
+        : '';
+    return JSON.stringify(canonicalizeGroupValue({ name, subrules: rulesUiState.currentEditingSubrules }));
+}
+
+/** 打开分组编辑弹窗、名称与规则都就位后调用，记录基线。 */
+export function captureEditGroupBaseline() {
+    rulesUiState.editGroupBaseline = readCurrentGroupSnapshot();
+}
+
+/** 关闭弹窗前判断名称或规则是否相对基线发生变化。 */
+export function hasUnsavedEditGroupChanges() {
+    if (rulesUiState.editGroupBaseline === null) return false;
+    return rulesUiState.editGroupBaseline !== readCurrentGroupSnapshot();
+}
+
+/** 关闭弹窗后清空基线，避免影响下一次打开。 */
+export function clearEditGroupBaseline() {
+    rulesUiState.editGroupBaseline = null;
 }

@@ -18,6 +18,7 @@ import { markLatestMessageShujukuRewritePending } from '../shujuku/realtime.js';
 import { recordAiRewriteDebug } from '../aiRewrite/debug.js';
 import { refreshMessageDisplay } from './display.js';
 import { recordRewriteStat } from '../diff/rewriteStats.js';
+import { recordRuleHitTrace } from '../diff/ruleHitTrace.js';
 
 /**
  * 从事件负载中解析消息索引。
@@ -124,8 +125,9 @@ export function cleanseMessageDataAtIndex(index, options = {}) {
     }
 
     const { metadataChanged } = syncMessageDiffMetadata(msg, sourceMes, msg.mes);
+    const traceChanged = recordRuleHitTrace(msg, sourceMes);
     maintainDiffRetention();
-    if (metadataChanged) changed = true;
+    if (metadataChanged || traceChanged) changed = true;
     refreshDiffViewer(index);
 
     if (changed) markHostChatDirtyFromIndex(index);

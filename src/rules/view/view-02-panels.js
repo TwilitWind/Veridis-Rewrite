@@ -1,5 +1,5 @@
 /** view 的分块：panels。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { rulesUiState } from '../state.js';
+import { rulesUiState, captureEditGroupBaseline } from '../state.js';
 import { safeHtml } from '../../ui/html.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
@@ -173,6 +173,8 @@ export function openEditModal(index = -1, options = {}) {
     rulesUiState.currentEditingFilter = 'all';
     syncRuleEditFilterUi();
     renderSubrulesToModal();
+    // 名称与规则都已就位，记录基线供关闭前判断是否有未保存改动。
+    captureEditGroupBaseline();
     modal.css('display', 'flex');
 }
 

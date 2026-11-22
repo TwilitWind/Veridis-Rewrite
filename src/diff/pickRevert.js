@@ -1,5 +1,5 @@
 /**
- * 单条撤回的 DOM 采集与纯计算工具。
+ * 撤回所选的 DOM 采集与纯计算工具。
  *
  * 从 core 事件模块抽离：core 只负责事件编排与提交，
  * 这里负责「勾选项 -> 阶段文本」的换算，避免单文件继续膨胀。
@@ -43,7 +43,15 @@ export function assignDiffRevertItemIds(contentEl) {
 /** 读取已勾选的差异项；同一项的 del/ins 只返回一条。 */
 export function collectPickedDiffItems(contentEl) {
     if (!contentEl) return [];
-    const nodes = Array.from(contentEl.querySelectorAll('[data-blai-revert-item]'));
+    // 一次遍历建 id -> [del, ins] 索引；几百条差异时避免对每个勾选项重复 filter（O(n×m)）。
+    const groupsById = new Map();
+    for (const node of contentEl.querySelectorAll('[data-blai-revert-item]')) {
+        const id = node.getAttribute('data-blai-revert-item');
+        if (!id) continue;
+        let group = groupsById.get(id);
+        if (!group) { group = []; groupsById.set(id, group); }
+        group.push(node);
+    }
     const picked = Array.from(contentEl.querySelectorAll('.blai-diff-change-picked'));
     const items = [];
     const handled = new Set();
@@ -51,7 +59,7 @@ export function collectPickedDiffItems(contentEl) {
         const id = element.getAttribute('data-blai-revert-item');
         if (id && handled.has(id)) continue;
         if (id) handled.add(id);
-        const group = id ? nodes.filter(node => node.getAttribute('data-blai-revert-item') === id) : [element];
+        const group = id ? (groupsById.get(id) || [element]) : [element];
         const del = group.find(node => node.tagName === 'DEL');
         const ins = group.find(node => node.tagName === 'INS');
         const anchor = del || ins || element;

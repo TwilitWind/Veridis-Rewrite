@@ -2,9 +2,9 @@
 import { isSearchGroupEditFlow, isSearchDirectSubruleFlow, isRelatedDirectSubruleFlow, saveCurrentEditingRule, formatRegexTargetError, clearRegexTargetValidationState, validateRegexTargetField, clearRegexTestArea } from './events-00-shared.js';
 import { runRuleTransfer } from './events-01-ui.js';
 import { refreshDiffViewer } from '../../diff/state.js';
-import { rulesUiState } from '.././state.js';
+import { rulesUiState, hasUnsavedEditGroupChanges, clearEditGroupBaseline } from '.././state.js';
 import { parseInputToWords } from '.././model.js';
-import { showToast } from '../../ui/notifications.js';
+import { showToast, showUnsavedChangesModal } from '../../ui/notifications.js';
 import { clearRuleSearchEditFlow, closeTransferModal, getSingleRuleReplacementValues, hasPendingRegexReplacementInput, openRuleSearchModal, renderSubrulesToModal } from '.././view.js';
 
 export function bindRuleModalActionEvents() {
@@ -102,12 +102,26 @@ export function bindRuleModalActionEvents() {
         $('#blai-subrule-edit-modal').fadeOut(150);
     });
 
-    $(document).off('click', '#blai-edit-cancel-x').on('click', '#blai-edit-cancel-x', () => {
+    const closeEditGroupModal = () => {
         $('#blai-rule-edit-modal').hide();
+        clearEditGroupBaseline();
         if (isSearchGroupEditFlow()) {
             clearRuleSearchEditFlow();
             openRuleSearchModal();
         }
+    };
+
+    $(document).off('click', '#blai-edit-cancel-x').on('click', '#blai-edit-cancel-x', async () => {
+        if (hasUnsavedEditGroupChanges()) {
+            const choice = await showUnsavedChangesModal();
+            if (choice === 'cancel') return; // 继续编辑
+            if (choice === 'save') {
+                const saveResult = saveCurrentEditingRule({ toastMessage: '合集保存成功', focusLatest: true });
+                if (!saveResult.ok) return; // 校验未通过，留在弹窗里改
+            }
+            // discard：直接关闭，不写回设置
+        }
+        closeEditGroupModal();
     });
     $(document).off('click', '#blai-transfer-cancel').on('click', '#blai-transfer-cancel', () => closeTransferModal());
     $(document).off('click', '#blai-transfer-copy').on('click', '#blai-transfer-copy', () => runRuleTransfer(false));
@@ -119,6 +133,7 @@ export function bindRuleModalActionEvents() {
     $(document).off('click', '#blai-edit-save').on('click', '#blai-edit-save', () => {
         const saveResult = saveCurrentEditingRule({ toastMessage: '合集保存成功', focusLatest: true });
         if (!saveResult.ok) return;
+        clearEditGroupBaseline();
         $('#blai-rule-edit-modal').hide();
         if (isSearchGroupEditFlow()) {
             clearRuleSearchEditFlow();

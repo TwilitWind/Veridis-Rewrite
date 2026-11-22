@@ -37,6 +37,13 @@ function currentLabel(select, placeholder) {
     if (!option) return placeholder || '';
     // 空值选项（如「请选择」）用占位文案，避免选中后触发器空白。
     if (option.value === '' && placeholder) return placeholder;
+    // 两级文案（预设 / 分组）：optgroup 标签拼在前面，让收起时也能看出属于哪个预设。
+    if (select.getAttribute('data-blai-select-two-level') === 'true') {
+        const groupLabel = String(option.parentElement?.label || '').trim();
+        const text = String(option.textContent || '').trim();
+        if (groupLabel) return `${groupLabel} / ${text}`;
+        return text;
+    }
     return option.textContent || '';
 }
 
@@ -46,7 +53,11 @@ function buildMenuHtml(select, placeholder) {
         if (node.tagName === 'OPTGROUP') {
             parts.push(`<div class="${GROUP_CLASS}" role="group" aria-label="${escapeHtml(node.label || '')}">`);
             parts.push(`<div class="${GROUP_CLASS}-label">${escapeHtml(node.label || '')}</div>`);
-            for (const option of node.options) parts.push(optionHtml(option, placeholder));
+            // HTMLOptGroupElement 没有 .options 属性，必须遍历子 OPTION 节点；
+            // 用 node.options 会在含分组的下拉（如移动规则弹窗）抛错，导致菜单 0 项、触发器空白。
+            for (const option of node.children) {
+                if (option.tagName === 'OPTION') parts.push(optionHtml(option, placeholder));
+            }
             parts.push('</div>');
         } else if (node.tagName === 'OPTION') {
             parts.push(optionHtml(node, placeholder));
@@ -160,6 +171,22 @@ export function enhanceNativeSelect(select, options = {}) {
 
     registry.set(select, state);
     return state;
+}
+
+/**
+ * 业务代码动态重建 options / value 后显式同步一次触发器与菜单。
+ * 迁移弹窗实测 MutationObserver 未能及时刷新（label 空、菜单 0 项），
+ * 所以在填完选项后主动调用，保证收起显示与展开列表都正确。
+ */
+export function syncNativeSelect(select) {
+    if (!(select instanceof HTMLSelectElement)) return false;
+    if (!registry.has(select)) {
+        enhanceNativeSelect(select);
+        return registry.has(select);
+    }
+    const state = registry.get(select);
+    syncMenu(select, state);
+    return true;
 }
 
 /** select 被业务整体替换时，释放旧的观察器。 */

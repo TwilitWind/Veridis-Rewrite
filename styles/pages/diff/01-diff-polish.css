@@ -59,7 +59,8 @@
     border-radius: var(--blai-radius-8);
 }
 
-/* 顶栏收成单行：标题在左、动作在右，省掉原来整行按钮占的高度。 */
+/* 顶栏收成单行：标题在左、动作在右，省掉原来整行按钮占的高度。
+   主操作最多两个常驻，其余进 ⋮；窄屏全部收进 ⋮，只留标题与关闭。 */
 #blai-diff-modal .blai-diff-modal-header {
     flex-wrap: nowrap;
     gap: var(--blai-space-8);
@@ -88,6 +89,18 @@
 #blai-diff-modal .blai-diff-modal-close {
     width: var(--blai-size-28);
     height: var(--blai-size-28);
+}
+
+/* 窄屏顶栏：标题居左，⋯ 与 × 贴右；四个主操作镜像项在菜单里，
+   顶栏按钮本身隐藏。判定：标题与首个控件之间无重叠，标题不换行被压。 */
+@media screen and (max-width: 600px) {
+#blai-diff-modal .blai-diff-header-primary {
+    display: none;
+}
+
+#blai-diff-modal .blai-diff-modal-title {
+    flex: 1 1 auto;
+}
 }
 
 #blai-diff-modal .blai-diff-legend {
@@ -121,4 +134,47 @@
 
 #blai-diff-modal .blai-diff-stat > span {
     color: var(--text-secondary);
+}
+
+/* 手机端：透视属长文本重内容，用全屏自适应而非居中卡片。
+   本段在 00-diff.css 之后构建，压过其中「85vh 居中 + 圆角边框卡片」的旧写法；
+   旧写法不删是为了平板/桌面仍走那套尺寸。 */
+@media screen and (max-width: 600px) {
+#blai-diff-modal {
+    padding: 0;
+}
+
+#blai-diff-modal > .blai-diff-modal-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: max(var(--blai-space-10), env(safe-area-inset-top)) env(safe-area-inset-right) max(var(--blai-space-10), env(safe-area-inset-bottom)) env(safe-area-inset-left);
+}
+
+/* 图例与统计合并观感：同处顶部、去掉各自内边距，靠行距区分。 */
+#blai-diff-modal .blai-diff-legend,
+#blai-diff-modal .blai-diff-stats {
+    padding: var(--blai-space-4) var(--blai-space-12);
+    flex-shrink: 0;
+}
+
+#blai-diff-modal .blai-diff-modal-content {
+    margin: 0;
+    padding: var(--blai-space-8) var(--blai-space-12);
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+}
+
+/* ⋮ 菜单里的分隔线：把顶栏动作镜像与偏好项分组，两端都显示。 */
+.blai-diff-menu-divider {
+    height: var(--blai-border-1);
+    background: var(--border-color);
+    margin: var(--blai-space-4) 0;
 }

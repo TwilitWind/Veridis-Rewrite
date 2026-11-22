@@ -188,7 +188,7 @@
     min-height: var(--blai-size-32);
     padding: 0 var(--blai-space-12);
     border: none;
-    border-radius: var(--blai-radius-7);
+    border-radius: var(--blai-radius-full);
     background: var(--status-danger);
     color: var(--danger-contrast);
     font-size: var(--blai-font-12);
@@ -503,9 +503,14 @@
     text-align: left;
 }
 
+/* 弹窗正文统一走 body 档。移动端把普通 p 压到 note 档的规则会按 .blai-dialog-body-text 排除，
+   避免说明文字比按钮还小；浅字说明继续用 note 档。 */
+.blai-dialog-body-text {
+    font-size: var(--blai-fs-body);
+}
+
 .blai-plugin-dialog-text {
     margin: 0;
-    font-size: var(--blai-font-14);
     line-height: 1.6;
     color: var(--text-main);
     white-space: pre-line;

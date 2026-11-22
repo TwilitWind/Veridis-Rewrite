@@ -45,8 +45,9 @@
 /* 顶栏：四个视图直接作为标签页铺满整条，标题已由全局顶栏承担。 */
 #blai-feedback-workspace .blai-feedback-workspace-header {
     min-width: 0;
-    padding: var(--blai-space-2) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
-    border-bottom: 0;
+    /* 缩进对齐全局标题的 20px：原先 clamp + 按钮左 padding 把首个标签推到约 44px。 */
+    padding: var(--blai-space-2) var(--blai-space-16) 0;
+    /* 顶栏底边分隔线由 layouts/01-responsive.css 提供，此处不再声明第二条。 */
     display: grid;
     gap: 0;
     background: var(--bg-surface);
@@ -85,7 +86,8 @@
     min-width: 0;
     flex: 1 1 auto;
     padding: 0;
-    border-bottom: var(--blai-border-1) solid var(--border-color);
+    /* 分隔线只保留顶栏一条；nav 不再画第二条，选中指示条压在顶栏那条线上。 */
+    border-bottom: 0;
     display: flex;
     align-items: flex-end;
     gap: var(--blai-space-2);
@@ -122,6 +124,16 @@
     height: auto;
     min-height: var(--blai-size-34);
     flex: 0 0 auto;
+}
+
+/* 首尾标签去掉外侧 padding：文字直接贴 header 内边距，与上方标题对齐；
+   中间标签保留左右 padding 维持间距。 */
+#blai-feedback-workspace .blai-feedback-workspace-nav button:first-child {
+    padding-left: 0;
+}
+
+#blai-feedback-workspace .blai-feedback-workspace-nav button:last-child {
+    padding-right: 0;
 }
 
 /* 指示条画在文字 span 上，长度与标题等长；按钮左右 padding 不再把线拉长。
@@ -194,7 +206,8 @@
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--blai-space-10) var(--blai-space-18);
-    margin-top: var(--blai-space-2);
+    /* 上提一档，缩短提交按钮与上方附件区的空白；仍保留间距，不与 textarea 重叠。 */
+    margin-top: calc(var(--blai-space-2) - var(--blai-space-10));
 }
 
 #blai-feedback-workspace .blai-feedback-form-footer .blai-feedback-privacy {

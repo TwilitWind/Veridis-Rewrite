@@ -96,9 +96,11 @@
     font-weight: var(--blai-weight-bold);
 }
 
+/* 提交预览是独立主操作，用胶囊；同组的文件选择与诊断按钮保持原档位。 */
 #blai-feedback-workspace .blai-feedback-primary {
     background: var(--accent-color);
     color: var(--accent-contrast);
+    border-radius: var(--blai-radius-full);
 }
 
 #blai-feedback-workspace .blai-feedback-primary:hover:not(:disabled) {

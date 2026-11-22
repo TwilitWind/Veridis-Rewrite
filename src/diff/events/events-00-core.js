@@ -20,6 +20,7 @@ import { showRelatedRulesForDiffElement } from './diffRelatedRules.js';
 import { computeRevertedText } from '../revertMerge.js';
 import { getRewriteStats } from '../rewriteStats.js';
 import { establishDiffBaselineAtIndex } from '../baseline.js';
+import { syncRelatedRuleRuntime } from '../preferences.js';
 import { assignDiffRevertItemIds, collectPickedDiffItems, computePickedRevert } from '../pickRevert.js';
 import { requestManualAiRewriteForMessage } from '../../aiRewrite/index.js';
 import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
@@ -72,6 +73,13 @@ export function createDiffEventsCore() {
         const menu = $('#blai-diff-actions-menu').get(0);
         const toggle = $('#blai-diff-menu-toggle').get(0);
         if (!menu || !toggle) return;
+        // 镜像项文案跟随顶栏：撤回所选会切成「退出勾选」，全文模式会切成「切回片段」。
+        $('#blai-diff-actions-menu [data-blai-header-action]').each((_, item) => {
+            const labelId = item.getAttribute('data-blai-header-label');
+            const text = labelId ? document.getElementById(labelId)?.textContent : null;
+            const span = item.querySelector('span');
+            if (span && text) span.textContent = text;
+        });
         diffMenuOpen = true;
         openMenuPopover(toggle, menu);
         $('#blai-diff-actions-menu').prop('hidden', false);
@@ -117,7 +125,7 @@ export function createDiffEventsCore() {
         $('#blai-diff-modal').toggleClass('blai-diff-related-mode', enabled);
         $('#blai-diff-related-mode-icon').attr('class', enabled ? 'fa-solid fa-crosshairs blai-related-active-icon' : 'fa-solid fa-crosshairs');
         $('#blai-diff-related-mode-text').text(enabled ? '相关规则：开启' : '相关规则：关闭');
-        $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭相关规则模式' : '点击差异文本后推测相关规则');
+        $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭相关规则模式' : '点击差异文本查看命中的规则');
         if (!enabled) closeDiffRelatedModal();
     };
 
@@ -169,6 +177,7 @@ export function createDiffEventsCore() {
 
     const syncDiffPreferenceMenuState = () => {
         const settings = extension_settings[extensionName];
+        syncRelatedRuleRuntime();
         syncDiffLimitControlState();
         syncDiffRelatedModeState();
         syncDiffPositionMenuState(settings);
@@ -207,12 +216,15 @@ export function createDiffEventsCore() {
     };
 
 
-    const syncDiffPickConfirmState = () => {
-        const count = $('#blai-diff-modal-content .blai-diff-change-picked').length;
+    const syncDiffPickConfirmState = (countOverride) => {
+        // 传统计全表查询在几百条差异时每次勾选都要重扫；传入增量计数走缓存分支。
+        const count = Number.isInteger(countOverride)
+            ? countOverride
+            : $('#blai-diff-modal-content .blai-diff-change-picked').length;
         $('#blai-diff-pick-confirm').prop('disabled', count === 0);
         $('#blai-diff-pick-hint').text(count > 0
             ? `已勾选 ${count} 处差异`
-            : '点击差异片段勾选要撤回的项');
+            : '点击差异片段勾选要撤回的内容');
     };
 
 
@@ -221,9 +233,9 @@ export function createDiffEventsCore() {
         const canPick = enabled && !!msg && typeof msg === 'object' && !isMessageDiffReverted(msg);
         $('#blai-diff-modal').toggleClass('blai-diff-pick-mode', canPick);
         $('#blai-diff-pick-bar').prop('hidden', !canPick);
-        $('#blai-diff-pick-toggle').attr('title', canPick ? '退出单条撤回模式' : '勾选差异项后逐条撤回');
+        $('#blai-diff-pick-toggle').attr('title', canPick ? '退出撤回所选' : '勾选差异片段后撤回所选');
         $('#blai-diff-pick-icon').attr('class', canPick ? 'fa-solid fa-list-check blai-related-active-icon' : 'fa-solid fa-list-check');
-        $('#blai-diff-pick-text').text(canPick ? '退出勾选' : '单条撤回');
+        $('#blai-diff-pick-text').text(canPick ? '退出勾选' : '撤回所选');
         if (!canPick) $('#blai-diff-modal-content .blai-diff-change-picked').removeClass('blai-diff-change-picked');
         syncDiffPickConfirmState();
     };
@@ -232,7 +244,10 @@ export function createDiffEventsCore() {
     const setDiffPickMode = (enabled, msg) => {
         const next = enabled === true;
         if (next && diffRuntimeState.diffRelatedRuleMode) {
+            // 相关规则与撤回所选互斥；偏好已持久化，关掉时一并写回设置。
+            extension_settings[extensionName].diffRelatedRuleEnabled = false;
             diffRuntimeState.diffRelatedRuleMode = false;
+            saveSettingsDebounced();
             syncDiffRelatedModeState();
         }
         diffRuntimeState.diffPickMode = next;

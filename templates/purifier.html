@@ -705,12 +705,19 @@
         <div id="blai-subrule-transfer-modal" class="blai-modal-shell">
             <div class="blai-modal-card blai-subrule-transfer-card">
                 <div class="blai-transfer-content">
-                    <h3 class="blai-edit-modal-title blai-transfer-title"><i class="fas fa-arrows-turn-right"></i> 移动这条规则</h3>
-                    <p class="blai-subrule-transfer-hint">可移动到当前预设的其它分组，也可以移到别的预设里的分组。</p>
-                    <select id="blai-subrule-transfer-target" class="blai-input blai-transfer-target"></select>
-                    <div class="blai-transfer-actions">
-                        <button id="blai-subrule-transfer-confirm" type="button" class="blai-transfer-btn blai-transfer-move">移动到这里</button>
-                        <button id="blai-subrule-transfer-cancel" type="button" class="blai-transfer-btn">取消</button>
+                    <h3 id="blai-subrule-transfer-title" class="blai-edit-modal-title blai-transfer-title">移动规则 · 第 1/2 步：选择预设</h3>
+                    <p id="blai-subrule-transfer-hint" class="blai-subrule-transfer-hint blai-dialog-body-text">先选预设，下一步只列出该预设里的分组。</p>
+                    <div id="blai-subrule-transfer-step-preset" class="blai-transfer-step">
+                        <select id="blai-subrule-transfer-preset" class="blai-input blai-transfer-target" aria-label="目标预设"></select>
+                    </div>
+                    <div id="blai-subrule-transfer-step-group" class="blai-transfer-step" hidden>
+                        <select id="blai-subrule-transfer-target" class="blai-input blai-transfer-target" aria-label="目标分组"></select>
+                    </div>
+                    <div class="blai-modal-actions blai-transfer-actions">
+                        <button id="blai-subrule-transfer-cancel" type="button" class="blai-secondary-btn">取消</button>
+                        <button id="blai-subrule-transfer-back" type="button" class="blai-secondary-btn" hidden>上一步</button>
+                        <button id="blai-subrule-transfer-next" type="button" class="blai-primary-btn">下一步</button>
+                        <button id="blai-subrule-transfer-confirm" type="button" class="blai-primary-btn" hidden>移动到这里</button>
                     </div>
                 </div>
             </div>
@@ -802,7 +809,7 @@
                     <div class="blai-diff-header-actions">
                         <div class="blai-diff-header-primary">
                         <button id="blai-diff-pick-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="勾选差异项后逐条撤回">
-                            <i id="blai-diff-pick-icon" class="fa-solid fa-list-check"></i> <span id="blai-diff-pick-text">单条撤回</span>
+                            <i id="blai-diff-pick-icon" class="fa-solid fa-list-check"></i> <span id="blai-diff-pick-text">撤回所选</span>
                         </button>
                         <button id="blai-diff-revert-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="撤回净化并保护原文">
                             <i id="blai-diff-revert-icon" class="fas fa-rotate-left"></i> <span id="blai-diff-revert-text">撤回</span>
@@ -820,23 +827,40 @@
                                 <i class="fa-solid fa-ellipsis"></i>
                             </button>
                             <div id="blai-diff-actions-menu" class="blai-diff-actions-menu" hidden>
-                                <button id="blai-diff-related-mode-toggle" type="button" class="blai-diff-actions-item" title="点击差异文本后推测相关规则">
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-pick-toggle">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <span>撤回所选</span>
+                                </button>
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-revert-toggle">
+                                    <i class="fas fa-rotate-left"></i>
+                                    <span>撤回净化</span>
+                                </button>
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-ai-rewrite">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>AI 改写</span>
+                                </button>
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-mode-toggle" data-blai-header-label="blai-diff-mode-text">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    <span>全文模式</span>
+                                </button>
+                                <div class="blai-diff-menu-divider" aria-hidden="true"></div>
+                                <button id="blai-diff-related-mode-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffRelatedRuleEnabled" title="点击差异文本查看命中的规则">
                                     <i id="blai-diff-related-mode-icon" class="fa-solid fa-crosshairs"></i>
                                     <span id="blai-diff-related-mode-text">相关规则：关闭</span>
                                 </button>
-                                <button id="blai-diff-line-height-toggle" type="button" class="blai-diff-actions-item" title="切换正文行距（片段与全文通用）">
+                                <button id="blai-diff-line-height-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffLineHeight" title="切换正文行距（片段与全文通用）">
                                     <i class="fa-solid fa-text-height"></i>
                                     <span id="blai-diff-line-height-text">正文行距：1.5</span>
                                 </button>
-                                <button id="blai-diff-paragraph-gap-toggle" type="button" class="blai-diff-actions-item" title="切换段落间距（片段与全文通用）">
+                                <button id="blai-diff-paragraph-gap-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffParagraphGap" title="切换段落间距（片段与全文通用）">
                                     <i class="fa-solid fa-grip-lines"></i>
                                     <span id="blai-diff-paragraph-gap-text">段落间距：标准</span>
                                 </button>
-                                <button id="blai-diff-menu-pos-toggle" type="button" class="blai-diff-actions-item" title="将顶部按钮收纳进菜单">
+                                <button id="blai-diff-menu-pos-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffButtonInExtraMenu" title="将顶部按钮收纳进菜单">
                                     <i id="blai-diff-menu-pos-icon" class="fa-solid fa-ellipsis"></i>
                                     <span id="blai-diff-menu-pos-text">顶部按钮：收纳</span>
                                 </button>
-                                <button id="blai-diff-menu-bottom-toggle" type="button" class="blai-diff-actions-item" title="隐藏消息尾部按钮">
+                                <button id="blai-diff-menu-bottom-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="showBottomDiffButton" title="隐藏消息尾部按钮">
                                     <i id="blai-diff-menu-bottom-icon" class="fa-solid fa-eye-slash"></i>
                                     <span id="blai-diff-menu-bottom-text">尾部按钮：隐藏</span>
                                 </button>
@@ -858,9 +882,9 @@
                                     <span class="blai-diff-stat" data-kind="ai"><i></i><strong id="blai-diff-stat-ai">0</strong><span>AI 改写</span></span>
                                 </div>
                 <div id="blai-diff-pick-bar" class="blai-diff-pick-bar" hidden>
-                    <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击差异片段勾选要撤回的项</span>
+                    <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击差异片段勾选要撤回的内容</span>
                     <button id="blai-diff-pick-confirm" type="button" class="blai-icon-btn blai-diff-pick-confirm" disabled>
-                        <i class="fas fa-rotate-left"></i> <span>确认撤回选中</span>
+                        <i class="fas fa-rotate-left"></i> <span>确认撤回所选</span>
                     </button>
                     <button id="blai-diff-pick-cancel" type="button" class="blai-icon-btn">取消</button>
                 </div>
@@ -872,7 +896,7 @@
         <div id="blai-diff-related-modal" class="blai-modal-shell">
             <div class="blai-modal-card blai-diff-related-card">
                 <div class="blai-diff-related-modal-header">
-                    <h3 class="blai-edit-modal-title blai-diff-related-title"><i class="fa-solid fa-crosshairs"></i> 可能相关规则</h3>
+                    <h3 class="blai-edit-modal-title blai-diff-related-title"><i class="fa-solid fa-crosshairs"></i> 相关规则</h3>
                     <button id="blai-diff-related-close" type="button" class="blai-icon-btn" title="关闭"><i class="fas fa-times"></i></button>
                 </div>
                 <div id="blai-diff-related-body" class="blai-diff-related-body"></div>
@@ -930,19 +954,21 @@
                         </div>
                         <div id="blai-modal-sub-target-error" class="blai-field-error" aria-live="polite"></div>
                         <div class="blai-regex-input-wrap">
-                            <textarea id="blai-modal-sub-target" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px; padding: var(--blai-input-pad-compact);"></textarea>
+                            <textarea id="blai-modal-sub-target" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px; padding: var(--blai-input-pad-compact);"></textarea>
                             <div id="blai-regex-target-highlight" class="blai-regex-highlight" aria-hidden="true" hidden></div>
                         </div>
                         <div id="blai-regex-test-block" class="blai-regex-test-block" hidden>
-                            <button id="blai-regex-test-toggle" type="button" class="blai-subrule-mini-btn blai-regex-test-toggle" aria-expanded="false">
-                                <i class="fas fa-vial"></i>
-                                <span>匹配测试区</span>
-                            </button>
+                            <div id="blai-regex-test-head" class="blai-regex-test-head">
+                                <button id="blai-regex-test-toggle" type="button" class="blai-subrule-mini-btn blai-regex-test-toggle" aria-expanded="false">
+                                    <i class="fas fa-vial"></i>
+                                    <span>匹配测试区</span>
+                                </button>
+                                <span id="blai-regex-test-stat" class="blai-regex-test-stat" hidden></span>
+                            </div>
                             <div id="blai-regex-test-panel" class="blai-regex-test-panel" hidden>
                                 <div id="blai-regex-test-input-wrap" class="blai-regex-test-input-wrap">
                                     <textarea id="blai-regex-test-text" class="blai-textarea blai-regex-test-input" rows="4" placeholder="在这里粘贴一段样本文本，匹配内容会直接在这里高亮。"></textarea>
                                     <div id="blai-regex-test-highlight" class="blai-regex-test-highlight" aria-hidden="true" hidden></div>
-                                    <span id="blai-regex-test-stat" class="blai-regex-test-stat" hidden></span>
                                 </div>
                             </div>
                         </div>

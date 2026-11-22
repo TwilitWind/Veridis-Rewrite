@@ -68,7 +68,7 @@ function openPluginDialog({ message, value = null, placeholder = '', okText = '�
         const $modal = $('<div class="blai-modal-shell blai-plugin-dialog" role="presentation"></div>')
             .attr('data-theme', theme);
         const $card = $('<div class="blai-modal-card blai-plugin-dialog-card" role="dialog" aria-modal="true"></div>').appendTo($modal);
-        const $text = $('<p class="blai-plugin-dialog-text"></p>').appendTo($card);
+        const $text = $('<p class="blai-plugin-dialog-text blai-dialog-body-text"></p>').appendTo($card);
         // 只有调用方显式声明可信的硬编码文案时才渲染 HTML；默认仍走 text()，避免把用户输入当标记解析。
         if (allowHtml) $text.html(String(message || ''));
         else $text.text(String(message || ''));
@@ -125,6 +125,47 @@ export function showConfirmModal(message, options = {}) {
         okText: options.okText || '确定',
         cancelText: options.cancelText || '取消',
         danger: options.danger === true,
+    });
+}
+
+// 未保存改动提醒：三选一，返回 'save' | 'discard' | 'cancel'（继续编辑）。
+// 走与统一对话框相同的 blai-plugin-dialog 外观和 z-index，保证压在编辑弹窗之上。
+export function showUnsavedChangesModal(message = '当前分组有未保存的改动，是否保存？') {
+    return new Promise((resolve) => {
+        const theme = String($('#blai-purifier-popup').attr('data-theme') || 'auto');
+        const $modal = $('<div class="blai-modal-shell blai-plugin-dialog" role="presentation"></div>')
+            .attr('data-theme', theme);
+        const $card = $('<div class="blai-modal-card blai-plugin-dialog-card" role="dialog" aria-modal="true"></div>').appendTo($modal);
+        $('<p class="blai-plugin-dialog-text blai-dialog-body-text"></p>').text(String(message || '')).appendTo($card);
+        const $actions = $('<div class="blai-modal-actions"></div>').appendTo($card);
+        $('<button type="button" class="blai-secondary-btn"></button>').text('继续编辑').appendTo($actions);
+        $('<button type="button" class="blai-secondary-btn blai-danger-btn"></button>').text('放弃改动').appendTo($actions);
+        $('<button type="button" class="blai-primary-btn"></button>').text('保存并关闭').appendTo($actions);
+
+        const close = (result) => {
+            $(document).off('keydown.blaiUnsavedChanges');
+            $modal.remove();
+            resolve(result);
+        };
+        $actions.on('click', 'button', function () {
+            const $btn = $(this);
+            if ($btn.hasClass('blai-danger-btn')) return close('discard');
+            if ($btn.hasClass('blai-primary-btn')) return close('save');
+            return close('cancel');
+        });
+        $modal.on('click', (event) => {
+            if (event.target === $modal[0]) close('cancel');
+        });
+        $(document).on('keydown.blaiUnsavedChanges', (event) => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                close('cancel');
+            }
+        });
+
+        $('body').append($modal);
+        $modal.addClass('blai-is-open').css('display', 'flex');
+        window.setTimeout(() => $actions.find('.blai-primary-btn').trigger('focus'), 20);
     });
 }
 

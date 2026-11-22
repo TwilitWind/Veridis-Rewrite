@@ -1,12 +1,18 @@
 /**
- * 相关规则推测：从点击的差异片段提取上下文，匹配可能的触发规则并渲染候选列表。
+ * 相关规则：按净化时记录的实际命中痕迹精确定位，不再用相似度猜一整页候选。
+ * 命中痕迹保存在消息独立字段里（ruleHitTrace.js）；找不到痕迹或规则已删时明确提示。
  * 从 events-00-core.js 拆出，这组函数不依赖弹窗闭包状态。
  */
 import { getAppContext } from '../../host/appContext.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getCurrentDiffIndex, getDiffComparisonForMessage } from '../state.js';
 import { escapeHtml } from '../compare.js';
-import { findRelatedRulesForDiffChange } from '../relatedRules.js';
+import {
+    getRuleHitTrace,
+    findHitsForChange,
+    renderHitCandidate,
+} from '../ruleHitTrace.js';
+import { findRuleByFingerprint } from '../../rules/ruleIdentity.js';
 
 function readDiffChangeNumber(element, name) {
     const raw = element?.getAttribute?.(`data-blai-${name}`);
@@ -64,61 +70,60 @@ function buildDiffChangeFromElement(element) {
     };
 }
 
-function summarizeCandidateTargets(candidate) {
-    const targets = Array.isArray(candidate.targets) ? candidate.targets.filter(Boolean) : [];
-    const replacements = Array.isArray(candidate.replacements) ? candidate.replacements.filter(Boolean) : [];
-    const targetText = targets.length > 0 ? targets.join(' / ') : '（空查找词）';
-    const replacementText = replacements.length > 0 ? replacements.join(' / ') : '删除';
-    return `${targetText} -> ${replacementText}`;
+function setRelatedBody(headHtml, noteHtml, listHtml = '') {
+    const $body = $('#blai-diff-related-body');
+    if (!$body.length) return;
+    $body.html(`
+            <div class="blai-diff-related-head">${headHtml}</div>
+            <div class="blai-diff-related-note">${noteHtml}</div>
+            ${listHtml ? `<div class="blai-diff-related-list">${listHtml}</div>` : ''}
+        `);
+    $('#blai-diff-related-modal').css('display', 'flex');
 }
 
-function renderRelatedRulesModal(change, candidates) {
-    const $modal = $('#blai-diff-related-modal');
-    const $body = $('#blai-diff-related-body');
-    if (!$modal.length || !$body.length) return;
-    const clickedText = change?.clickedText ? escapeHtml(change.clickedText).slice(0, 120) : '（空）';
-    if (!Array.isArray(candidates) || candidates.length === 0) {
-        $body.html(`
-                <div class="blai-diff-related-head">
-                    <strong><i class="fa-solid fa-crosshairs"></i> 未找到明显相关规则</strong>
-                    <span>点击文本：${clickedText}</span>
-                </div>
-                <div class="blai-diff-related-note">这是相关规则推测，不保证为实际触发规则。</div>
-            `);
-        $modal.css('display', 'flex');
-        return;
-    }
-
-    const items = candidates.map((candidate) => {
-        const reasons = Array.isArray(candidate.reasons) && candidate.reasons.length > 0
-            ? candidate.reasons.slice(0, 2).join('，')
-            : '相关文本命中';
-        const remark = candidate.remark ? ` · ${candidate.remark}` : '';
-        return `
-                <button type="button" class="blai-diff-related-candidate" data-rule-index="${candidate.ruleIndex}" data-subrule-index="${candidate.subRuleIndex}">
-                    <span class="blai-diff-related-candidate-main">
-                        <span class="blai-tag blai-badge-compact">${escapeHtml(candidate.modeLabel || candidate.mode || '规则')}</span>
-                        <strong>${escapeHtml(candidate.groupName || `合集 ${candidate.ruleIndex + 1}`)}</strong>
-                    </span>
-                    <span class="blai-diff-related-candidate-preview">${escapeHtml(summarizeCandidateTargets(candidate))}</span>
-                    <span class="blai-diff-related-candidate-reason">${escapeHtml(`${reasons} · 分数 ${Math.round(candidate.score)}${remark}`)}</span>
-                </button>
-            `;
-    }).join('');
-
-    $body.html(`
-            <div class="blai-diff-related-head"><span>点击文本：${clickedText}</span></div>
-            <div class="blai-diff-related-note">相关规则推测，不保证为实际触发规则。最多显示 10 条。</div>
-            <div class="blai-diff-related-list">${items}</div>
-        `);
-    $modal.css('display', 'flex');
+function showNotFound(clickedText, reason) {
+    setRelatedBody(
+        `<strong><i class="fa-solid fa-magnifying-glass"></i> 找不到对应规则</strong>
+         <span>点击文本：${escapeHtml(clickedText || '（空）').slice(0, 120)}</span>`,
+        escapeHtml(reason),
+    );
 }
 
 export function showRelatedRulesForDiffElement(element) {
     const change = buildDiffChangeFromElement(element);
     if (!change) return;
-    const { extension_settings } = getAppContext();
-    const rules = extension_settings[extensionName]?.rules || [];
-    const candidates = findRelatedRulesForDiffChange(change, rules, { maxCount: 10 });
-    renderRelatedRulesModal(change, candidates);
+    const { chat } = getAppContext();
+    const index = getCurrentDiffIndex();
+    const msg = Array.isArray(chat) ? chat[index] : null;
+    const trace = getRuleHitTrace(msg);
+    if (trace.length === 0) {
+        showNotFound(change.clickedText, '这条消息没有规则命中记录（旧版本净化或 AI 改写），无法精确定位。');
+        return;
+    }
+
+    const hits = findHitsForChange(trace, change);
+    if (hits.length === 0) {
+        showNotFound(change.clickedText, '该片段没有匹配的规则命中记录，可能由手动编辑或 AI 改写产生。');
+        return;
+    }
+
+    const rules = getAppContext().extension_settings?.[extensionName]?.rules || [];
+    const located = hits.map((hit) => findRuleByFingerprint(rules, hit.fingerprint));
+    const items = hits.map((hit, itemIndex) => renderHitCandidate(
+        hit,
+        !!located[itemIndex],
+        located[itemIndex]?.ruleIndex,
+        located[itemIndex]?.subRuleIndex,
+    )).join('');
+
+    const allMissing = located.every((entry) => !entry);
+    const note = allMissing
+        ? '这些规则已被删除或修改，无法打开。'
+        : '以下是实际改写该片段的规则，点击即可打开。';
+    setRelatedBody(
+        `<strong><i class="fa-solid fa-crosshairs"></i> 改写这条片段的规则</strong>
+         <span>点击文本：${escapeHtml(change.clickedText || '（空）').slice(0, 120)}</span>`,
+        note,
+        items,
+    );
 }

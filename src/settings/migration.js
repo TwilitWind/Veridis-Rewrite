@@ -151,6 +151,7 @@ export function maybeCopyLegacySettings() {
         'scopeTagMode',
         'enableVisualDiff',
         'diffViewMode',
+        'diffRelatedRuleEnabled',
         'diffLineHeight',
         'diffParagraphGap',
         'diffButtonInExtraMenu',
@@ -190,6 +191,7 @@ export function ensureSettingsShape() {
     if (!['protect', 'cleanse-inside'].includes(settings.scopeTagMode)) settings.scopeTagMode = 'protect';
     settings.enableVisualDiff = true;
     if (!['snippet', 'full'].includes(settings.diffViewMode)) settings.diffViewMode = 'snippet';
+    if (settings.diffRelatedRuleEnabled === undefined) settings.diffRelatedRuleEnabled = false;
     settings.diffLineHeight = normalizeDiffLineHeight(settings.diffLineHeight);
     settings.diffParagraphGap = normalizeDiffParagraphGap(settings.diffParagraphGap);
     if (settings.diffButtonInExtraMenu === undefined) settings.diffButtonInExtraMenu = false;

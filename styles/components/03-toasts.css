@@ -88,9 +88,10 @@
     box-shadow: none !important;
 }
 
+/* 弹窗底栏主/次按钮是独立短文案操作，统一胶囊；卡片与输入框仍用中圆角。 */
 .blai-modal-shell :is(.blai-secondary-btn, .blai-primary-btn) {
     min-height: var(--blai-size-38);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-full);
     border: var(--blai-border-1) solid var(--border-color);
     background: transparent;
     color: var(--text-main);
@@ -116,7 +117,7 @@
     margin: 0 !important;
     overflow-y: auto !important;
     color: var(--text-main) !important;
-    font-size: var(--blai-font-14) !important;
+    font-size: var(--blai-fs-body) !important;
     line-height: 1.7 !important;
     white-space: pre-wrap !important;
 }
@@ -197,7 +198,8 @@
     border-radius: var(--blai-radius-8);
 }
 
-.blai-modal-shell small, .blai-modal-shell p, .blai-modal-shell .blai-subrule-mode-hint, .blai-modal-shell .blai-field-error {
+/* 弹窗正文（.blai-dialog-body-text）不压到 note 档，否则说明文字比按钮还小、主次颠倒。 */
+.blai-modal-shell small, .blai-modal-shell p:not(.blai-dialog-body-text), .blai-modal-shell .blai-subrule-mode-hint, .blai-modal-shell .blai-field-error {
     font-size: var(--blai-font-10) !important;
     line-height: 1.4 !important;
 }
