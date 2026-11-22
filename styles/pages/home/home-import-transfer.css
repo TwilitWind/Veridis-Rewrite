@@ -550,7 +550,7 @@
     box-sizing: border-box !important;
 }
 
-.blai-edit-modal-title, .blai-edit-field, .blai-edit-modal-card > .blai-field-label, .blai-subrule-field, #blai-add-subrule-btn {
+.blai-edit-modal-title, .blai-edit-field, .blai-edit-modal-body > .blai-field-label, .blai-subrule-field, #blai-add-subrule-btn {
     flex-shrink: 0;
     flex-grow: 0;
 }

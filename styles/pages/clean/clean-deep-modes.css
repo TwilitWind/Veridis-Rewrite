@@ -122,8 +122,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-shujuku-note {
     margin: 0;
-    padding-top: var(--blai-space-10);
-    border-top: var(--blai-border-1) solid var(--border-color);
+    padding-top: var(--blai-space-8);
     color: var(--text-secondary);
     font-size: var(--blai-font-9);
     line-height: 1.45;
@@ -138,7 +137,6 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel + .blai-deep-clean-resource-panel {
     padding-top: var(--blai-space-12);
-    border-top: var(--blai-border-1) solid var(--border-color);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {

@@ -118,11 +118,9 @@
  * 2) 卡片内部不画任何边框（只有输入框本身保留一圈边框）。
  * 3) 卡片底 = 页面灰白，卡片里的每一块内容 = 纯白实色包裹，块与块靠留白分开。
  * --------------------------------------------------------------------------- */
-/* 简易组合弹窗（界面B）在日间用纯白卡片：它的内容密度最高，白卡 + 1px 边框
-   才是这套边框式该有的底；夜间与跟随酒馆在纯白上会炸，所以只对 light 给值。 */
-#blai-subrule-edit-modal[data-theme="light"].blai-modal-shell > .blai-subrule-modal-card {
-    --blai-modal-card-bg: var(--bg-surface);
-}
+/* 三个大弹窗（深度净化 / 编辑规则集 / 编辑规则）统一三段背景：
+   顶栏、底栏用容器色 --bg-surface，中间内容用画布色 --bg-base。
+   全部走 token，随主题自动切换；这里不再给 light 单开白卡例外。 */
 
 #blai-rule-edit-modal.blai-modal-shell > .blai-edit-modal-card,
 #blai-subrule-edit-modal.blai-modal-shell > .blai-subrule-modal-card,
@@ -432,4 +430,51 @@
     background: var(--blai-dropdown-active-bg);
     color: var(--blai-dropdown-active-ink);
     font-weight: var(--blai-dropdown-item-weight);
+}
+
+/* ---------------------------------------------------------------------------
+ * 三个大弹窗统一三段背景：顶栏 / 底栏 = 容器色 --bg-surface，
+ * 中间内容 = 画布色 --bg-base。全部走 token，随主题自动切换。
+ * 用 --blai-modal-pad-* 让顶/底栏的负外边距与卡片内边距精确对齐，
+ * 这样色条能铺到卡片边缘，中间画布色正好卡在两条色带之间。
+ * --------------------------------------------------------------------------- */
+#blai-rule-edit-modal.blai-modal-shell > .blai-edit-modal-card,
+#blai-subrule-edit-modal.blai-modal-shell > .blai-subrule-modal-card {
+    --blai-modal-pad-y: var(--blai-space-16);
+    --blai-modal-pad-x: var(--blai-space-20);
+}
+
+/* 顶栏：容器色，向上/左右顶到卡片边缘 */
+#blai-rule-edit-modal .blai-edit-modal-head,
+#blai-subrule-edit-modal .blai-subrule-modal-header {
+    margin: calc(-1 * var(--blai-modal-pad-y)) calc(-1 * var(--blai-modal-pad-x)) 0;
+    padding: var(--blai-space-8) var(--blai-modal-pad-x);
+    background: var(--bg-surface);
+    border-bottom: 0;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* 中间内容：画布色（卡片底色），规则编辑弹窗的内容容器需自己撑满剩余高度 */
+#blai-rule-edit-modal .blai-edit-modal-body,
+#blai-subrule-edit-modal .blai-subrule-modal-body {
+    background: var(--bg-base);
+}
+
+#blai-rule-edit-modal .blai-edit-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 底栏：容器色，向下/左右顶到卡片边缘 */
+#blai-rule-edit-modal .blai-modal-actions,
+#blai-subrule-edit-modal .blai-subrule-footer {
+    margin: 0 calc(-1 * var(--blai-modal-pad-x)) calc(-1 * var(--blai-modal-pad-y)) !important;
+    padding: var(--blai-space-8) var(--blai-modal-pad-x) !important;
+    background: var(--bg-surface);
+    border-top: 0;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
