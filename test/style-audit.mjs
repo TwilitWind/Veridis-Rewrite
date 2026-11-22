@@ -1,6 +1,8 @@
 // 样式静态审计：字号分布 / 极值 / 裸值离群 / 双端覆盖 / 裁切隐患信号。
-// 用法：node test/style-audit.mjs [--json]
+// 用法：node test/style-audit.mjs [--json] [--strict]
 //   默认输出人类可读报告；--json 输出结构化结果便于脚本消费。
+//   --strict（或 STRICT=1）：发现「确定错误」退出 1。只拦客观坏 declaration，
+//   离群字号/裸写 px 在白名单内/未用 token/裁切信号只是线索，永不判错。
 // 只读，不改任何样式文件；不启动浏览器，因此检测的是「声明」而非「实际渲染」。
 // 真正的裁切/重叠/遮挡请用 test/layout-audit.mjs（CDP 实际量几何）。
 import fs from 'node:fs';
@@ -11,6 +13,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const STYLES = path.join(ROOT, 'styles');
 const ORDER = JSON.parse(fs.readFileSync(path.join(STYLES, 'ORDER.json'), 'utf8')).order;
 const jsonMode = process.argv.includes('--json');
+const STRICT = process.argv.includes('--strict') || process.env.STRICT === '1';
 
 const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
 
@@ -201,6 +204,14 @@ const report = {
     },
 };
 
+// 确定错误：引用未定义的字号 token、或硬编码 px 且不在白名单（客观 off-scale，非风格建议）。
+// 这两类放回去一定渲染错，适合做闸门；其余统计项只是线索。
+const strictErrors = bareFonts.filter((d) => /未定义|不在字号白名单/.test(d.reason));
+if (STRICT) {
+    console.log(`\nSTRICT=1 闸门：确定错误 ${strictErrors.length} 处（未定义 token / 白名单外硬编码字号）`);
+    for (const d of strictErrors.slice(0, 8)) console.log(`  ✗ ${d.file}:${d.line} font-size:${d.value} — ${d.reason}`);
+}
+
 if (jsonMode) {
     console.log(JSON.stringify(report, null, 2));
 } else {
@@ -236,4 +247,9 @@ if (jsonMode) {
     console.log(`  height:0              ${report.layoutSignals.zeroHeight.length} 处${report.layoutSignals.zeroHeight.length ? ' → ' + report.layoutSignals.zeroHeight.slice(0, 5).join(', ') : ''}`);
     console.log();
     console.log('注：静态只看声明。文字是否真的被裁/重叠/遮挡，需 CDP 实测 → node test/layout-audit.mjs');
+}
+
+if (STRICT && strictErrors.length) {
+    console.error(`\nSTRICT 失败：${strictErrors.length} 处确定错误，请改用字号 token 或补齐白名单档位。`);
+    process.exit(1);
 }

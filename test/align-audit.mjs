@@ -5,6 +5,7 @@
 //   TOL=4          中线偏差阈值（px），超过即报
 //   OUT=report.json 结构化结果
 //   NO_MOBILE=1    只测桌面
+//   STRICT=1       偏差 > TOL 即退出 1（测得的是真实几何，属判定非线索）
 // 只读：不改源码；临时打开面板/弹窗、切视口，退出还原。
 import fs from 'node:fs';
 
@@ -184,4 +185,11 @@ for (const [label, runs] of [['桌面', desktop], ['手机', mobile]]) {
     console.log('  合计 ' + total + ' 处偏差' + (total ? '' : '（全部对齐）'));
 }
 if (out) console.log('结构化结果：' + out);
+const STRICT = process.env.STRICT === '1';
+const totalIssues = [...desktop, ...(mobile || [])].reduce((n, run) => n + run.issues.length, 0);
+if (STRICT) console.log(`\nSTRICT=1 闸门：中线偏差 ${totalIssues} 处（阈值 ${TOL}px）`);
 ws.close();
+if (STRICT && totalIssues) {
+    console.error(`STRICT 失败：${totalIssues} 处控件与文本未垂直居中，请修正对齐或确认是否属白名单例外。`);
+    process.exit(1);
+}

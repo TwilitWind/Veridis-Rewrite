@@ -7,6 +7,9 @@
 //   MOBILE_W=390 MOBILE_H=844  手机视口
 //   NO_MOBILE=1          只测桌面
 //   PAGES=all(default)|current  默认遍历所有标签页；current 只测当前激活页
+//   STRICT=1  仅审计自身报错（连不上 CDP / 所有页面失败）时退出 1；
+//             裁切/重叠/遮挡是启发式「需看线索」，含自然误报，永不作闸门，
+//             否则一个 input 的 3px 正常溢出就会让整条命令红——狼来了的闸门等于没有。
 // 只读：不改源文件；只在页面里临时打开面板、切页、切视口，退出时还原。
 // 信噪比设计：故意裁切（省略号 / 无障碍隐藏 / 滚动容器）归入 intentional，不进问题清单。
 // 覆盖设计：默认逐页激活每个 .page-panel 再测，避免「只测当前页」漏掉 AI/净化等非首页区块。
@@ -400,4 +403,18 @@ for (const [label, r] of [['桌面', desktop], ['手机', mobile]]) {
 console.log();
 console.log('说明：省略号截断/无障碍隐藏/滚动容器/固定导航覆盖/toast 压盖归为良性；重叠检测覆盖全部标签页且包含 absolute/fixed，保留项为启发式结果。');
 if (out) console.log(`结构化结果：${out}`);
+
+// STRICT 只拦「审计本身没跑成」这一确定失败：连不上 CDP、所有页面失败。
+// 裁切/重叠/遮挡即便已排除良性也仍是启发式线索（实测有 input 3px 正常溢出被列可疑），
+// 拿它判错会制造假红灯，违背「检查必须可信」——这类只看线索、由人核对。
+const STRICT = process.env.STRICT === '1';
+const suspectCount = (r) => r && !r.error
+    ? (r.counts?.clippingSuspicious || 0) + (r.counts?.overlap || 0) + (r.counts?.occlusion || 0)
+    : 0;
+const auditError = desktop?.error || mobile?.error;
+if (STRICT) console.log(`\nSTRICT=1 闸门：审计错误 ${auditError ? '有' : '无'}；裁切/重叠/遮挡 桌面 ${suspectCount(desktop)} / 手机 ${suspectCount(mobile)}（仅线索，不判错）`);
 ws.close();
+if (STRICT && auditError) {
+    console.error(`STRICT 失败：布局审计自身没跑成（${auditError}）。先修 CDP/页面，再谈布局结论。`);
+    process.exit(1);
+}

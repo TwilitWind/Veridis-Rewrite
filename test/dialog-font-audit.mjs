@@ -3,6 +3,7 @@
 // 用法：node test/dialog-font-audit.mjs
 //   CDP_PORT=9224  调试端口（需先启动带 --remote-debugging-port 的 Chrome）
 //   OUT=tmp/dialog-font-report.json  结构化结果（可选）
+//   STRICT=1  明确违反字号层级（正文比按钮小）即退出 1；推荐档位仅提示不判错。
 // 只读：临时打开弹窗，测完按 Escape / 直接移除，不改源码与设置。
 import fs from 'node:fs';
 import path from 'node:path';
@@ -136,4 +137,12 @@ if (process.env.OUT) {
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, JSON.stringify({ callSites: staticCallSites, staticShells, results }, null, 2));
     console.log(`\n结构化报告：${out}`);
+}
+
+// STRICT 只拦明确的大小层级颠倒（脚本自身的「问题」判定）；推荐档位属建议，不判错。
+const STRICT = process.env.STRICT === '1';
+if (STRICT) console.log(`\nSTRICT=1 闸门：统一弹窗正文/按钮主次颠倒 ${inverted ? '是' : '否'}`);
+if (STRICT && inverted) {
+    console.error('STRICT 失败：统一弹窗正文比按钮小、主次颠倒，请把正文提到 body 档。');
+    process.exit(1);
 }

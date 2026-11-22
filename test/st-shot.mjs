@@ -2,6 +2,9 @@
 // Usage: node st-shot.mjs <outfile.png> [jsToEval] [waitMs]
 //   CLIP=<css selector> SCALE=3   -> screenshot only that element, enlarged
 //   FRONT=1                       -> Page.bringToFront first (needed before sampling animations)
+//   EXPECT_OPEN=<sel[,sel...]>    -> 截图前确认目标可见且非 0 尺寸，否则拒绝出图（防「截到空页还当证据」）
+//   EXPECT_MAXIMIZED=1            -> 截图前确认浏览器窗口 maximized/fullscreen，否则拒绝出图
+//   每次出图写 <outfile>.json sidecar：视口、窗口状态、目标可见性、控制台错误——让证据可追溯。
 import fs from 'node:fs';
 
 const out = process.argv[2] ?? 'shot.png';
@@ -73,6 +76,64 @@ async function main() {
         await sleep(waitMs);
     }
 
+    // ---- 证据有效性前置校验：截图前先确认「窗口状态 + 目标真的可见」，否则不出图 ----
+    const evidence = {
+        out, checkedAt: new Date().toISOString(),
+        evalJs: evalJs || null, waitMs,
+        expectOpen: process.env.EXPECT_OPEN ?? null,
+        expectMaximized: process.env.EXPECT_MAXIMIZED === '1',
+        viewport: null, windowState: null, openTargets: [], consoleErrors: [],
+    };
+    const failEvidence = (msg) => {
+        console.error('EVIDENCE FAIL:', msg);
+        ws.close();
+        process.exit(3);
+    };
+
+    // 视口与控制台错误：这两项无论是否设期望都记录，供事后追溯。
+    const vp = await send('Runtime.evaluate', {
+        expression: `({ w: innerWidth, h: innerHeight, dpr: devicePixelRatio, url: location.href,
+            errors: (window.__stProbeErrors || []).slice() })`,
+        returnByValue: true,
+    });
+    evidence.viewport = vp.result?.value ?? null;
+    evidence.consoleErrors = evidence.viewport?.errors ?? [];
+
+    if (evidence.expectMaximized) {
+        try {
+            const wf = await send('Browser.getWindowForTarget', { targetId: page.id });
+            const wb = await send('Browser.getWindowBounds', { windowId: wf.windowId });
+            evidence.windowState = wb.bounds?.windowState ?? null;
+        } catch (e) {
+            console.error('EXPECT_MAXIMIZED 查询失败：', String(e));
+            evidence.windowState = 'unknown';
+        }
+        if (!['maximized', 'fullscreen'].includes(evidence.windowState)) {
+            failEvidence(`窗口未最大化（当前 ${evidence.windowState}）；请先用 st-window.mjs 或 --start-maximized 再截图`);
+        }
+    }
+
+    if (evidence.expectOpen) {
+        const selectors = evidence.expectOpen.split(',').map((s) => s.trim()).filter(Boolean);
+        const probe = await send('Runtime.evaluate', {
+            expression: `(${JSON.stringify(selectors)}).map(s => {
+                const el = document.querySelector(s);
+                if (!el) return { sel: s, ok: false, reason: 'not found' };
+                const st = getComputedStyle(el), b = el.getBoundingClientRect();
+                const visible = st.display !== 'none' && st.visibility !== 'hidden' && Number(st.opacity) !== 0;
+                if (!visible) return { sel: s, ok: false, reason: 'hidden', display: st.display, visibility: st.visibility, opacity: st.opacity };
+                if (b.width <= 1 || b.height <= 1) return { sel: s, ok: false, reason: 'zero-size', w: b.width, h: b.height };
+                return { sel: s, ok: true, w: +b.width.toFixed(1), h: +b.height.toFixed(1) };
+            })`,
+            returnByValue: true,
+        });
+        evidence.openTargets = probe.result?.value ?? [];
+        const bad = evidence.openTargets.filter((t) => !t.ok);
+        if (bad.length) {
+            failEvidence(`目标不可见：${bad.map((t) => `${t.sel}(${t.reason})`).join(', ')}；先打开目标弹窗/页面再截图`);
+        }
+    }
+
     // CLIP=<selector> 只截该元素，SCALE 放大倍数（默认 3），用于看清小控件。
     const clipSel = process.env.CLIP;
     let clip;
@@ -90,6 +151,7 @@ async function main() {
             x: b.x, y: b.y, width: b.w, height: b.h,
             scale: Number(process.env.SCALE ?? 3),
         };
+        evidence.clip = clip;
         console.error('CLIP =>', JSON.stringify(clip));
     }
 
@@ -99,7 +161,8 @@ async function main() {
         ...(clip ? { clip } : {}),
     });
     fs.writeFileSync(out, Buffer.from(shot.data, 'base64'));
-    console.log('saved', out);
+    fs.writeFileSync(`${out}.json`, JSON.stringify(evidence, null, 2));
+    console.log('saved', out, `(+ ${out}.json)`);
     ws.close();
 }
 
