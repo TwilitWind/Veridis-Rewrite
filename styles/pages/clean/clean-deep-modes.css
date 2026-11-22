@@ -21,11 +21,34 @@
     color: var(--text-main);
 }
 
+/* 单选自绘：圆形外框 + 选中圆点，与复选框同一套 accent 语言。 */
 #blai-deep-clean-workspace .blai-deep-clean-mode-option input {
-    width: var(--blai-size-14);
-    height: var(--blai-size-14);
+    width: var(--blai-size-16);
+    height: var(--blai-size-16);
+    min-width: var(--blai-size-16);
     margin: 0;
-    accent-color: var(--accent-color);
+    flex: 0 0 var(--blai-size-16);
+    appearance: none;
+    -webkit-appearance: none;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: 50%;
+    background: var(--bg-surface);
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option input:checked {
+    border-color: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option input:checked::after {
+    content: '';
+    width: var(--blai-size-8);
+    height: var(--blai-size-8);
+    border-radius: 50%;
+    background: var(--accent-color);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-mode-copy {
@@ -109,10 +132,13 @@
     line-height: 1.45;
 }
 
-/* 资源面板扁平：不画独立边框和底色，靠细分隔线区分层级。 */
+/* 资源面板是一张容器卡：容器背景色 + 圆角 + 内边距，落在画布色上形成分区。 */
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel {
     min-width: 0;
-    background: transparent;
+    padding: var(--blai-space-14) var(--blai-space-16);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-lg);
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
@@ -225,11 +251,36 @@
     background: color-mix(in srgb, var(--bg-base) 54%, var(--bg-surface));
 }
 
+/* 复选框自绘：替掉浏览器原生外观，与插件其它自绘控件同一套 accent 勾选。 */
 #blai-deep-clean-workspace .blai-deep-clean-choice input {
-    width: var(--blai-size-14);
-    height: var(--blai-size-14);
+    width: var(--blai-size-16);
+    height: var(--blai-size-16);
+    min-width: var(--blai-size-16);
     margin: 0;
-    accent-color: var(--accent-color);
+    flex: 0 0 var(--blai-size-16);
+    appearance: none;
+    -webkit-appearance: none;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-sm);
+    background: var(--bg-surface);
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice input:checked {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-choice input:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    color: var(--accent-contrast);
+    font-size: var(--blai-font-10);
+    line-height: 1;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice-copy {

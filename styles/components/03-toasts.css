@@ -126,7 +126,8 @@
     margin-top: var(--blai-space-16);
 }
 
-#blai-add-subrule-btn, #blai-modal-sub-save {
+/* 保存条目是唯一实心主按钮；新增规则回到描边次按钮，避免一个对话框出现两个主色。 */
+#blai-modal-sub-save {
     background: var(--accent-color) !important;
     border-color: var(--accent-color) !important;
     color: var(--accent-contrast) !important;

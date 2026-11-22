@@ -137,11 +137,11 @@
 }
 
 /* 指示条画在文字 span 上，长度与标题等长；按钮左右 padding 不再把线拉长。
-   margin-bottom 负值让 2px 指示条压在 nav 的 1px 分隔线上（两者重合）。 */
+   指示条完整显示在文字下方，不用负 margin 压到分隔线上：tab 字重是 bold，
+   指示条再被压掉一半会显得单薄、与粗体失衡；完整 2px 才能撑住。 */
 #blai-feedback-workspace .blai-feedback-workspace-nav button > span {
     display: inline-block;
     padding-bottom: var(--blai-space-8);
-    margin-bottom: calc(-1 * var(--blai-border-1));
     border-bottom: var(--blai-border-2) solid transparent;
     /* 上面 .blai-feedback-workspace-header span 把 header 内所有 span 染成强调色，
        会误伤这四个标签；这里显式继承按钮色，未选中保持浅色、选中才由按钮规则变强调色。 */
