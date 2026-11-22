@@ -52,7 +52,7 @@
 
 #blai-purifier-popup .rail-btn {
     min-height: var(--blai-size-38);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-sm);
     padding: 0 var(--blai-space-10);
     display: grid;
     grid-template-columns: 18px 1fr;
@@ -365,7 +365,7 @@
 #blai-purifier-popup.blai-app-shell .panel {
     min-width: 0;
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
     background: transparent;
     padding: var(--blai-space-10);
     display: grid;
@@ -565,7 +565,7 @@
     min-height: var(--blai-size-58);
     padding: var(--blai-space-6) var(--blai-space-3);
     gap: var(--blai-space-4);
-    border-radius: var(--blai-radius-11);
+    border-radius: var(--blai-radius-sm);
     font-size: var(--blai-font-10);
 }
 
@@ -601,7 +601,7 @@
 #blai-purifier-popup.blai-app-shell .panel {
     padding: var(--blai-space-16);
     gap: var(--blai-space-11);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     box-shadow: none;
 }
 

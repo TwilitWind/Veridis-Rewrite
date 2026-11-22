@@ -54,7 +54,7 @@
     align-items: center;
     gap: var(--blai-space-6);
     border: 0;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-main);
     font: inherit;

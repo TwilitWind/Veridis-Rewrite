@@ -127,7 +127,7 @@
 .blai-regex-flags-chip {
     flex: 0 0 auto;
     padding: var(--blai-space-2) var(--blai-space-8);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-base);
     color: var(--text-main);
@@ -249,7 +249,7 @@
     flex: 0 1 auto;
     max-width: 60%;
     padding: var(--blai-space-2) var(--blai-space-8);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     color: var(--text-secondary);
     font-size: var(--blai-font-10);
@@ -303,7 +303,7 @@
     display: inline-flex;
     align-items: center;
     max-width: 100%;
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     border: var(--blai-border-1) solid var(--border-color);
 }
@@ -380,7 +380,7 @@
     min-width: var(--blai-size-104) !important;
     min-height: var(--blai-size-32) !important;
     padding: 0 var(--blai-space-12) !important;
-    border-radius: var(--blai-radius-12) !important;
+    border-radius: var(--blai-radius-sm) !important;
     border: var(--blai-border-1) solid var(--accent-color) !important;
     background: var(--accent-color) !important;
     color: var(--accent-contrast) !important;
@@ -435,7 +435,7 @@
     width: min(var(--blai-size-420), 96vw);
     background: var(--bg-surface);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     /* 内层控件离卡片边缘留一档呼吸，避免边框贴边的拥挤压迫感。
        移动规则弹窗由 #blai-subrule-transfer-modal 的 ID 规则覆盖为 0。 */
     padding: var(--blai-space-22);
@@ -463,7 +463,7 @@
 .blai-transfer-btn {
     flex: 1;
     padding: var(--blai-space-9) var(--blai-space-10);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);
     color: var(--text-main);

@@ -352,7 +352,7 @@
     min-width: 0;
     box-sizing: border-box;
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     /* 主题对 input/textarea 下过 `border:1 像素 solid var(--ui-color-sec)` 的强声明，
        重定向后边框颜色被染成控件底色（白底白框＝看不见），select 更是被清成 none。
        主题的 box-shadow 没有强声明，用同色 inset 阴影补一圈可见边框，既不新增强制声明，

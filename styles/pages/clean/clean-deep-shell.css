@@ -109,7 +109,7 @@
     min-height: var(--blai-size-36);
     padding: 0 var(--blai-space-14);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-6);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     color: var(--text-main);
     font: inherit;
@@ -197,7 +197,7 @@
     height: var(--blai-size-34);
     padding: var(--blai-input-pad-inline-compact);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-6);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     color: var(--text-main);
     font: inherit;

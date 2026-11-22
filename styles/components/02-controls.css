@@ -42,7 +42,7 @@
 
 #blai-purifier-popup :is(.text-btn, .mini-btn, .round-btn) {
     min-height: var(--blai-size-28);
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     padding: 0 var(--blai-space-10);
     display: inline-grid;
     place-items: center;
@@ -188,7 +188,7 @@
     min-height: var(--blai-size-32);
     padding: 0 var(--blai-space-12);
     border: none;
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--status-danger);
     color: var(--danger-contrast);
     font-size: var(--blai-font-12);
@@ -226,7 +226,7 @@
 .blai-input, .blai-textarea {
     width: 100%;
     padding: var(--blai-input-pad);
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     /* 输入框用 1px 边框表达「这里能输入」，填充只做弱区分。
        边框色取 --border-color，三套主题各自给值，日间 / 夜间 / 跟随酒馆同为边框式。
        border-box 已声明，加边框不会顶开布局。 */
@@ -271,7 +271,7 @@
     min-width: var(--blai-size-30);
     font-size: var(--blai-font-13);
     line-height: 1;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     border: none;
     box-shadow: none;
@@ -314,7 +314,7 @@
     min-width: 0;
     background-color: var(--blai-input-bg);
     padding: var(--blai-input-pad-inline-wide);
-    border-radius: var(--blai-radius-6);
+    border-radius: var(--blai-radius-sm);
     font-size: var(--blai-font-14);
     color: var(--text-main);
     cursor: pointer;
@@ -443,7 +443,7 @@
 
 .blai-modal-card {
     box-sizing: border-box;
-    border-radius: var(--blai-radius-18);
+    border-radius: var(--blai-radius-lg);
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);
     color: var(--text-main);
@@ -461,7 +461,7 @@
 .blai-secondary-btn, .blai-primary-btn {
     flex: 1;
     padding: var(--blai-space-10);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     cursor: pointer;
     font-weight: var(--blai-weight-bold);
 }
@@ -490,7 +490,7 @@
     align-items: center;
     gap: var(--blai-space-6);
     margin: 0;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
 }
 
 .blai-plugin-dialog-card {
@@ -531,7 +531,7 @@
     border: var(--blai-border-1) solid var(--border-color);
     color: var(--text-main);
     padding: var(--blai-input-pad-dialog);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     font-size: var(--blai-font-14);
 }
 

@@ -32,7 +32,7 @@
     width: min(var(--blai-size-860), 96vw);
     max-height: min(82vh, var(--blai-size-900));
     background: var(--bg-surface);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     border: var(--blai-border-1) solid var(--border-color);
     box-shadow: 0 12px 30px color-mix(in srgb, var(--bg-base) 12%, transparent);
     display: flex;
@@ -365,7 +365,7 @@
     width: min(var(--blai-size-520), 94vw);
     max-height: min(78vh, var(--blai-size-720));
     padding: var(--blai-space-14);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     display: flex;
     flex-direction: column;
     gap: var(--blai-space-10);
@@ -662,7 +662,7 @@
     height: var(--blai-size-34);
     min-height: var(--blai-size-34);
     padding: 0;
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
 }
 
 #blai-diff-mode-text, #blai-diff-revert-text, #blai-diff-ai-rewrite span {
@@ -687,7 +687,7 @@
     width: 100%;
     max-width: var(--blai-size-420);
     max-height: calc(100dvh - var(--blai-size-40));
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
 }
 
 #blai-diff-modal {
@@ -706,7 +706,7 @@
     max-width: var(--blai-size-420);
     max-height: calc(100dvh - var(--blai-size-40));
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
     box-shadow: var(--blai-shadow-lg);
     box-sizing: border-box;
@@ -730,7 +730,7 @@
     max-width: var(--blai-size-560);
     height: calc(100dvh - var(--blai-size-28));
     max-height: calc(100dvh - var(--blai-size-28));
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
 }
 
 #blai-diff-modal .blai-diff-modal-header {

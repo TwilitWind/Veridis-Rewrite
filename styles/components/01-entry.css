@@ -19,7 +19,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--blai-space-8);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     font-size: var(--blai-font-14);
     font-weight: var(--blai-weight-bold);
     white-space: nowrap;

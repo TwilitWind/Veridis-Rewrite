@@ -52,7 +52,7 @@
 .blai-rule-search-card {
     width: min(var(--blai-size-580), 96vw);
     max-height: min(85vh, var(--blai-size-860));
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -100,7 +100,7 @@
 .blai-rule-search-input {
     height: var(--blai-size-44);
     padding: 0 var(--blai-space-40) 0 var(--blai-space-40);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     font-size: var(--blai-font-15);
     line-height: 44px;
     white-space: nowrap;
@@ -150,7 +150,7 @@
     display: inline-flex;
     align-items: center;
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     color: var(--text-secondary);
     font-size: var(--blai-font-12);
@@ -214,7 +214,7 @@
 .blai-rule-search-result-card {
     background: var(--bg-surface);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-14);
+    border-radius: var(--blai-radius-lg);
     padding: var(--blai-space-14);
     display: flex;
     flex-direction: column;
@@ -393,7 +393,7 @@
 
 .blai-rule-search-result-card {
     padding: var(--blai-space-12);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
 }
 
 .blai-rule-search-result-preview {
@@ -591,6 +591,6 @@
     width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
     max-height: calc(100dvh - var(--blai-size-28));
     height: min(var(--blai-size-860), calc(100dvh - var(--blai-size-28)));
-    border-radius: var(--blai-radius-20);
+    border-radius: var(--blai-radius-lg);
     padding: var(--blai-space-14) var(--blai-space-16);
 }

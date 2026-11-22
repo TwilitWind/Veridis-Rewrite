@@ -72,7 +72,7 @@
     box-sizing: border-box !important;
     resize: vertical !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
-    border-radius: var(--blai-radius-9) !important;
+    border-radius: var(--blai-radius-sm) !important;
     background: var(--blai-input-bg) !important;
     color: var(--text-main) !important;
     font-family: inherit !important;
@@ -314,7 +314,7 @@
     max-width: var(--blai-size-760) !important;
     max-height: calc(100dvh - clamp(var(--blai-size-48), 8vw, var(--blai-size-88))) !important;
     padding: var(--blai-space-18) !important;
-    border-radius: var(--blai-radius-14) !important;
+    border-radius: var(--blai-radius-lg) !important;
 }}
 
 /* 附加参数入口按钮：桌面与移动端都显示，与「高级生成参数」同款卡片式按钮。

@@ -143,7 +143,7 @@
         display: inline-grid;
         place-items: center;
         border: var(--blai-border-1) solid var(--border-color);
-        border-radius: var(--blai-radius-10);
+        border-radius: var(--blai-radius-sm);
         background: var(--blai-input-bg);
         color: var(--text-main);
         font-size: var(--blai-font-13);
@@ -367,7 +367,7 @@
     align-items: center;
     max-width: 100%;
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     overflow: hidden;
 }

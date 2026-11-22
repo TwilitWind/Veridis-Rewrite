@@ -79,7 +79,7 @@
     /* 单行输入框/下拉框统一 13px：.blai-input 基线的 18px 只该留给多行文本域，
        否则提示语（placeholder）会比同排控件大一整号。 */
     font-size: var(--blai-font-13) !important;
-    border-radius: var(--blai-radius-12) !important;
+    border-radius: var(--blai-radius-sm) !important;
     /* 弹窗里的输入框与主界面同一套：1px 边框 + 弱填充，焦点态另描内阴影 */
     border: var(--blai-border-1) solid var(--border-color) !important;
     padding: var(--blai-input-pad-inline);
@@ -91,7 +91,7 @@
 /* 弹窗底栏主/次按钮是独立短文案操作，统一胶囊；卡片与输入框仍用中圆角。 */
 .blai-modal-shell :is(.blai-secondary-btn, .blai-primary-btn) {
     min-height: var(--blai-size-38);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: transparent;
     color: var(--text-main);
@@ -175,7 +175,7 @@
     max-height: calc(100dvh - var(--blai-size-40)) !important;
     padding: var(--blai-space-18) !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
-    border-radius: var(--blai-radius-16) !important;
+    border-radius: var(--blai-radius-lg) !important;
     background: var(--bg-surface) !important;
     color: var(--text-main) !important;
     box-shadow: var(--blai-shadow-lg) !important;
@@ -195,7 +195,7 @@
 
 .blai-modal-shell :is(input, select) {
     min-height: var(--blai-size-38);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
 }
 
 /* 弹窗正文（.blai-dialog-body-text）不压到 note 档，否则说明文字比按钮还小、主次颠倒。 */
@@ -213,7 +213,7 @@
 .blai-modal-shell .blai-primary-btn, .blai-modal-shell .blai-secondary-btn, .blai-modal-shell .blai-modal-actions button, .blai-modal-shell .blai-subrule-footer button {
     min-height: var(--blai-size-36) !important;
     padding: 0 var(--blai-space-12) !important;
-    border-radius: var(--blai-radius-8) !important;
+    border-radius: var(--blai-radius-sm) !important;
     font-size: var(--blai-font-12) !important;
     font-weight: var(--blai-weight-bold) !important;
 }
@@ -222,7 +222,7 @@
     width: 100%;
     max-width: var(--blai-size-420);
     max-height: calc(100dvh - var(--blai-size-40));
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
 }}
 
 @media (min-width: 601px) {.blai-modal-shell {

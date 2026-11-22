@@ -100,7 +100,7 @@
 #blai-feedback-workspace .blai-feedback-primary {
     background: var(--accent-color);
     color: var(--accent-contrast);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
 }
 
 #blai-feedback-workspace .blai-feedback-primary:hover:not(:disabled) {

@@ -120,7 +120,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     width: 100% !important;
     max-width: var(--blai-size-420) !important;
     max-height: calc(100dvh - var(--blai-size-40)) !important;
-    border-radius: var(--blai-radius-16) !important;
+    border-radius: var(--blai-radius-lg) !important;
 }}
 
 #blai-ai-prompt-modal .blai-ai-prompt-modal-head {
@@ -161,7 +161,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     min-width: var(--blai-size-40) !important;
     height: var(--blai-size-40) !important;
     min-height: var(--blai-size-40) !important;
-    border-radius: var(--blai-radius-full) !important;
+    border-radius: var(--blai-radius-sm) !important;
     display: inline-grid !important;
     place-items: center !important;
 }
@@ -342,7 +342,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     padding: var(--blai-input-pad-inline) !important;
     box-sizing: border-box !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
-    border-radius: var(--blai-radius-8) !important;
+    border-radius: var(--blai-radius-sm) !important;
     background: var(--blai-input-bg) !important;
     color: var(--text-main) !important;
     font-family: inherit !important;
@@ -383,7 +383,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     margin: 0;
     box-sizing: border-box;
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-main);
     font-family: inherit;
@@ -456,7 +456,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     min-width: var(--blai-size-40);
     height: var(--blai-size-40);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
 }
 
@@ -467,7 +467,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     min-height: var(--blai-size-32);
     padding: 0;
     border: 0;
-    border-radius: var(--blai-radius-6);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-secondary);
     box-shadow: none;

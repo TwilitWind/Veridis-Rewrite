@@ -125,7 +125,7 @@
     display: inline-grid;
     place-items: center;
     border: 0;
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-main);
     font-size: var(--blai-font-14);
@@ -348,7 +348,7 @@
     justify-content: center;
     gap: var(--blai-space-8);
     border: var(--blai-border-1) solid var(--status-danger);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--status-danger);
     color: var(--danger-contrast);
     font: inherit;

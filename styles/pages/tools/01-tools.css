@@ -7,7 +7,7 @@
     margin: 0 !important;
     padding: 0 var(--blai-space-2) !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
-    border-radius: var(--blai-radius-9) !important;
+    border-radius: var(--blai-radius-sm) !important;
     background: var(--blai-input-bg) !important;
     box-shadow: none !important;
     color: var(--text-main);
@@ -159,7 +159,7 @@
     min-height: var(--blai-size-30);
     padding: 0 var(--blai-space-12);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     color: var(--text-main);
     box-sizing: border-box;
@@ -187,7 +187,7 @@
     min-height: var(--blai-size-36);
     padding: 0 var(--blai-space-14);
     border: var(--blai-border-1) solid var(--accent-color);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     background: var(--accent-color);
     color: var(--accent-contrast);
     box-sizing: border-box;
@@ -281,7 +281,7 @@
     width: 100%;
     max-width: var(--blai-size-420);
     max-height: calc(100dvh - var(--blai-size-40));
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
 }}
 
 /* ---- 工具页标题栏操作（绑定记录入口） ---- */
@@ -300,7 +300,7 @@
     align-items: center;
     gap: var(--blai-space-6);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background-color: var(--bg-surface);
     color: var(--text-secondary);
     font-size: var(--blai-font-11);

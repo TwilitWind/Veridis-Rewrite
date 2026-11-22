@@ -91,7 +91,10 @@
   --blai-duration-slow: 180ms; /* 有位移的弹卡进场 */
   --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
 
-  /* 圆角；--blai-radius-full 用于胶囊与圆形。 */
+  /* 圆角；--blai-radius-full 只用于本就为圆形的元素（色点、开关轨道、进度条、滚动条、圆形图标）。 */
+  /* 语义档位：大组件（Modal 等承载内容的卡片）用 lg，输入类小控件（Button/Input）用 sm，全端同一档。 */
+  --blai-radius-lg: var(--blai-radius-8);
+  --blai-radius-sm: var(--blai-radius-4);
   --blai-radius-2: 2px;
   --blai-radius-3: 3px;
   --blai-radius-4: 4px;

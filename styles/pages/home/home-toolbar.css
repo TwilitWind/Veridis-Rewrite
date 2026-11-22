@@ -42,7 +42,7 @@
     padding: 0 var(--blai-space-38) 0 var(--blai-space-14) !important;
     /* 与全站输入框同一套：1px 边框 + 弱填充，悬停时边框提亮一档 */
     border: var(--blai-border-1) solid var(--border-color) !important;
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     appearance: none;
     -webkit-appearance: none;
     background-color: var(--blai-input-bg) !important;
@@ -176,7 +176,7 @@
     justify-content: center;
     gap: var(--blai-space-6);
     border: 0;
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-main);
     font: inherit;
@@ -229,7 +229,7 @@
     justify-content: center;
     gap: var(--blai-space-6);
     border: 0;
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-main);
     box-shadow: none;
@@ -300,7 +300,7 @@
     justify-content: center;
     gap: var(--blai-space-7);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
     color: var(--text-main);
     font: inherit;
@@ -329,7 +329,7 @@
     min-width: 0;
     overflow: hidden;
     border: 0;
-    border-radius: var(--blai-radius-14);
+    border-radius: var(--blai-radius-lg);
     /* 每个规则分组是一张白卡，与首页灰白底形成明度差（与 AI/净化/工具三页模块卡一致） */
     background: var(--bg-surface);
     box-shadow: none;

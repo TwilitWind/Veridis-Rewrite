@@ -54,7 +54,7 @@
     align-self: center;
     /* 主题对裸 button 有 border 强声明，只能用同级强声明抵消（与既有 .blai-subrule-close-btn 一致）。 */
     border: 0 !important;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     box-shadow: none;
     color: var(--text-secondary);
@@ -134,7 +134,7 @@
 #blai-edit-subrules-container .blai-subrule-card {
     margin: 0;
     padding: var(--blai-space-12);
-    border-radius: var(--blai-radius-15);
+    border-radius: var(--blai-radius-lg);
     border: var(--blai-border-1) solid var(--border-color);
     background: transparent;
     box-shadow: none;
@@ -187,7 +187,7 @@
     margin: 0;
     padding: 0;
     border: 0;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     box-shadow: none;
     color: var(--text-main);
@@ -243,7 +243,7 @@
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-select-wrap {
-    border-radius: var(--blai-radius-14);
+    border-radius: var(--blai-radius-sm);
 }
 
 #blai-subrule-edit-modal .blai-subrule-mode-hint {
@@ -265,7 +265,7 @@
 
 #blai-rule-search-modal .blai-modal-card {
     width: min(var(--blai-size-520), calc(100vw - var(--blai-size-28)));
-    border-radius: var(--blai-radius-20);
+    border-radius: var(--blai-radius-lg);
 }
 
 @media screen and (max-width: 600px) {#blai-rule-edit-modal .blai-edit-modal-card, #blai-subrule-edit-modal .blai-subrule-modal-card {

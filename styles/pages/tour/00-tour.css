@@ -35,7 +35,7 @@
     box-sizing: border-box;
     padding: var(--blai-space-18);
     border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 28%, var(--border-color) 72%);
-    border-radius: var(--blai-radius-14);
+    border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
     box-shadow: 0 16px 38px color-mix(in srgb, var(--bg-base) 45%, transparent);
 }

@@ -24,7 +24,7 @@
     flex-direction: column;
     gap: var(--blai-space-14);
     padding: var(--blai-space-22) var(--blai-space-24);
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
     border: var(--blai-border-1) solid var(--border-color);
     box-shadow: 0 22px 58px color-mix(in srgb, var(--bg-base) 12%, transparent);
@@ -58,7 +58,7 @@
     min-height: var(--blai-size-38);
     padding: 0 var(--blai-space-16);
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-10);
+    border-radius: var(--blai-radius-sm);
     background: color-mix(in srgb, var(--text-main) 6%, var(--bg-base));
     color: var(--text-main);
     font-size: var(--blai-font-14);

@@ -78,7 +78,7 @@
     max-width: var(--blai-size-480);
     max-height: 85vh;
     padding: var(--blai-space-20);
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -152,7 +152,7 @@
     min-height: var(--blai-size-28);
     padding: 0;
     border: 0;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: none;
     color: var(--text-main);
     font-size: var(--blai-font-14);
@@ -214,7 +214,7 @@
 
 .blai-subrule-mini-btn {
     padding: var(--blai-space-6) var(--blai-space-10);
-    border-radius: var(--blai-radius-full);
+    border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);
     color: var(--text-main);

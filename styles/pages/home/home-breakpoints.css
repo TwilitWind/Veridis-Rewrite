@@ -18,7 +18,7 @@
         max-width: var(--blai-size-560);
         height: calc(100dvh - var(--blai-size-28));
         max-height: calc(100dvh - var(--blai-size-28));
-        border-radius: var(--blai-radius-16);
+        border-radius: var(--blai-radius-lg);
     }
 
     /* 编辑规则弹窗与编辑规则分组弹窗同一把尺子：以前者为准 */
@@ -31,7 +31,7 @@
         max-width: var(--blai-size-560);
         height: calc(100dvh - var(--blai-size-28));
         max-height: calc(100dvh - var(--blai-size-28));
-        border-radius: var(--blai-radius-16);
+        border-radius: var(--blai-radius-lg);
         box-sizing: border-box;
     }
 
@@ -171,7 +171,7 @@
     padding: var(--blai-space-12) var(--blai-space-14);
     background: var(--bg-surface);
     border: 0;
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     box-shadow: none;
 }
 
@@ -186,7 +186,7 @@
     position: relative;
     background: var(--bg-surface);
     border: 0;
-    border-radius: var(--blai-radius-12);
+    border-radius: var(--blai-radius-lg);
     box-shadow: none;
     padding: var(--blai-space-14) var(--blai-space-14);
     margin: 0;
@@ -352,7 +352,7 @@
     margin: 0;
     padding: 0;
     border: 0;
-    border-radius: var(--blai-radius-8);
+    border-radius: var(--blai-radius-sm);
     background: none;
     color: var(--text-main);
     font-size: var(--blai-font-13);

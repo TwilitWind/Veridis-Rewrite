@@ -216,7 +216,7 @@
     /* 手机端每组规则用边框收成完整卡片，避免白卡在浅色画布上显得散。 */
     box-sizing: border-box;
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-14);
+    border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
     box-shadow: none;
 }
@@ -256,7 +256,7 @@
     width: min(var(--blai-size-720), 100%);
     max-width: var(--blai-size-720);
     max-height: calc(100dvh - clamp(var(--blai-size-48), 8vw, var(--blai-size-88)));
-    border-radius: var(--blai-radius-14);
+    border-radius: var(--blai-radius-lg);
 }}
 
 @media (max-width: 600px) {
@@ -284,7 +284,7 @@
     max-width: var(--blai-size-420);
     max-height: calc(100dvh - var(--blai-size-40));
     border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-16);
+    border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
     box-shadow: var(--blai-shadow-lg);
     box-sizing: border-box;
