@@ -5,7 +5,7 @@
     min-height: var(--blai-size-30);
     padding: var(--blai-space-4) var(--blai-space-6) var(--blai-space-4) var(--blai-space-4);
     display: grid;
-    grid-template-columns: 14px minmax(0, 1fr);
+    grid-template-columns: var(--blai-size-15) minmax(0, 1fr);
     align-items: center;
     gap: var(--blai-space-9);
     border: 0;
@@ -23,14 +23,14 @@
 
 /* 单选自绘：圆点用 background 画，不用伪元素，避免叠加。 */
 #blai-deep-clean-workspace .blai-deep-clean-mode-option input {
-    width: var(--blai-size-16);
-    height: var(--blai-size-16);
-    min-width: var(--blai-size-16);
-    margin: 0;
-    flex: 0 0 var(--blai-size-16);
+    width: var(--blai-size-15);
+    height: var(--blai-size-15);
+    min-width: var(--blai-size-15);
+    margin: var(--blai-space-1) 0 0;
+    flex: 0 0 var(--blai-size-15);
     appearance: none;
     -webkit-appearance: none;
-    border: var(--blai-border-1) solid var(--border-color);
+    border: var(--blai-border-1-5) solid color-mix(in srgb, var(--text-main) 34%, var(--border-color));
     border-radius: 50%;
     background: var(--bg-surface);
     background-repeat: no-repeat;
@@ -87,7 +87,6 @@
 #blai-deep-clean-workspace .blai-deep-clean-resource-header {
     min-width: 0;
     padding: 0 0 var(--blai-space-10);
-    border-bottom: var(--blai-border-1) solid var(--border-color);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
@@ -253,20 +252,23 @@
 }
 
 /* 复选框自绘：勾直接用 background-image 画，不用伪元素——避免与原生/其它勾叠加成两个。 */
+/* 与主题其它自绘控件同规格：15px、1.5px 边框、4px 圆角。 */
 #blai-deep-clean-workspace .blai-deep-clean-choice input {
-    width: var(--blai-size-16);
-    height: var(--blai-size-16);
-    min-width: var(--blai-size-16);
-    margin: 0;
-    flex: 0 0 var(--blai-size-16);
+    width: var(--blai-size-15);
+    height: var(--blai-size-15);
+    min-width: var(--blai-size-15);
+    margin: var(--blai-space-1) 0 0;
+    flex: 0 0 var(--blai-size-15);
     appearance: none;
     -webkit-appearance: none;
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-sm);
+    border: var(--blai-border-1-5) solid color-mix(in srgb, var(--text-main) 34%, var(--border-color));
+    border-radius: var(--blai-radius-4);
     background: var(--bg-surface);
     background-repeat: no-repeat;
     background-position: center;
     background-size: var(--blai-size-10);
+    outline: none;
+    box-shadow: none;
     cursor: pointer;
     box-sizing: border-box;
 }

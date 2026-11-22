@@ -308,20 +308,23 @@
 }
 
 /* 复选框自绘：勾只用 background-image 画一份，不用伪元素——避免与主题注入的勾叠加成两个。 */
+/* 与主题其它自绘复选框同规格：15px、1.5px 边框、4px 圆角，不用偏大的 6px。 */
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"] {
-    width: var(--blai-size-16);
-    height: var(--blai-size-16);
-    min-width: var(--blai-size-16);
-    margin: 0;
-    flex: 0 0 var(--blai-size-16);
+    width: var(--blai-size-15);
+    height: var(--blai-size-15);
+    min-width: var(--blai-size-15);
+    margin: var(--blai-space-1) 0 0;
+    flex: 0 0 var(--blai-size-15);
     appearance: none;
     -webkit-appearance: none;
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-sm);
+    border: var(--blai-border-1-5) solid color-mix(in srgb, var(--text-main) 34%, var(--border-color));
+    border-radius: var(--blai-radius-4);
     background: var(--bg-surface);
     background-repeat: no-repeat;
     background-position: center;
     background-size: var(--blai-size-10);
+    outline: none;
+    box-shadow: none;
     cursor: pointer;
     box-sizing: border-box;
 }
