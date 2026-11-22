@@ -560,24 +560,27 @@
                 </div>
             </div>
 
-            <section id="blai-deep-clean-workspace" class="blai-deep-clean-workspace" aria-hidden="true" aria-labelledby="blai-deep-clean-title">
-                <header class="blai-deep-clean-header">
-                    <div class="blai-deep-clean-heading">
-                        <p class="blai-deep-clean-eyebrow" hidden></p>
-                        <h2 id="blai-deep-clean-title">深度净化</h2>
-                        <p id="blai-deep-clean-description">初始选择</p>
-                    </div>
-                    <div id="blai-deep-clean-header-actions" class="blai-deep-clean-header-actions"></div>
-                </header>
-                <div id="blai-deep-clean-content" class="blai-deep-clean-content" aria-live="polite">
-                    <section class="blai-deep-clean-state blai-deep-clean-loading-state" aria-label="正在读取可选资源">
-                        <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
-                        <h3>正在读取可选资源</h3>
-                    </section>
-                </div>
-            </section>
-
         </div>
+
+        <!-- 必须放在 #blai-purifier-popup 之外：该容器带 transform/backdrop-filter，
+             内部的 position:fixed 会相对它定位，遮罩铺不满视口、工作区也拿不到完整尺寸。 -->
+        <div id="blai-deep-clean-backdrop" class="blai-deep-clean-backdrop blai-modal-shell" data-theme="auto" aria-hidden="true"></div>
+        <section id="blai-deep-clean-workspace" class="blai-deep-clean-workspace blai-modal-shell" data-theme="auto" aria-hidden="true" aria-labelledby="blai-deep-clean-title">
+            <header class="blai-deep-clean-header">
+                <div class="blai-deep-clean-heading">
+                    <p class="blai-deep-clean-eyebrow" hidden></p>
+                    <h2 id="blai-deep-clean-title">深度净化</h2>
+                    <p id="blai-deep-clean-description">初始选择</p>
+                </div>
+                <div id="blai-deep-clean-header-actions" class="blai-deep-clean-header-actions"></div>
+            </header>
+            <div id="blai-deep-clean-content" class="blai-deep-clean-content" aria-live="polite">
+                <section class="blai-deep-clean-state blai-deep-clean-loading-state" aria-label="正在读取可选资源">
+                    <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                    <h3>正在读取可选资源</h3>
+                </section>
+            </div>
+        </section>
 
         <div id="blai-rule-edit-modal" class="blai-modal-shell">
             <div class="blai-modal-card blai-edit-modal-card">

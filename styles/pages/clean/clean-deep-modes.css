@@ -21,7 +21,7 @@
     color: var(--text-main);
 }
 
-/* 单选自绘：圆形外框 + 选中圆点，与复选框同一套 accent 语言。 */
+/* 单选自绘：圆点用 background 画，不用伪元素，避免叠加。 */
 #blai-deep-clean-workspace .blai-deep-clean-mode-option input {
     width: var(--blai-size-16);
     height: var(--blai-size-16);
@@ -33,22 +33,15 @@
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: 50%;
     background: var(--bg-surface);
-    display: inline-grid;
-    place-items: center;
+    background-repeat: no-repeat;
+    background-position: center;
     cursor: pointer;
     box-sizing: border-box;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-mode-option input:checked {
     border-color: var(--accent-color);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-mode-option input:checked::after {
-    content: '';
-    width: var(--blai-size-8);
-    height: var(--blai-size-8);
-    border-radius: 50%;
-    background: var(--accent-color);
+    background-image: radial-gradient(circle, var(--accent-color) 0 var(--blai-size-4), transparent var(--blai-size-4));
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-mode-copy {
@@ -115,12 +108,17 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* 世界书与聊天记录同住一张容器卡：外层统一背景/圆角/内边距，内层只靠分隔线分区。 */
 #blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
     min-width: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: var(--blai-panel-gap);
+    align-content: start;
+    gap: var(--blai-space-6);
+    padding: var(--blai-space-14) var(--blai-space-16);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-lg);
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-shujuku-note {
@@ -132,13 +130,16 @@
     line-height: 1.45;
 }
 
-/* 资源面板是一张容器卡：容器背景色 + 圆角 + 内边距，落在画布色上形成分区。 */
+/* 资源分区：同住一张容器卡，内部靠细分隔线区分，不再各自套边框。 */
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel {
     min-width: 0;
-    padding: var(--blai-space-14) var(--blai-space-16);
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-lg);
-    background: var(--bg-surface);
+    padding: 0 0 var(--blai-space-12);
+    background: transparent;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-panel + .blai-deep-clean-resource-panel {
+    padding-top: var(--blai-space-12);
+    border-top: var(--blai-border-1) solid var(--border-color);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
@@ -251,7 +252,7 @@
     background: color-mix(in srgb, var(--bg-base) 54%, var(--bg-surface));
 }
 
-/* 复选框自绘：替掉浏览器原生外观，与插件其它自绘控件同一套 accent 勾选。 */
+/* 复选框自绘：勾直接用 background-image 画，不用伪元素——避免与原生/其它勾叠加成两个。 */
 #blai-deep-clean-workspace .blai-deep-clean-choice input {
     width: var(--blai-size-16);
     height: var(--blai-size-16);
@@ -263,24 +264,17 @@
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
-    display: inline-grid;
-    place-items: center;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: var(--blai-size-10);
     cursor: pointer;
     box-sizing: border-box;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice input:checked {
-    background: var(--accent-color);
     border-color: var(--accent-color);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-choice input:checked::after {
-    content: '\f00c';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: var(--blai-weight-icon);
-    color: var(--accent-contrast);
-    font-size: var(--blai-font-10);
-    line-height: 1;
+    background-color: var(--accent-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice-copy {

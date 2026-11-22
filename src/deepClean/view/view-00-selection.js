@@ -82,6 +82,7 @@ export function setDeepCleanWorkspaceHeader(eyebrow, title, description, actionH
 }
 
 export function openDeepCleanInitialSelection(options = {}) {
+    $('#blai-deep-clean-backdrop').addClass('blai-is-open').attr('aria-hidden', 'false');
     $('#blai-deep-clean-workspace').addClass('blai-is-open').attr('aria-hidden', 'false');
     if (options.preserveContent === true) return;
     setDeepCleanWorkspaceHeader('', '深度净化', '初始选择');
@@ -94,6 +95,7 @@ export function openDeepCleanInitialSelection(options = {}) {
 }
 
 export function closeDeepCleanInitialSelection() {
+    $('#blai-deep-clean-backdrop').removeClass('blai-is-open').attr('aria-hidden', 'true');
     $('#blai-deep-clean-workspace').removeClass('blai-is-open').attr('aria-hidden', 'true');
 }
 

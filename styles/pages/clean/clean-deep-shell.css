@@ -1,22 +1,52 @@
 /* 深度净化外壳：遮罩、头部、内容区、选择与配置。标签分组样式留在 01-clean.css。 */
 
 
-/* 深度净化是独立工作区：桌面端做成与「编辑规则」同规格的居中大卡片，
-   不再铺满 560px 主面板——面板太窄会让内容显得空。层级与弹窗同段、互不冲突。 */
+/* 遮罩：与编辑规则弹窗同一套压暗+模糊，打开时盖住其余界面。独立元素而非 workspace 伪元素，
+   因为 workspace 带 transform 会让 fixed 伪元素相对自身定位、铺不满视口。
+   两层都挂 .blai-modal-shell 只为借用主题变量作用域（theme.js 已同步 data-theme），
+   壳自身的全屏 flex/padding/背景由下面的 id 规则覆盖。 */
+#blai-deep-clean-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000002;
+    display: none;
+    padding: 0;
+    background: color-mix(in srgb, var(--text-main) 38%, transparent);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+}
+
+#blai-deep-clean-backdrop.blai-is-open {
+    display: block;
+}
+
+/* 深度净化工作区：与「编辑规则集」弹窗同规格的居中大卡片——宽 560、
+   高 calc(100dvh - 28px)，层级紧贴遮罩之上。 */
 #blai-deep-clean-workspace {
     position: fixed;
     top: 50%;
     left: 50%;
+    right: auto;
+    bottom: auto;
     transform: translate(-50%, -50%);
     z-index: 10000003;
-    width: min(var(--blai-size-720), calc(100vw - var(--blai-size-28)));
-    height: min(var(--blai-size-760), calc(100dvh - var(--blai-size-48)));
+    padding: 0;
+    width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
+    max-width: var(--blai-size-560);
+    height: calc(100dvh - var(--blai-size-28));
+    max-height: calc(100dvh - var(--blai-size-28));
     min-width: 0;
     min-height: 0;
     display: none;
     grid-template-rows: auto minmax(0, 1fr);
+    /* .blai-modal-shell 带入的 align/justify:center 在 grid 上会把超高的内容区
+       在行内上下居中，顶出到 header 之上——这里显式改回 stretch 让它待在自己的行里。 */
+    align-items: stretch;
+    justify-content: stretch;
     overflow: hidden;
     background: var(--bg-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     color: var(--text-main);
     box-sizing: border-box;
     border: var(--blai-border-1) solid var(--border-color);
@@ -26,6 +56,23 @@
 
 #blai-deep-clean-workspace.blai-is-open {
     display: grid;
+}
+
+/* .blai-modal-shell:not(#blai-tour-layer) 自带 (1,1,0) 的全屏背景/模糊声明。
+   这里只用同级同特异性的后置规则改外观，不抬高基础 id 选择器——否则手机端
+   (1,0,0) 的媒体查询会被压掉，铺不满屏。 */
+#blai-deep-clean-backdrop.blai-modal-shell {
+    padding: 0;
+    background: color-mix(in srgb, var(--text-main) 38%, transparent);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+}
+
+#blai-deep-clean-workspace.blai-modal-shell {
+    padding: 0;
+    background: var(--bg-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 #blai-deep-clean-workspace *, #blai-deep-clean-workspace *::before, #blai-deep-clean-workspace *::after {
@@ -163,12 +210,13 @@
     padding: var(--blai-space-16) var(--blai-space-24);
 }
 
+/* 内容从上到下排布，不左右分栏：设置区在上、处理文件在下，读起来是一条直线。 */
 #blai-deep-clean-workspace .blai-deep-clean-two-column {
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 5fr);
-    align-items: start;
-    gap: var(--blai-column-gap);
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--blai-panel-gap);
 }
 
 #blai-deep-clean-workspace :is(.blai-deep-clean-settings, .blai-deep-clean-resources) {
@@ -259,6 +307,7 @@
     font-weight: var(--blai-weight-normal);
 }
 
+/* 复选框自绘：勾只用 background-image 画一份，不用伪元素——避免与主题注入的勾叠加成两个。 */
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"] {
     width: var(--blai-size-16);
     height: var(--blai-size-16);
@@ -270,23 +319,16 @@
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
-    display: inline-grid;
-    place-items: center;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: var(--blai-size-10);
     cursor: pointer;
     box-sizing: border-box;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]:checked {
-    background: var(--accent-color);
     border-color: var(--accent-color);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]:checked::after {
-    content: '\f00c';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: var(--blai-weight-icon);
-    color: var(--accent-contrast);
-    font-size: var(--blai-font-10);
-    line-height: 1;
+    background-color: var(--accent-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
