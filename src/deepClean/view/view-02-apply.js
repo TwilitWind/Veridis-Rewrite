@@ -127,7 +127,7 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                 <div class="blai-deep-clean-two-column">
                     <div class="blai-deep-clean-settings">
                         <section class="blai-deep-clean-section blai-deep-clean-options-section" aria-labelledby="blai-deep-clean-options-title">
-                            <h3 id="blai-deep-clean-options-title">处理范围与运行设置</h3>
+                            <h3 id="blai-deep-clean-options-title">处理设置</h3>
                             <div class="blai-deep-clean-scope-card ${scopeBlocked ? 'is-blocked' : ''}">
                                 <span class="blai-deep-clean-scope-label">当前角色卡</span>
                                 <strong class="blai-deep-clean-scope-name">${deepCleanSafeHtml(scopeName)}</strong>
@@ -153,15 +153,15 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                                     </div>
                                 </fieldset>
                                 <label class="blai-deep-clean-option blai-deep-clean-hidden-toggle">
-                                    <span>清理被隐藏的楼层</span>
-                                    <input type="checkbox" data-deep-clean-option="includeHidden" ${selection.includeHidden === true ? 'checked' : ''} aria-label="清理被隐藏的楼层">
+                                    <span>清理被 /hide 隐藏的楼层</span>
+                                    <input type="checkbox" data-deep-clean-option="includeHidden" ${selection.includeHidden === true ? 'checked' : ''} aria-label="清理被 /hide 隐藏的楼层">
                                 </label>
                             </div>
                         </section>
                     </div>
                     <section class="blai-deep-clean-resources" aria-labelledby="blai-deep-clean-final-title">
                         <header class="blai-deep-clean-resource-header">
-                            <h3 id="blai-deep-clean-final-title">处理的文件</h3>
+                            <h3 id="blai-deep-clean-final-title">处理范围</h3>
                             <p>共选择 <strong>${totalSelected}</strong> 项 · 只处理当前角色卡的世界书与聊天记录</p>
                         </header>
                         <div class="blai-deep-clean-resource-workspace">

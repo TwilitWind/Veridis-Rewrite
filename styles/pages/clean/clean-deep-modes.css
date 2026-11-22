@@ -235,14 +235,16 @@
     padding: 0;
 }
 
+/* 行间分隔线已去掉：行高/内边距同步收紧，靠 hover 底色区分行，不再留分隔线的空档。 */
 #blai-deep-clean-workspace .blai-deep-clean-choice {
     min-width: 0;
-    min-height: var(--blai-size-42);
-    padding: var(--blai-space-7) var(--blai-space-10);
+    min-height: var(--blai-size-34);
+    padding: var(--blai-space-4) var(--blai-space-8);
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    gap: var(--blai-space-10);
+    gap: var(--blai-space-9);
+    border-radius: var(--blai-radius-sm);
     cursor: pointer;
 }
 
