@@ -96,7 +96,6 @@
 
   /* 交互控件的重复几何，收成单一出处：改写一处全站同步，避免各页写各自的字面量。 */
   --blai-focus-offset: 2px;       /* :focus-visible 描边与控件的间距（按钮/开关/菜单项一致） */
-  --blai-switch-travel: 14px;     /* 开关滑块从关到开的横向位移 */
   --blai-ring-inset: inset 0 0 0 var(--blai-border-1); /* 1px 内描边环，颜色由使用处叠加 */
 
   /* 圆角；--blai-radius-full 只用于本就为圆形的元素（色点、开关轨道、进度条、滚动条、圆形图标）。 */

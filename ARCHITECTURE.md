@@ -101,7 +101,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 
 | 模块 | 关键导出 |
 | --- | --- |
-| `rules/engine.js` | `compileProcessors`（永不含 AI 规则）、内部 `compileReplacementProcessors(rules, options, includeAi)`、`buildProcessors`、`applyCompiledReplacements` / `WithTrackedRanges` 变体、`applyScopedReplacements` 系列、`countProcessorMatches`、`applyStreamingProgram`、`pickReplacement`、`buildTargetLiteralPattern`、`buildSimpleTargetPattern` |
+| `rules/engine.js` | `compileProcessors`（永不含 AI 规则）、内部 `compileReplacementProcessors(rules, options, includeAi)`、`buildProcessors`、`applyCompiledReplacementsWithTrackedRanges` 变体、`applyScopedReplacements` 系列、`countProcessorMatches`、`applyStreamingProgram`、`pickReplacement`、`buildTargetLiteralPattern`、`buildSimpleTargetPattern` |
 | `rules/regex.js` | `compileRegexTarget`、`validateRegexTargetInput`、`translateRegexError`（英文错误 → 中文）、`buildSimpleWildcardPattern` |
 | `rules/regexHighlight.js` | `tokenizeRegexSource`、`renderRegexHighlightHtml` 行内高亮、`findBracketPairAt(source, caret)` 取光标侧括号与配对符号的两个下标；底纹只加在这两个符号字符上，不覆盖中间文本。配对高亮只由真实 `click/keyup/select` 触发（见下方「配对高亮触发时机」） |
 | `rules/view.js` | 规则卡片与顶栏、编辑弹窗（`syncRuleEditFilterUi`）、规则搜索（`buildRuleSearchResults(keyword, scope)`、`syncRuleSearchScopeUi`、历史四件套；`localStorage blai-rule-search-history` 保留 10 条）。barrel 后接 `view-00-search` / `view-01-modal` / `view-02-panels` / `view-03-subrule-transfer`（子规则跨分组、跨预设移动） |
@@ -140,10 +140,10 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
 | `diff/tracking.js` / `retention.js` | 谁被记录、按设置裁剪历史 |
 | `rules/ruleIdentity.js` | 规则稳定身份：`computeRuleFingerprint(rule, sub)` 用「分组名+模式+查找词+替换词」算指纹（备注不纳入），`findRuleByFingerprint(rules, fp)` 精确回查。不往用户数据写 id，删改规则后指纹自然失配 |
-| `diff/ruleHitTrace.js` | 命中痕迹：净化时用 `collectRuleHits` 采集，存 `msg.__blai_diff_rule_trace[branchKey]`（独立于 diff 阶段元数据）；`findHitsForChange` 按删除/插入文本或原文坐标匹配，`renderHitCandidate` 渲染可点击候选。窗口外消息与删 Swipe 时同步清理 |
+| `diff/ruleHitTrace.js` | 命中痕迹：净化时用 `collectRuleHits` 采集，存 `msg.__blai_diff_rule_trace[branchKey]`（独立于 diff 阶段元数据）；`findHitsForChange` 按删除/插入文本或原文坐标匹配，`renderHitCandidate` 渲染可点击候选。窗口外消息清理时同步清除 |
 | `diff/view.js` | 尾部透视按钮投影；`syncBottomDiffButtonOffset` 按 `.swipes-counter` 实测矩形反推 `right/bottom`，与分支计数同行并留 8px，兼容 99/99 |
 | `settings/defaults.js` | `diffLineHeight`（1.5 / 1.8）与 `diffParagraphGap`（4 / 8 / 12）唯一默认与归一化来源，菜单切换后写回并持久化 |
-| `dom/protection.js` | `isProtectedNode`、`isMessageOnAllowedSurface`、`isAllowedChatInputElement`：哪些节点可净化 |
+| `dom/protection.js` | `isProtectedNode`、`isAllowedChatInputElement`：哪些节点可净化 |
 | `dom/message.js` / `observer.js` / `streaming.js` | DOM 取节点与原子换文、观察器、流式投影 |
 | `deepClean/` | `inventory`、`contentItems`、`scan`、`programProcessing` / `aiProcessing`、`review`、`apply/`（chat / worldBook / character / persona / io 分批落盘）、`lifecycle`（`startDeepCleanRun` / `runDeepCleanScan` / `runDeepCleanApply`、冻结 `frozenRunInput`）、`view`、`events`、`diagnostics` |
 

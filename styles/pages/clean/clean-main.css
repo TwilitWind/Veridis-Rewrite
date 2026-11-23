@@ -376,7 +376,6 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--blai-font-18);
     line-height: 1;
     color: var(--text-secondary);
 }

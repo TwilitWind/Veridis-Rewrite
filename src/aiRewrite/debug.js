@@ -21,8 +21,6 @@ import {
 import {
     countDebugDisplayEvents,
     formatDebugDisplayEvents,
-    getDebugDisplayOrder,
-    getDebugLogTimeZoneLabel,
     refreshMountedDebugDisplay,
     setDebugDisplayOrder,
 } from './debugView.js';
@@ -118,6 +116,4 @@ export function applyDebugDisplayOrder(order) {
     return normalized;
 }
 
-export { getDebugDisplayOrder };
-export { getDebugLogTimeZoneLabel };
 export { clearAiRewriteDebugEvents };

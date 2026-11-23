@@ -1,7 +1,6 @@
 /* 净化页标签列表、分组开关、下拉菜单。 */
 
-/* 跳过用户消息 / 保护人设描述两行的状态文字只供读屏，视觉隐藏。
-   原先它是 flex 子项却没脱离布局，挤占 32px 轨道宽度，开关只剩圆形滑块可见。 */
+/* 跳过用户消息 / 保护人设描述两行的状态文字只供读屏，视觉隐藏。 */
 #blai-purifier-popup .blai-clean-switch .blai-switch-state {
     position: absolute;
     width: var(--blai-size-1);

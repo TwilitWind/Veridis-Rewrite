@@ -353,14 +353,6 @@ const debugDateFormatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric', month: '2-digit', day: '2-digit',
 });
 
-export function getDebugLogTimeZoneLabel() {
-    try {
-        return Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    } catch {
-        return '';
-    }
-}
-
 function formatTimeZonePart(formatter, isoTime, type) {
     const date = new Date(String(isoTime || ''));
     if (Number.isNaN(date.getTime())) return '';
@@ -438,10 +430,6 @@ export function countDebugDisplayEvents(events) {
 // 日期正序（默认）或倒序：倒序时日期分组与组内条目一起翻转，
 // 保证「最近发生的在最上面」读起来仍然连贯。
 let debugDisplayOrder = 'asc';
-
-export function getDebugDisplayOrder() {
-    return debugDisplayOrder;
-}
 
 export function setDebugDisplayOrder(order) {
     debugDisplayOrder = order === 'desc' ? 'desc' : 'asc';

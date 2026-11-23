@@ -49,15 +49,6 @@ export function getRuleHitTrace(msg, branchKey = getMessageDiffBranchKey(msg)) {
     return Array.isArray(hits) ? hits : [];
 }
 
-/** 删除某个 Swipe 分支的痕迹（分支被删时调用）。 */
-export function deleteRuleHitTrace(msg, branchKey) {
-    const container = msg?.[traceKey];
-    if (!isObject(container) || !branchKey || !Object.hasOwn(container, branchKey)) return false;
-    delete container[branchKey];
-    if (Object.keys(container).length === 0) delete msg[traceKey];
-    return true;
-}
-
 /** 删除消息的全部痕迹（窗口外消息清理时调用）。 */
 export function clearMessageRuleHitTrace(msg) {
     if (!isObject(msg) || !Object.hasOwn(msg, traceKey)) return false;

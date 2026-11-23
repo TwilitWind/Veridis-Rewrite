@@ -209,10 +209,6 @@ export function applyStreamingProgram(originalText, choices) {
     return programText;
 }
 
-export function applyCompiledReplacements(originalText, processors = [], options = {}) {
-    return applyCompiledReplacementsWithTrackedRanges(originalText, processors, [], options).text;
-}
-
 export function countProcessorMatches(originalText, processors = []) {
     if (typeof originalText !== 'string' || !originalText) return 0;
     let hitCount = 0;
