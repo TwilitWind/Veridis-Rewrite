@@ -260,6 +260,8 @@ export function renderDiffDocument(pairs, mode) {
             blocks.push(...renderFullTextDiffBlocks(
                 operations,
                 (operation) => renderDiffOperation(operation, pair.section),
+                {},
+                pair.section,
             ));
             continue;
         }
@@ -289,16 +291,18 @@ export function renderDiffDocument(pairs, mode) {
                 runIndex++;
             }
             if (parts.some(part => part.type !== 'equal')) {
-                blocks.push(`<div class="blai-diff-snippet">${renderDiffOperations(parts)}</div>`);
+                blocks.push(`<div class="blai-diff-snippet" data-diff-section="${pair.section}">${renderDiffOperations(parts)}</div>`);
             }
         }
     }
     return blocks;
 }
 
-export function renderFullTextDiffBlocks(operations = [], renderOperation = renderDiffOperation, classNames = {}) {
+export function renderFullTextDiffBlocks(operations = [], renderOperation = renderDiffOperation, classNames = {}, section = '') {
     const normalClassName = classNames.normal || 'blai-diff-full-normal';
     const modifiedClassName = classNames.modified || 'blai-diff-full-modified';
+    // 来源标记：透视弹窗按 section 筛选/隐藏整块；深度清理不传 section，不产生该属性。
+    const sectionAttr = section ? ` data-diff-section="${section}"` : '';
     const blocks = [];
     let currentParts = [];
     let currentHasChange = false;
@@ -312,7 +316,7 @@ export function renderFullTextDiffBlocks(operations = [], renderOperation = rend
         }
 
         const className = currentHasChange ? modifiedClassName : normalClassName;
-        blocks.push(`<div class="${className}">${html}</div>`);
+        blocks.push(`<div class="${className}"${sectionAttr}>${html}</div>`);
         currentParts = [];
         currentHasChange = false;
     };

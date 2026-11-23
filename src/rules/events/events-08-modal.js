@@ -22,7 +22,7 @@ export function bindRuleModalActionEvents() {
         if (mode === 'regex') {
             const validation = validateRegexTargetField();
             if (!validation.ok) {
-                showToast(`正则规则有误：${validation.uiMessage || formatRegexTargetError(validation.error)}`, 'error');
+                showToast(`正则写法有误：${validation.uiMessage || formatRegexTargetError(validation.error)}`, undefined, 'error');
                 $('#blai-modal-sub-target').trigger('focus');
                 return;
             }
@@ -31,7 +31,8 @@ export function bindRuleModalActionEvents() {
         }
 
         if (mode === 'regex' && hasPendingRegexReplacementInput()) {
-            showToast('替换框里还有未处理的内容，请先点右侧按钮。', 'error');
+            const recognizeLabel = String($('#blai-modal-sub-regex-recognize').text() || '按行识别').trim();
+            showToast(`替换框里还有未处理的内容，请先点「${recognizeLabel}」。`, undefined, 'error');
             $('#blai-modal-sub-rep').trigger('focus');
             return;
         }
@@ -40,7 +41,7 @@ export function bindRuleModalActionEvents() {
         const replacements = getSingleRuleReplacementValues(mode);
 
         if (targets.length === 0) {
-            showToast("查找内容不能为空！", 'error');
+            showToast('查找内容不能为空', undefined, 'error');
             $('#blai-modal-sub-target').trigger('focus');
             return;
         }
@@ -67,7 +68,7 @@ export function bindRuleModalActionEvents() {
         clearRegexTargetValidationState();
         clearRegexTestArea();
         if (isDirectSearchFlow || isRelatedFlow) {
-            const saveResult = saveCurrentEditingRule({ toastMessage: '条目保存成功', focusLatest: false });
+            const saveResult = saveCurrentEditingRule({ toastMessage: '已保存规则', focusLatest: false });
             if (!saveResult.ok) return;
             $('#blai-subrule-edit-modal').fadeOut(150, () => {
                 $('#blai-rule-edit-modal').hide();
@@ -80,6 +81,9 @@ export function bindRuleModalActionEvents() {
 
         $('#blai-subrule-edit-modal').fadeOut(150);
         renderSubrulesToModal();
+        // 普通编辑流程只把规则写进当前分组草稿，此前没有任何成功反馈；
+        // 搜索直编/关联流程走上面的 saveCurrentEditingRule，已有吐司，不在此重复。
+        showToast('已保存规则', undefined, 'success');
 
         if (rulesUiState.currentSubruleEditIndex === -1) {
             const container = $('#blai-edit-subrules-container');
@@ -116,7 +120,7 @@ export function bindRuleModalActionEvents() {
             const choice = await showUnsavedChangesModal();
             if (choice === 'cancel') return; // 继续编辑
             if (choice === 'save') {
-                const saveResult = saveCurrentEditingRule({ toastMessage: '合集保存成功', focusLatest: true });
+                const saveResult = saveCurrentEditingRule({ toastMessage: '已保存规则分组', focusLatest: true });
                 if (!saveResult.ok) return; // 校验未通过，留在弹窗里改
             }
             // discard：直接关闭，不写回设置
@@ -131,7 +135,7 @@ export function bindRuleModalActionEvents() {
     });
 
     $(document).off('click', '#blai-edit-save').on('click', '#blai-edit-save', () => {
-        const saveResult = saveCurrentEditingRule({ toastMessage: '合集保存成功', focusLatest: true });
+        const saveResult = saveCurrentEditingRule({ toastMessage: '已保存规则分组', focusLatest: true });
         if (!saveResult.ok) return;
         clearEditGroupBaseline();
         $('#blai-rule-edit-modal').hide();

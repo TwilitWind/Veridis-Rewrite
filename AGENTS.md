@@ -24,6 +24,7 @@
 | 正则查找框高亮时光标贴字右侧、不叠进字形 | `CDP_PORT=9224 node test/audit/verify-regex-caret.mjs`（真浏览器量光标 x−字符右缘，注入 bold 反证） |
 | 三弹窗直属 body、直角高亮、主题对比色、扫描结果说明、双端导览锚点 | `CDP_PORT=9224 node test/audit/verify-followup.mjs`（真浏览器 19 项，桌面+手机） |
 | 透视弹窗不再残留独立「AI 改写」入口 | `verify-diff-menu.mjs` 的 `aiRewriteGone` 断言（顶栏与菜单镜像都检查） |
+| 透视来源图例纯展示、右侧筛选行折叠多选、定位高亮单线无投影、说明文字浅字带图标、手机四字文案 | `CDP_PORT=9224 node test/audit/verify-diff-stats-legend.mjs`（真浏览器，桌面+手机，含展开/多选/折叠/撤回/重新净化路径） |
 | 交差前跑通验证并附截图 | `build-css.mjs` + `build-check.mjs` + `test/audit/verify-*.mjs` + `shots/` |
 
 ## 已知陷阱：portal 菜单

@@ -234,7 +234,7 @@ export function bindFeedbackEvents() {
         if (!confirmed) return;
         clearAiRewriteDebugEvents();
         renderRuntimeLog();
-        showToast('运行日志已清空。', 'success');
+        showToast('运行日志已清空', undefined, 'success');
     });
 
     $(document).off('click', '#blai-ai-monitor-clear').on('click', '#blai-ai-monitor-clear', () => {

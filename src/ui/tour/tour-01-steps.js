@@ -10,7 +10,7 @@ export const mainSteps = [
     { page: 'ai', title: 'AI 改写', badge: '按需', body: 'AI 页面包含 API、API Key、模型和「启用改写」设置。\n\n启用 AI 改写的规则会使用这里配置的连接和模型。', target: '#blai-ai-connection-title' },
     { page: 'ai', title: '其他生成参数', badge: '高级', body: '这里包含 Top P、Top K、Max Tokens、惩罚参数、重试、超时、单次条目和 Context 等生成与请求参数。\n\n它们分别控制采样范围、输出长度、请求行为和单次处理规模。', target: aiAdvancedGenerationTourTarget },
     { page: 'clean', title: '标签作用范围', badge: '可选', body: '这个设置用于限制 XML 标签内容的净化范围。\n\n「保护特定标签」会排除启用标签中的内容；「净化特定标签」只处理启用标签中的内容。\n\n在「保护特定标签」模式下，如果没有启用任何标签，不会额外限制净化范围，普通内容会照常净化。', target: '#blai-clean-scope-title' },
-    { page: 'clean', title: '深度净化', badge: '高级', body: '深度净化批量处理已有的角色、聊天分支、User 设定、世界书和相关数据。\n\n第一次打开深度净化时会显示独立导览。', target: deepCleanLaunchTourTarget },
+    { page: 'clean', title: '深度净化', badge: '高级', body: '深度净化批量处理已有的角色、聊天分支、User 设定、世界书和相关数据。', target: deepCleanLaunchTourTarget },
     { page: 'tools', title: '工具页', badge: '高级 / 按需', body: '这里包含预设绑定解析，以及合并在一起的「附加功能」：AI 改写快捷键、净化结果楼层数、数据库自动净化和简繁转换 (OpenCC)。', target: toolsPageTourTarget },
     { page: 'tools', title: '净化结果楼层数', badge: '按需', body: '这里设置可以查看多少个最近楼层的插件净化结果。\n\n例如设置为 5 条时，Veridis Rewrite 会保留最近 5 个可追踪楼层的净化结果供查看和审查。\n\n这个设置只控制净化结果的保留 / 查看范围，不会改变净化规则本身。', target: 'label[for="blai-diff-limit-input"]' },
     { page: 'feedback', title: '反馈与诊断', badge: '排查问题 / 提交反馈', body: '排查 AI 改写问题时，可在「AI 上下文」查看本次实际发送给 AI 的内容和返回结果；这些内容只在本地显示。\n\n提交匿名反馈前会先展示完整 JSON 预览，只有你选择的诊断附件会随反馈发送。', target: '#blai-feedback-workspace' },

@@ -99,6 +99,12 @@
     line-height: 1.2;
 }
 
+/* 分组级字段标签不抢层级：桌面与手机都保持常规字重。 */
+#blai-rule-edit-modal .blai-edit-field > .blai-field-label,
+#blai-rule-edit-modal .blai-edit-modal-body > .blai-field-label {
+    font-weight: var(--blai-weight-normal);
+}
+
 #blai-rule-edit-modal #blai-edit-name {
     padding-top: var(--blai-space-6);
     padding-bottom: var(--blai-space-6);
@@ -123,7 +129,10 @@
     flex-direction: column;
     gap: var(--blai-space-10);
     min-height: var(--blai-size-160);
-    max-height: min(var(--blai-size-420), 50dvh);
+    /* 曾写 max-height:min(420px,50dvh)：手机端它排在整屏弹窗规则之后，把列表硬性截断，
+       body 下半段就成了截图里的大空白；键盘弹出时 50dvh 还会随视口缩到 250px。
+       这里不再限高，让列表吃掉 body 剩余空间并自己滚动。 */
+    max-height: none;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     margin: var(--blai-space-10) 0;
@@ -270,7 +279,7 @@
 
 @media screen and (max-width: 600px) {#blai-rule-edit-modal .blai-edit-modal-card, #blai-subrule-edit-modal .blai-subrule-modal-card {
     width: calc(100vw - var(--blai-size-20));
-    max-height: calc(100dvh - var(--blai-size-20));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-20));
     padding: var(--blai-space-12);
 }}
 

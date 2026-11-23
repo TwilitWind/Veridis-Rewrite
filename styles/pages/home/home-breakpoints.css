@@ -94,20 +94,15 @@
 /* ---------------------------------------------------------------------------
  * 三个编辑弹窗（编辑规则集 / 编辑单条规则 / 新增标签）的统一版式。
  * 1) 三张卡片内边距用同一组数：16 / 20，标题下 12。
- * 2) 卡片内部不画任何边框（只有输入框本身保留一圈边框）。
- * 3) 卡片底 = 页面灰白，卡片里的每一块内容 = 纯白实色包裹，块与块靠留白分开。
+ * 2) 整张弹窗只用一层容器色；顶栏、正文、底栏不再分三段底色。
+ * 3) 内部模块靠低对比边框分组，不再铺第二层填充块。
  * --------------------------------------------------------------------------- */
-/* 三个大弹窗（深度净化 / 编辑规则集 / 编辑规则）统一三段背景：
-   顶栏、底栏用容器色 --bg-surface，中间内容用画布色 --bg-base。
-   全部走 token，随主题自动切换；这里不再给 light 单开白卡例外。 */
 
 #blai-rule-edit-modal.blai-modal-shell > .blai-edit-modal-card,
 #blai-subrule-edit-modal.blai-modal-shell > .blai-subrule-modal-card,
 #blai-scope-tag-editor-modal.blai-modal-shell > .blai-scope-tag-editor-card {
     padding: var(--blai-space-16) var(--blai-space-20) !important;
-    /* 卡片底色走变量：简易组合弹窗（界面B）在日间取纯白，其余主题与另外两个弹窗取 --bg-base。
-       内容密度最高的那个弹窗，灰白卡上再叠一片带边框的控件会整块发灰。 */
-    background: var(--blai-modal-card-bg, var(--bg-base)) !important;
+    background: var(--bg-surface) !important;
     border: 0 !important;
     box-shadow: var(--blai-shadow-lg) !important;
 }
@@ -136,37 +131,26 @@
     margin-bottom: var(--blai-space-12);
 }
 
-/* 每条规则 = 一块纯白实色包裹，无边框；块与块之间留 8px */
+/* 规则列表靠留白分组；每条规则与弹窗同色，只用一圈低对比边框表达边界。 */
 #blai-rule-edit-modal #blai-edit-subrules-container {
     display: flex;
     flex-direction: column;
     gap: var(--blai-space-8);
 }
 
-#blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-card {
-    margin: 0;
-    padding: var(--blai-space-12) var(--blai-space-14);
-    background: var(--bg-surface);
-    border: 0;
-    border-radius: var(--blai-radius-lg);
-    box-shadow: none;
-}
-
 :is(#blai-rule-edit-modal, #blai-subrule-edit-modal, #blai-scope-tag-editor-modal) .blai-regex-flags-chip {
-    border: 0;
-    background: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: transparent;
 }
 
-/* 编辑规则集：每条规则保留自己的底色块（白），只去掉块外面的描边线。
-   块与块之间不加任何分隔线，靠 gap 留白分开。 */
 #blai-rule-edit-modal #blai-edit-subrules-container .blai-subrule-card {
     position: relative;
-    background: var(--bg-surface);
-    border: 0;
-    border-radius: var(--blai-radius-lg);
-    box-shadow: none;
-    padding: var(--blai-space-14) var(--blai-space-14);
     margin: 0;
+    padding: var(--blai-space-14);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-lg);
+    background: transparent;
+    box-shadow: none;
 }
 
 /* 编辑规则集：规则正文与正文首行取消加粗，只靠颜色区分 */
@@ -418,10 +402,8 @@
 }
 
 /* ---------------------------------------------------------------------------
- * 三个大弹窗统一三段背景：顶栏 / 底栏 = 容器色 --bg-surface，
- * 中间内容 = 画布色 --bg-base。全部走 token，随主题自动切换。
- * 用 --blai-modal-pad-* 让顶/底栏的负外边距与卡片内边距精确对齐，
- * 这样色条能铺到卡片边缘，中间画布色正好卡在两条色带之间。
+ * 大弹窗顶栏 / 正文 / 底栏统一为同一层容器色，靠负外边距贴到卡片边缘；
+ * 层级改由低对比边框和留白表达，不再叠三段底色。
  * --------------------------------------------------------------------------- */
 #blai-rule-edit-modal.blai-modal-shell > .blai-edit-modal-card,
 #blai-subrule-edit-modal.blai-modal-shell > .blai-subrule-modal-card {
@@ -429,21 +411,21 @@
     --blai-modal-pad-x: var(--blai-space-20);
 }
 
-/* 顶栏：画布色，向上/左右顶到卡片边缘，与正文同一底色 */
+/* 顶栏：与卡片同色，向上/左右顶到卡片边缘 */
 #blai-rule-edit-modal .blai-edit-modal-head,
 #blai-subrule-edit-modal .blai-subrule-modal-header {
     margin: calc(-1 * var(--blai-modal-pad-y)) calc(-1 * var(--blai-modal-pad-x)) 0;
     padding: var(--blai-space-8) var(--blai-modal-pad-x);
-    background: var(--bg-base);
+    background: var(--bg-surface);
     border-bottom: 0;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 
-/* 中间内容：画布色（卡片底色），规则编辑弹窗的内容容器需自己撑满剩余高度 */
+/* 中间内容：与卡片同色，规则编辑弹窗的内容容器需自己撑满剩余高度 */
 #blai-rule-edit-modal .blai-edit-modal-body,
 #blai-subrule-edit-modal .blai-subrule-modal-body {
-    background: var(--bg-base);
+    background: var(--bg-surface);
 }
 
 #blai-rule-edit-modal .blai-edit-modal-body {
@@ -453,28 +435,29 @@
     flex-direction: column;
 }
 
-/* 底栏：画布色，向下/左右顶到卡片边缘，与正文同一底色 */
+/* 底栏：与卡片同色，向下/左右顶到卡片边缘 */
 #blai-rule-edit-modal .blai-modal-actions,
 #blai-subrule-edit-modal .blai-subrule-footer {
     margin: 0 calc(-1 * var(--blai-modal-pad-x)) calc(-1 * var(--blai-modal-pad-y)) !important;
     padding: var(--blai-space-8) var(--blai-modal-pad-x) !important;
-    background: var(--bg-base);
+    background: var(--bg-surface);
     border-top: 0;
     box-sizing: border-box;
     flex-shrink: 0;
 }
 
-/* 手机端两个编辑弹窗：底栏压到约 36px，把高度让给内容区。 */
+/* 手机端两个编辑弹窗：底栏保持单行，但上下留白和按钮高度不能压到失去手感。
+   8px + 32px + 8px = 48px，比旧版 52px 只低 4px，却不再像把按钮贴死在边线上。 */
 @media screen and (max-width: 600px) {
 #blai-rule-edit-modal .blai-modal-actions,
 #blai-subrule-edit-modal .blai-subrule-footer {
-    padding: var(--blai-space-4) var(--blai-modal-pad-x) !important;
+    padding: var(--blai-space-8) var(--blai-modal-pad-x) !important;
 }
 
 #blai-rule-edit-modal .blai-modal-actions > button,
 #blai-subrule-edit-modal .blai-subrule-footer > button {
-    height: var(--blai-size-28) !important;
-    min-height: var(--blai-size-28) !important;
+    height: var(--blai-size-32) !important;
+    min-height: var(--blai-size-32) !important;
     padding: 0 var(--blai-btn-pad-x) !important;
 }
 

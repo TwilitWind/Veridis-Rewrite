@@ -139,10 +139,10 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `diff/pickRevert.js` | 撤回所选的 DOM 采集与计算：`assignDiffRevertItemIds` 编号相邻 del/ins，`collectPickedDiffItems` 用 `Map<itemId, 节点[]>` 索引回查勾选项（避免 O(n×m)），`computePickedRevert` 换算阶段文本 |
 | `diff/preferences.js` | 透视「更多操作」菜单偏好的单一入口：`SPECS`（取值序列 + read/write）+ `cycleDiffPreference(key)` 统一切换并写 settings + `syncRelatedRuleRuntime` 打开弹窗时从 settings 恢复规则定位开关。模板按钮用 `data-blai-pref`（值必须等于 SPECS 键） |
 | `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex`：AI 改写关闭时以保留的 `meta.originalMes` 只跑程序改写；开启时 `requestManualAiRewriteForMessage(index, {recleanse:true, onSettled})` 在撤回保护仍未解除时按原文发起 AI 任务，AI 原子写回时清除保护并写入「原文 → AI → 程序」阶段链。发起失败只出非交互提示，不降级为程序改写。透视弹窗不再有独立「AI 改写」按钮 |
-| `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
+| `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务。片段块与全文块都写 `data-diff-section`（ai/program）供来源筛选按块隐藏；`renderFullTextDiffBlocks` 第 4 参 `section` 可选，深度清理不传则不产生该属性 |
 | `diff/tracking.js` / `retention.js` | 谁被记录、按设置裁剪历史 |
 | `rules/ruleIdentity.js` | 规则稳定身份：`computeRuleFingerprint(rule, sub)` 用「分组名+模式+查找词+替换词」算指纹（备注不纳入），`findRuleByFingerprint(rules, fp)` 精确回查。不往用户数据写 id，删改规则后指纹自然失配 |
-| `diff/ruleHitTrace.js` | 命中痕迹：净化时用 `collectRuleHits` 采集，存 `msg.__blai_diff_rule_trace[branchKey]`（独立于 diff 阶段元数据）；`findHitsForChange` 按删除/插入文本或原文坐标匹配，`renderHitCandidate` 渲染可点击候选。窗口外消息清理时同步清除 |
+| `diff/ruleHitTrace.js` | 命中痕迹：净化时用 `collectRuleHits` 采集（坐标还原到原文），存 `msg.__blai_diff_rule_trace[branchKey]`（独立于 diff 阶段元数据）；`findHitsForChange` 按删除/插入文本加原文坐标匹配，并要求命中词属于该差异片段，`renderHitCandidate` 渲染可点击候选。窗口外消息清理时同步清除 |
 | `diff/view.js` | 尾部透视按钮投影；`syncBottomDiffButtonOffset` 按 `.swipes-counter` 实测矩形反推 `right/bottom`，与分支计数同行并留 8px，兼容 99/99 |
 | `settings/defaults.js` | `diffLineHeight`（1.5 / 1.8）与 `diffParagraphGap`（4 / 8 / 12）唯一默认与归一化来源，菜单切换后写回并持久化 |
 | `dom/protection.js` | `isProtectedNode`、`isAllowedChatInputElement`：哪些节点可净化 |
@@ -221,7 +221,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **首页规则集下拉**：原生 `#blai-preset-select` 留作数据锚点并视觉隐藏，可见控件 `#blai-preset-select-trigger` + `#blai-preset-menu`；菜单沿用弹窗下拉框样式，打开时宽度同步触发器。选项点击走 `presets/events.js` 的 `switchPreset()`，之后显式 `updateToolbarUI()` 刷新 trigger 文案（切换带 `skipRender` 不自动刷新）。事件集中在 `presets/presetSelectMenu.js`，避免 `events.js` 超闸门。
 
-**子规则复制与移动**（`src/rules/view/view-03-subrule-transfer.js`）：复制是 `deepClone` 后 `splice(index + 1, 0, …)`；移动按 `预设序号::分组序号` 编码目标，跨预设用 `buildPresetEntry` 写回 `settings.presets[name]`。只改编辑中的工作副本 `rulesUiState.currentEditingSubrules`，落盘仍需点「保存合集」。
+**子规则复制与移动**（`src/rules/view/view-03-subrule-transfer.js`）：复制是 `deepClone` 后 `splice(index + 1, 0, …)`；移动按 `预设序号::分组序号` 编码目标，跨预设用 `buildPresetEntry` 写回 `settings.presets[name]`。只改编辑中的工作副本 `rulesUiState.currentEditingSubrules`，落盘仍需点「保存分组」。
 
 `<select>` 的 `option` 不继承 CSS 变量，必须在 `styles/tokens/02-themes.css` 按 `[data-theme]` 分段显式写死底色字色并带 `!important`（酒馆 `public/style.css` 有 `select option{background-color:var(--white50a)}`）。
 
@@ -294,6 +294,8 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | 改 AI 改写调度 | `aiRewrite/runtime.js`；写回范围在 `matching.js`；终稿合并与 `chat/cleanse.js` 一起看 |
 | 改撤回算法 | 只改 `diff/revertMerge.js` |
 | 改撤回所选交互 / 性能 | `diff/pickRevert.js`（编号 + 采集索引）+ `diff/events/events-00-core.js`（计数缓存、apply 提交）+ `events-01-bindings.js`（勾选事件） |
+| 改来源筛选 / 逐条定位 | 状态在 `diff/state.js`（`diffFilterEnabled`/`diffSelectedSources`/`diffNavIndex`，会话内不持久化）；开关只控制筛选行折叠，行内程序/AI/手改可多选，空数组表示不筛选。`compare.js` 给块打 `data-diff-section`（手改提示也带该属性），`events-00-core.js` 的 `syncDiffFilterState` 每次重渲染按选择给未选块加 `.blai-diff-source-hidden`（`00-diff.css` 里 `display:none`，不用 `!important`）；`toggleDiffSourceFilter` 切换多选、折叠时清空。可见项收集、跳转高亮与筛选清勾选也在 `events-00-core.js`（`setDiffFilterEnabled`/`navigateDiffItems`），绑定在 `events-01-bindings.js`；DOM 在 `templates/purifier.html` 的 `#blai-diff-filter-panel`。来源图例改为 span 纯展示，不再绑定筛选；筛选切走会清掉被隐藏的已勾选项，避免撤回误伤 |
+| 改改写项计数 / 来源图例 / 说明文字 | 计数口径在 `diff/diffStats.js` 的 `collectDiffStats`：程序/AI 按 `data-blai-revert-item` 去重、按 `data-blai-diff-section` 分组，手改用 `getTextDiffOperations` 比较 programMes 与当前正文、连续一段算一次（撤回态记 0）；`events-00-core.js` 只负责回显。四项来源图例在 `templates/purifier.html` 的 `.blai-diff-source` 与 `styles/pages/diff/00-diff.css`，原文用正文色、其余三种共用 `--blai-diff-source-*`，与正文 del/ins 同源；控件无边框，选中态只用背景胶囊。空态/提示统一 `.blai-diff-empty`（次级文字色 + 行首图标），定位高亮用 `--blai-border-2` 单层描边、无投影。真浏览器回归见 `test/audit/verify-diff-stats-legend.mjs` |
 | 改「更多操作」菜单偏好 | `diff/preferences.js` 的 `SPECS` 加一项（取值 + read/write）→ 模板按钮加 `data-blai-pref="<键>"`；键名必须与 SPECS 一致，否则点击无效 |
 | 改移动规则弹窗步骤 | `rules/view/view-03-subrule-transfer.js`（步骤切换）+ `templates/purifier.html` 的 `#blai-subrule-transfer-*` + `styles/pages/home/home-overview.css`（`.blai-transfer-step`） |
 | 改下拉滚动关闭行为 | `ui/popover.js` 的 scroll 捕获：portal 菜单内部滚动必须 return，外部才 `closeAllMenuPopovers` |

@@ -77,7 +77,7 @@ export function bindRuleListEvents() {
             markRulesDataDirty();
             saveSettingsDebounced();
             renderTagsPreserveBatchSelection();
-            showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个合集` : '合集删除成功', 'success');
+            showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个规则` : '已删除规则', undefined, 'success');
         }
     });
 }

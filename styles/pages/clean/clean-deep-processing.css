@@ -151,7 +151,7 @@
     flex-direction: column;
     overflow: hidden;
     border-left: var(--blai-border-1) solid var(--border-color);
-    background: color-mix(in srgb, var(--bg-base) 52%, var(--bg-surface));
+    background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-batch-head {

@@ -157,7 +157,7 @@
 
 #blai-ai-prompt-modal .blai-ai-prompt-modal-card {
     width: 100vw !important;
-    height: 100vh !important;
+    height: var(--blai-viewport-h) !important;
     height: var(--blai-viewport-h) !important;
     max-width: none !important;
     max-height: none !important;

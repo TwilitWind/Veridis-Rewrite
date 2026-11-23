@@ -542,9 +542,11 @@
     font-size: var(--blai-font-14);
 }
 
+/* 焦点只画一层内描边：不要再叠 border-color，否则手机端会看到外框 + 内框两条线。 */
 .blai-plugin-dialog-input:focus {
     outline: none !important;
-    border-color: var(--accent-color) !important;
+    border-color: transparent !important;
+    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
 }
 
 .blai-plugin-dialog .blai-modal-actions {

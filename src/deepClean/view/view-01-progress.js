@@ -49,7 +49,6 @@ export function renderDeepCleanBatchProgress(progress = {}) {
         ];
     const activeIndex = Math.max(pipeline.findIndex((entry) => entry.id === progress.stage), 0);
     setDeepCleanWorkspaceHeader(
-        '深度净化 · 处理中',
         '深度净化进行中',
         directProgramApply
             ? '按冻结后受影响内容项的原始顺序处理并直接应用当前批次。'
@@ -98,7 +97,7 @@ export function renderDeepCleanLookaheadProgress(progress = null) {
 }
 
 export function renderDeepCleanStopped() {
-    setDeepCleanWorkspaceHeader('', '', '');
+    setDeepCleanWorkspaceHeader('', '');
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-state blai-deep-clean-stopped-state" aria-label="深度净化已停止">
             <i class="fas fa-stop-circle" aria-hidden="true"></i>
@@ -121,7 +120,7 @@ export function renderDeepCleanComplete(summary) {
         </dl>
     `;
     const hasAiSummary = Object.hasOwn(summary, 'totalAiRequestCount');
-    setDeepCleanWorkspaceHeader('', '', '');
+    setDeepCleanWorkspaceHeader('', '');
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-state blai-deep-clean-complete-state" aria-label="深度净化已完成">
             <i class="fas fa-check" aria-hidden="true"></i>

@@ -11,6 +11,7 @@ import { logger } from './src/log.js';
 import { bindEvents } from './src/events.js';
 import { initRealtimeInterceptor } from './src/host/lifecycleEvents.js';
 import { setupUI } from './src/ui/shell.js';
+import { initViewportHeightStabilizer } from './src/ui/viewportHeight.js';
 import { updateToolbarUI } from './src/presets/view.js';
 import { applyCharacterPresetBinding, syncActivePresetSnapshot } from './src/presets/application.js';
 import { setActivePresetSyncHook } from './src/rules/state.js';
@@ -140,6 +141,7 @@ jQuery(() => {
         isBooted = true;
         await waitForTauriTavernReady();
         logger.info('[词汇映射] 启动初始化开始...');
+        initViewportHeightStabilizer();
         if (isTauriTavernHost()) logger.info('[词汇映射] 已启用 TauriTavern 兼容层');
         if (isBaiBaiToolkitInstalled()) logger.info('[词汇映射] 已启用柏宝箱兼容层');
         if (isLoreFrameInstalled()) logger.info('[词汇映射] 已启用 LoreFrame 兼容层');

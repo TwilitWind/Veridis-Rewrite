@@ -265,7 +265,7 @@
     padding: var(--blai-dropdown-pad);
     display: grid;
     gap: var(--blai-dropdown-gap);
-    max-height: calc(100vh - var(--blai-size-16));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-16));
     overflow-y: auto;
     background: var(--blai-dropdown-bg);
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
@@ -520,7 +520,7 @@
     position: fixed;
     inset: 0;
     width: 100vw;
-    height: 100vh;
+    height: var(--blai-viewport-h);
     height: var(--blai-viewport-h);
     align-items: stretch;
     justify-content: stretch;
@@ -538,7 +538,7 @@
     left: auto !important;
     width: 100vw !important;
     max-width: 100vw !important;
-    height: 100vh !important;
+    height: var(--blai-viewport-h) !important;
     height: var(--blai-viewport-h) !important;
     max-height: var(--blai-viewport-h) !important;
     margin: 0 !important;
@@ -571,7 +571,7 @@
     position: fixed;
     inset: 0;
     width: 100vw;
-    height: 100vh;
+    height: var(--blai-viewport-h);
     height: var(--blai-viewport-h);
     align-items: center;
     justify-content: center;

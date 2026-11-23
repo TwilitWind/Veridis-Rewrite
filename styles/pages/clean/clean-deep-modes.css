@@ -84,6 +84,18 @@
     background: var(--bg-surface);
 }
 
+/* 处理范围与处理设置同级：整块自带同一张卡片边界，标题在框内。 */
+#blai-deep-clean-workspace .blai-deep-clean-resources {
+    min-width: 0;
+    padding: var(--blai-space-12) var(--blai-space-14);
+    display: grid;
+    align-content: start;
+    gap: 0;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-lg);
+    background: transparent;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-resource-header {
     min-width: 0;
     padding: 0 0 var(--blai-space-8);
@@ -91,9 +103,9 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
     margin: 0;
-    font-size: var(--blai-font-13);
+    font-size: var(--blai-font-12);
     font-weight: var(--blai-weight-bold);
-    letter-spacing: -.01em;
+    letter-spacing: 0;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header p {
@@ -107,25 +119,17 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* 世界书与聊天记录同住一张容器卡：外层统一背景/圆角/内边距，内层只靠分隔线分区。 */
+/* 资源列表继承处理范围卡片边界，自身不再套一层框。 */
 #blai-deep-clean-workspace .blai-deep-clean-resource-workspace {
     min-width: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
     gap: var(--blai-space-6);
-    padding: var(--blai-space-12) var(--blai-space-14);
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-lg);
-    background: var(--bg-surface);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-shujuku-note {
-    margin: 0;
-    padding-top: var(--blai-space-6);
-    color: var(--text-secondary);
-    font-size: var(--blai-font-9);
-    line-height: 1.45;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
 /* 资源分区：同住一张容器卡，内部靠细分隔线区分，不再各自套边框。 */
@@ -146,7 +150,6 @@
     align-items: baseline;
     justify-content: space-between;
     gap: var(--blai-space-12);
-    border-bottom: var(--blai-border-1) solid color-mix(in srgb, var(--border-color) 68%, transparent);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-title {
@@ -163,42 +166,39 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-search-field {
+    position: relative;
     height: var(--blai-size-34);
-    display: grid;
-    grid-template-columns: 34px minmax(0, 1fr);
+    display: flex;
     align-items: center;
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-5);
-    background: var(--bg-base);
+    /* 只留一个背景框，底色用容器色，不再给图标格和输入框各铺一层底色。 */
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-search-field i {
-    grid-column: 1;
-    justify-self: center;
+    position: absolute;
+    left: var(--blai-space-10);
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--text-secondary);
     font-size: var(--blai-font-10);
     pointer-events: none;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-search-field .blai-deep-clean-input {
-    grid-column: 2;
     width: 100%;
     height: 100%;
     min-width: 0;
-    padding: 0 var(--blai-space-10) 0 0;
+    padding: 0 var(--blai-space-10) 0 var(--blai-size-34);
     border: 0;
-    border-radius: 0;
-    /* 输入框底色跟外壳一致：外壳已提供边框与底色，但这里仍写实色而不是 transparent，
-       否则第三方主题注入的底色会从输入框里透出来。 */
-    background: var(--bg-base);
+    /* 与外框同圆角：focus 内阴影描边也跟着变圆，不会出现外框圆、高亮直角的割裂。 */
+    border-radius: var(--blai-radius-5);
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-summary {
     min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--blai-space-13);
     color: var(--text-secondary);
     font-size: var(--blai-font-10);
     white-space: nowrap;
@@ -335,36 +335,41 @@
     justify-content: flex-end;
     gap: var(--blai-space-9);
     border-top: var(--blai-border-1) solid var(--border-color);
-    background: var(--bg-base);
+    background: var(--bg-surface);
 }
 
-/* 处理范围信息行：与上面的模式/预设同处「初始选择」面板，选择器独立、无层叠冲突，
-   原独立文件仅 1KB，并入本文件减少碎片（从 clean-deep-scope.css 收拢）。 */
+/* 当前角色卡弱化为一行元数据：标签与值都不加粗，异常提示才换行。 */
 #blai-deep-clean-workspace .blai-deep-clean-scope-card {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--blai-space-4) var(--blai-space-10);
-    margin: var(--blai-space-4) 0 0;
+    gap: var(--blai-space-4);
+    margin: 0 0 var(--blai-space-10);
     padding: 0;
     background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scope-label {
+    flex: 0 0 auto;
     font-size: var(--blai-font-11);
-    font-weight: var(--blai-weight-bold);
+    font-weight: var(--blai-weight-normal);
     color: var(--text-secondary);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scope-name {
+    min-width: 0;
+    flex: 0 1 auto;
+    overflow: hidden;
     font-size: var(--blai-font-12);
-    font-weight: var(--blai-weight-bold);
+    font-weight: var(--blai-weight-normal);
     color: var(--text-main);
-    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scope-detail {
-    margin-left: auto;
+    flex: 1 0 100%;
+    margin-left: 0;
     font-size: var(--blai-font-11);
     line-height: 1.5;
     color: var(--text-secondary);

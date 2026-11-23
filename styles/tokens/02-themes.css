@@ -70,34 +70,36 @@
     #blai-loading-overlay,
     #blai-tour-layer
 ):is([data-theme="dark"], [data-theme="dim"]) {
-    --bg-base: #0D1017;
-    --bg-surface: #181E2A;
-    /* 夜间蓝要降饱和、抬明度差：纯 #2F6FED 压在深底上会发荧光。
-       实心块用偏灰的浅蓝配深字，浅底上的强调文字用亮一档的蓝。 */
-    --accent-color: #7BA7F0;
-    --accent-ink: #8FB6F5;
-    --accent-contrast: #0B1526;
-    --text-main: #C7D3E0;
-    --text-secondary: #8899AA;
-    --border-color: #303849;
+    /* 墨夜取 ayu dark 的深蓝灰层次，但整体往中性灰蓝偏：上一版 G-R（绿-红）差偏大，
+       在深底上泛青冷、不适合久读；这一版把底/卡/正文/浅字的 G-R 压到 1~3，只留极小蓝偏，
+       正文仍保持 12:1 以上对比度，观感由「冷青蓝」转为「中性灰蓝」。 */
+    --bg-base: #171920;
+    --bg-surface: #20232C;
+    /* 强调蓝同步去青：降绿通道、保留蓝的主色相，实心块上的深字同步调整。 */
+    --accent-color: #8AA2CE;
+    --accent-ink: #ADBEDC;
+    --accent-contrast: #121722;
+    --text-main: #E0E2E6;
+    --text-secondary: #ABAEB7;
+    --border-color: #3A3F4B;
     /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
     --status-danger: #D95757;
     --status-success: #70BF56;
     /* 夜间四来源圆点整体提亮，避免在深卡片上糊成一团。 */
-    --blai-diff-original: #A8B4C2;
-    --blai-diff-program: #7BA7F0;
+    --blai-diff-original: #AFB2BA;
+    --blai-diff-program: #8AA2CE;
     --blai-diff-ai: #C6A2FF;
     --blai-diff-manual: #E0A458;
-    /* 深主题遮罩更重、投影更实，避免深色卡片在黑底上失边。 */
-    --blai-scrim: rgba(0, 0, 0, 0.66);
-    --blai-modal-shadow: rgba(0, 0, 0, 0.5);
+    /* 底抬亮后遮罩与投影不必再压那么重，卡片边界靠明度差而不是靠黑边。 */
+    --blai-scrim: rgba(0, 0, 0, 0.60);
+    --blai-modal-shadow: rgba(0, 0, 0, 0.44);
     /* 投影颜色恒为中性黑，夜间只加深浓度；所有浮层共用这组令牌。 */
-    --blai-shadow-color: rgba(0, 0, 0, 0.5);
+    --blai-shadow-color: rgba(0, 0, 0, 0.42);
     /* 深底上滚动条拇指改为浅灰，否则黑色拇指在深卡上看不见。 */
-    --blai-scrollbar-thumb: rgba(255, 255, 255, 0.28);
-    --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.44);
-    /* 深蓝底配白字，避免浅蓝底在深主题下发荧光。 */
-    --blai-dropdown-active-bg: #3D6FB4;
+    --blai-scrollbar-thumb: rgba(255, 255, 255, 0.3);
+    --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.46);
+    /* 深灰蓝底配白字，避免浅蓝底在深主题下发荧光；蓝同步去青。 */
+    --blai-dropdown-active-bg: #47567E;
     --re-escape: #FF8F40;
     --re-class: #39BAE6;
     --re-group: #D2A6FF;
@@ -105,7 +107,7 @@
     --re-anchor: #AAD94C;
     --re-error: #D95757;
     /* 深底上适当提高浓度，柔和不刺眼 */
-    --blai-test-match-bg: rgba(230, 170, 60, 0.42);
+    --blai-test-match-bg: rgba(230, 170, 60, 0.38);
 }
 
 /* 暖米：参考 Solarized Light 的米白画布再提亮一档，深灰字；强调色取 Solarized

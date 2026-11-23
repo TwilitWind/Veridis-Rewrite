@@ -41,9 +41,6 @@ export function applySubruleRewriteModeUI() {
     const rewriteMode = $('#blai-modal-sub-rewrite-mode').val() === 'ai' ? 'ai' : 'program';
     const isAiMode = rewriteMode === 'ai';
     $('#blai-modal-sub-rep-label').text(isAiMode ? '流式临时替换 / API 参考候选' : '替换为');
-    $('#blai-modal-sub-rewrite-hint').text(isAiMode
-        ? '生成中只做视觉预览，生成结束后把命中片段发给配置的 AI 接口局部改写。'
-        : '沿用当前本地替换逻辑，生成结束后直接写入消息数据。');
     $('#blai-modal-sub-ai-prompt-field').prop('hidden', !isAiMode);
     $('#blai-modal-sub-ai-prompt').prop('disabled', !isAiMode);
     $('#blai-modal-sub-ai-prompt-hint').text('只填写这条规则命中时的特殊处理；通用风格仍由全局提示词控制。');
@@ -60,7 +57,7 @@ export function runRuleTransfer(isMove) {
         .filter((v) => Number.isInteger(v) && v >= 0);
     if (validIndexes.length === 0) return;
     if (!targetPreset) {
-        showToast('请选择目标存档。', 'error');
+        showToast('请选择目标预设', undefined, 'error');
         return;
     }
     if (targetPreset === sourcePreset) {

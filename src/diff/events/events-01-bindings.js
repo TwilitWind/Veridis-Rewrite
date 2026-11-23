@@ -20,6 +20,10 @@ export function bindDiffEventHandlers(core) {
         closeDiffRelatedModal,
         showRelatedRulesForDiffElement,
         syncDiffPreferenceMenuState,
+        syncDiffFilterState,
+        setDiffFilterEnabled,
+        toggleDiffSourceFilter,
+        navigateDiffItems,
         toggleCurrentDiffRevert,
         setDiffPickMode,
         syncDiffPickConfirmState,
@@ -29,7 +33,8 @@ export function bindDiffEventHandlers(core) {
         establishDiffBaselineAtIndex,
     } = core;
 
-diffRuntimeState.diffModalClose = closeDiffModal;
+    diffRuntimeState.diffModalClose = closeDiffModal;
+    syncDiffFilterState();
 
     diffRuntimeState.diffModalRefresh = (index) => {
         if ($('#blai-diff-modal').is(':visible')) renderDiffModalContent(index);
@@ -188,7 +193,7 @@ diffRuntimeState.diffModalClose = closeDiffModal;
         e.preventDefault();
         e.stopPropagation();
         if ($(this).attr('data-missing') === 'true') {
-            showToast('这条规则已被删除或修改，无法打开。', 'error');
+            showToast('这条规则已被删除或修改，无法打开。', undefined, 'error');
             return;
         }
         const ruleIndex = Number($(this).attr('data-rule-index'));
@@ -210,6 +215,33 @@ diffRuntimeState.diffModalClose = closeDiffModal;
 
     $(document).off('click', '#blai-diff-related-modal').on('click', '#blai-diff-related-modal', function(e) {
         if (e.target && e.target.id === 'blai-diff-related-modal') closeDiffRelatedModal();
+    });
+
+
+    // 筛选只展开/收起右侧的筛选行；来源图例纯展示，不再承担筛选交互。
+    // 行内三项可多选，再点同一项取消；都不触碰勾选态与已落盘设置。
+    $(document).off('click', '#blai-diff-filter-toggle').on('click', '#blai-diff-filter-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        setDiffFilterEnabled(!diffRuntimeState.diffFilterEnabled);
+    });
+
+    $(document).off('click', '#blai-diff-filter-panel [data-blai-diff-filter-source]').on('click', '#blai-diff-filter-panel [data-blai-diff-filter-source]', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleDiffSourceFilter($(this).attr('data-blai-diff-filter-source'));
+    });
+
+    $(document).off('click', '#blai-diff-nav-prev').on('click', '#blai-diff-nav-prev', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navigateDiffItems(-1);
+    });
+
+    $(document).off('click', '#blai-diff-nav-next').on('click', '#blai-diff-nav-next', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navigateDiffItems(1);
     });
 
 

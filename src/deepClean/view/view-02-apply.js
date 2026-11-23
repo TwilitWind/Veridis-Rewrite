@@ -1,7 +1,6 @@
 /** view 的分块：apply。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { getDeepCleanReviewEntry } from '../review.js';
 import { deepCleanRuntimeState } from '../state.js';
-import { offerDeepCleanTourFirstUse } from '../../ui/tour.js';
 import { deepCleanSafeHtml, setDeepCleanWorkspaceHeader, deepCleanReviewIdentity, deepCleanBatchSummaryHtml, renderDeepCleanResourcePanel } from './view-00-selection.js';
 import { deepCleanLookaheadHtml, deepCleanProtectionLabel, renderDeepCleanReviewViewSwitcher, renderDeepCleanReviewView } from './view-01-progress.js';
 
@@ -10,7 +9,7 @@ export function renderDeepCleanReview(session, lookaheadProgress = null) {
     const total = session.reviewItemIndexes.length;
     const stopAction = '<button id="blai-deep-clean-stop" class="blai-deep-clean-header-stop" type="button"><i class="fas fa-xmark" aria-hidden="true"></i><span>停止</span></button>';
     if (total === 0) {
-        setDeepCleanWorkspaceHeader('深度净化', '审核 0 / 0', '本批没有需要审核的文本变更。', stopAction);
+        setDeepCleanWorkspaceHeader('审核 0 / 0', '本批没有需要审核的文本变更。', stopAction);
         $('#blai-deep-clean-content').html(`
             <section class="blai-deep-clean-review-shell" aria-label="深度净化审核">
                 <div class="blai-deep-clean-review-main">
@@ -34,7 +33,7 @@ export function renderDeepCleanReview(session, lookaheadProgress = null) {
     const viewMode = ['review', 'original', 'cleaned', 'final'].includes(session.viewMode)
         ? session.viewMode
         : 'review';
-    setDeepCleanWorkspaceHeader('深度净化', `审核 ${position + 1} / ${total}`, '', stopAction);
+    setDeepCleanWorkspaceHeader(`审核 ${position + 1} / ${total}`, '', stopAction);
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-review-shell" aria-label="深度净化审核">
             <div class="blai-deep-clean-review-main">
@@ -87,7 +86,7 @@ export function renderDeepCleanApplyProgress(progress = {}) {
         : '正在准备正式持久化单元';
     const session = deepCleanRuntimeState.deepCleanSelection?.currentReviewSession;
     const batch = session?.processedRun?.reviewBatch || {};
-    setDeepCleanWorkspaceHeader('深度净化 · 正式应用', '正在正式应用', '进度按已完成的真实持久化单元计算。');
+    setDeepCleanWorkspaceHeader('正在正式应用', '进度按已完成的真实持久化单元计算。');
     $('#blai-deep-clean-content').html(`
         <div class="blai-deep-clean-processing" aria-label="深度净化正式应用进度">
             <main class="blai-deep-clean-processing-main">
@@ -120,7 +119,7 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     const scopeBlocked = groupChat || !scopeCharacter;
     const scopeName = scopeCharacter?.displayLabel || '当前没有打开角色卡';
 
-    setDeepCleanWorkspaceHeader('', '深度净化', '初始选择', '', true);
+    setDeepCleanWorkspaceHeader('深度净化', '');
     // 勾选复选框会走这里整块重渲染；先记住滚动位置，重建后还原，避免一勾选就被强制拉回顶部。
     const previousScrollTop = $('#blai-deep-clean-content .blai-deep-clean-selection-scroll').get(0)?.scrollTop || 0;
     $('#blai-deep-clean-content').html(`
@@ -131,11 +130,9 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                         <section class="blai-deep-clean-section blai-deep-clean-options-section" aria-labelledby="blai-deep-clean-options-title">
                             <h3 id="blai-deep-clean-options-title">处理设置</h3>
                             <div class="blai-deep-clean-scope-card ${scopeBlocked ? 'is-blocked' : ''}">
-                                <span class="blai-deep-clean-scope-label">当前角色卡</span>
-                                <strong class="blai-deep-clean-scope-name">${deepCleanSafeHtml(scopeName)}</strong>
-                                <span class="blai-deep-clean-scope-detail">${scopeBlocked
-        ? (groupChat ? '当前处于群聊，深度净化不处理群聊。' : '请先在酒馆里打开一张角色卡并进入聊天。')
-        : `${scopeChats.length} 个聊天 · ${scopeWorldBooks.length} 个世界书`}</span>
+                                <span class="blai-deep-clean-scope-label">当前角色卡：</span>
+                                <span class="blai-deep-clean-scope-name" title="${deepCleanSafeHtml(scopeName)}">${deepCleanSafeHtml(scopeName)}</span>
+                                ${scopeBlocked ? `<span class="blai-deep-clean-scope-detail">${groupChat ? '当前处于群聊，深度净化不处理群聊。' : '请先在酒馆里打开一张角色卡并进入聊天。'}</span>` : ''}
                             </div>
                             <div class="blai-deep-clean-options">
                                 <label class="blai-deep-clean-option"><span>规则预设</span><select class="blai-deep-clean-select" data-deep-clean-option="presetName" aria-label="深度净化规则预设">${presetNames.length
@@ -189,7 +186,6 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
         detailFor: (chat) => (chat.key === inventory.current.chatKey ? '当前对话' : '其他对话'),
         showSearch: true,
     })}
-                        <p class="blai-deep-clean-shujuku-note">角色卡正文、Persona、其它角色与外部世界书、Shujuku 单元格都不在深度净化范围内。</p>
                         </div>
                     </section>
                 </div>
@@ -203,7 +199,6 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     // 恢复勾选前的滚动位置：整块 .html() 重建会把 scrollTop 归零，同步设回原值。
     const scrollEl = $('#blai-deep-clean-content .blai-deep-clean-selection-scroll').get(0);
     if (scrollEl && previousScrollTop > 0) scrollEl.scrollTop = previousScrollTop;
-    offerDeepCleanTourFirstUse();
 }
 
 

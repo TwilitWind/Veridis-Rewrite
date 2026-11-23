@@ -12,7 +12,6 @@ import { collectXmlCommentRanges } from './commentProtection.js';
 import { getOccurrenceProgramFallbackText, resolveRewriteTrackedRanges } from './matching.js';
 import { getTaskFreshnessIssue } from './task.js';
 import { recordAiRewriteDebug } from './debug.js';
-import { recordRewriteStat } from '../diff/rewriteStats.js';
 import { generationLifecycle } from '../host/generationLifecycle.js';
 
 // 负责基于 Original 的 AI/回退组合、最后一次普通 Program 处理、
@@ -104,7 +103,6 @@ function commitRewriteText(taskLike, prepared, mode) {
             afterLength: finalText.length,
             mode,
         });
-        recordRewriteStat(msg, mode === 'ai' ? 'ai' : 'program');
         return { committed: true, reason: '' };
     } catch (error) {
         atomicSwap?.release();

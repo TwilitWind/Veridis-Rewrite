@@ -44,7 +44,7 @@ export function markRulesUiDirty(dirty = true) {
 
 // 规则/AI 改动落盘后立即把当前工作区写回预设快照的钩子。
 // 由入口层注入以避开 state.js ↔ presets/application.js 的循环依赖；
-// 这样「保存合集」「开关 AI 改写」等操作即改即存，切换预设不再出现未保存确认。
+// 这样「保存分组」「开关 AI 改写」等操作即改即存，切换预设不再出现未保存确认。
 let activePresetSyncHook = null;
 export function setActivePresetSyncHook(fn) {
     activePresetSyncHook = typeof fn === 'function' ? fn : null;

@@ -146,9 +146,12 @@ export function showUnsavedChangesModal(message = '当前分组有未保存的�
         const $card = $('<div class="blai-modal-card blai-plugin-dialog-card" role="dialog" aria-modal="true"></div>').appendTo($modal);
         $('<p class="blai-plugin-dialog-text blai-dialog-body-text"></p>').text(String(message || '')).appendTo($card);
         const $actions = $('<div class="blai-modal-actions"></div>').appendTo($card);
-        $('<button type="button" class="blai-secondary-btn"></button>').text('继续编辑').appendTo($actions);
-        $('<button type="button" class="blai-secondary-btn"></button>').text('放弃改动').appendTo($actions);
-        $('<button type="button" class="blai-primary-btn"></button>').text('保存并关闭').appendTo($actions);
+        // 三个按钮的返回值用 data-choice 显式声明，不靠 blai-danger-btn / blai-primary-btn
+        // 这类样式类反推——「放弃改动」此前只挂了 secondary 类，被误判成 cancel（继续编辑），
+        // 导致点了放弃却不关闭分组弹窗。样式与结果解耦后，改样式不会再改变行为。
+        $('<button type="button" class="blai-secondary-btn" data-choice="cancel"></button>').text('继续编辑').appendTo($actions);
+        $('<button type="button" class="blai-secondary-btn" data-choice="discard"></button>').text('放弃改动').appendTo($actions);
+        $('<button type="button" class="blai-primary-btn" data-choice="save"></button>').text('保存并关闭').appendTo($actions);
 
         const close = (result) => {
             $(document).off('keydown.blaiUnsavedChanges');
@@ -156,10 +159,7 @@ export function showUnsavedChangesModal(message = '当前分组有未保存的�
             resolve(result);
         };
         $actions.on('click', 'button', function () {
-            const $btn = $(this);
-            if ($btn.hasClass('blai-danger-btn')) return close('discard');
-            if ($btn.hasClass('blai-primary-btn')) return close('save');
-            return close('cancel');
+            close($(this).attr('data-choice'));
         });
         $modal.on('click', (event) => {
             if (event.target === $modal[0]) close('cancel');

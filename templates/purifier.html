@@ -577,9 +577,8 @@
         <section id="blai-deep-clean-workspace" class="blai-deep-clean-workspace blai-modal-shell" data-theme="auto" aria-hidden="true" aria-labelledby="blai-deep-clean-title">
             <header class="blai-deep-clean-header">
                 <div class="blai-deep-clean-heading">
-                    <p class="blai-deep-clean-eyebrow" hidden></p>
                     <h2 id="blai-deep-clean-title">深度净化</h2>
-                    <p id="blai-deep-clean-description">初始选择</p>
+                    <p id="blai-deep-clean-description" hidden></p>
                 </div>
                 <div id="blai-deep-clean-header-actions" class="blai-deep-clean-header-actions"></div>
             </header>
@@ -626,7 +625,7 @@
 
                 <div class="blai-modal-actions">
                     <button id="blai-add-subrule-btn" class="blai-secondary-btn">新增规则</button>
-                    <button id="blai-edit-save" class="blai-primary-btn">保存合集</button>
+                    <button id="blai-edit-save" class="blai-primary-btn">保存分组</button>
                 </div>
             </div>
         </div>
@@ -877,17 +876,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="blai-diff-legend" aria-label="改写阶段颜色说明">
-                    <span class="blai-diff-legend-item" data-source="original"><i></i>原文本</span>
-                    <span class="blai-diff-legend-item" data-source="program"><i></i>程序改写</span>
-                    <span class="blai-diff-legend-item" data-source="ai"><i></i>AI 改写</span>
-                    <span class="blai-diff-legend-item" data-source="manual"><i></i>手动改写</span>
+                <div id="blai-diff-toolbar" class="blai-diff-toolbar" aria-label="改写来源、逐条定位与筛选">
+                    <div class="blai-diff-sources" role="group" aria-label="改写来源颜色与数量">
+                        <span class="blai-diff-source blai-diff-source-original" title="原文"><i></i>原文</span>
+                        <span class="blai-diff-source" data-blai-diff-source="program" title="程序改写"><i></i>程序 <strong id="blai-diff-stat-program">0</strong></span>
+                        <span class="blai-diff-source" data-blai-diff-source="ai" title="AI 改写"><i></i>AI <strong id="blai-diff-stat-ai">0</strong></span>
+                        <span class="blai-diff-source blai-diff-source-manual" title="插件改写后的手动改动"><i></i>手改 <strong id="blai-diff-stat-manual">0</strong></span>
+                    </div>
+                    <div class="blai-diff-nav" role="group" aria-label="逐条定位改写项">
+                        <button type="button" id="blai-diff-nav-prev" class="blai-diff-nav-btn" title="上一个改写项" aria-label="上一个改写项"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
+                        <span id="blai-diff-nav-count" class="blai-diff-nav-count" aria-live="polite">0 / 0</span>
+                        <button type="button" id="blai-diff-nav-next" class="blai-diff-nav-btn" title="下一个改写项" aria-label="下一个改写项"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+                    </div>
+                    <button type="button" id="blai-diff-filter-toggle" class="blai-diff-filter-toggle" title="展开来源筛选，可多选" aria-pressed="false" aria-expanded="false" aria-controls="blai-diff-filter-panel"><i class="fa-solid fa-filter" aria-hidden="true"></i>筛选</button>
                 </div>
-                                <div id="blai-diff-stats" class="blai-diff-stats" aria-label="改写次数统计">
-                                    <span class="blai-diff-stat"><i class="fa-solid fa-arrows-rotate"></i><strong id="blai-diff-stat-total">0</strong><span>本次改写</span></span>
-                                    <span class="blai-diff-stat" data-kind="program"><i></i><strong id="blai-diff-stat-program">0</strong><span>程序改写</span></span>
-                                    <span class="blai-diff-stat" data-kind="ai"><i></i><strong id="blai-diff-stat-ai">0</strong><span>AI 改写</span></span>
-                                </div>
+                <div id="blai-diff-filter-panel" class="blai-diff-filter-panel" role="group" aria-label="按改写来源筛选，可多选" hidden>
+                    <button type="button" class="blai-diff-filter-chip" data-blai-diff-filter-source="program" aria-pressed="false" title="只看程序改写"><i></i>程序</button>
+                    <button type="button" class="blai-diff-filter-chip" data-blai-diff-filter-source="ai" aria-pressed="false" title="只看 AI 改写"><i></i>AI</button>
+                    <button type="button" class="blai-diff-filter-chip" data-blai-diff-filter-source="manual" aria-pressed="false" title="只看插件改写后的手动改动"><i></i>手改</button>
+                </div>
                 <div id="blai-diff-pick-bar" class="blai-diff-pick-bar" hidden>
                     <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击改写项勾选要撤回的内容</span>
                     <button id="blai-diff-pick-confirm" type="button" class="blai-icon-btn blai-diff-pick-confirm" disabled>
@@ -944,7 +951,6 @@
                             <option value="program">程序替换</option>
                             <option value="ai">AI 改写</option>
                         </select>
-                        <div id="blai-modal-sub-rewrite-hint" class="blai-subrule-mode-hint" aria-live="polite"></div>
                     </div>
 
                     <div id="blai-modal-sub-ai-prompt-field" class="blai-subrule-field" style="margin-bottom: 12px;" hidden>
@@ -994,7 +1000,7 @@
                 </div>
 
                 <div class="blai-subrule-footer">
-                    <button id="blai-modal-sub-save" type="button" class="blai-primary-btn blai-subrule-footer-save">保存条目</button>
+                    <button id="blai-modal-sub-save" type="button" class="blai-primary-btn blai-subrule-footer-save">保存规则</button>
                 </div>
             </div>
         </div>

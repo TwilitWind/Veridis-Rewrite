@@ -17,7 +17,6 @@ import { queueIncrementalChatSave } from './persistence.js';
 import { markLatestMessageShujukuRewritePending } from '../shujuku/realtime.js';
 import { recordAiRewriteDebug } from '../aiRewrite/debug.js';
 import { refreshMessageDisplay } from './display.js';
-import { recordRewriteStat } from '../diff/rewriteStats.js';
 import { recordRuleHitTrace } from '../diff/ruleHitTrace.js';
 
 /**
@@ -144,7 +143,6 @@ export function cleanseMessageDataAtIndex(index, options = {}) {
             details.afterLength = typeof msg.mes === 'string' ? msg.mes.length : 0;
         }
         recordAiRewriteDebug('program-commit', details);
-        recordRewriteStat(msg, 'program');
     }
     return changed;
 }

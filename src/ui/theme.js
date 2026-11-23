@@ -64,6 +64,6 @@ export function bindThemeEvents() {
         applyThemeMode(mode);
         closeMenuPopover(document.getElementById('blai-theme-menu'));
         saveSettingsDebounced();
-        showToast(`已切换主题：${themeByMode.get(normalizeThemeMode(mode)).label}`, 'success');
+        showToast(`已切换主题：${themeByMode.get(normalizeThemeMode(mode)).label}`, undefined, 'success');
     });
 }

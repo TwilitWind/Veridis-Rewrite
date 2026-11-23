@@ -58,13 +58,13 @@ export function saveActivePresetSnapshot(options = {}) {
     const settings = extension_settings[extensionName];
     const active = String(settings.activePreset || '');
     if (!active) {
-        if (options.toast !== false) showToast('当前为临时规则，请点击“新建”保存为新存档。', 'warning');
+        if (options.toast !== false) showToast('当前为临时预设，请点「新建」保存。', undefined, 'warning');
         return false;
     }
     settings.presets[active] = buildPresetEntry(settings.rules || [], getCurrentPresetAiRewriteSettings(settings.aiRewrite));
     saveSettingsDebounced();
     markRulesDataDirty({ rulesUi: false });
-    if (options.toast !== false) showToast('保存成功', 'success');
+    if (options.toast !== false) showToast('已保存', undefined, 'success');
     return true;
 }
 

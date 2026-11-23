@@ -70,21 +70,17 @@ export function renderDeepCleanResourcePanel({ kind, title, items, selectionKeys
         </section>
     `;
 }
-export function setDeepCleanWorkspaceHeader(eyebrow, title, description, actionHtml = '', showTourHelp = false) {
-    $('#blai-deep-clean-workspace .blai-deep-clean-eyebrow').text(eyebrow).prop('hidden', !eyebrow);
+export function setDeepCleanWorkspaceHeader(title, description, actionHtml = '') {
     $('#blai-deep-clean-title').text(title).prop('hidden', !title);
     $('#blai-deep-clean-description').text(description).prop('hidden', !description);
-    const tourHelp = showTourHelp
-        ? '<button id="blai-deep-clean-tour-help" type="button" class="blai-deep-clean-header-stop" title="Deep Clean 导览" aria-label="Deep Clean 导览"><i class="fas fa-question" aria-hidden="true"></i></button>'
-        : '';
-    $('#blai-deep-clean-header-actions').html(`${tourHelp}${actionHtml}`);
+    $('#blai-deep-clean-header-actions').html(actionHtml);
 }
 
 export function openDeepCleanInitialSelection(options = {}) {
     $('#blai-deep-clean-backdrop').addClass('blai-is-open').attr('aria-hidden', 'false');
     $('#blai-deep-clean-workspace').addClass('blai-is-open').attr('aria-hidden', 'false');
     if (options.preserveContent === true) return;
-    setDeepCleanWorkspaceHeader('', '深度净化', '初始选择');
+    setDeepCleanWorkspaceHeader('深度净化', '');
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-state blai-deep-clean-loading-state" aria-label="正在读取可选资源">
             <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
@@ -99,7 +95,7 @@ export function closeDeepCleanInitialSelection() {
 }
 
 export function showDeepCleanInitialSelectionError(error) {
-    setDeepCleanWorkspaceHeader('深度净化 · 错误', '深度净化无法完成', '请查看错误信息后结束当前工作区。');
+    setDeepCleanWorkspaceHeader('深度净化无法完成', '请查看错误信息后结束当前工作区。');
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-state blai-deep-clean-error-state" aria-label="深度净化错误">
             <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
@@ -189,7 +185,7 @@ export function renderDeepCleanScanProgress(progress = {}) {
         state: index < activeIndex ? 'complete' : (index === activeIndex ? 'active' : 'pending'),
     }));
     const frozenItems = deepCleanRuntimeState.deepCleanSelection?.run?.contentItems || [];
-    setDeepCleanWorkspaceHeader('深度净化 · 扫描', '深度净化进行中', '扫描冻结资源；不会写入正式数据。');
+    setDeepCleanWorkspaceHeader('深度净化进行中', '扫描冻结资源；不会写入正式数据。');
     $('#blai-deep-clean-content').html(`
         <div class="blai-deep-clean-processing" aria-label="深度净化扫描进度">
             <main class="blai-deep-clean-processing-main">
@@ -240,7 +236,6 @@ export function renderDeepCleanScanResult(scanResult = {}) {
     const directProgramApply = deepCleanRuntimeState.deepCleanSelection?.run?.input?.processingMode === 'program'
         && deepCleanRuntimeState.deepCleanSelection?.run?.input?.programApplyPolicy === 'direct';
     setDeepCleanWorkspaceHeader(
-        '深度净化 · 扫描结果',
         '扫描结果',
         directProgramApply ? '确认后按批处理并直接写入。' : '确认后逐批生成审核。',
     );

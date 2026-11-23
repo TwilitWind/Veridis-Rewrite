@@ -10,7 +10,8 @@
        line-height/white-space 无对抗，实测移除 !important 计算值不变。 */
     display: inline-flex !important;
     align-items: center !important;
-    gap: var(--blai-space-6) !important;
+    /* 与酒馆原生魔法棒条目一致：原生 #extensionsMenu 的 column-gap 是 10px（双端相同）。 */
+    gap: var(--blai-space-10) !important;
     line-height: 1;
     white-space: nowrap;
 }

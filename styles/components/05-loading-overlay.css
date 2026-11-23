@@ -4,7 +4,7 @@
     position: fixed;
     inset: 0;
     width: 100vw;
-    height: 100vh;
+    height: var(--blai-viewport-h);
     height: var(--blai-viewport-h);
     background: color-mix(in srgb, var(--bg-base) 12%, transparent);
     z-index: var(--blai-z-loading);

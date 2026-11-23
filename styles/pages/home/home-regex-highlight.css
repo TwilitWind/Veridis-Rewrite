@@ -482,8 +482,8 @@
     position: fixed;
     inset: 0;
     width: 100vw;
-    height: 100vh;
-    height: 100dvh;
+    height: var(--blai-viewport-h);
+    height: var(--blai-viewport-h);
     align-items: center;
     justify-content: center;
     padding: max(var(--blai-space-18), env(safe-area-inset-top)) max(var(--blai-space-18), env(safe-area-inset-right)) max(var(--blai-space-18), env(safe-area-inset-bottom)) max(var(--blai-space-18), env(safe-area-inset-left));

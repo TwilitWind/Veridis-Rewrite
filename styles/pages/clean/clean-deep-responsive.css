@@ -87,10 +87,6 @@
     gap: var(--blai-space-8);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-eyebrow {
-    display: none;
-}
-
 #blai-deep-clean-workspace .blai-deep-clean-selection-scroll {
     padding: var(--blai-space-10) var(--blai-space-12);
 }
@@ -131,11 +127,6 @@
 #blai-deep-clean-workspace .blai-deep-clean-search-field {
     width: 100%;
     min-width: 0;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-resource-summary {
-    justify-content: space-between;
-    white-space: normal;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice-copy {

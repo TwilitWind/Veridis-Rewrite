@@ -4,7 +4,8 @@
 
 :root {
   /* 挂在 :root 上：弹层、toast、巡览层都不在插件容器内，仍要能取到刻度。 */
-  /* 视口高度：手机端锁 small viewport，软键盘弹出时布局高度不重排。 */
+  /* 视口高度：手机端锁 small viewport；软键盘弹出时由 ui/viewportHeight.js
+     临时改成本变量的具体像素值，阻止宿主 interactive-widget=resizes-content 挤压全屏弹窗。 */
   --blai-viewport-h: 100vh;
   --blai-viewport-h: 100svh;
   /* 间距：padding / margin / gap / inset 共用一套刻度。 */

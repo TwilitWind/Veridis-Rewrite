@@ -16,9 +16,9 @@ import { renderDiffDocumentInBackground } from '../background.js';
 import { collectAiScopeSegments } from '../../aiRewrite/matching.js';
 import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from '../../chat/messageBranch.js';
 import { getMessageDiffMeta, isMessageDiffReverted, setMessageDiffReverted, writeMessageDiffAiStage, writeMessageDiffProgram } from '../messageMeta.js';
+import { collectDiffStats } from '../diffStats.js';
 import { showRelatedRulesForDiffElement } from './diffRelatedRules.js';
 import { computeRevertedText } from '../revertMerge.js';
-import { getRewriteStats } from '../rewriteStats.js';
 import { establishDiffBaselineAtIndex } from '../baseline.js';
 import { syncRelatedRuleRuntime } from '../preferences.js';
 import { assignDiffRevertItemIds, collectPickedDiffItems, computePickedRevert } from '../pickRevert.js';
@@ -239,11 +239,13 @@ export function createDiffEventsCore() {
     };
 
 
+    // 工具行数字走统一口径：程序/AI 看当前差异项，手改看当前正文相对插件产出的连续改动段。
+    // 口径实现在 diff/diffStats.js，这里只回显。
     const syncDiffStats = (msg) => {
-        const stats = getRewriteStats(msg);
-        $('#blai-diff-stat-total').text(String(stats.total));
+        const stats = collectDiffStats(msg, document.getElementById('blai-diff-modal-content'));
         $('#blai-diff-stat-program').text(String(stats.program));
         $('#blai-diff-stat-ai').text(String(stats.ai));
+        $('#blai-diff-stat-manual').text(String(stats.manual));
     };
 
 
@@ -256,6 +258,118 @@ export function createDiffEventsCore() {
         $('#blai-diff-pick-hint').text(count > 0
             ? `已勾选 ${count} 个改写项`
             : '点击改写项勾选要撤回的内容');
+    };
+
+
+    // 筛选与逐条定位：改写项已由 assignDiffRevertItemIds 按 del/ins 配对编号，
+    // 这里按编号收集「当前可见」的项，供定位箭头与计数共用。隐藏项（被来源筛选掉）不参与。
+    const getVisibleRevertItems = () => {
+        const content = document.getElementById('blai-diff-modal-content');
+        if (!content) return [];
+        const grouped = new Map();
+        content.querySelectorAll('[data-blai-revert-item]').forEach((node) => {
+            const id = node.getAttribute('data-blai-revert-item');
+            if (!id) return;
+            // offsetParent 为 null：元素自身或祖先被 display:none（筛选隐藏）。
+            if (node.offsetParent === null) return;
+            let group = grouped.get(id);
+            if (!group) { group = []; grouped.set(id, group); }
+            group.push(node);
+        });
+        return Array.from(grouped.values()).map(nodes => ({
+            id: nodes[0].getAttribute('data-blai-revert-item'),
+            nodes,
+        }));
+    };
+
+
+    const syncDiffNavState = () => {
+        const items = getVisibleRevertItems();
+        const total = items.length;
+        const raw = diffRuntimeState.diffNavIndex;
+        const index = total === 0 ? -1 : Math.min(Math.max(raw, -1), total - 1);
+        diffRuntimeState.diffNavIndex = index;
+        $('#blai-diff-nav-count').text(`${index < 0 ? 0 : index + 1} / ${total}`);
+        $('#blai-diff-nav-prev').prop('disabled', total === 0);
+        $('#blai-diff-nav-next').prop('disabled', total === 0);
+        return items;
+    };
+
+
+    const clearNavHighlight = () => {
+        $('#blai-diff-modal-content .blai-diff-nav-current').removeClass('blai-diff-nav-current');
+    };
+
+
+    // 筛选开关只负责展开/收起筛选行；行内三项可多选，隐藏未选中的来源块。
+    // 一项都没选＝不筛选；关闭开关会清空选择。选中态只给背景胶囊，不加边框。
+    const syncDiffFilterState = () => {
+        const enabled = diffRuntimeState.diffFilterEnabled === true;
+        const selected = diffRuntimeState.diffSelectedSources;
+        const panel = document.getElementById('blai-diff-filter-panel');
+        if (panel) panel.hidden = !enabled;
+        document.getElementById('blai-diff-modal')?.setAttribute('data-diff-filter-enabled', String(enabled));
+        $('#blai-diff-filter-toggle')
+            .toggleClass('is-active', enabled)
+            .attr('aria-pressed', enabled ? 'true' : 'false')
+            .attr('aria-expanded', enabled ? 'true' : 'false');
+        $('#blai-diff-filter-panel [data-blai-diff-filter-source]').each((_, chip) => {
+            const active = selected.includes(chip.getAttribute('data-blai-diff-filter-source'));
+            chip.classList.toggle('is-active', active);
+            chip.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        // 整块重渲染后重建可见集合；未选任何来源时不加隐藏类。
+        $('#blai-diff-modal-content [data-diff-section]').each((_, node) => {
+            const section = node.getAttribute('data-diff-section');
+            const hide = enabled && selected.length > 0 && !selected.includes(section);
+            node.classList.toggle('blai-diff-source-hidden', hide);
+        });
+    };
+
+    const resetDiffFilterVisibility = () => {
+        clearNavHighlight();
+        diffRuntimeState.diffNavIndex = -1;
+        syncDiffNavState();
+        // 被筛掉的项若已勾选，确认撤回会误伤隐藏内容；一并清掉并刷新确认按钮。
+        $('#blai-diff-modal-content .blai-diff-change-picked').each((_, node) => {
+            if (node.offsetParent === null) node.classList.remove('blai-diff-change-picked');
+        });
+        syncDiffPickConfirmState();
+    };
+
+    const setDiffFilterEnabled = (enabled) => {
+        diffRuntimeState.diffFilterEnabled = enabled === true;
+        if (!diffRuntimeState.diffFilterEnabled) diffRuntimeState.diffSelectedSources = [];
+        syncDiffFilterState();
+        resetDiffFilterVisibility();
+    };
+
+    const toggleDiffSourceFilter = (source) => {
+        if (!diffRuntimeState.diffFilterEnabled) return;
+        if (!['program', 'ai', 'manual'].includes(source)) return;
+        const selected = diffRuntimeState.diffSelectedSources;
+        const at = selected.indexOf(source);
+        if (at >= 0) selected.splice(at, 1);
+        else selected.push(source);
+        syncDiffFilterState();
+        resetDiffFilterVisibility();
+    };
+
+
+    const navigateDiffItems = (delta) => {
+        const items = syncDiffNavState();
+        if (!items.length) return;
+        const current = diffRuntimeState.diffNavIndex;
+        // 未定位时：向下取第一项、向上取最后一项；到两端后回绕，形成循环浏览。
+        const next = current < 0
+            ? (delta > 0 ? 0 : items.length - 1)
+            : (current + delta + items.length) % items.length;
+        diffRuntimeState.diffNavIndex = next;
+        clearNavHighlight();
+        const target = items[next];
+        target.nodes.forEach(node => node.classList.add('blai-diff-nav-current'));
+        target.nodes[0]?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        syncDiffNavState();
     };
 
 
@@ -361,6 +475,9 @@ export function createDiffEventsCore() {
         diffRuntimeState.diffPickMode = false;
         syncDiffRelatedModeState();
         syncDiffPickModeState(null);
+        diffRuntimeState.diffFilterEnabled = false;
+        diffRuntimeState.diffSelectedSources = [];
+        syncDiffFilterState();
         $('#blai-diff-modal').hide();
         diffRuntimeState.currentMessage = null;
     };
@@ -370,7 +487,6 @@ export function createDiffEventsCore() {
         cancelComparison();
         const msg = getDiffMessageByIndex(index);
         if (!msg) { closeDiffModal(); return; }
-        syncDiffStats(msg);
         const meta = getMessageDiffMeta(msg);
         const mode = extension_settings[extensionName].diffViewMode || 'snippet';
         closeDiffRelatedModal();
@@ -378,14 +494,21 @@ export function createDiffEventsCore() {
         syncDiffModeToggleState(mode);
         syncDiffRevertToggleState(msg);
         const contentEl = $('#blai-diff-modal-content');
+        // 每次打开/重渲染先复位定位：改写项集合即将重建，旧高亮与序号都失效。
+        clearNavHighlight();
+        diffRuntimeState.diffNavIndex = -1;
         if (isMessageDiffReverted(msg)) {
             const current = !meta ? '历史对比文本已超出保留范围。' : msg.mes === meta.originalMes ? '当前显示为原始文本。' : '当前文本与保留原文不同。';
-            contentEl.html(`<div class="blai-diff-empty"><i class="fas fa-shield-halved blai-diff-reverted-icon"></i>此消息已撤回并处于免净化保护状态，${current}点击 <i class="fas fa-wand-magic-sparkles blai-diff-inline-icon"></i> 重新净化文本。</div>`);
+            contentEl.html(`<div class="blai-diff-empty"><i class="fas fa-shield-halved" aria-hidden="true"></i>此消息已撤回并处于免净化保护状态，${current}点击 <i class="fas fa-wand-magic-sparkles blai-diff-inline-icon"></i> 重新净化文本。</div>`);
+            syncDiffStats(msg);
+            syncDiffNavState();
             syncDiffPickModeState(msg);
             return;
         }
         if (!meta) {
-            contentEl.html('<div class="blai-diff-empty">当前消息尚未经过净化。若这条正文已经写好，可把它作为原文立即执行一次净化：<button id="blai-diff-baseline-btn" type="button" class="blai-icon-btn blai-diff-baseline-btn">按当前正文建立净化基线</button></div>');
+            contentEl.html('<div class="blai-diff-empty"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>当前消息尚未经过净化。若这条正文已经写好，可把它作为原文立即执行一次净化：<button id="blai-diff-baseline-btn" type="button" class="blai-icon-btn blai-diff-baseline-btn">按当前正文建立净化基线</button></div>');
+            syncDiffStats(msg);
+            syncDiffNavState();
             syncDiffPickModeState(msg);
             return;
         }
@@ -400,26 +523,35 @@ export function createDiffEventsCore() {
         const controller = new AbortController();
         comparisonController = controller;
         const branchKey = getMessageDiffBranchKey(msg);
-        contentEl.html('<div class="blai-diff-empty">正在比较文本…</div>');
+        contentEl.html('<div class="blai-diff-empty"><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>正在比较文本…</div>');
         let rendered;
         try {
             rendered = await renderDiffDocumentInBackground(pairs, mode, { signal: controller.signal });
         } catch (error) {
             if (controller.signal.aborted) return;
-            contentEl.html(`<div class="blai-diff-empty">文本比较失败：${escapeHtml(error.message)}</div>`);
+            contentEl.html(`<div class="blai-diff-empty"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>文本比较失败：${escapeHtml(error.message)}</div>`);
+            syncDiffStats(msg);
+            syncDiffNavState();
             return;
         } finally {
             if (comparisonController === controller) comparisonController = null;
         }
         if (controller.signal.aborted || diffRuntimeState.currentMessage !== msg
             || getDiffMessageByIndex(index) !== msg || getMessageDiffBranchKey(msg) !== branchKey) return;
+        // 手改提示是「手改」来源在弹窗里的可见载体，带上 data-diff-section 供筛选隐藏。
         const notice = omitVariableUpdates(msg.mes) !== omitVariableUpdates(meta.programMes)
-            ? '<div class="blai-diff-empty">当前消息已被手动编辑；撤回净化会保留你的改动，并把记录阶段里的改写尽量还原为原文（找不到的替换会跳过）。</div>' : '';
-        const empty = '<div class="blai-diff-empty">当前消息没有改写项。</div>';
+            ? '<div class="blai-diff-empty" data-diff-section="manual"><i class="fa-solid fa-pen" aria-hidden="true"></i>当前消息已被手动编辑；撤回净化会保留你的改动，并把记录阶段里的改写尽量还原为原文（找不到的替换会跳过）。</div>' : '';
+        const empty = '<div class="blai-diff-empty"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>当前消息没有改写项。</div>';
         contentEl.html(notice + (mode === 'full'
             ? `<div class="blai-diff-full-text">${rendered.join('') || empty}</div>`
             : rendered.join('<hr class="blai-diff-divider">') || empty));
         assignDiffRevertItemIds($('#blai-diff-modal-content').get(0));
+        syncDiffStats(msg);
+        // 渲染完按当前筛选/定位状态重建：来源筛选用属性挂在弹窗上由 CSS 隐藏块，
+        // 定位高亮因 DOM 重建需清掉并复位，避免指向已不存在的节点。
+        syncDiffFilterState();
+        diffRuntimeState.diffNavIndex = -1;
+        syncDiffNavState();
         syncDiffPickModeState(msg);
     }
 
@@ -434,6 +566,10 @@ export function createDiffEventsCore() {
         syncDiffRelatedModeState,
         showRelatedRulesForDiffElement,
         syncDiffPreferenceMenuState,
+        syncDiffFilterState,
+        setDiffFilterEnabled,
+        toggleDiffSourceFilter,
+        navigateDiffItems,
         toggleCurrentDiffRevert,
         setDiffPickMode,
         syncDiffPickConfirmState,

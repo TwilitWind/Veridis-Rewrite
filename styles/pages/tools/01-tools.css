@@ -280,7 +280,7 @@
 @media (max-width: 600px) {#blai-zh-dictionary-modal > .blai-zh-dict-card {
     width: 100%;
     max-width: var(--blai-size-420);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     border-radius: var(--blai-radius-lg);
 }}
 

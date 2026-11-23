@@ -186,7 +186,8 @@ export function commitRuleSearchKeyword() {
 
 export function saveCurrentEditingRule(options = {}) {
     const {
-        toastMessage = '合集保存成功',
+        toastMessage = '已保存规则分组',
+        toastType = 'success',
         focusLatest = true,
     } = options;
     const { extension_settings, saveSettingsDebounced } = getAppContext();
@@ -196,7 +197,7 @@ export function saveCurrentEditingRule(options = {}) {
     const validSubrules = rulesUiState.currentEditingSubrules.filter(sub => sub.targets && sub.targets.length > 0);
 
     if (validSubrules.length === 0) {
-        showToast('合集内至少需要保留一组有效映射！', 'error');
+        showToast('规则分组至少需要一条有效的规则。', undefined, 'error');
         return { ok: false };
     }
 
@@ -228,7 +229,7 @@ export function saveCurrentEditingRule(options = {}) {
         }, 50);
     }
     renderRuleSearchModal();
-    if (toastMessage) showToast(toastMessage);
+    if (toastMessage) showToast(toastMessage, undefined, toastType);
     return { ok: true, isCreatingNewRule, rule: newRule };
 }
 
@@ -282,7 +283,7 @@ export function validateRegexTargetField(options = {}) {
 
     const uiMessage = applyRegexTargetValidationError(result.error);
     if (options.focus === true) $('#blai-modal-sub-target').trigger('focus');
-    if (options.toast === true) showToast(`正则规则有误：${uiMessage}`, 'error');
+    if (options.toast === true) showToast(`正则写法有误：${uiMessage}`, undefined, 'error');
     return { ...result, uiMessage };
 }
 

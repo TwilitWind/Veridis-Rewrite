@@ -23,8 +23,13 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
     if (!valid) return { text: source, ranges: trackedRanges, valid: false };
 
     const onHit = typeof options.onRuleHit === 'function' ? options.onRuleHit : null;
+    // 命中回查要按原文坐标定位。每个处理器的回调偏移只反映它自己的输入，
+    // 必须用「已完成处理器在该位置之前的替换」把坐标还原，不能用全局总位移。
+    const replacementEvents = [];
     (Array.isArray(processors) ? processors : []).forEach((proc) => {
         if (!proc?.regex) return;
+        const priorEvents = [...replacementEvents];
+        const processorEvents = [];
         let priorReplacementDelta = 0;
         text = text.replace(proc.regex, (match, ...args) => {
             const sourceStart = getReplaceCallbackOffset(args);
@@ -40,6 +45,11 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
                 occurrenceStart: sourceStart,
             }) ?? '');
             if (onHit) {
+                let deltaBefore = 0;
+                for (const event of priorEvents) {
+                    if (event.position < sourceStart) deltaBefore += event.delta;
+                }
+                const originalStart = sourceStart - deltaBefore;
                 for (const source of getProcessorHitSources(proc, match)) {
                     onHit({
                         fingerprint: source.fingerprint,
@@ -51,14 +61,19 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
                         scopeStart: Number(options.scopeStart) || 0,
                         start,
                         end,
+                        originalStart,
+                        originalEnd: originalStart + String(match).length,
                     });
                 }
             }
             protectedRanges = projectTrackedRangesThroughReplacement(protectedRanges, start, end, replacement.length);
             trackedRanges = projectTrackedRangesThroughReplacement(trackedRanges, start, end, replacement.length);
-            priorReplacementDelta += replacement.length - String(match).length;
+            const delta = replacement.length - String(match).length;
+            processorEvents.push({ position: sourceStart, delta });
+            priorReplacementDelta += delta;
             return replacement;
         });
+        replacementEvents.push(...processorEvents);
     });
     return { text, ranges: trackedRanges, valid };
 }
@@ -305,7 +320,8 @@ export function collectRuleHits(originalText) {
     applyScopedReplacements(source, { onRuleHit: (hit) => hits.push(hit) });
     const seen = new Set();
     return hits.filter((hit) => {
-        const key = `${hit.fingerprint}|${hit.scopeStart}|${hit.start}|${hit.matchedText}`;
+        // 痕迹按原文位置去重：start 是当前处理链坐标，同一处命中会被后续替换反复挪动。
+        const key = `${hit.fingerprint}|${hit.scopeStart}|${hit.originalStart ?? hit.start}|${hit.matchedText}`;
         if (seen.has(key)) return false;
         seen.add(key);
         return true;

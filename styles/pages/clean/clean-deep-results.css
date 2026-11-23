@@ -316,7 +316,7 @@
     justify-content: space-between;
     gap: var(--blai-space-18);
     border-top: var(--blai-border-1) solid var(--border-color);
-    background: color-mix(in srgb, var(--bg-base) 52%, var(--bg-surface));
+    background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-review-apply p {

@@ -129,9 +129,25 @@
         box-shadow: none !important;
     }
 
-    :is(#blai-purifier-popup, .blai-modal-shell) :is(button, .blai-proxy-field):is(:focus-visible, :active),
+    /* 手机端不再给无边框按钮画 inset ring：底部导航、图标按钮、工具按钮点击时
+       只保留按下位移与文字/图标色，不再冒出一圈高亮边框。
+       有边框的 proxy-field / replacement chip 仍保留一层内描边选中态。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) button:focus-visible {
+        outline: none !important;
+    }
+
+    :is(#blai-purifier-popup, .blai-modal-shell) .blai-proxy-field:is(:focus-visible, :active),
     :is(#blai-purifier-popup, .blai-modal-shell) .field.blai-proxy-field.is-active,
     .blai-regex-replacement-chip.is-active {
+        border-color: transparent !important;
+        background-color: var(--bg-surface) !important;
+        outline: none !important;
+        box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+    }
+
+    /* 输入框/文本域/下拉同样只保留一层内描边。部分控件同时有 border-color:accent
+       和 inset ring，手机端会看成两条线；这里统一压成单环，圆角跟随控件自身。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) :is(input, textarea, select):is(:focus, :focus-visible) {
         border-color: transparent !important;
         background-color: var(--bg-surface) !important;
         outline: none !important;

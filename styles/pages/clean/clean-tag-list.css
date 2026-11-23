@@ -180,7 +180,7 @@
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
     position: fixed;
-    max-height: calc(100vh - var(--blai-size-16));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-16));
     overflow-y: auto;
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);

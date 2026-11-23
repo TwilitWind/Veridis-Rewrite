@@ -25,7 +25,8 @@ function normalizeHit(hit = {}) {
         matchedText: String(hit.matchedText || ''),
         replacement: String(hit.replacement ?? ''),
         scopeStart: Number(hit.scopeStart) || 0,
-        start: Number(hit.start) || 0,
+        // 统一存原文坐标：命中回查要对齐差异片段，不能用处理链里被前序替换挪动过的坐标。
+        start: Number(hit.originalStart ?? hit.start) || 0,
     };
 }
 
@@ -87,10 +88,21 @@ export function findHitsForChange(trace = [], change = {}) {
     const oldEnd = Number(change.oldEnd);
     const hasRange = Number.isFinite(oldStart) && Number.isFinite(oldEnd);
 
+    // 只按替换结果相同会把「都删成空」的规则串成一组；命中词必须真的属于这段差异。
+    const isTextCompatible = (hit) => {
+        const matched = String(hit.matchedText || '').trim();
+        const replacement = String(hit.replacement || '').trim();
+        if (deleted && matched && !deleted.includes(matched)) return false;
+        if (inserted && replacement && !inserted.includes(replacement)) return false;
+        return true;
+    };
+
     const exact = trace.filter((hit) => {
         const matched = String(hit.matchedText || '').trim();
         const replacement = String(hit.replacement || '').trim();
-        return (deleted && matched === deleted) || (inserted && replacement === inserted);
+        const matchedDelete = deleted && matched === deleted;
+        const matchedReplacement = inserted && !matchedDelete && replacement === inserted;
+        return isTextCompatible(hit) && (matchedDelete || matchedReplacement);
     });
     if (exact.length > 0) return dedupeHits(exact);
 
@@ -98,7 +110,8 @@ export function findHitsForChange(trace = [], change = {}) {
         const byRange = trace.filter((hit) => {
             const absoluteStart = hit.scopeStart + hit.start;
             const absoluteEnd = absoluteStart + String(hit.matchedText || '').length;
-            return absoluteStart <= oldEnd && absoluteEnd >= oldStart;
+            return isTextCompatible(hit)
+                && absoluteStart <= oldEnd && absoluteEnd >= oldStart;
         });
         if (byRange.length > 0) return dedupeHits(byRange);
     }

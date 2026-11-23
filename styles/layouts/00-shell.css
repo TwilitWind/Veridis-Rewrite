@@ -520,19 +520,22 @@
 }}
 
 @media (max-width: 600px) {
+/* 手机底栏只留一行图标+短标签，不再额外抬高 48px；键盘弹出时也不该吃掉正文高度。 */
 #blai-purifier-popup.blai-app-shell .bottom-nav {
-    --blai-nav-minh: var(--blai-size-48);
-    --blai-nav-pad-y: var(--blai-space-2);
+    --blai-nav-minh: var(--blai-size-40);
+    --blai-nav-pad-y: var(--blai-space-1);
     --blai-nav-pad-x: var(--blai-space-6);
 }
 
 #blai-purifier-popup.blai-app-shell .bottom-nav .nav-item {
-    min-height: var(--blai-size-40);
+    min-height: var(--blai-size-34);
+    padding: 0;
+    gap: var(--blai-space-1);
     font-size: var(--blai-font-9);
 }
 
 #blai-purifier-popup.blai-app-shell .bottom-nav .nav-item > i {
-    font-size: var(--blai-font-15);
+    font-size: var(--blai-font-14);
 }}
 
 @media (min-width: 601px) {

@@ -8,6 +8,11 @@ export const diffRuntimeState = {
     diffModalClose: null,
     diffRelatedRuleMode: false,
     diffPickMode: false,
+    // 改写来源筛选与逐条定位：会话内状态，不持久化（跟随每次打开弹窗重建）。
+    diffFilterEnabled: false,
+    // 多选来源：空数组表示不筛选；关闭筛选行时清空。
+    diffSelectedSources: [],
+    diffNavIndex: -1,
 };
 
 export function getCurrentDiffIndex() {
@@ -30,6 +35,9 @@ export function resetDiffRuntimeState() {
     diffRuntimeState.currentMessage = null;
     diffRuntimeState.diffRelatedRuleMode = false;
     diffRuntimeState.diffPickMode = false;
+    diffRuntimeState.diffFilterEnabled = false;
+    diffRuntimeState.diffSelectedSources = [];
+    diffRuntimeState.diffNavIndex = -1;
 }
 
 export function getDiffComparisonForMessage(index, section) {

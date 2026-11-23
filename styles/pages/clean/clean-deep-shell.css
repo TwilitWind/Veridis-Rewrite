@@ -91,7 +91,7 @@
     justify-content: space-between;
     gap: var(--blai-space-20);
     border-bottom: var(--blai-border-1) solid var(--border-color);
-    background: var(--bg-base);
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-heading {
@@ -103,12 +103,6 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-eyebrow, #blai-deep-clean-workspace .blai-deep-clean-header h2, #blai-deep-clean-workspace .blai-deep-clean-header p, #blai-deep-clean-workspace .blai-deep-clean-content p, #blai-deep-clean-workspace .blai-deep-clean-content h3, #blai-deep-clean-workspace .blai-deep-clean-content h4 {
     margin: 0;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-eyebrow {
-    color: var(--accent-ink);
-    font: var(--blai-weight-bold) 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
-    letter-spacing: .09em;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-header h2 {
@@ -147,12 +141,12 @@
     color: var(--text-main);
 }
 
-/* 画布色打底，内部模块用容器色分区，层级一眼可辨。 */
+/* 工作区只用一层容器色，内部模块靠边框分区。 */
 #blai-deep-clean-workspace .blai-deep-clean-content {
     min-width: 0;
     min-height: 0;
     overflow: hidden;
-    background: var(--bg-base);
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace :is(.blai-deep-clean-loading, .blai-deep-clean-error, .blai-deep-clean-empty) {
@@ -226,14 +220,14 @@
     gap: var(--blai-space-12);
 }
 
-/* 每个模块是一张容器卡：容器背景色 + 圆角 + 内边距，落在画布色上形成分区。 */
+/* 每个模块与工作区同色，只用边框 + 圆角 + 内边距分区。 */
 #blai-deep-clean-workspace .blai-deep-clean-section {
     min-width: 0;
     margin-bottom: var(--blai-space-8);
     padding: var(--blai-space-12) var(--blai-space-14);
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-lg);
-    background: var(--bg-surface);
+    background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-section h3 {

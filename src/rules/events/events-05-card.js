@@ -92,7 +92,7 @@ export function bindRuleCardEvents() {
             markRulesDataDirty();
             saveSettingsDebounced();
             renderTagsPreserveBatchSelection();
-            showToast(copies.length > 1 ? `已复制 ${copies.length} 个合集` : '合集复制成功', 'success');
+            showToast(copies.length > 1 ? `已复制 ${copies.length} 个规则` : '已复制规则', undefined, 'success');
             return;
         }
 
@@ -109,7 +109,7 @@ export function bindRuleCardEvents() {
                 markRulesDataDirty();
                 saveSettingsDebounced();
                 renderTagsPreserveBatchSelection();
-                showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个合集` : '合集删除成功', 'success');
+                showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个规则` : '已删除规则', undefined, 'success');
             }
         }
     });
