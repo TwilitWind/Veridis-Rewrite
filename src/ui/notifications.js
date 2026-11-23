@@ -2,11 +2,19 @@
 // 退场时长与 --blai-duration-fast 保持一致，避免动画未播完就被移除。
 const TOAST_EXIT_MS = 120;
 
-export function showToast(message, description) {
+// 语义类型 → Font Awesome 图标；默认 info。
+const TOAST_ICONS = {
+    success: 'fa-circle-check',
+    error: 'fa-circle-xmark',
+    warning: 'fa-triangle-exclamation',
+    info: 'fa-circle-info',
+};
+
+export function showToast(message, description, type = 'info') {
     $('.blai-toast').remove();
     const themeMode = String($('#blai-purifier-popup').attr('data-theme') || 'auto');
-    // 替换为 100% 兼容的 fas fa-exclamation-circle 图标
-    const $toast = $(`<div class="blai-toast" data-theme="${themeMode}" data-tt-mobile-surface="free-window" role="status" aria-live="polite"><i class="fas fa-exclamation-circle"></i><span class="blai-toast-text"></span></div>`);
+    const semantic = Object.hasOwn(TOAST_ICONS, type) ? type : 'info';
+    const $toast = $(`<div class="blai-toast" data-type="${semantic}" data-theme="${themeMode}" data-tt-mobile-surface="free-window" role="status" aria-live="polite"><i class="fas ${TOAST_ICONS[semantic]}"></i><span class="blai-toast-text"></span></div>`);
     $toast.find('.blai-toast-text').text(String(message || ''));
     const hasDescription = description !== undefined && description !== null && String(description);
     if (hasDescription) {

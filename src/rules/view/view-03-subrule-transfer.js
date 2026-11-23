@@ -58,7 +58,7 @@ export function openSubruleTransferModal(index) {
     if (!Number.isInteger(position) || position < 0 || position >= rulesUiState.currentEditingSubrules.length) return;
     const { targets, presetNames, activePreset } = collectTransferTargets();
     if (targets.length === 0) {
-        showToast('没有可用的目标分组。请先新建一个分组或预设。');
+        showToast('没有可用的目标分组。请先新建一个分组或预设。', 'error');
         return;
     }
     rulesUiState.currentTransferSubruleIndex = position;
@@ -88,7 +88,7 @@ export function goSubruleTransferGroupStep() {
     const presetName = presetNames[presetIndex];
     const groups = targets.filter(target => target.presetIndex === presetIndex);
     if (!presetName || groups.length === 0) {
-        showToast('该预设没有可用的目标分组，请换一个预设。');
+        showToast('该预设没有可用的目标分组，请换一个预设。', 'error');
         return;
     }
     const options = groups
@@ -128,7 +128,7 @@ export function runSubruleTransfer() {
     const presetName = Object.keys(settings.presets || {})[Number(presetIndexText)];
     const groupIndex = Number(groupIndexText);
     if (!presetName || !Number.isInteger(groupIndex) || groupIndex < 0) {
-        showToast('请选择目标分组。');
+        showToast('请选择目标分组。', 'error');
         return;
     }
 
@@ -138,7 +138,7 @@ export function runSubruleTransfer() {
         : getPresetRules(settings.presets[presetName]);
     const targetRule = targetRules[groupIndex];
     if (!targetRule) {
-        showToast('目标分组已不存在，请重新选择。');
+        showToast('目标分组已不存在，请重新选择。', 'error');
         return;
     }
     const moved = deepClone(subrule);
@@ -159,5 +159,5 @@ export function runSubruleTransfer() {
     saveSettingsDebounced();
     closeSubruleTransferModal();
     const groupLabel = String(targetRule.name || '').trim() || `未命名合集 ${groupIndex + 1}`;
-    showToast(`已移动到「${presetName}」的「${groupLabel}」`);
+    showToast(`已移动到「${presetName}」的「${groupLabel}」`, 'success');
 }

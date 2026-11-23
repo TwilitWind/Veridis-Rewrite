@@ -60,7 +60,7 @@ export function runRuleTransfer(isMove) {
         .filter((v) => Number.isInteger(v) && v >= 0);
     if (validIndexes.length === 0) return;
     if (!targetPreset) {
-        showToast('请选择目标存档。');
+        showToast('请选择目标存档。', 'error');
         return;
     }
     if (targetPreset === sourcePreset) {

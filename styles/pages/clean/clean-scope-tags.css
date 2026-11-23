@@ -1,7 +1,7 @@
 /* 标签（分组详情）编辑器弹窗：只在净化页的标签管理里触发。 */
 
 .blai-scope-tag-editor-modal {
-    z-index: 10000006;
+    z-index: var(--blai-z-modal);
 }
 
 .blai-scope-tag-editor-card {
@@ -161,7 +161,7 @@
     justify-content: stretch;
     padding: 0;
     margin: 0;
-    z-index: 10000005;
+    z-index: var(--blai-z-modal);
 }
 
 #blai-scope-tag-editor-modal .blai-scope-tag-editor-card {

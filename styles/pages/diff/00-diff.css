@@ -19,7 +19,7 @@
     --blai-diff-body-font-size: var(--blai-font-15);
     position: fixed;
     inset: 0;
-    z-index: 10000000;
+    z-index: var(--blai-z-shell);
     background: color-mix(in srgb, var(--bg-base) 58%, transparent);
     display: none;
     align-items: center;
@@ -298,7 +298,7 @@
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);
     box-shadow: var(--blai-dropdown-shadow);
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
 }
 
 /* [hidden] 必须显式压回：作者样式的 display:grid 会盖过 UA 的 [hidden]{display:none}，
@@ -359,7 +359,7 @@
 }
 
 #blai-diff-related-modal {
-    z-index: 10000004;
+    z-index: var(--blai-z-modal);
 }
 
 .blai-diff-related-card {
@@ -562,7 +562,7 @@
     /* 由 JS 按分支计数实际矩形反推，保证和 1/1 同行且右侧留 8px。 */
     bottom: var(--blai-diff-bottom-offset, 6px);
     right: var(--blai-diff-swipe-offset, 48px);
-    z-index: 10;
+    z-index: var(--blai-z-page);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -589,7 +589,7 @@
     padding: max(var(--blai-space-16), env(safe-area-inset-top)) var(--blai-space-16) max(var(--blai-space-16), env(safe-area-inset-bottom));
     margin: 0;
     box-sizing: border-box;
-    z-index: 10000005;
+    z-index: var(--blai-z-modal);
 }
 
 #blai-diff-related-modal > .blai-diff-related-card, .blai-diff-modal-card {

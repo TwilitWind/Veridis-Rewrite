@@ -184,7 +184,7 @@ export function createAiSettingsCore() {
             if (enteredName === null) return false;
             name = String(enteredName || '').trim();
             if (!name) {
-                showToast('API 预设名称不能为空');
+                showToast('API 预设名称不能为空', 'error');
                 return false;
             }
             if (Object.prototype.hasOwnProperty.call(aiSettings.apiPresets, name)
@@ -194,7 +194,7 @@ export function createAiSettingsCore() {
         aiSettings.activeApiPreset = name;
         saveSettingsDebounced();
         syncAiRewriteSettingsUI();
-        showToast(`API 预设已保存：${name}`);
+        showToast(`API 预设已保存：${name}`, 'success');
         return true;
     };
 
@@ -206,12 +206,12 @@ export function createAiSettingsCore() {
         if (enteredName === null) return false;
         const nextName = String(enteredName || '').trim();
         if (!nextName) {
-            showToast('API 预设名称不能为空');
+            showToast('API 预设名称不能为空', 'error');
             return false;
         }
         if (nextName === activeName) return false;
         if (Object.prototype.hasOwnProperty.call(aiSettings.apiPresets, nextName)) {
-            showToast(`API 预设“${nextName}”已存在`);
+            showToast(`API 预设“${nextName}”已存在`, 'error');
             return false;
         }
         aiSettings.apiPresets[nextName] = aiSettings.apiPresets[activeName];
@@ -219,7 +219,7 @@ export function createAiSettingsCore() {
         aiSettings.activeApiPreset = nextName;
         saveSettingsDebounced();
         syncAiRewriteSettingsUI();
-        showToast(`API 预设已重命名：${nextName}`);
+        showToast(`API 预设已重命名：${nextName}`, 'success');
         return true;
     };
 

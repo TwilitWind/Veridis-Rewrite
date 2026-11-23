@@ -234,7 +234,7 @@ export function bindFeedbackEvents() {
         if (!confirmed) return;
         clearAiRewriteDebugEvents();
         renderRuntimeLog();
-        showToast('运行日志已清空。');
+        showToast('运行日志已清空。', 'success');
     });
 
     $(document).off('click', '#blai-ai-monitor-clear').on('click', '#blai-ai-monitor-clear', () => {
@@ -265,7 +265,7 @@ export function bindFeedbackEvents() {
             invalidateFeedbackPreview();
             showFeedbackSubmissionStatus(`提交成功。反馈 ID：${result.feedbackId}`, 'success');
             clearRenderedFeedbackPreview({ preserveSubmissionStatus: true });
-            showToast(`匿名反馈提交成功 · ID ${result.feedbackId}`, '如需更新提醒，请在贴内附 ID 并 @我，处理后会在贴内回复。');
+            showToast(`匿名反馈提交成功 · ID ${result.feedbackId}`, '如需更新提醒，请在贴内附 ID 并 @我，处理后会在贴内回复。', 'success');
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
             showFeedbackSubmissionStatus(`提交失败：${message}`, 'error');

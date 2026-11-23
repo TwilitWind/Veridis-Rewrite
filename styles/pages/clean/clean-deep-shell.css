@@ -8,7 +8,7 @@
 #blai-deep-clean-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 10000002;
+    z-index: var(--blai-z-modal);
     display: none;
     padding: 0;
     background: color-mix(in srgb, var(--text-main) 38%, transparent);
@@ -29,7 +29,7 @@
     right: auto;
     bottom: auto;
     transform: translate(-50%, -50%);
-    z-index: 10000003;
+    z-index: var(--blai-z-modal);
     padding: 0;
     width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
     max-width: var(--blai-size-560);

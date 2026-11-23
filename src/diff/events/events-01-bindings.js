@@ -188,7 +188,7 @@ diffRuntimeState.diffModalClose = closeDiffModal;
         e.preventDefault();
         e.stopPropagation();
         if ($(this).attr('data-missing') === 'true') {
-            showToast('这条规则已被删除或修改，无法打开。');
+            showToast('这条规则已被删除或修改，无法打开。', 'error');
             return;
         }
         const ruleIndex = Number($(this).attr('data-rule-index'));

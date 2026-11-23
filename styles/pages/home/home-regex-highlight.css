@@ -9,7 +9,7 @@
 
 .blai-regex-input-wrap .blai-textarea {
     position: relative;
-    z-index: 2;
+    z-index: var(--blai-z-inner);
     margin: 0;
     line-height: 1.55;
 }
@@ -26,7 +26,7 @@
 .blai-regex-highlight {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: var(--blai-z-inner-raised);
     /* 与输入框逐像素对齐：textarea 是 1px 边框 + --blai-input-pad-area(12px 14px)，
        文字起点距边框盒 = 13px(纵)/15px(横)。覆盖层无边框，故把 1px 补进 padding。
        旧值用 10px 是更早的 padding 档，textarea 改 area 档后这里没跟，纵向差 2px。 */
@@ -183,7 +183,7 @@
 
 .blai-regex-test-input-wrap .blai-textarea {
     position: relative;
-    z-index: 2;
+    z-index: var(--blai-z-inner);
     margin: 0;
     padding: var(--blai-space-10) var(--blai-space-12);
     min-height: var(--blai-size-88);
@@ -206,7 +206,7 @@
 .blai-regex-test-highlight {
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: var(--blai-z-inner);
     /* 与输入框同为 1px 边框 + 同样内边距，高亮块才能和真实字形逐像素对齐；
        旧代码在已有边框的基础上又给 padding 补 1px，导致高亮块整体右下偏 1px。 */
     padding: var(--blai-space-10) var(--blai-space-12);
@@ -423,7 +423,7 @@
     position: fixed;
     inset: 0;
     background: color-mix(in srgb, var(--bg-base) 12%, transparent);
-    z-index: 10000000;
+    z-index: var(--blai-z-shell);
     display: none;
     align-items: center;
     justify-content: center;
@@ -489,7 +489,7 @@
     padding: max(var(--blai-space-18), env(safe-area-inset-top)) max(var(--blai-space-18), env(safe-area-inset-right)) max(var(--blai-space-18), env(safe-area-inset-bottom)) max(var(--blai-space-18), env(safe-area-inset-left));
     box-sizing: border-box;
     pointer-events: auto;
-    z-index: 10000008;
+    z-index: var(--blai-z-modal);
 }
 
 #blai-preset-import-choice-modal.blai-is-open {

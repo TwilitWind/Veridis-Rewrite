@@ -116,7 +116,7 @@
     box-sizing: border-box;
     display: none;
     flex-direction: column;
-    z-index: 999999;
+    z-index: var(--blai-z-panel);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 }

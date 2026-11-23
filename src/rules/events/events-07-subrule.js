@@ -85,7 +85,7 @@ export function bindRuleSubruleEditorEvents() {
         } else if (action === 'copy') {
             list.splice(index + 1, 0, deepClone(list[index]));
             renderSubrulesToModal();
-            showToast('已复制该条规则');
+            showToast('已复制该条规则', 'success');
         } else if (action === 'transfer') {
             openSubruleTransferModal(index);
         } else if (action === 'remark') {
@@ -99,7 +99,7 @@ export function bindRuleSubruleEditorEvents() {
             if (!await showConfirmModal('确定要删除该映射规则吗？', { danger: true, okText: '删除' })) return;
             list.splice(index, 1);
             renderSubrulesToModal();
-            showToast('词条删除成功');
+            showToast('词条删除成功', 'success');
         }
     });
 

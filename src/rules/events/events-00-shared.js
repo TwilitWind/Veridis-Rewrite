@@ -196,7 +196,7 @@ export function saveCurrentEditingRule(options = {}) {
     const validSubrules = rulesUiState.currentEditingSubrules.filter(sub => sub.targets && sub.targets.length > 0);
 
     if (validSubrules.length === 0) {
-        showToast('合集内至少需要保留一组有效映射！');
+        showToast('合集内至少需要保留一组有效映射！', 'error');
         return { ok: false };
     }
 
@@ -282,7 +282,7 @@ export function validateRegexTargetField(options = {}) {
 
     const uiMessage = applyRegexTargetValidationError(result.error);
     if (options.focus === true) $('#blai-modal-sub-target').trigger('focus');
-    if (options.toast === true) showToast(`正则规则有误：${uiMessage}`);
+    if (options.toast === true) showToast(`正则规则有误：${uiMessage}`, 'error');
     return { ...result, uiMessage };
 }
 

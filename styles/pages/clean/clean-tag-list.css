@@ -20,7 +20,7 @@
     height: var(--blai-size-32);
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: var(--blai-z-inner);
     margin: 0;
     opacity: 0;
     cursor: pointer;
@@ -174,7 +174,7 @@
 /* 需求 2.7：标签 / 分组的下拉菜单与首页「规则集」卡片菜单同款（图标 + 32px 行高 + 10px 圆角）。
  * 菜单是 body 级浮层（src/ui/popover.js 定位），不继承 #blai-purifier-popup 作用域，故不带前缀。 */
 .blai-clean-tag-menu, .blai-clean-group-menu {
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
     min-width: var(--blai-size-148);
     display: grid;
     gap: var(--blai-dropdown-gap);

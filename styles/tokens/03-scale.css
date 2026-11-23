@@ -94,6 +94,21 @@
   --blai-duration-slow: 180ms; /* 有位移的弹卡进场 */
   --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
 
+  /* 层级阶梯：全部浮层只从这里取值，不要在页面文件里写裸 z-index。
+     从低到高：组件内部 < 页面浮层 < 导览 < 主面板/弹窗 < 菜单浮层 < toast。
+     toast 必须是最高层——透视弹窗（10000000）打开时的提示也要盖得住。 */
+  --blai-z-inner: 1;              /* 组件内部：高亮覆盖层、诊断条 */
+  --blai-z-inner-raised: 3;       /* 同组件内需要再压一层的元素 */
+  --blai-z-page: 10;              /* 页面内局部浮层 */
+  --blai-z-tour: 1000001;         /* 导览遮罩 */
+  --blai-z-panel: 999999;         /* 主面板本体（.blai-purifier-popup） */
+  --blai-z-loading: 9999999;      /* 全局加载遮罩，压在主面板之上 */
+  --blai-z-shell: 10000000;       /* 大弹窗基底（透视 / 规则编辑等） */
+  --blai-z-modal: 10000005;       /* 弹窗之上的次级弹窗 */
+  --blai-z-modal-raised: 10000020;/* 弹窗内需要再抬一层的元素 */
+  --blai-z-menu: 2147483000;      /* 下拉菜单 / 省略号菜单浮层 */
+  --blai-z-toast: 2147483647;     /* toast：最高层，盖住所有弹窗 */
+
   /* 交互控件的重复几何，收成单一出处：改写一处全站同步，避免各页写各自的字面量。 */
   --blai-focus-offset: 2px;       /* :focus-visible 描边与控件的间距（按钮/开关/菜单项一致） */
   --blai-ring-inset: inset 0 0 0 var(--blai-border-1); /* 1px 内描边环，颜色由使用处叠加 */

@@ -213,7 +213,7 @@ export async function importPresetOnly() {
     saveSettingsDebounced();
     updateToolbarUI();
     closeImportChoiceModal();
-    showToast(`已导入预设：${name}`);
+    showToast(`已导入预设：${name}`, 'success');
 }
 
 export async function importPresetAndSwitch() {
@@ -234,7 +234,7 @@ export async function importPresetAndSwitch() {
     updateToolbarUI();
     renderTags();
     closeImportChoiceModal();
-    showToast(`已导入并切换：${name}`);
+    showToast(`已导入并切换：${name}`, 'success');
 }
 
 export async function importPresetAsTemporaryPreview() {

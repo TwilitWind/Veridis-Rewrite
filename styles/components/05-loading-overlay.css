@@ -7,7 +7,7 @@
     height: 100vh;
     height: var(--blai-viewport-h);
     background: color-mix(in srgb, var(--bg-base) 12%, transparent);
-    z-index: 9999999;
+    z-index: var(--blai-z-loading);
     display: flex;
     justify-content: center;
     align-items: center;

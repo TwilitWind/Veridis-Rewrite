@@ -92,7 +92,7 @@ export function bindPresetEvents() {
             presetsRuntimeState.lastPresetBindingSignature = '';
             saveSettingsDebounced();
             refreshCharacterBindingUI();
-            showToast(isBound ? '已解除角色卡绑定' : '已绑定到当前角色卡');
+            showToast(isBound ? '已解除角色卡绑定' : '已绑定到当前角色卡', 'success');
             return;
         }
 
@@ -115,7 +115,7 @@ export function bindPresetEvents() {
             presetsRuntimeState.lastPresetBindingSignature = '';
             saveSettingsDebounced();
             refreshCharacterBindingUI();
-            showToast(isBound ? '已解除对话补全预设绑定' : '已绑定到当前对话补全预设');
+            showToast(isBound ? '已解除对话补全预设绑定' : '已绑定到当前对话补全预设', 'success');
         }
     };
 
@@ -165,13 +165,13 @@ export function bindPresetEvents() {
         markPresetsUiDirty(true);
         saveSettingsDebounced();
         updateToolbarUI();
-        showToast(`已重命名为：${newName}`);
+        showToast(`已重命名为：${newName}`, 'success');
     });
 
     $(document).off('click', '#blai-preset-delete').on('click', '#blai-preset-delete', async function() {
         const settings = extension_settings[extensionName];
         const name = settings.activePreset;
-        if (!name) { showToast('当前为临时规则，没有可删除的存档'); return; }
+        if (!name) { showToast('当前为临时规则，没有可删除的存档', 'warning'); return; }
         if (await showConfirmModal(`确定删除存档 "${name}" 吗？`, { danger: true, okText: '删除' })) {
             delete settings.presets[name];
             if (settings.defaultPreset === name) settings.defaultPreset = '';
@@ -187,7 +187,7 @@ export function bindPresetEvents() {
             saveSettingsDebounced();
             renderTags();
             updateToolbarUI();
-            showToast('删除成功');
+            showToast('删除成功', 'success');
         }
     });
 
@@ -203,7 +203,7 @@ export function bindPresetEvents() {
         saveSettingsDebounced();
         updateToolbarUI();
         renderTags(); // 必须重新渲染以清空列表
-        showToast(`已新建存档：${name}`);
+        showToast(`已新建存档：${name}`, 'success');
     });
 
     $(document).off('click', '#blai-preset-export').on('click', '#blai-preset-export', function() {

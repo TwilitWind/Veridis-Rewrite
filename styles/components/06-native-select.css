@@ -77,7 +77,7 @@
     --blai-dropdown-item-font: var(--blai-font-13);
     --blai-dropdown-item-weight: var(--blai-weight-normal);
     position: fixed;
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
     display: grid;
     min-width: var(--blai-size-120);
     gap: var(--blai-dropdown-gap);

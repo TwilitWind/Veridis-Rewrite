@@ -86,7 +86,7 @@
 /* 自绘规则集下拉菜单：与卡片菜单同一套弹层风格（白底/圆角/边框/阴影），宽度铺满触发器。 */
 #blai-purifier-popup .blai-preset-menu,
 .blai-preset-menu {
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
     border: var(--blai-border-1) solid var(--blai-dropdown-border);

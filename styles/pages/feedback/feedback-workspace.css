@@ -435,7 +435,7 @@
     --blai-dropdown-item-pad-x: var(--blai-space-10);
     --blai-dropdown-item-height: var(--blai-size-28);
     position: fixed;
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
     display: grid;
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);

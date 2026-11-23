@@ -1,18 +1,26 @@
 /* 全局浮层提示：toast 容器与内容排版。 */
 
+/* 宿主 toastr 容器默认 999999，会被插件的透视弹窗（10000000）盖住，
+   AI 改写提示因此看不见。提升到 toast 层，并让 mouse 事件照旧穿透到下层。 */
+body > #toast-container {
+    z-index: var(--blai-z-toast) !important;
+}
+
 .blai-toast {
     position: fixed;
-    top: 50vh;
+    /* 顶部居中、离顶部留一段距离（不是贴边），不随主题背景变化。 */
+    top: var(--blai-space-24);
     left: 50vw;
-    transform: translate(-50%, -40%) scale(0.95);
+    transform: translate(-50%, -12px) scale(0.95);
     opacity: 0;
     width: max-content;
     max-width: 85vw;
     padding: var(--blai-space-12) var(--blai-space-20);
     border-radius: var(--blai-radius-12);
-    border: var(--blai-border-1) solid color-mix(in srgb, var(--text-main) 22%, var(--border-color));
-    background: var(--bg-surface);
-    color: var(--text-main);
+    border: var(--blai-border-1) solid transparent;
+    /* 默认 info 的写死背景；具体语义色由下面的 [data-type] 覆盖，均不跟随主题。 */
+    background: var(--blai-toast-info-bg);
+    color: var(--blai-toast-ink);
     font-size: var(--blai-font-14);
     font-weight: var(--blai-weight-bold);
     line-height: 1.5;
@@ -22,10 +30,15 @@
     justify-content: center;
     gap: var(--blai-space-6);
     box-shadow: var(--blai-shadow-sm);
-    z-index: 2147483647;
+    z-index: var(--blai-z-toast);
     pointer-events: none;
     transition: opacity var(--blai-duration-fast) var(--blai-ease-out), transform var(--blai-duration-fast) var(--blai-ease-out);
 }
+
+.blai-toast[data-type="success"] { background: var(--blai-toast-success-bg); }
+.blai-toast[data-type="error"] { background: var(--blai-toast-error-bg); }
+.blai-toast[data-type="warning"] { background: var(--blai-toast-warning-bg); }
+.blai-toast[data-type="info"] { background: var(--blai-toast-info-bg); }
 
 .blai-toast > i {
     color: inherit;
@@ -50,7 +63,7 @@
 
 .blai-toast.blai-show {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, 0) scale(1);
     transition-duration: var(--blai-duration-base);
 }
 

@@ -5,8 +5,16 @@ const THEME_VARS = ['--bg-base', '--bg-surface', '--accent-color', '--text-main'
 const CLEARED_STYLES = ['position', 'top', 'left', 'right', 'bottom', 'margin', 'transform', 'will-change', 'z-index'];
 const IMPORTANT_POSITION_PROPS = ['position', 'left', 'top', 'right', 'bottom', 'transform', 'margin', 'max-height'];
 const MENU_GAP = 6;
-// 菜单统一挂到 body 并压在所有界面之上（仅次于 toast 的 2147483647），避免被弹窗、面板、滚动容器裁剪或盖住。
-const PORTAL_Z_INDEX = '2147483000';
+// 菜单统一挂到 body 并压在所有界面之上（仅次于 toast），避免被弹窗、面板、滚动容器裁剪或盖住。
+// 层级真源是 --blai-z-menu；这里读一次缓存，字面量只作 CSS 未就绪时的兜底。
+const PORTAL_Z_INDEX_FALLBACK = '2147483000';
+let portalZIndex = PORTAL_Z_INDEX_FALLBACK;
+function resolvePortalZIndex() {
+    if (portalZIndex !== PORTAL_Z_INDEX_FALLBACK) return portalZIndex;
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--blai-z-menu').trim();
+    if (raw && raw !== PORTAL_Z_INDEX_FALLBACK) portalZIndex = raw;
+    return portalZIndex;
+}
 const VIEWPORT_PADDING = 8;
 const openMenus = new Set();
 let documentBound = false;
@@ -95,7 +103,7 @@ export function openMenuPopover(anchor, menu) {
     menu.style.setProperty('right', 'auto', 'important');
     menu.style.setProperty('bottom', 'auto', 'important');
     menu.style.setProperty('margin', '0', 'important');
-    menu.style.setProperty('z-index', PORTAL_Z_INDEX, 'important');
+    menu.style.setProperty('z-index', resolvePortalZIndex(), 'important');
     document.body.appendChild(menu);
     const instance = applyPosition(anchor, menu);
     // 存同一个 entry 引用，供下方重定位与关闭逻辑共用。

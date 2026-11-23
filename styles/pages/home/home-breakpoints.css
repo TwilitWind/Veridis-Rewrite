@@ -378,7 +378,7 @@
 /* 筛选菜单是 body 级浮层（src/ui/popover.js 定位），不继承 #blai-rule-edit-modal 作用域，
    与「⋯」菜单同一套外观：图标行高同步、10px 圆角、2px 行距。 */
 .blai-edit-filter-menu {
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
     min-width: var(--blai-size-148);
     display: grid;
     gap: var(--blai-dropdown-gap);

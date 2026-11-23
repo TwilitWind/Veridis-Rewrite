@@ -8,7 +8,7 @@
     /* 负的 top 抵消正文卡的上内边距：否则吸顶时上方会留一条 21px 的缝，
        滚动的日志会从这条缝里露出来。 */
     top: calc(-1 * var(--blai-feedback-page-pad-y));
-    z-index: 3;
+    z-index: var(--blai-z-inner-raised);
     margin: calc(-1 * var(--blai-feedback-page-pad-y)) calc(-1 * var(--blai-feedback-page-pad-x)) 0;
     padding: var(--blai-feedback-page-pad-y) var(--blai-feedback-page-pad-x) var(--blai-space-14);
     background: var(--bg-surface);

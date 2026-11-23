@@ -24,16 +24,16 @@
 }
 
 #blai-rule-edit-modal {
-    z-index: 10000005;
+    z-index: var(--blai-z-modal);
 }
 
 #blai-subrule-edit-modal {
-    z-index: 10000006;
+    z-index: var(--blai-z-modal);
 }
 
 /* 移动子规则的弹窗从编辑分组弹窗里打开，层级必须高于它，否则会被盖住 */
 #blai-subrule-transfer-modal {
-    z-index: 10000007;
+    z-index: var(--blai-z-modal);
 }
 
 /* 卡片自身提供统一内边距；里面的 .blai-transfer-content 只是内容层，不再画第二层框。 */

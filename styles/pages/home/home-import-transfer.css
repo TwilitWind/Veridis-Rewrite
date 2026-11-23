@@ -46,7 +46,7 @@
 }
 
 #blai-rule-search-modal {
-    z-index: 10000004;
+    z-index: var(--blai-z-modal);
 }
 
 .blai-rule-search-card {
@@ -271,7 +271,7 @@
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);
     box-shadow: var(--blai-dropdown-shadow);
-    z-index: 2147483000;
+    z-index: var(--blai-z-menu);
 }
 
 .blai-rule-search-menu-item {
@@ -527,7 +527,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    z-index: 10000005;
+    z-index: var(--blai-z-modal);
 }
 
 #blai-rule-edit-modal > .blai-edit-modal-card, #blai-preset-import-choice-modal > .blai-import-choice-card, #blai-rule-search-modal > .blai-rule-search-card, #blai-subrule-edit-modal > .blai-subrule-modal-card, #blai-subrule-edit-modal > .blai-edit-modal-card {

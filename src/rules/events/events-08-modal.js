@@ -22,7 +22,7 @@ export function bindRuleModalActionEvents() {
         if (mode === 'regex') {
             const validation = validateRegexTargetField();
             if (!validation.ok) {
-                showToast(`正则规则有误：${validation.uiMessage || formatRegexTargetError(validation.error)}`);
+                showToast(`正则规则有误：${validation.uiMessage || formatRegexTargetError(validation.error)}`, 'error');
                 $('#blai-modal-sub-target').trigger('focus');
                 return;
             }
@@ -31,7 +31,7 @@ export function bindRuleModalActionEvents() {
         }
 
         if (mode === 'regex' && hasPendingRegexReplacementInput()) {
-            showToast('替换框里还有未处理的内容，请先点右侧按钮。');
+            showToast('替换框里还有未处理的内容，请先点右侧按钮。', 'error');
             $('#blai-modal-sub-rep').trigger('focus');
             return;
         }
@@ -40,7 +40,7 @@ export function bindRuleModalActionEvents() {
         const replacements = getSingleRuleReplacementValues(mode);
 
         if (targets.length === 0) {
-            showToast("查找内容不能为空！");
+            showToast("查找内容不能为空！", 'error');
             $('#blai-modal-sub-target').trigger('focus');
             return;
         }

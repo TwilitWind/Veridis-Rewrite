@@ -63,7 +63,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-pipeline-marker {
     position: relative;
-    z-index: 1;
+    z-index: var(--blai-z-inner);
     width: var(--blai-size-24);
     height: var(--blai-size-24);
     display: grid;

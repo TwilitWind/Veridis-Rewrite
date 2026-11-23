@@ -96,7 +96,7 @@
 }
 
 #blai-ai-prompt-modal {
-    z-index: 10000006;
+    z-index: var(--blai-z-modal);
     padding: 0;
     justify-content: stretch;
     align-items: stretch;

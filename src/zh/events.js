@@ -86,7 +86,7 @@ export function bindZhEvents() {
             markRulesDataDirty({ rulesUi: false });
             saveSettingsDebounced();
             syncZhCompatToggle();
-            showToast('简繁兼容包不可用，请重新下载');
+            showToast('简繁兼容包不可用，请重新下载', 'error');
             return false;
         }
         settings.zhVariantCompatEnabled = true;

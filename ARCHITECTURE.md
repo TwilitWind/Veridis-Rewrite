@@ -195,7 +195,11 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **挂载位置**：所有大弹窗都必须是 `templates/purifier.html` 里 `#blai-purifier-popup` 闭合标签之后的顶层节点（运行时 `$('body').append(templateHtml)`，即成为 body 直属）。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。绑定记录、高级生成参数、附加参数三个弹窗曾嵌在里面，已移出；新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点。
 
-**层级阶梯**：插件内弹窗占 `10000004`~`10000008`（卡片菜单/搜索/编辑规则/编辑分组/编辑子规则/移动/预设导入）；`.blai-plugin-dialog`（备注、删除、重命名等由弹窗内按钮触发者）及 `#blai-risk-confirm-modal`、`#blai-risk-info-modal` 一律 `10000020`——它们从别的弹窗里弹出，必须压在上面，否则遮罩盖住按钮像点了没反应。首页规则卡菜单 `.blai-home-card-menu` 与子规则菜单 `.blai-subrule-menu` 需 `10000060`。新增弹窗要么落在 `10000004`~`10000008` 且后弹的更高，要么沿用 `10000020`。
+**层级阶梯**：所有 z-index 只在 `tokens/03-scale.css` 的 `--blai-z-*` 里定义，页面文件一律 `var(...)`，不写裸数字。从低到高：`--blai-z-inner`（组件内部高亮）/ `--blai-z-page`（页面浮层）/ `--blai-z-tour`（导览）/ `--blai-z-panel`（主面板）/ `--blai-z-loading`（加载遮罩）/ `--blai-z-shell`（大弹窗基底）/ `--blai-z-modal`（弹窗内再弹出的对话框，如备注、删除、重命名、风险确认）/ `--blai-z-modal-raised`（最终层）/ `--blai-z-menu`（下拉/省略号菜单）/ `--blai-z-toast`（toast，最高）。新增浮层先在这张表里选一档，不要另造数字。
+
+**toast 必居最高层**：酒馆宿主 `#toast-container` 默认 `999999`，会被透视弹窗（`--blai-z-shell`）盖住；`components/03-toasts.css` 把它提 `--blai-z-toast` 修掉这个遮挡。插件自己的 `.blai-toast` 同样取 `--blai-z-toast`。
+
+**toast 语义色**：`showToast(message, description, type)`，`type` 取 `success` / `error` / `warning` / `info`（默认 info），图标随类型切换（`fa-circle-check` / `fa-circle-xmark` / `fa-triangle-exclamation` / `fa-circle-info`）。四种背景是 `01-palette.css` 里写死的 `--blai-toast-*-bg`（绿/红/橙/蓝实心 + 白字），**不跟随主题背景变化**，02-themes.css 不覆盖它们。新增调用点按内容语义显式传 type，别留默认 info 造成成功/失败一个样。位置固定在顶部居中留白（`top: 24px`），不是贴边也不是屏幕正中。
 
 四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(100dvh - 28px)` 高、16px 圆角（`styles/pages/home/home-breakpoints.css`）；600px 以下整屏（`100vw/100dvh`）、去圆角、适配安全区。
 
@@ -246,7 +250,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | `pages/<page>/` | 单页排版 home/ai/clean/tools/feedback/diff/tour | 只写该页，禁止通用组件样式 |
 | `pages/99-mobile.css` | 手机端跨页收尾：标题降档、提交反馈单列化 | 最后加载，压过各页桌面声明；只放 `@media (max-width: 600px)` |
 
-三个令牌文件：`01-palette.css`（状态色、正则高亮 `--re-*`、差异来源色）、`02-themes.css`（auto/light/dark 的 `--bg-*` / `--text-*` / `--border-color` / `--accent-*`，及 `select option` 的三段 `!important`）、`03-scale.css`（`--blai-space-*` / `--blai-font-*` / `--blai-radius-*` / `--blai-border-*` / `--blai-size-*` 与语义层）。动效节奏也在 `03-scale.css`：`--blai-duration-fast` 120ms（菜单/toast 退场）、`--blai-duration-base` 160ms（切页/toast 进场）、`--blai-duration-slow` 180ms（弹卡进场）、`--blai-ease-out`（平滑减速不过冲）；改一处全站同步。交互控件的重复几何也收在同一文件：`--blai-focus-offset`（焦点描边间距）、`--blai-switch-travel`（开关滑块位移）、`--blai-ring-inset`（1px 内描边环，颜色由使用处叠加）；同类重复值先找这三个，别在各页重写字面量。可见滚动条在 `base/00-reset.css` 挂根容器统一设中性灰拇指（`--blai-scrollbar-thumb`），不用强调色；刻意隐藏的不受影响。
+三个令牌文件：`01-palette.css`（状态色、正则高亮 `--re-*`、差异来源色）、`02-themes.css`（auto/light/dark 的 `--bg-*` / `--text-*` / `--border-color` / `--accent-*`，及 `select option` 的三段 `!important`）、`03-scale.css`（`--blai-space-*` / `--blai-font-*` / `--blai-radius-*` / `--blai-border-*` / `--blai-size-*` 与语义层）。动效节奏也在 `03-scale.css`：`--blai-duration-fast` 120ms（菜单/toast 退场）、`--blai-duration-base` 160ms（切页/toast 进场）、`--blai-duration-slow` 180ms（弹卡进场）、`--blai-ease-out`（平滑减速不过冲）；改一处全站同步。交互控件的重复几何也收在同一文件：`--blai-focus-offset`（焦点描边间距）、`--blai-ring-inset`（1px 内描边环，颜色由使用处叠加）、`--blai-z-*`（层级阶梯，见「层级阶梯」段）；同类重复值先在 `03-scale.css` 找，别在各页重写字面量。可见滚动条在 `base/00-reset.css` 挂根容器统一设中性灰拇指（`--blai-scrollbar-thumb`），不用强调色；刻意隐藏的不受影响。
 
 令牌挂在一组**容器选择器**而非 `:root`：`#blai-purifier-popup`、`.blai-modal-shell`、`#blai-scope-tag-editor-modal`、`#blai-rule-transfer-modal`、`#blai-diff-modal`、`#blai-rule-search-modal`、`#blai-preset-import-choice-modal`、`.blai-toast`、`#blai-loading-overlay`、`#blai-tour-layer`。弹层与 toast 不在主容器内——增删容器要同步令牌、`theme.js` 的 `data-theme` 列表与 `03-scale.css` 语义层。
 

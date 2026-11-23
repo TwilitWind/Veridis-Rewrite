@@ -95,7 +95,7 @@ export function bindAiSettingHandlers(core) {
         aiSettings.activeApiPreset = '';
         saveSettingsDebounced();
         syncAiRewriteSettingsUI();
-        showToast(`已删除 API 预设：${name}`);
+        showToast(`已删除 API 预设：${name}`, 'success');
     });
 
 
@@ -139,7 +139,7 @@ export function bindAiSettingHandlers(core) {
         aiSettings.model = value;
         saveSettingsDebounced();
         syncAiRewriteSettingsUI();
-        showToast(`已加入模型列表：${value}`);
+        showToast(`已加入模型列表：${value}`, 'success');
     });
 
 
@@ -284,7 +284,7 @@ export function bindAiSettingHandlers(core) {
     $(document).off('click', '#blai-ai-api-key-clear').on('click', '#blai-ai-api-key-clear', function(e) {
         e.preventDefault();
         updateAiRewriteSetting('apiKey', '', { markRulesDirty: false });
-        showToast('API Key 已清空');
+        showToast('API Key 已清空', 'success');
     });
 
 
