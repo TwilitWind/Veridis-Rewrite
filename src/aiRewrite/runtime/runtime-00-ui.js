@@ -182,6 +182,8 @@ export function notifyAiRewriteStatus(type, title, message, options = {}) {
         });
         const toastElement = getToastElement(toast);
         toastElement?.classList?.add('blai-ai-rewrite-toast');
+        // 语义类型写到 data-type，CSS 用它套用与插件 toast 相同的固定色系。
+        toastElement?.setAttribute('data-type', method);
         if (sticky) toastElement?.classList?.add('blai-ai-rewrite-progress-toast');
         aiRewriteState.statusToast = sticky ? toast : null;
         aiRewriteState.statusTask = task;

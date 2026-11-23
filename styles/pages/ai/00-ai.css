@@ -2,16 +2,46 @@
 
 /* AI 设置、AI 编辑器/监控弹窗、AI 改写提示，以及 AI 专属响应式布局。 */
 
+/* AI 改写提示走宿主 toastr（保留 sticky/取消/进度能力），这里只把外观统一到
+   --blai-toast-* 那套固定语义色，和插件自己的 .blai-toast 一致。
+   宿主靠 .toast-error 等类塞了带 !important 的 png 背景图，必须显式覆盖掉。 */
 #toast-container > .blai-ai-rewrite-toast {
     width: fit-content;
     min-width: min(var(--blai-size-300), 80vw);
     max-width: min(var(--blai-size-380), 80vw);
     box-sizing: border-box;
     text-align: left;
-    padding-block: var(--blai-space-8);
+    padding-block: var(--blai-space-12);
     padding-right: var(--blai-space-36);
     line-height: 1.4;
+    border-radius: var(--blai-radius-12) !important;
+    background-image: none !important;
+    color: var(--blai-toast-ink) !important;
+    box-shadow: var(--blai-shadow-sm) !important;
 }
+
+/* 语义背景：复用 .blai-toast 的同一组 token，不随主题变。 */
+#toast-container > .blai-ai-rewrite-toast[data-type="success"] { background-color: var(--blai-toast-success-bg) !important; }
+#toast-container > .blai-ai-rewrite-toast[data-type="error"] { background-color: var(--blai-toast-error-bg) !important; }
+#toast-container > .blai-ai-rewrite-toast[data-type="warning"] { background-color: var(--blai-toast-warning-bg) !important; }
+#toast-container > .blai-ai-rewrite-toast[data-type="info"] { background-color: var(--blai-toast-info-bg) !important; }
+
+/* 用 FA 字形替换宿主的 png 图标，内容与 .blai-toast 的语义图标一致。 */
+#toast-container > .blai-ai-rewrite-toast::before {
+    position: absolute;
+    left: var(--blai-space-16);
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: var(--blai-font-15);
+    color: var(--blai-toast-ink);
+    pointer-events: none;
+}
+#toast-container > .blai-ai-rewrite-toast[data-type="success"]::before { content: "\f058"; }
+#toast-container > .blai-ai-rewrite-toast[data-type="error"]::before { content: "\f057"; }
+#toast-container > .blai-ai-rewrite-toast[data-type="warning"]::before { content: "\f071"; }
+#toast-container > .blai-ai-rewrite-toast[data-type="info"]::before { content: "\f05a"; }
 
 #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast {
     display: grid;
@@ -30,9 +60,11 @@
     line-height: 1.2;
     text-align: left;
     white-space: nowrap;
+    color: var(--blai-toast-ink) !important;
 }
 
 #toast-container > .blai-ai-rewrite-toast > .toast-message {
+    color: var(--blai-toast-ink) !important;
     min-width: 0;
     margin: 0;
     font-size: calc(var(--blai-font-12-5) + 1pt);
@@ -54,6 +86,8 @@
 }
 
 #toast-container > .blai-ai-rewrite-toast > .toast-close-button {
+    color: var(--blai-toast-ink) !important;
+    opacity: .85;
     position: absolute;
     top: 0;
     right: 0;

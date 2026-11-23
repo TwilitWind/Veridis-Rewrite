@@ -2,16 +2,19 @@
    这些值被五套主题共同继承；主题相关的覆盖见 02-themes.css。
    间距/字号/圆角/尺寸刻度见 03-scale.css。 */
 
-#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
-    --status-danger: #B6494B;
-    --status-success: #5D8A68;
-    /* toast 语义色：固定同色系实心背景 + 白字，不跟随主题背景变化。
-       色值写在这里（基底），02-themes.css 不覆盖它们。 */
+/* toast 语义色：固定同色系实心背景 + 白字，不跟随主题背景变化。
+   同时挂在插件 toast 与宿主 toastr 容器上（AI 改写提示走宿主），02-themes.css 不覆盖它们。 */
+.blai-toast, #toast-container {
     --blai-toast-success-bg: #3F8F5C;
     --blai-toast-error-bg: #B6494B;
     --blai-toast-warning-bg: #B8791F;
     --blai-toast-info-bg: #3D6FB4;
     --blai-toast-ink: #FFFFFF;
+}
+
+#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
+    --status-danger: #B6494B;
+    --status-success: #5D8A68;
     /* 净化透视四种来源的实心圆点 / 改写文字色。夜间在 02-themes.css 覆盖为亮一档。 */
     --blai-diff-original: #6B7280;
     --blai-diff-program: #3D6FB4;
