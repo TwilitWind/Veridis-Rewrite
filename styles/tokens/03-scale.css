@@ -259,7 +259,7 @@
      常规档用于弹窗主/次按钮、工具主按钮、批量与深度净化动作；
      紧凑档用于工具条等靠 min-height 定高的横向按钮。图标方按钮与纯文字动作不引用。 */
   --blai-btn-pad-y: var(--blai-space-8);
-  --blai-btn-pad-x: var(--blai-space-16);
+  --blai-btn-pad-x: var(--blai-space-12);
   --blai-btn-pad: var(--blai-btn-pad-y) var(--blai-btn-pad-x);
   --blai-btn-pad-compact: 0 var(--blai-space-10);
 }

@@ -705,7 +705,7 @@
 .blai-switch-on { display: none; }
 .blai-switch-off { display: inline-block; }
 
-.blai-ai-switch input:checked + .blai-ai-switch-track,
+.blai-ai-switch input:checked ~ .blai-ai-switch-track,
 .blai-clean-group-switch.is-on .blai-clean-switch-track,
 .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track,
 .blai-clean-tag-switch input:checked + .blai-clean-switch-track,
@@ -714,7 +714,7 @@
     color: var(--accent-color);
 }
 
-.blai-ai-switch input:checked + .blai-ai-switch-track .blai-switch-off,
+.blai-ai-switch input:checked ~ .blai-ai-switch-track .blai-switch-off,
 .blai-clean-group-switch.is-on .blai-clean-switch-track .blai-switch-off,
 .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track .blai-switch-off,
 .blai-clean-tag-switch input:checked + .blai-clean-switch-track .blai-switch-off,
@@ -723,7 +723,7 @@
     display: none;
 }
 
-.blai-ai-switch input:checked + .blai-ai-switch-track .blai-switch-on,
+.blai-ai-switch input:checked ~ .blai-ai-switch-track .blai-switch-on,
 .blai-clean-group-switch.is-on .blai-clean-switch-track .blai-switch-on,
 .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track .blai-switch-on,
 .blai-clean-tag-switch input:checked + .blai-clean-switch-track .blai-switch-on,

@@ -1,6 +1,6 @@
 /* AI 页：API 连接、生成参数、开关与两栏布局。 */
 
-#blai-purifier-popup.blai-app-shell .blai-ai-switch input:focus-visible + .blai-ai-switch-track {
+#blai-purifier-popup.blai-app-shell .blai-ai-switch input:focus-visible ~ .blai-ai-switch-track {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 40%, transparent) !important;
     outline-offset: var(--blai-focus-offset) !important;
 }
@@ -250,15 +250,6 @@
 
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-title-row {
     justify-content: flex-start;
-}
-
-/* 关闭 AI 改写会过滤预设里的 AI 改写规则——放在连接说明下方，用户看开关时就能看到。 */
-#blai-purifier-popup.blai-app-shell .blai-ai-connection-note {
-    margin-top: var(--blai-space-4);
-    color: var(--text-secondary);
-    font-size: var(--blai-font-11);
-    line-height: 1.45;
-    text-wrap: pretty;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches {

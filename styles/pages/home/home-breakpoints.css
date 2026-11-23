@@ -475,7 +475,7 @@
 #blai-subrule-edit-modal .blai-subrule-footer > button {
     height: var(--blai-size-28) !important;
     min-height: var(--blai-size-28) !important;
-    padding: 0 var(--blai-space-10) !important;
+    padding: 0 var(--blai-btn-pad-x) !important;
 }
 
 /* 手机端首页规则分组容器左右留白统一 12px。 */

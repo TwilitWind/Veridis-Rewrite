@@ -165,7 +165,8 @@
 #blai-purifier-popup .blai-global-heading {
     min-width: 0;
     color: var(--text-main);
-    font-size: var(--blai-font-18);
+    /* 顶栏左侧标题与各页容器里的第一个标题同一档，避免层级倒挂。 */
+    font-size: var(--blai-fs-title);
     font-weight: var(--blai-weight-bold);
     line-height: 1.2;
     text-align: center;
@@ -276,7 +277,7 @@
     }
 
     #blai-purifier-popup .blai-global-heading {
-        font-size: var(--blai-font-17);
+        font-size: var(--blai-fs-title);
     }}
 
 @media (max-width: 600px) {

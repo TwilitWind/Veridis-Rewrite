@@ -455,7 +455,7 @@
 #blai-binding-history-modal .blai-binding-history-actions .blai-primary-btn {
     flex: 0 0 auto !important;
     min-width: var(--blai-size-96);
-    padding: 0 var(--blai-space-22) !important;
+    padding: 0 var(--blai-btn-pad-x) !important;
     min-height: var(--blai-size-38);
     font-size: var(--blai-font-13) !important;
 }

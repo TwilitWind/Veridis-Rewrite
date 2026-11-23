@@ -71,7 +71,7 @@
 .blai-scope-tag-cancel, .blai-scope-tag-confirm {
     min-width: var(--blai-size-96);
     min-height: var(--blai-size-56);
-    padding: 0 var(--blai-space-20);
+    padding: 0 var(--blai-btn-pad-x);
     border: none;
     border-radius: var(--blai-radius-14);
     font-size: var(--blai-font-18);
@@ -208,7 +208,7 @@
 #blai-scope-tag-editor-modal :is(.blai-scope-tag-cancel, .blai-scope-tag-confirm) {
     min-width: var(--blai-size-72);
     min-height: var(--blai-size-36);
-    padding: 0 var(--blai-space-14);
+    padding: 0 var(--blai-btn-pad-x);
     border-radius: var(--blai-radius-sm);
     font-size: var(--blai-font-12);
 }

@@ -3,7 +3,7 @@
 
 @media (max-width: 600px) {
     #blai-purifier-popup.blai-app-shell .blai-global-heading {
-        font-size: var(--blai-mobile-type-medium);
+        font-size: var(--blai-fs-title);
     }
 
     /* AI / 工具 / 净化三页的容器标题要比容器内次级标题（12px）大一点，层级才清楚。 */
@@ -108,10 +108,24 @@
     }
 
     /* 手机端无悬停态：触摸模拟时 hover 被粘滞触发，取消其边框/底色高亮；
-       只保留真实交互（聚焦、按下）与选中态的强调色内描边。 */
-    :is(#blai-purifier-popup, .blai-modal-shell) :is(button, .blai-proxy-field):hover {
+       只保留真实交互（聚焦、按下）与选中态的强调色内描边。
+       自绘下拉触发器本身就有 1px 描边，必须排除，否则悬停会把边框一起抹掉。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) button:hover {
         border-color: transparent !important;
         background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    :is(#blai-purifier-popup, .blai-modal-shell) .blai-proxy-field:hover {
+        border-color: transparent !important;
+        background-color: var(--blai-input-bg) !important;
+        box-shadow: none !important;
+    }
+
+    /* 自绘下拉：悬停只退回默认描边与底色，不消除边框。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) .blai-native-select-trigger:hover {
+        border-color: var(--blai-dropdown-border, var(--border-color)) !important;
+        background-color: var(--blai-dropdown-bg, var(--bg-surface)) !important;
         box-shadow: none !important;
     }
 

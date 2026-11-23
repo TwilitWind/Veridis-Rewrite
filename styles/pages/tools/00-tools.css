@@ -69,7 +69,7 @@
 
 .blai-zh-dict-actions :is(.blai-secondary-btn, .blai-primary-btn) {
     min-height: var(--blai-size-38);
-    padding: 0 var(--blai-space-14);
+    padding: 0 var(--blai-btn-pad-x);
     border-radius: var(--blai-radius-sm);
 }
 
