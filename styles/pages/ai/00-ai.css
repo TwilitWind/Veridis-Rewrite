@@ -492,7 +492,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
-    gap: var(--blai-space-8);
+    gap: var(--blai-switch-gap);
     color: var(--text-main);
     font-size: var(--blai-font-11);
     font-weight: var(--blai-weight-bold);

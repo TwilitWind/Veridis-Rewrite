@@ -264,7 +264,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch {
-    gap: var(--blai-space-4);
+    gap: var(--blai-switch-gap);
     min-height: var(--blai-size-28);
     font-size: var(--blai-font-10);
 }

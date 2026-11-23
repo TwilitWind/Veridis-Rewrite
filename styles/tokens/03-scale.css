@@ -262,6 +262,8 @@
   --blai-btn-pad-x: var(--blai-space-12);
   --blai-btn-pad: var(--blai-btn-pad-y) var(--blai-btn-pad-x);
   --blai-btn-pad-compact: 0 var(--blai-space-10);
+  /* 开关与同排文字/图标之间的横向间距：全站只有一个值，避免各行疏密不一。 */
+  --blai-switch-gap: var(--blai-space-8);
 }
 
 /* 手机端 5 档字号：note 保 11px 下限，正文及以上统一加大一档。 */

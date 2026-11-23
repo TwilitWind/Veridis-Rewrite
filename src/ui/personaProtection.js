@@ -16,8 +16,13 @@ export function syncPersonaDescriptionProtectionControl() {
         const text = button.querySelector('.blai-persona-protect-text');
         const isPanelControl = Boolean(button.closest('#blai-purifier-popup'));
         if (text) text.textContent = isPanelControl ? (enabled ? '开启' : '关闭') : (enabled ? '已保护' : '保护');
-        const icon = button.querySelector('i');
-        if (icon) icon.className = enabled ? 'fa-solid fa-shield-halved' : 'fa-solid fa-shield';
+        // 面板里的开关只用 FA toggle 图标，盾牌只用于酒馆页面注入的按钮。
+        // 之前这里无条件改写第一个 <i>，把面板开关的 off 图标换成盾牌，
+        // 于是开启态出现「盾牌 + toggle-on」两个图标叠在一起。
+        if (!isPanelControl) {
+            const icon = button.querySelector('i');
+            if (icon) icon.className = enabled ? 'fa-solid fa-shield-halved' : 'fa-solid fa-shield';
+        }
     };
 
     document

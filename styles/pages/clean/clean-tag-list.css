@@ -113,7 +113,7 @@
 #blai-purifier-popup .blai-clean-tag-actions {
     display: inline-flex;
     align-items: center;
-    gap: var(--blai-space-6);
+    gap: var(--blai-switch-gap);
 }
 
 #blai-purifier-popup .blai-clean-tag-action {
