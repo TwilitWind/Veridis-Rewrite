@@ -268,7 +268,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 - 焦点态用 `box-shadow: inset 0 0 0 1px var(--accent-color) !important`，不占位不抖动；hover 不加描边。禁给输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）。主题对裸标签有强声明时把 `--ui-color-sec` 重定向到 `--blai-input-bg`，不新增 `!important`；副作用是边框也读该变量，反馈页三个裸标签用同色 inset 补可见边框。`.pages` / `.page-panel` 保持透明让 `--bg-base` 透上来；日间用实色，不用半透明叠灰底（发脏）。
 - 图标统一酒馆自带 Font Awesome 6.5.2，格式 `<i class="fas fa-*" aria-hidden="true"></i>`；禁止内联 `<svg>`、CSS 拼三角/对勾、字符箭头。伪元素勾选与下拉箭头用 FA 字形码加 FA 字体；装饰线条/圆点不算图标。类名必须在 FA 6.5.2 存在，`fa-fw` / `fa-solid` / `fa-spin` 是修饰类，不参与校验。
 - 字号只用 5 档语义 token（`--blai-fs-*`），旧 `--blai-font-N` 全是别名；双端档值与禁止整体缩放见根目录 `DESIGN.md`「字号档位」。间距语义层在 `03-scale.css` 第二块：`--blai-canvas-pad`(12)、`--blai-panel-pad`、`--blai-panel-pad-tight`(10)、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`(8)、`--blai-head-pad`(12)、`--blai-row-pad`(10)。弹窗/对话框里有底色的按钮左右内边距统一走 `--blai-btn-pad-x`(12)，各弹窗不再写 14/15/20/22px 的独立值。页面文件不写裸 `gap: 14px`。
-- 视口高度统一走 `--blai-viewport-h`（`100vh` 回退，支持时用 `100svh`），插件外壳与大弹窗不再直接写 `100dvh`：手机软键盘弹出时布局高度不重排，内容被键盘覆盖而非被顶起。弹窗打开时输入框不自动聚焦，避免软键盘意外弹出。
+- 视口高度统一走 `--blai-viewport-h`（`100vh` 回退，支持时用 `100svh`），插件外壳与大弹窗不再直接写 `100dvh`：手机软键盘弹出时布局高度不重排，内容被键盘覆盖而非被顶起。弹窗打开时输入框不自动聚焦，避免软键盘意外弹出。键盘期间 `ui/viewportHeight.js` 只给聚焦输入框所在的滚动容器临时补一段底部空间，并把它滚到键盘上沿；弹窗顶栏、底栏和输入框高度不变，键盘收起时撤销。
 - 两栏统一 `minmax(0, 5fr) minmax(0, 3fr)`（两端都要 `minmax(0, ...)`）与 `align-items: stretch`，不退回 `start`；断点、`box-shadow`、`grid-template-columns`、`transform` 保留字面量是刻意的。
 
 ### 反馈页与高亮的实现约束

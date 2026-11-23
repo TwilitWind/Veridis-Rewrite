@@ -8,7 +8,7 @@ whenToUse: 用 test/ 或 test/audit/ 下任一脚本前，先查这里的用途�
 
 本目录脚本分两层：**根目录**是每次开发的常用工具（从通用库 `sillytavern-extension-dev/scripts/` 拷贝，靠 `drift-check.mjs` 保持同名一致）；**`audit/` 子目录**是按需的专项审计和功能回归脚本。
 
-通用工具的完整参数、CDP 环境、手机模拟、真输入用法见 `sillytavern-extension-dev/scripts/SKILL.md` 与 `E:/Plugin Development/docs/testing.md`，这里只记本项目的调用约定。
+通用工具参数、CDP 环境、手机模拟、真输入见 `sillytavern-extension-dev/scripts/SKILL.md` 和 `docs/testing.md`；这里只记本项目调用约定。
 
 ## 根目录（常用）
 

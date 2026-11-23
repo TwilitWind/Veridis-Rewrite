@@ -1,70 +1,51 @@
 # 本项目协作规则
 
-## 交差前必须做的事
+## 交差前
 
-改了用户看得见的行为（界面、交互）时，「我改了 CSS / 写了代码」不算数，必须有真浏览器跑过的证据。
+改了用户看得见的行为（界面、交互）时，源码改动不算证据。汇报格式：
 
-```
+```text
 做了什么：一句话
 测试：<命令> → 通过 N，失败 0
 截图：shots/ 下的路径
 没验证到的：哪些、为什么；没有就写「无」
 ```
 
-验证要测「用户看到的结果」，不是「源码里有没有那行字」。判断办法：把改动故意弄坏，验证必须失败；只改内部写法，验证应照样通过。做不到的验证是形式主义。
+验证测「用户看到的结果」。把改动弄坏，验证必须失败；只改内部写法，验证应照样通过。做不到的验证是形式主义。
 
 ## 规则表
 
 | 规则 | 由什么拦住 |
 |---|---|
-| 透视弹窗顶栏与 ⋮ 菜单镜像严格互斥（顶栏有→菜单不重复，顶栏无→菜单必露出） | `CDP_PORT=9224 node test/audit/verify-diff-menu.mjs`（真浏览器，桌面+手机两视口，含反证） |
-| 禁止用 `#blai-diff-modal` 祖先选择器控制菜单镜像显隐 | `node build-check.mjs` 第 15 条静态检查 |
-| 深度净化程序改写不报 `xxx is not defined`、勾选不回顶 | `CDP_PORT=9224 node test/audit/verify-deep-clean.mjs`（真浏览器，含双向反证） |
-| 禁止「调用别处导出却没 import」（`node --check` 查不出，运行才炸） | `node test/check-imports.mjs` / `node build-check.mjs` 第 16 条静态闸门（含反证） |
-| 正则查找框高亮时光标贴字右侧、不叠进字形 | `CDP_PORT=9224 node test/audit/verify-regex-caret.mjs`（真浏览器量光标 x−字符右缘，注入 bold 反证） |
-| 三弹窗直属 body、直角高亮、主题对比色、扫描结果说明、双端导览锚点 | `CDP_PORT=9224 node test/audit/verify-followup.mjs`（真浏览器 19 项，桌面+手机） |
-| 透视弹窗不再残留独立「AI 改写」入口 | `verify-diff-menu.mjs` 的 `aiRewriteGone` 断言（顶栏与菜单镜像都检查） |
-| 透视来源图例纯展示、右侧筛选行折叠多选、定位高亮单线无投影、说明文字浅字带图标、手机四字文案 | `CDP_PORT=9224 node test/audit/verify-diff-stats-legend.mjs`（真浏览器，桌面+手机，含展开/多选/折叠/撤回/重新净化路径） |
+| 透视弹窗顶栏与 ⋮ 菜单镜像严格互斥 | `CDP_PORT=9224 node test/audit/verify-diff-menu.mjs`（桌面 + 手机，含反证） |
+| 禁止用 `#blai-diff-modal` 祖先选择器控制菜单镜像显隐 | `node build-check.mjs` 静态检查 |
+| 深度净化程序改写不报错、勾选不回顶 | `CDP_PORT=9224 node test/audit/verify-deep-clean.mjs`（含反证） |
+| 禁止调用未 import 的导出 | `node test/check-imports.mjs` / `node build-check.mjs` 静态闸门 |
+| 正则查找框高亮不叠字 | `CDP_PORT=9224 node test/audit/verify-regex-caret.mjs`（量光标 x−字符右缘） |
+| 三弹窗直属 body、主题对比色、扫描说明、双端导览锚点 | `CDP_PORT=9224 node test/audit/verify-followup.mjs` |
+| 透视来源图例、筛选折叠、定位高亮单线、浅字说明、手机四字文案 | `CDP_PORT=9224 node test/audit/verify-diff-stats-legend.mjs`（桌面 + 手机） |
 | 交差前跑通验证并附截图 | `build-css.mjs` + `build-check.mjs` + `test/audit/verify-*.mjs` + `shots/` |
 
 ## 已知陷阱：portal 菜单
 
-`src/ui/popover.js` 的 `openMenuPopover` 会把菜单 `document.body.appendChild(menu)` 挂到 body。
-因此任何依赖祖先容器的 CSS 选择器（如 `#blai-diff-modal .blai-diff-menu-action`）在菜单打开后**必然失效**——
-菜单已经不在那个祖先里了。这类菜单的显隐要么只用菜单自身选择器，要么由 JS 在打开时按真实状态运行时设置。
-
-曾因此踩坑：桌面 ⋮ 菜单里顶栏四项（撤回所选/撤回净化/AI 改写/全文模式）全部重复出现，
-而 grep CSS 的「验证」一路误报通过。现在镜像显隐由 `openDiffActionsMenu` 按顶栏按钮实际可见性设置，
-CSS 基线只负责「默认隐藏」，两者配合覆盖桌面/手机与 reverted 等动态状态。
-独立「AI 改写」入口已删，镜像项由 4 项减为 3 项；「重新净化」按 AI 开关串接 AI 与程序改写。
+`openMenuPopover` 把菜单挂到 `document.body`。依赖祖先容器的 CSS（如 `#blai-diff-modal .blai-diff-menu-action`）在菜单打开后失效。菜单显隐只用菜单自身选择器，或由 JS 在打开时按真实状态设置。镜像显隐由 `openDiffActionsMenu` 按顶栏按钮可见性设置，CSS 基线只负责默认隐藏。
 
 ## 已知陷阱：主容器内的弹窗
 
-`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文：内部的 `position:fixed` 相对它定位，
-遮罩铺不满视口、弹窗也可能被主界面挡住。所有大弹窗都必须放在模板里 `#blai-purifier-popup`
-闭合标签**之后**（运行时整体 append 到 body，即成为 body 直属节点）。
-新增弹窗后同步检查 `src/ui/shell.js` 的初始化清理清单，否则重复加载会残留旧节点。
+`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文；内部 `position:fixed` 相对它定位，遮罩和弹窗会被挡住。大弹窗必须在模板里放在 `#blai-purifier-popup` 闭合标签之后，运行时成为 body 直属节点。新增弹窗后检查 `src/ui/shell.js` 的初始化清理清单。
 
 ## 已知陷阱：漏导入的 ReferenceError
 
-ES module 里调用别模块导出的函数却忘了 import，`node --check` 与 CSS 构建闸门都查不出，
-只有真运行到那条分支才抛 `xxx is not defined`——表现为用户点开界面看到「无法完成」。
-已踩坑：`matching-00-compile.js` 漏导入 `collectVariableUpdateRanges`（程序改写必炸）、
-`replay-04-migration.js` 漏导入 `cloneJson`、`debugStore.js` 调用未导入的 `refreshMountedDebugDisplay`。
-现在 `test/check-imports.mjs` 静态扫全仓（已处理 spread 调用 `...fn(` 的误伤），
-并挂到 `build-check.mjs` 第 16 条闸门，构建期就拦下。新增跨模块调用务必确认已 import。
+ES module 漏 import 不会被 `node --check` 或 CSS 构建闸门发现，只有运行到分支才报 `xxx is not defined`。`test/check-imports.mjs` 已挂到 `build-check.mjs`，新增跨模块调用必须确认已 import。
 
 ## 已知陷阱：整块重渲染吞掉滚动位置
 
-用 `.html()` 整块重建 DOM 会销毁原滚动容器，scrollTop 归零。
-深度净化初始选择勾选复选框就走这条路：渲染前记住 scrollTop、渲染后**同步**设回。
-不要用 `requestAnimationFrame` 延迟恢复（回调时机不稳，实测反而丢失）。
+`.html()` 整块重建 DOM 会销毁滚动容器，scrollTop 归零。深度净化勾选后渲染前记住 scrollTop，渲染后同步设回；不要 `requestAnimationFrame` 延迟恢复。
 
 ## 测试环境
 
-- SillyTavern 在 `http://127.0.0.1:8000/`
-- 验证用独立调试浏览器（`CDP_PORT=9224`，脚本默认值已是它）：端口约定与启动方式见工作区 `AGENTS.md`「CDP 调试端口」及 `docs/testing.md` §2，本处不复述本机细节。
-- 源码在 `E:\Plugin Development\Veridis-Rewrite`；装机副本在
-  `D:\Games\SillyTavern\SillyTavern\data\default-user\extensions\Veridis-Rewrite`
-- 改完必须跑 `node build-css.mjs` → `node build-check.mjs` →
-  `node test/sync.mjs <源> <装机副本>`，否则装机副本与源码不一致。
+- SillyTavern：`http://127.0.0.1:8000/`
+- CDP：`CDP_PORT=9224`，端口约定与启动见工作区 `AGENTS.md` 和 `docs/testing.md` §2。
+- 源码：`E:\Plugin Development\Veridis-Rewrite`
+- 装机副本：`D:\Games\SillyTavern\SillyTavern\data\default-user\extensions\Veridis-Rewrite`
+- 改完跑：`node build-css.mjs` → `node build-check.mjs` → `node test/sync.mjs <源> <装机副本>`。

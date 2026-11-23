@@ -281,13 +281,13 @@
   --blai-switch-gap: var(--blai-space-8);
 }
 
-/* 手机端 5 档字号：note 保 11px 下限，正文及以上统一加大一档。 */
+/* 手机端 5 档字号：整档比桌面大 1px，浅字也不再压到 11px。 */
 @media (max-width: 600px) {
 :root {
-  --blai-fs-note: 11px;
-  --blai-fs-body: 13px;
-  --blai-fs-sub: 14px;
-  --blai-fs-title: 15px;
-  --blai-fs-hero: 17px;
+  --blai-fs-note: 12px;
+  --blai-fs-body: 14px;
+  --blai-fs-sub: 15px;
+  --blai-fs-title: 16px;
+  --blai-fs-hero: 18px;
 }
 }

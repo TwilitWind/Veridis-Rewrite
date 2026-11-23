@@ -520,17 +520,18 @@
 }}
 
 @media (max-width: 600px) {
-/* 手机底栏只留一行图标+短标签，不再额外抬高 48px；键盘弹出时也不该吃掉正文高度。 */
+/* 手机底栏只留一行图标+短标签；上下 6px 是手感底线。
+   内容区 36px + 上下 6px + 顶边框约 1px，总高约 49px：不再 1px 贴边，也不回到 60px 厚底栏。 */
 #blai-purifier-popup.blai-app-shell .bottom-nav {
-    --blai-nav-minh: var(--blai-size-40);
-    --blai-nav-pad-y: var(--blai-space-1);
+    --blai-nav-minh: var(--blai-size-36);
+    --blai-nav-pad-y: var(--blai-space-6);
     --blai-nav-pad-x: var(--blai-space-6);
 }
 
 #blai-purifier-popup.blai-app-shell .bottom-nav .nav-item {
     min-height: var(--blai-size-34);
     padding: 0;
-    gap: var(--blai-space-1);
+    gap: var(--blai-space-2);
     font-size: var(--blai-font-9);
 }
 

@@ -232,17 +232,18 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header {
-    /* 标题与说明居左、开关居右，二者都在正常 flex 流中；开关不再 absolute，
-       否则窄屏下说明文字会铺满整行、右端钻到开关底下造成重叠。 */
+    /* 标题独占第一行，两个开关并排占满第二行，整组落在 API 预设上方。
+       仍在正常 flex 流中，不用 absolute，窄屏不会与说明文字重叠。 */
     position: relative;
     flex-direction: row;
+    flex-wrap: wrap;
     min-height: var(--blai-size-62);
     gap: var(--blai-space-8);
 }
 
-/* 标题与副标题居左，两个开关贴标题栏最右侧 */
+/* 标题与副标题居左并独占一行，给下面的开关组让出整行宽度。 */
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-header > div:first-child {
-    flex: 1 1 auto;
+    flex: 1 1 100%;
     min-width: 0;
     align-self: flex-start;
     text-align: left;
@@ -253,17 +254,20 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches {
-    /* 回到正常 flex 流：flex:0 0 auto 固定在右，左侧文字 min-width:0 收缩换行，
-       避免 absolute 定位导致的说明文字与开关重叠。 */
+    /* 两个开关同排、各占半行：文字在左、开关在右，沿用插件与 iOS 的开关方向。 */
     position: static;
-    flex: 0 0 auto;
-    flex-direction: column;
-    align-items: flex-end;
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     flex-wrap: nowrap;
-    gap: var(--blai-space-3);
+    gap: var(--blai-space-10);
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-rewrite-switches .blai-ai-switch {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: space-between;
     gap: var(--blai-switch-gap);
     min-height: var(--blai-size-28);
     font-size: var(--blai-font-10);
