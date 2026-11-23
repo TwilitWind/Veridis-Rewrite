@@ -12,7 +12,8 @@ import { bindEvents } from './src/events.js';
 import { initRealtimeInterceptor } from './src/host/lifecycleEvents.js';
 import { setupUI } from './src/ui/shell.js';
 import { updateToolbarUI } from './src/presets/view.js';
-import { applyCharacterPresetBinding } from './src/presets/application.js';
+import { applyCharacterPresetBinding, syncActivePresetSnapshot } from './src/presets/application.js';
+import { setActivePresetSyncHook } from './src/rules/state.js';
 import { showRiskConfirmModal } from './src/ui/notifications.js';
 import { performGlobalChatMaintenance } from './src/chat/cleanse.js';
 import { isTauriTavernHost, waitForTauriTavernReady } from './src/integrations/tauriTavern.js';
@@ -121,6 +122,9 @@ initAppContext({
         return collectInstalledEnabledExtensions({ externalIds, manifestsByExternalId });
     },
 });
+
+// 规则/AI 改动落盘即写回当前预设快照，切换/关闭预设不再弹「未保存」确认。
+setActivePresetSyncHook(syncActivePresetSnapshot);
 
 jQuery(() => {
     if (isBooted) return;

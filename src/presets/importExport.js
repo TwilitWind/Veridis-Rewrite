@@ -10,7 +10,6 @@ import { focusOnFinePointer } from '../ui/popover.js';
 import { presetsRuntimeState, markPresetsUiDirty } from './state.js';
 import { deepClone, buildPresetEntry, getCurrentPresetAiRewriteSettings, normalizePresetAiRewriteSettings } from './model.js';
 import { normalizeRuleActivationSafety } from '../rules/model.js';
-import { hasActivePresetUnsavedChanges } from './application.js';
 import { syncPresetAiRewriteGenerationSettingsUI, updateToolbarUI } from './view.js';
 import { renderTags } from '../rules/view.js';
 import { showAlertModal, showConfirmModal, showToast } from '../ui/notifications.js';
@@ -139,12 +138,9 @@ async function openImportChoiceModal(rules, defaultName, aiRewriteSettings = nul
     }, 50);
 }
 
+// 改动已由 markRulesDataDirty 的钩子实时写回预设快照，导入前无需「未保存」确认。
 async function confirmBeforeImportChoiceIfUnsaved() {
-    const { extension_settings } = getAppContext();
-    const settings = extension_settings[extensionName];
-    const active = settings.activePreset;
-    if (!active || !hasActivePresetUnsavedChanges()) return true;
-    return showConfirmModal(`当前预设 "${active}" 有未保存的改动。\n\n仅导入不会修改当前规则；导入并切换或临时预览会在执行前再次确认保存。\n\n是否继续选择导入方式？`, { okText: '继续' });
+    return true;
 }
 
 async function validateImportPresetName() {
@@ -164,16 +160,8 @@ async function validateImportPresetName() {
     return name;
 }
 
-async function confirmUnsavedBeforeReplacingCurrentRules(actionLabel) {
-    const { extension_settings, saveSettingsDebounced } = getAppContext();
-    const settings = extension_settings[extensionName];
-    const active = settings.activePreset;
-    if (!active || !hasActivePresetUnsavedChanges()) return true;
-    const shouldSave = await showConfirmModal(`当前预设 "${active}" 有未保存的改动。\n\n点击“确定”先保存并继续${actionLabel}。\n点击“取消”将取消本次导入操作。`, { okText: '保存并继续' });
-    if (!shouldSave) return false;
-    settings.presets[active] = buildCurrentPresetEntry(settings.rules || []);
-    saveSettingsDebounced();
-    markPresetsUiDirty(true);
+// 改动已实时写回预设快照，导入并切换/预览前无需「未保存」确认。
+async function confirmUnsavedBeforeReplacingCurrentRules(_actionLabel) {
     return true;
 }
 

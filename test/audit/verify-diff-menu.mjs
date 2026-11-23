@@ -3,7 +3,9 @@
  * 净化透视弹窗「顶栏 / ⋮ 菜单镜像互斥」真浏览器回归测试。
  *
  * 守的就是用户感受得到的行为：顶栏上有的功能，⋮ 菜单里不许重复；
- * 顶栏被收起的功能（手机断点 / reverted 状态），必须在 ⋮ 菜单里露出。
+ * 顶栏被手机断点收起的功能（全文模式），必须在 ⋮ 菜单里露出。
+ * 撤回态的全文模式改为置灰常驻、不再隐藏，因此不再算「收进菜单」的情形。
+ * 顶栏动作镜像下方不加分隔线。
  *
  * 关键背景：菜单打开时会被 popover.js portal 到 <body>，任何依赖
  * #blai-diff-modal 祖先的 CSS 选择器都会失效。所以本测试在菜单「打开后」
@@ -139,8 +141,9 @@ function assertSnapshot(label, snap) {
             failures.push(`${m.act}: 顶栏已隐藏，但菜单里也没有（功能丢失）`);
         }
     });
-    if (snap.dividerVisible !== snap.anyMirrorVisible) {
-        failures.push(`分隔线显示=${snap.dividerVisible} 与是否有镜像露出=${snap.anyMirrorVisible} 不一致`);
+    // 顶栏动作镜像下方不再加分隔线：手机端全文模式收进菜单后，直接与偏好项相邻。
+    if (snap.dividerVisible) {
+        failures.push('分隔线仍显示：顶栏动作镜像下方不应再有分隔线');
     }
     return failures;
 }

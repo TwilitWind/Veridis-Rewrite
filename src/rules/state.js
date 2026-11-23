@@ -42,11 +42,21 @@ export function markRulesUiDirty(dirty = true) {
     rulesUiState.rulesUiDirty = dirty;
 }
 
+// 规则/AI 改动落盘后立即把当前工作区写回预设快照的钩子。
+// 由入口层注入以避开 state.js ↔ presets/application.js 的循环依赖；
+// 这样「保存合集」「开关 AI 改写」等操作即改即存，切换预设不再出现未保存确认。
+let activePresetSyncHook = null;
+export function setActivePresetSyncHook(fn) {
+    activePresetSyncHook = typeof fn === 'function' ? fn : null;
+}
+
 export function markRulesDataDirty(options = {}) {
     const { rulesUi = true, presetsUi = false } = options;
     markRegexDirty(true);
     if (rulesUi) markRulesUiDirty(true);
     if (presetsUi) markPresetsUiDirty(true);
+    // 同步写回当前预设快照：编辑弹窗里的草稿不经过这里，只有真实落盘的改动才触发。
+    if (activePresetSyncHook) activePresetSyncHook();
 }
 
 // 分组编辑弹窗的未保存改动检测：把名称与规则列表归一化成可比较的字符串。

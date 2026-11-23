@@ -3,7 +3,6 @@ import { extensionName } from './settings/defaults.js';
 import { getAppContext } from './host/appContext.js';
 import { clearPendingShujukuRewrite } from './shujuku/realtime.js';
 import { showResponsivePage, updateLegacyPurifierWarning } from './ui/shell.js';
-import { applyPresetByName, hasActivePresetUnsavedChanges, saveActivePresetSnapshot } from './presets/application.js';
 import { refreshCharacterBindingUI, updateToolbarUI } from './presets/view.js';
 import { bindPresetEvents } from './presets/events.js';
 import { bindRuleEvents } from './rules/events.js';
@@ -74,15 +73,8 @@ export function bindEvents() {
         }
     });
 
-    $(document).off('click', '#blai-close-btn').on('click', '#blai-close-btn', async () => {
-        if (hasActivePresetUnsavedChanges()) {
-            if (await showConfirmModal(`预设 "${extension_settings[extensionName].activePreset}" 有未保存的规则或 AI 生成限制改动，是否保存？\n点击【确定】保存，点击【取消】直接关闭放弃改动。`, { okText: '保存' })) {
-                saveActivePresetSnapshot();
-            } else {
-                // 放弃保存时回滚到已保存状态，避免脏数据残留。
-                applyPresetByName(extension_settings[extensionName].activePreset, { skipRender: true });
-            }
-        }
+    $(document).off('click', '#blai-close-btn').on('click', '#blai-close-btn', () => {
+        // 改动已由 markRulesDataDirty 的钩子实时写回预设快照，关闭无需再弹「未保存」确认。
         closeRuleSearchModal({ reset: true });
         closeScopeTagsModal({ reset: true });
         $('#blai-purifier-popup').fadeOut(120);

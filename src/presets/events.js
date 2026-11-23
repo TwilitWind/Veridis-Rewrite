@@ -7,7 +7,7 @@ import { getAppContext } from '../host/appContext.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { presetsRuntimeState, markPresetsUiDirty } from './state.js';
 import { normalizeImportedRulesPayload } from './model.js';
-import { applyPresetByName, hasActivePresetUnsavedChanges } from './application.js';
+import { applyPresetByName } from './application.js';
 import { refreshCharacterBindingUI, renderBindingHistory, updateToolbarUI } from './view.js';
 import { renderTags } from '../rules/view.js';
 import { showAlertModal, showConfirmModal, showPromptModal, showToast } from '../ui/notifications.js';
@@ -29,17 +29,8 @@ export function bindPresetEvents() {
     const { extension_settings, saveSettingsDebounced } = getAppContext();
 
     // 切换规则集的共用逻辑：原生 select 的 change 与自绘菜单的点击都走这里。
+    // 改动已由 markRulesDataDirty 的钩子实时写回预设快照，切换无需再弹「未保存」确认。
     const switchPreset = async (newPreset) => {
-        const settings = extension_settings[extensionName];
-        const oldPreset = settings.activePreset;
-
-        if (oldPreset && newPreset !== oldPreset && hasActivePresetUnsavedChanges()) {
-            if (await showConfirmModal(`预设 "${oldPreset}" 有未保存的规则或 AI 生成限制改动，是否在切换前保存？\n点击【确定】保存，点击【取消】放弃改动。`, { okText: '保存' })) {
-                settings.presets[oldPreset] = buildCurrentPresetEntry(settings.rules);
-                saveSettingsDebounced();
-            }
-        }
-
         applyPresetByName(newPreset, { skipRender: true });
         $('#blai-preset-select, #blai-tools-preset-select').val(newPreset);
         renderTags();

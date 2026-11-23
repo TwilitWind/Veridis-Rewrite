@@ -96,17 +96,15 @@ export function createDiffEventsCore() {
         // 菜单会被 popover.js portal 到 body，CSS 祖先选择器失效，故在此运行时同步；
         // 顶栏按钮的可见性同时受屏幕断点与状态（如 reverted 时隐藏全文模式）影响，
         // 直接读 computed style 才能覆盖所有情况。
-        let anyMirrorVisible = false;
         $('#blai-diff-actions-menu [data-blai-header-action]').each((_, item) => {
             const actionId = item.getAttribute('data-blai-header-action');
             const headerBtn = actionId ? document.getElementById(actionId) : null;
-            // offsetParent 为 null 表示该按钮被 display:none 隐藏（含断点/状态两种原因）。
+            // offsetParent 为 null 表示该按钮被 display:none 隐藏（只可能是手机断点，撤回态改置灰不再隐藏）。
             const headerVisible = !!headerBtn && headerBtn.offsetParent !== null
                 && window.getComputedStyle(headerBtn).display !== 'none';
             // 显式写 flex/none：菜单镜像的 CSS 基线是 display:none（防 portal 后重复），
             // 若这里清空 style 会回退到基线而看不到，故放出时必须显式给 flex。
             item.style.display = headerVisible ? 'none' : 'flex';
-            if (!headerVisible) anyMirrorVisible = true;
 
             // 镜像项文案跟随顶栏：撤回所选会切成「退出勾选」，全文模式会切成「切回片段」。
             const labelId = item.getAttribute('data-blai-header-label');
@@ -114,10 +112,9 @@ export function createDiffEventsCore() {
             const span = item.querySelector('span');
             if (span && text) span.textContent = text;
         });
-        // 分隔线只在确有镜像项露出时才显示，避免菜单顶部空出一条线。
-        // 同样显式给 block（基线是 none），不能靠清空 style 回退。
+        // 顶栏动作镜像与下方偏好项之间不加分隔线：手机端全文模式镜像本就是顶栏功能的延续。
         const divider = menu.querySelector('.blai-diff-menu-divider');
-        if (divider) divider.style.display = anyMirrorVisible ? 'block' : 'none';
+        if (divider) divider.style.display = 'none';
 
         diffMenuOpen = true;
         openMenuPopover(toggle, menu);
@@ -163,8 +160,8 @@ export function createDiffEventsCore() {
         const enabled = diffRuntimeState.diffRelatedRuleMode === true;
         $('#blai-diff-modal').toggleClass('blai-diff-related-mode', enabled);
         $('#blai-diff-related-mode-icon').attr('class', enabled ? 'fa-solid fa-crosshairs blai-related-active-icon' : 'fa-solid fa-crosshairs');
-        $('#blai-diff-related-mode-text').text(enabled ? '相关规则：开启' : '相关规则：关闭');
-        $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭相关规则模式' : '点击改写项查看命中的规则');
+        $('#blai-diff-related-mode-text').text(enabled ? '规则定位：开启' : '规则定位：关闭');
+        $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭规则定位' : '点击改写项查看命中的规则');
         if (!enabled) closeDiffRelatedModal();
     };
 
@@ -237,7 +234,8 @@ export function createDiffEventsCore() {
         // 被手动编辑过的消息仍可撤回：未改动的区间回退到
         // 记录的 Original，用户自己的措辞则保留。
         $('#blai-diff-revert-toggle').attr('title', revertTitle).prop('disabled', !isReverted && !meta);
-        $('#blai-diff-mode-toggle').toggle(!isReverted);
+        // 全文/片段模式常驻顶栏：撤回态没有差异可切换，置灰表示不可用，但按钮不消失。
+        $('#blai-diff-mode-toggle').prop('disabled', isReverted);
     };
 
 

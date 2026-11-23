@@ -66,6 +66,8 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 
 页面内部统一三层：`model.js` 纯数据与规范化 → `view.js` 只碰 DOM → `events.js` 绑事件、调 model 与 view。运行时状态放各目录 `state.js`（`programRuntimeState`、`rulesUiState`、`aiRewriteState`、`presetsRuntimeState` 等），脏标记（`markRulesUiDirty` 等）触发重渲染。`rules/rulesUiState.editGroupBaseline` 在打开分组编辑弹窗时记录名称+规则快照（`captureEditGroupBaseline`），关闭前由 `hasUnsavedEditGroupChanges` 比对是否触发未保存提醒（忽略纯 UI 的 `isEditing`）。
 
+**预设改动即存**：`markRulesDataDirty()` 在真实落盘时调用注入钩子 `activePresetSyncHook`（入口层用 `presets/application.js` 的 `syncActivePresetSnapshot` 注入，避开 state↔application 循环依赖），把当前 `settings.rules` + 预设 AI 字段静默写回 `settings.presets[activePreset]`。因此 `hasActivePresetUnsavedChanges()` 常态为 false，切换预设/关闭窗口/导入预设的「未保存」确认弹窗已全部移除。编辑弹窗草稿不经过 `markRulesDataDirty`，仍按原有未保存提醒处理，不受影响。
+
 | 层 | 目录 | 职责 |
 | --- | --- | --- |
 | 入口 | `index.js`、`src/events.js`、`src/log.js` | 宿主导入、全局初始化、顶栏与路由事件、`logger`（前缀 `[词汇映射]`） |
@@ -135,7 +137,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `diff/messageMeta.js` | `{originalMes, aiMes, programMes, reverted}` 存在 `msg.__blai_diff_branch_meta[branchKey]`；`migrateChatDiffMetadata` 处理旧字段 |
 | `diff/revertMerge.js` | `computeRevertedText(currentText, programText, originalText)`：撤回唯一入口 |
 | `diff/pickRevert.js` | 撤回所选的 DOM 采集与计算：`assignDiffRevertItemIds` 编号相邻 del/ins，`collectPickedDiffItems` 用 `Map<itemId, 节点[]>` 索引回查勾选项（避免 O(n×m)），`computePickedRevert` 换算阶段文本 |
-| `diff/preferences.js` | 透视「更多操作」菜单偏好的单一入口：`SPECS`（取值序列 + read/write）+ `cycleDiffPreference(key)` 统一切换并写 settings + `syncRelatedRuleRuntime` 打开弹窗时从 settings 恢复相关规则开关。模板按钮用 `data-blai-pref`（值必须等于 SPECS 键） |
+| `diff/preferences.js` | 透视「更多操作」菜单偏好的单一入口：`SPECS`（取值序列 + read/write）+ `cycleDiffPreference(key)` 统一切换并写 settings + `syncRelatedRuleRuntime` 打开弹窗时从 settings 恢复规则定位开关。模板按钮用 `data-blai-pref`（值必须等于 SPECS 键） |
 | `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex`：AI 改写关闭时以保留的 `meta.originalMes` 只跑程序改写；开启时 `requestManualAiRewriteForMessage(index, {recleanse:true, onSettled})` 在撤回保护仍未解除时按原文发起 AI 任务，AI 原子写回时清除保护并写入「原文 → AI → 程序」阶段链。发起失败只出非交互提示，不降级为程序改写。透视弹窗不再有独立「AI 改写」按钮 |
 | `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
 | `diff/tracking.js` / `retention.js` | 谁被记录、按设置裁剪历史 |

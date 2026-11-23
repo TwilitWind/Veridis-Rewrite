@@ -68,6 +68,19 @@ export function saveActivePresetSnapshot(options = {}) {
     return true;
 }
 
+// 改动即存：把当前工作区静默写回当前预设快照。
+// 由 markRulesDataDirty 的注入钩子调用，必须避免再次触发 markRulesDataDirty（否则递归），
+// 因此这里不复用 saveActivePresetSnapshot，直接写 settings + saveSettingsDebounced。
+export function syncActivePresetSnapshot() {
+    const { extension_settings, saveSettingsDebounced } = getAppContext();
+    const settings = extension_settings[extensionName];
+    const active = String(settings.activePreset || '');
+    if (!active) return false;
+    settings.presets[active] = buildPresetEntry(settings.rules || [], getCurrentPresetAiRewriteSettings(settings.aiRewrite));
+    saveSettingsDebounced();
+    return true;
+}
+
 export function applyPresetByName(name, options = {}) {
     const { extension_settings, saveSettingsDebounced } = getAppContext();
     const settings = extension_settings[extensionName];

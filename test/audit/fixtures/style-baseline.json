@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-23T07:31:18.876Z",
+  "generatedAt": "2026-11-23T07:59:46.868Z",
   "props": [
     "display",
     "visibility",
@@ -122,8 +122,8 @@
       "digest": "e44294e82016ba2a286f9b3195812284ccc7c4e299c5a8d067321c60593f1f8d"
     },
     "desktop|light|feedback": {
-      "elementCount": 14,
-      "digest": "9f423d40b486668e26aef43cff4e6ae8aad684402e254daa42cbf97f11363763"
+      "elementCount": 29,
+      "digest": "8d78bdc3c753d4c8c0dd9a5296d4855c7924ad1f18731ffa2d6e3bff16d307e7"
     },
     "desktop|dark|overview": {
       "elementCount": 222,
@@ -142,8 +142,8 @@
       "digest": "bb21603e3871f3da04f80a4c7ce5851897710fc2b920ca42bb6d15a983b41363"
     },
     "desktop|dark|feedback": {
-      "elementCount": 14,
-      "digest": "03d31b696c5641f6562f07a86f5380f76fa07aa7bff3d9ec317634f6ef1e0c3e"
+      "elementCount": 29,
+      "digest": "d6ac48fcc421286f1cac02cadf1a7640bf25ef8faefe2053e8cd36b9eb8fcf39"
     },
     "mobile|light|overview": {
       "elementCount": 222,
@@ -162,8 +162,8 @@
       "digest": "dd468c7ab7fa68da6e191580038099677c490db838caaec2cf071a0c92be4696"
     },
     "mobile|light|feedback": {
-      "elementCount": 14,
-      "digest": "0c380fa33d6d56b302a268d06e476b8620d4cffa49498578d51084bbc54d8400"
+      "elementCount": 29,
+      "digest": "845224a1f8653ea9f96d55304106d783714743c42cae5e255ae82e625cc7cf63"
     },
     "mobile|dark|overview": {
       "elementCount": 222,
@@ -182,8 +182,8 @@
       "digest": "873f2072621ea8ea8988212f31635b9bcd3e28b7f035cd4b004070dfec7e994b"
     },
     "mobile|dark|feedback": {
-      "elementCount": 14,
-      "digest": "b60a3003b7772b363088110e43c99d1f80e8a7908ba179280615f2aaa0d391bc"
+      "elementCount": 29,
+      "digest": "625c4043db4062daabfd8f3535289d9cd4e1b56a2b2ab5d9e6263d63e45d6d13"
     }
   }
 }
