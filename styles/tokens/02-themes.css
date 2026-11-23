@@ -21,8 +21,9 @@
         var(--SmartThemeBodyColor) 68%,
         transparent
     );
-    /* 跟随酒馆：边框原样沿用宿主 --SmartThemeBorderColor，不再按底色智能加深。 */
-    --border-color: var(--SmartThemeBorderColor);
+    /* 跟随酒馆：边框取正文色并降一档清晰度；不依赖宿主的 BorderColor，
+       亮色与暗色酒馆主题都自动得到同色系、低对比的描边。 */
+    --border-color: color-mix(in srgb, var(--SmartThemeBodyColor) 26%, transparent);
     /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
 }
 

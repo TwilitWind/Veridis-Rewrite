@@ -107,8 +107,15 @@
         backdrop-filter: none;
     }
 
-    /* 手机端高亮统一：只用当前主题强调色的一层内描边，不叠加边框/底色/外发光。 */
-    :is(#blai-purifier-popup, .blai-modal-shell) :is(button, .blai-proxy-field):is(:hover, :focus-visible, :active),
+    /* 手机端无悬停态：触摸模拟时 hover 被粘滞触发，取消其边框/底色高亮；
+       只保留真实交互（聚焦、按下）与选中态的强调色内描边。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) :is(button, .blai-proxy-field):hover {
+        border-color: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    :is(#blai-purifier-popup, .blai-modal-shell) :is(button, .blai-proxy-field):is(:focus-visible, :active),
     :is(#blai-purifier-popup, .blai-modal-shell) .field.blai-proxy-field.is-active,
     .blai-regex-replacement-chip.is-active {
         border-color: transparent !important;

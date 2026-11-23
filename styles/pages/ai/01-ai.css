@@ -1,33 +1,5 @@
 /* AI 页：API 连接、生成参数、开关与两栏布局。 */
 
-#blai-purifier-popup.blai-app-shell .blai-ai-switch-track::after {
-    content: "\f111";
-    font-family: 'Font Awesome 6 Free';
-    font-weight: var(--blai-weight-icon);
-    font-size: var(--blai-font-14);
-    line-height: 1;
-    width: var(--blai-size-14);
-    height: var(--blai-size-14);
-    position: absolute;
-    top: 50%;
-    left: var(--blai-space-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--bg-surface);
-    transform: translateY(-50%);
-    transition: transform 160ms ease, color 160ms ease;
-}
-
-#blai-purifier-popup.blai-app-shell .blai-ai-switch input:checked + .blai-ai-switch-track {
-    background: var(--accent-color) !important;
-    box-shadow: none !important;
-}
-
-#blai-purifier-popup.blai-app-shell .blai-ai-switch input:checked + .blai-ai-switch-track::after {
-    transform: translateX(var(--blai-switch-travel)) translateY(-50%) !important;
-}
-
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:focus-visible + .blai-ai-switch-track {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 40%, transparent) !important;
     outline-offset: var(--blai-focus-offset) !important;
@@ -40,8 +12,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch.is-disabled .blai-ai-switch-track {
-    background: color-mix(in srgb, var(--bg-base) 6%, var(--bg-surface) 94%);
-    box-shadow: var(--blai-ring-inset) var(--border-color);
+    color: color-mix(in srgb, var(--text-secondary) 45%, transparent);
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-status {

@@ -40,7 +40,7 @@ function buildScopeTagChipHtml(scopeTag, editId, index = 0, total = 1) {
             <div class="blai-clean-tag-actions">
                 <label class="blai-clean-tag-switch" title="启用或停用该标签">
                     <input type="checkbox" class="blai-clean-tag-toggle-input" data-id="${safeHtml(scopeTag.id)}" ${checkedAttr}>
-                    <span class="blai-clean-switch-track" aria-hidden="true"><span></span></span>
+                    <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                 </label>
                 <button type="button" class="blai-clean-tag-action blai-clean-tag-edit" data-id="${safeHtml(scopeTag.id)}" title="编辑此标签" aria-label="编辑此标签"><i class="fas fa-pen" aria-hidden="true"></i></button>
                 <div class="blai-clean-tag-menu-wrap">
@@ -144,7 +144,7 @@ export function renderScopeTagsModal() {
                 </button>
                 <div class="blai-clean-group-controls">
                     <button type="button" class="${groupToggleClass}" data-group-id="${safeHtml(group.id)}" aria-pressed="${String(isGroupEnabled)}" title="${safeHtml(groupToggleTitle)}" ${groupToggleDisabled}>
-                        <span class="blai-clean-switch-track" aria-hidden="true"><span></span></span>
+                        <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                     </button>
                     <button type="button" class="blai-clean-tag-action blai-clean-group-edit" data-group-id="${safeHtml(group.id)}" title="编辑分组名称" aria-label="编辑分组名称"><i class="fas fa-pen" aria-hidden="true"></i></button>
                     <div class="blai-clean-group-menu-wrap">

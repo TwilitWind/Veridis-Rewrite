@@ -507,12 +507,11 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch-track {
-    width: var(--blai-size-32);
-    height: var(--blai-size-18);
-    position: relative;
-    display: block;
-    flex: 0 0 var(--blai-size-32);
-    border-radius: var(--blai-radius-full);
-    background: var(--bg-surface);
-    box-shadow: var(--blai-ring-inset) var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    font-size: var(--blai-font-18);
+    line-height: 1;
+    color: var(--text-secondary);
 }

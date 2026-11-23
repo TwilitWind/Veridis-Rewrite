@@ -412,47 +412,12 @@
 }
 
 #blai-purifier-popup .blai-tools-switch-track {
-    width: var(--blai-size-32);
-    height: var(--blai-size-18);
-    position: relative;
-    display: block;
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-full);
-    background: var(--bg-surface);
-    box-sizing: border-box;
-    transition: border-color .16s ease, background-color .16s ease;
-}
-
-#blai-purifier-popup .blai-tools-switch-track > span {
-    width: var(--blai-size-14);
-    height: var(--blai-size-14);
-    position: absolute;
-    top: 50%;
-    left: var(--blai-space-2);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Font Awesome 6 Free';
-    font-weight: var(--blai-weight-icon);
-    font-size: var(--blai-font-14);
+    font-size: var(--blai-font-18);
     line-height: 1;
-    color: var(--bg-base);
-    transform: translateY(-50%);
-    transition: transform .16s ease, color .16s ease;
-}
-
-#blai-purifier-popup .blai-tools-switch-track > span::before {
-    content: "\f111";
-}
-
-#blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
-    border-color: var(--accent-color);
-    background: var(--accent-color);
-}
-
-#blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track > span {
-    transform: translateX(var(--blai-switch-travel)) translateY(-50%);
-    background: var(--bg-surface);
+    color: var(--text-secondary);
 }
 
 #blai-purifier-popup .blai-tools-switch-state {

@@ -699,3 +699,35 @@
 .blai-theme-menu button:focus-visible > i:first-child {
     color: inherit;
 }
+
+/* 滑动开关：图标本体即开关（Font Awesome fa-toggle-off / fa-toggle-on），
+   轨道与圆点不再自绘。默认显示 off，勾选态显示 on。 */
+.blai-switch-on { display: none; }
+.blai-switch-off { display: inline-block; }
+
+.blai-ai-switch input:checked + .blai-ai-switch-track,
+.blai-clean-group-switch.is-on .blai-clean-switch-track,
+.blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track,
+.blai-clean-tag-switch input:checked + .blai-clean-switch-track,
+.blai-clean-checkbox-switch input:checked + .blai-clean-switch-track,
+.blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
+    color: var(--accent-color);
+}
+
+.blai-ai-switch input:checked + .blai-ai-switch-track .blai-switch-off,
+.blai-clean-group-switch.is-on .blai-clean-switch-track .blai-switch-off,
+.blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track .blai-switch-off,
+.blai-clean-tag-switch input:checked + .blai-clean-switch-track .blai-switch-off,
+.blai-clean-checkbox-switch input:checked + .blai-clean-switch-track .blai-switch-off,
+.blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track .blai-switch-off {
+    display: none;
+}
+
+.blai-ai-switch input:checked + .blai-ai-switch-track .blai-switch-on,
+.blai-clean-group-switch.is-on .blai-clean-switch-track .blai-switch-on,
+.blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track .blai-switch-on,
+.blai-clean-tag-switch input:checked + .blai-clean-switch-track .blai-switch-on,
+.blai-clean-checkbox-switch input:checked + .blai-clean-switch-track .blai-switch-on,
+.blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track .blai-switch-on {
+    display: inline-block;
+}

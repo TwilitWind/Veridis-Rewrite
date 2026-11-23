@@ -82,41 +82,13 @@
 }
 
 #blai-subrule-edit-modal .blai-regex-highlight-switch .blai-ai-switch-track {
-    position: relative;
-    display: block;
-    flex: 0 0 var(--blai-size-28);
-    width: var(--blai-size-28);
-    height: var(--blai-size-16);
-    border-radius: var(--blai-radius-full);
-    background: color-mix(in srgb, var(--text-main) 26%, var(--bg-base));
-    transition: background 160ms ease;
-}
-
-#blai-subrule-edit-modal .blai-regex-highlight-switch .blai-ai-switch-track::after {
-    content: "\f111";
-    font-family: 'Font Awesome 6 Free';
-    font-weight: var(--blai-weight-icon);
-    font-size: var(--blai-font-12);
-    line-height: 1;
-    position: absolute;
-    top: 50%;
-    left: var(--blai-space-2);
-    width: var(--blai-size-12);
-    height: var(--blai-size-12);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--bg-surface);
-    transform: translateY(-50%);
-    transition: transform 160ms ease, color 160ms ease;
-}
-
-#blai-subrule-edit-modal .blai-regex-highlight-switch input:checked + .blai-ai-switch-track {
-    background: var(--accent-color) !important;
-}
-
-#blai-subrule-edit-modal .blai-regex-highlight-switch input:checked + .blai-ai-switch-track::after {
-    transform: translateX(var(--blai-size-12)) translateY(-50%) !important;
+    flex: 0 0 auto;
+    font-size: var(--blai-font-16);
+    line-height: 1;
+    color: var(--text-secondary);
 }
 
 /* ---------------------------------------------------------------------------

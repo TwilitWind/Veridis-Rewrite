@@ -119,12 +119,12 @@
                                             <div class="blai-ai-rewrite-switches" role="group" aria-label="AI 改写开关">
                                                 <label class="blai-ai-switch">
                                                     <input type="checkbox" id="blai-ai-enabled">
-                                                    <span class="blai-ai-switch-track" aria-hidden="true"></span>
+                                                    <span class="blai-ai-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                     <span>启用改写</span>
                                                 </label>
                                                 <label class="blai-ai-switch">
                                                     <input type="checkbox" id="blai-ai-auto-trigger-enabled">
-                                                    <span class="blai-ai-switch-track" aria-hidden="true"></span>
+                                                    <span class="blai-ai-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                     <span>自动触发 AI 改写</span>
                                                 </label>
                                             </div>
@@ -287,7 +287,7 @@
                                                     <p>用户消息、发送输入框和编辑输入区不进入净化。</p>
                                                 </div>
                                                 <button id="blai-skip-user-toggle" type="button" class="blai-clean-switch" aria-pressed="false" aria-label="跳过用户消息">
-                                                    <span class="blai-clean-switch-track" aria-hidden="true"><span></span></span>
+                                                    <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                     <span class="blai-switch-state">关闭</span>
                                                 </button>
                                             </div>
@@ -297,7 +297,7 @@
                                                     <p>保护 persona_description，深度净化时也不会改写。</p>
                                                 </div>
                                                 <button type="button" class="blai-clean-switch blai-persona-description-protect-toggle" aria-pressed="false" aria-label="保护人设描述" title="点击保护用户设定描述">
-                                                    <span class="blai-clean-switch-track" aria-hidden="true"><span></span></span>
+                                                    <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                     <span class="blai-switch-state blai-persona-protect-text">关闭</span>
                                                 </button>
                                             </div>
@@ -308,7 +308,7 @@
                                                 </div>
                                                 <span class="blai-clean-checkbox-switch">
                                                     <input type="checkbox" id="blai-ai-protect-comments" aria-label="保护 HTML/XML 注释">
-                                                    <span class="blai-clean-switch-track" aria-hidden="true"><span></span></span>
+                                                    <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                 </span>
                                             </label>
                                         </div>
@@ -421,7 +421,7 @@
                                                     <p>在输入框区域显示手动 AI 改写按钮，对当前聊天中最新一条助手消息执行手动 AI 改写。</p>
                                                 </div>
                                                 <button id="blai-composer-button-toggle" type="button" class="blai-tools-switch" aria-pressed="false" aria-label="AI改写快捷键">
-                                                    <span class="blai-tools-switch-track" aria-hidden="true"><span></span></span>
+                                                    <span class="blai-tools-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                     <span class="blai-tools-switch-state">关闭</span>
                                                 </button>
                                             </div>
@@ -432,7 +432,7 @@
                                                     <p>在数据库同步应用当前的净化规则，仅在使用数据库时启用。</p>
                                                 </div>
                                                 <button id="blai-shujuku-auto-rewrite-toggle" type="button" class="blai-tools-switch" aria-pressed="false" aria-label="开启数据库自动净化" title="开启数据库自动净化">
-                                                    <span class="blai-tools-switch-track" aria-hidden="true"><span></span></span>
+                                                    <span class="blai-tools-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                     <span class="blai-tools-switch-state">关闭</span>
                                                 </button>
                                             </div>
@@ -445,7 +445,7 @@
                                                     </div>
                                                     <button id="blai-zh-dict-install-open" class="blai-tools-primary-button" type="button">下载兼容包</button>
                                                     <button id="blai-zh-compat-toggle" class="blai-tools-switch" type="button" aria-pressed="false" aria-label="开启简繁转换" title="开启简繁转换" hidden>
-                                                        <span class="blai-tools-switch-track" aria-hidden="true"><span></span></span>
+                                                        <span class="blai-tools-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                                                         <span class="blai-tools-switch-state">关闭</span>
                                                     </button>
                                                 </div>
@@ -918,7 +918,7 @@
                     </div>
                     <label id="blai-regex-highlight-switch" class="blai-ai-switch blai-regex-highlight-switch" title="开启后在查找内容输入框里高亮语法符号（正则 / 简易通配符；普通文本无语法符号）">
                         <input type="checkbox" id="blai-regex-highlight-toggle">
-                        <span class="blai-ai-switch-track" aria-hidden="true"></span>
+                        <span class="blai-ai-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
                         <span>代码高亮</span>
                     </label>
                     <button id="blai-modal-sub-cancel" type="button" class="blai-icon-btn blai-subrule-close-btn blai-modal-close-x" title="关闭" aria-label="关闭"><i class="fas fa-times"></i></button>
