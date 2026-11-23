@@ -4,7 +4,51 @@
 import { defaultAiRewriteSettings, normalizeAiSamplingSettings } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { showAlertModal, showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
+import { openMenuPopover, closeMenuPopover } from '../../ui/popover.js';
 import { injectDiffButtons } from '../../diff/view.js';
+
+function bindAiApiPresetActionsMenu() {
+    const toggle = document.getElementById('blai-ai-preset-actions-toggle');
+    const menu = document.getElementById('blai-ai-preset-actions-menu');
+    if (!toggle || !menu) return;
+
+    const syncDisabledItems = () => {
+        menu.querySelectorAll('.blai-preset-menu-item[data-blai-ai-preset-action]').forEach((item) => {
+            const target = document.querySelector(String(item.getAttribute('data-blai-ai-preset-action') || ''));
+            const disabled = !target || target.disabled === true;
+            item.classList.toggle('is-disabled', disabled);
+            if (disabled) item.setAttribute('aria-disabled', 'true');
+            else item.removeAttribute('aria-disabled');
+        });
+    };
+
+    $(document).off('click', '#blai-ai-preset-actions-toggle').on('click', '#blai-ai-preset-actions-toggle', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!menu.hasAttribute('hidden')) {
+            closeMenuPopover(menu);
+            menu.setAttribute('hidden', '');
+            toggle.setAttribute('aria-expanded', 'false');
+            return;
+        }
+        syncDisabledItems();
+        menu.removeAttribute('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        openMenuPopover(toggle, menu);
+    });
+
+    $(document).off('click', '.blai-ai-preset-actions-menu .blai-preset-menu-item').on('click', '.blai-ai-preset-actions-menu .blai-preset-menu-item', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const item = event.currentTarget;
+        if (item.getAttribute('aria-disabled') === 'true') return;
+        const target = document.querySelector(String(item.getAttribute('data-blai-ai-preset-action') || ''));
+        closeMenuPopover(menu);
+        menu.setAttribute('hidden', '');
+        toggle.setAttribute('aria-expanded', 'false');
+        if (target && !target.disabled) target.click();
+    });
+}
 
 export function bindAiSettingHandlers(core) {
     const { saveSettingsDebounced } = getAppContext();
@@ -97,6 +141,8 @@ export function bindAiSettingHandlers(core) {
         syncAiRewriteSettingsUI();
         showToast(`已删除 API 预设：${name}`, 'success');
     });
+
+    bindAiApiPresetActionsMenu();
 
 
     $(document).off('input change', '#blai-ai-base-url').on('input change', '#blai-ai-base-url', function() {

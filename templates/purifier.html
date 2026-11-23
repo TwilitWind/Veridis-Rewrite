@@ -133,11 +133,20 @@
                                                 <span class="blai-ai-control-label">API 预设</span>
                                                 <span class="blai-ai-compound-control">
                                                     <select id="blai-ai-api-preset" class="blai-select-box" aria-label="API 预设"></select>
-                                                    <span class="blai-ai-api-preset-actions">
-                                                        <button type="button" id="blai-ai-api-preset-new" class="blai-ai-icon-button" title="将当前 API 配置另存为新预设" aria-label="将当前 API 配置另存为新预设"><i class="fas fa-plus" aria-hidden="true"></i></button>
-                                                        <button type="button" id="blai-ai-api-preset-save" class="blai-ai-icon-button" title="保存当前 API 配置" aria-label="保存当前 API 配置"><i class="fas fa-save" aria-hidden="true"></i></button>
-                                                        <button type="button" id="blai-ai-api-preset-edit" class="blai-ai-icon-button" title="重命名当前 API 预设" aria-label="重命名当前 API 预设"><i class="fas fa-pen" aria-hidden="true"></i></button>
-                                                        <button type="button" id="blai-ai-api-preset-delete" class="blai-ai-icon-button" title="删除当前 API 预设" aria-label="删除当前 API 预设"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                                                    <span class="blai-ai-preset-actions-wrap">
+                                                        <span class="blai-ai-api-preset-actions" hidden>
+                                                            <button type="button" id="blai-ai-api-preset-new" class="blai-ai-icon-button" title="将当前 API 配置另存为新预设" aria-label="将当前 API 配置另存为新预设"><i class="fas fa-plus" aria-hidden="true"></i></button>
+                                                            <button type="button" id="blai-ai-api-preset-save" class="blai-ai-icon-button" title="保存当前 API 配置" aria-label="保存当前 API 配置"><i class="fas fa-save" aria-hidden="true"></i></button>
+                                                            <button type="button" id="blai-ai-api-preset-edit" class="blai-ai-icon-button" title="重命名当前 API 预设" aria-label="重命名当前 API 预设"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                                                            <button type="button" id="blai-ai-api-preset-delete" class="blai-ai-icon-button" title="删除当前 API 预设" aria-label="删除当前 API 预设"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                                                        </span>
+                                                        <button type="button" id="blai-ai-preset-actions-toggle" class="blai-ai-icon-button blai-ai-preset-actions-toggle" title="API 预设操作" aria-label="API 预设操作" aria-haspopup="menu" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                                        <div id="blai-ai-preset-actions-menu" class="blai-preset-menu blai-ai-preset-actions-menu" role="menu" aria-label="API 预设操作" hidden>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>另存为新预设</span></button>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-save"><i class="fas fa-save" aria-hidden="true"></i><span>保存当前配置</span></button>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-edit"><i class="fas fa-pen" aria-hidden="true"></i><span>重命名</span></button>
+                                                            <button type="button" class="blai-preset-menu-item blai-preset-action-danger" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-delete"><i class="fas fa-trash" aria-hidden="true"></i><span>删除</span></button>
+                                                        </div>
                                                     </span>
                                                 </span>
                                             </label>

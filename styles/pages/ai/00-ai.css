@@ -432,6 +432,43 @@
     gap: var(--blai-space-5);
 }
 
+#blai-purifier-popup.blai-app-shell .blai-ai-api-preset-actions[hidden] {
+    display: none !important;
+}
+
+/* API 预设的四个操作收进一个竖省略号；原按钮仍作为隐藏的动作锚点保留事件绑定。 */
+#blai-purifier-popup.blai-app-shell .blai-ai-preset-actions-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+#blai-purifier-popup.blai-app-shell .blai-ai-preset-actions-toggle {
+    width: var(--blai-size-40);
+    height: var(--blai-size-40);
+    min-width: var(--blai-size-40);
+}
+
+.blai-ai-preset-actions-menu {
+    min-width: var(--blai-size-160);
+}
+
+.blai-ai-preset-actions-menu .blai-preset-menu-item[aria-disabled="true"] {
+    opacity: .45;
+    cursor: default;
+}
+
+.blai-ai-preset-actions-menu .blai-preset-action-danger,
+.blai-ai-preset-actions-menu .blai-preset-action-danger i {
+    color: var(--status-danger);
+}
+
+/* 自绘下拉触发器和 API Key 输入框/API 预设触发器统一 40px 高。 */
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-grid .blai-native-select-trigger {
+    height: var(--blai-size-40);
+    min-height: var(--blai-size-40);
+}
+
 #blai-purifier-popup.blai-app-shell .blai-ai-icon-button {
     min-width: 0;
     min-height: 0;
@@ -457,6 +494,14 @@
     border-color: var(--accent-color) !important;
     background: var(--bg-surface) !important;
     color: var(--accent-ink) !important;
+}
+
+/* API 连接区里的独立操作图标不要描边框，和输入框/下拉框的图标区分开。
+   只清边框，不隐藏 API Key 的眼睛/橡皮擦，也不动下拉框自带的箭头图标。 */
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-grid .blai-ai-icon-button,
+#blai-purifier-popup.blai-app-shell .blai-ai-connection-grid .blai-ai-icon-button:hover,
+#blai-purifier-popup.blai-app-shell .blai-ai-key-actions .blai-ai-embedded-button {
+    border-color: transparent !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-icon-button:disabled {

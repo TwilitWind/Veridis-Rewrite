@@ -711,10 +711,10 @@
 .blai-switch-off { display: inline-block; }
 
 /* 酒馆宿主用 .fa-solid:not(#load-spinner){font-size:var(--icon-size)} 把所有
-   FA 图标锁成 13.5px。这里覆盖宿主的 --icon-size，把开关图标收回和所在行
-   其它 UI 图标同一档（13px），不缩放按钮外框。 */
+   FA 图标锁成 13.5px。fa-toggle-* 字形在字体框里留白较多，13px 看着偏小；
+   这里单独把开关图标提到 15px，按钮外框仍是 32×32，不与同行按钮一起放大。 */
 :is(.blai-ai-switch-track, .blai-clean-switch-track, .blai-tools-switch-track) {
-    --icon-size: var(--blai-fs-body);
+    --icon-size: var(--blai-font-15);
 }
 
 /* 开启态颜色与所在行的铅笔/竖三点等 UI 图标同色（--text-main）。
