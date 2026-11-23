@@ -135,7 +135,9 @@ if (fs.existsSync(baselinePath)) {
   const baseMap = baseline.base ?? baseline;
   for (const rel of allFiles) {
     const text = fs.readFileSync(path.join(STYLES, rel), 'utf8');
-    const also = (text.match(/!important/g) || []).length;
+    // 注释里解释「为什么需要 !important」不算一次使用，和 important-audit.mjs 口径保持一致。
+    const declarations = text.replace(/\/\*[\s\S]*?\*\//g, '');
+    const also = (declarations.match(/!important/g) || []).length;
     const was = baseMap[rel]?.important ?? 0;
     if (also > was) warn(`styles/${rel} 的 !important 从 ${was} 涨到 ${also}`);
   }

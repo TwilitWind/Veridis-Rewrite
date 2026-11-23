@@ -28,8 +28,10 @@ whenToUse: 用 test/ 或 test/audit/ 下任一脚本前，先查这里的用途�
 
 | 脚本 | 用途 |
 |---|---|
-| `audit/audit.mjs` | 一站式审计调度：`node test/audit/audit.mjs all --strict` |
+| `audit/audit.mjs` | 一站式审计调度：`node test/audit/audit.mjs all --strict`；支持 `static/important/layout/align/all` |
 | `audit/style-audit.mjs` | 字号/token 静态审计（线索） |
+| `audit/important-audit.mjs` | `!important` 数量/分类审计，和 `styles/quality-baseline.json` 对比；`--strict` 只许降，`--update-baseline` 重新记基线 |
+| `audit/style-snapshot.mjs` | 双视口 × 双主题 × 五页面的计算样式快照；`--save-baseline` 存摘要基线，`--compare <file> --strict` 验零差异 |
 | `audit/layout-audit.mjs` | CDP 裁切/重叠/遮挡启发式（线索，非闸门） |
 | `audit/align-audit.mjs` | CDP 控件与文字垂直居中（STRICT 可判错） |
 | `audit/dialog-font-audit.mjs` | 弹窗字号层级实测（本项目特有） |

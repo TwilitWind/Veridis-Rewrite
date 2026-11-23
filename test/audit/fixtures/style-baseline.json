@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "generatedAt": "2026-11-23T07:04:35.796Z",
+  "props": [
+    "display",
+    "visibility",
+    "opacity",
+    "position",
+    "zIndex",
+    "top",
+    "right",
+    "bottom",
+    "left",
+    "width",
+    "height",
+    "minWidth",
+    "minHeight",
+    "maxWidth",
+    "maxHeight",
+    "boxSizing",
+    "marginTop",
+    "marginRight",
+    "marginBottom",
+    "marginLeft",
+    "paddingTop",
+    "paddingRight",
+    "paddingBottom",
+    "paddingLeft",
+    "borderTopWidth",
+    "borderRightWidth",
+    "borderBottomWidth",
+    "borderLeftWidth",
+    "borderTopStyle",
+    "borderRightStyle",
+    "borderBottomStyle",
+    "borderLeftStyle",
+    "borderTopColor",
+    "borderRightColor",
+    "borderBottomColor",
+    "borderLeftColor",
+    "borderTopLeftRadius",
+    "borderTopRightRadius",
+    "borderBottomRightRadius",
+    "borderBottomLeftRadius",
+    "backgroundColor",
+    "backgroundImage",
+    "color",
+    "fontFamily",
+    "fontSize",
+    "fontStyle",
+    "fontWeight",
+    "lineHeight",
+    "letterSpacing",
+    "textAlign",
+    "textOverflow",
+    "whiteSpace",
+    "overflowX",
+    "overflowY",
+    "gap",
+    "rowGap",
+    "columnGap",
+    "alignItems",
+    "justifyContent",
+    "flexDirection",
+    "gridTemplateColumns",
+    "boxShadow",
+    "outlineStyle",
+    "outlineColor",
+    "transform",
+    "filter",
+    "cursor",
+    "pointerEvents"
+  ],
+  "pseudoProps": [
+    "content",
+    "fontFamily",
+    "fontSize",
+    "color",
+    "backgroundColor",
+    "width",
+    "height",
+    "borderColor"
+  ],
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1353,
+      "height": 858
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "pages": [
+    "overview",
+    "ai",
+    "clean",
+    "tools",
+    "feedback"
+  ],
+  "combos": {
+    "desktop|light|overview": {
+      "elementCount": 222,
+      "digest": "ee0393666f64ba0723b86e8ba88856eb4b9ad227949e4e9ccc4192f883082da6"
+    },
+    "desktop|light|ai": {
+      "elementCount": 152,
+      "digest": "984c8e7b0f6c15072cf03358dd9f63d70d56dc0dd55807a132c87ce693e401c8"
+    },
+    "desktop|light|clean": {
+      "elementCount": 125,
+      "digest": "1fa6d53c6c3cb019919b39ea500523ce39bf29e5c42c338425d58adfa22c557a"
+    },
+    "desktop|light|tools": {
+      "elementCount": 118,
+      "digest": "89a20bb364b2e5867efd49af649fd1b3f62accc6200eb9396def161eb1783db6"
+    },
+    "desktop|light|feedback": {
+      "elementCount": 14,
+      "digest": "4eb54d5e56bf87d60a8bf6e37cd7b82552f8a7bfebeeeb59f5faa0fecfedab56"
+    },
+    "desktop|dark|overview": {
+      "elementCount": 222,
+      "digest": "753001228c69308b0724ea1dd0091d4f7da9830c0c3b37245e5accf61e39d82c"
+    },
+    "desktop|dark|ai": {
+      "elementCount": 152,
+      "digest": "55d1e0a369bc77886b13c7205066c03a73fa9d97b21aa473de7fefd1a6f4d069"
+    },
+    "desktop|dark|clean": {
+      "elementCount": 125,
+      "digest": "59158520836177b357fcf73cbcaf6723911b9e1e0077ad69f1087ef7d1f5f40b"
+    },
+    "desktop|dark|tools": {
+      "elementCount": 118,
+      "digest": "d5ab5d8f6e4d1822a6f40c2327441e75fea293e19448e189684deb2ceaa7f4a5"
+    },
+    "desktop|dark|feedback": {
+      "elementCount": 14,
+      "digest": "c348217103ada98ce15d2d4c2fc11988be19eb0b91f8a1949948d18d39239e2a"
+    },
+    "mobile|light|overview": {
+      "elementCount": 222,
+      "digest": "12572be21908c76e15a1690bdd7f199e7ffa2eda16b3012dec257541a14171bb"
+    },
+    "mobile|light|ai": {
+      "elementCount": 113,
+      "digest": "d6c8e6ea66ca3c9f2e521e992cdaa2952d24f49bc618c23b7469b7de0d9560d0"
+    },
+    "mobile|light|clean": {
+      "elementCount": 125,
+      "digest": "66425af55cf5d52d2360e6c2a4525768aed243b1bf149eb20eb14914570f25a7"
+    },
+    "mobile|light|tools": {
+      "elementCount": 118,
+      "digest": "713e116e4156491f460280e81ec69bffd9db2d481ecbb307a8ec3ef48907622c"
+    },
+    "mobile|light|feedback": {
+      "elementCount": 14,
+      "digest": "91e2c16d3aa6eb23a4ed7fdc0108ec3c36b31a0686e2f19cfc59281dc885aede"
+    },
+    "mobile|dark|overview": {
+      "elementCount": 222,
+      "digest": "e3599d48e4c988a0ec7d5b30b8fb02e8615ef7348de083c7154e720ec83bd859"
+    },
+    "mobile|dark|ai": {
+      "elementCount": 113,
+      "digest": "3b156992026632dd645f4871f39f3323b3876282958d2f379288f4f3794cec56"
+    },
+    "mobile|dark|clean": {
+      "elementCount": 125,
+      "digest": "f18d795a60e178ed166c181c850952491bd1e8902e6d6a6e8c414ddbcf133d05"
+    },
+    "mobile|dark|tools": {
+      "elementCount": 118,
+      "digest": "bf5d53a9e5d956a1a8debe0e1d84570da53ae0dce1da61ff351d463ca2e69ff0"
+    },
+    "mobile|dark|feedback": {
+      "elementCount": 14,
+      "digest": "40c6a35815a1a291e21952e98535cd6e3429d903a3cf8ea1d2fd00545db47e85"
+    }
+  }
+}
