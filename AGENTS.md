@@ -62,7 +62,7 @@ ES module 里调用别模块导出的函数却忘了 import，`node --check` 与
 ## 测试环境
 
 - SillyTavern 在 `http://127.0.0.1:8000/`
-- 验证用独立调试浏览器：`CDP_PORT=9224`。全项目统一这个端口，所有脚本默认值与文档都写它。用户日常浏览器占 9222 且无调试端口，不要连。
+- 验证用独立调试浏览器（`CDP_PORT=9224`，脚本默认值已是它）：端口约定与启动方式见工作区 `AGENTS.md`「CDP 调试端口」及 `docs/testing.md` §2，本处不复述本机细节。
 - 源码在 `E:\Plugin Development\Veridis-Rewrite`；装机副本在
   `D:\Games\SillyTavern\SillyTavern\data\default-user\extensions\Veridis-Rewrite`
 - 改完必须跑 `node build-css.mjs` → `node build-check.mjs` →
