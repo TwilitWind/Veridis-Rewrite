@@ -142,7 +142,7 @@
         padding: 0;
         display: inline-grid;
         place-items: center;
-        border: 0;
+        border: var(--blai-border-1) solid var(--border-color);
         border-radius: var(--blai-radius-sm);
         background: var(--blai-input-bg);
         color: var(--text-main);

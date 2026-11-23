@@ -450,7 +450,12 @@
 }
 
 .blai-ai-preset-actions-menu {
-    min-width: var(--blai-size-160);
+    min-width: var(--blai-size-148);
+}
+
+.blai-ai-preset-actions-menu .blai-preset-menu-item {
+    gap: var(--blai-space-8);
+    justify-content: flex-start;
 }
 
 .blai-ai-preset-actions-menu .blai-preset-menu-item[aria-disabled="true"] {
@@ -494,14 +499,6 @@
     border-color: var(--accent-color) !important;
     background: var(--bg-surface) !important;
     color: var(--accent-ink) !important;
-}
-
-/* API 连接区里的独立操作图标不要描边框，和输入框/下拉框的图标区分开。
-   只清边框，不隐藏 API Key 的眼睛/橡皮擦，也不动下拉框自带的箭头图标。 */
-#blai-purifier-popup.blai-app-shell .blai-ai-connection-grid .blai-ai-icon-button,
-#blai-purifier-popup.blai-app-shell .blai-ai-connection-grid .blai-ai-icon-button:hover,
-#blai-purifier-popup.blai-app-shell .blai-ai-key-actions .blai-ai-embedded-button {
-    border-color: transparent !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-icon-button:disabled {

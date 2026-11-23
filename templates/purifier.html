@@ -142,8 +142,8 @@
                                                         </span>
                                                         <button type="button" id="blai-ai-preset-actions-toggle" class="blai-ai-icon-button blai-ai-preset-actions-toggle" title="API 预设操作" aria-label="API 预设操作" aria-haspopup="menu" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
                                                         <div id="blai-ai-preset-actions-menu" class="blai-preset-menu blai-ai-preset-actions-menu" role="menu" aria-label="API 预设操作" hidden>
-                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>另存为新预设</span></button>
-                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-save"><i class="fas fa-save" aria-hidden="true"></i><span>保存当前配置</span></button>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-save"><i class="fas fa-save" aria-hidden="true"></i><span>保存</span></button>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>新建</span></button>
                                                             <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-edit"><i class="fas fa-pen" aria-hidden="true"></i><span>重命名</span></button>
                                                             <button type="button" class="blai-preset-menu-item blai-preset-action-danger" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-delete"><i class="fas fa-trash" aria-hidden="true"></i><span>删除</span></button>
                                                         </div>
@@ -328,10 +328,10 @@
                                         </header>
                                         <div class="blai-clean-danger-content">
                                             <h3>启动深度净化</h3>
-                                            <p>启动一个在正式应用前不写入正式数据的深度净化运行。</p>
+                                            <p>先预览改写，再决定是否写入。</p>
                                             <div class="blai-clean-warning" role="note">
                                                 <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
-                                                <span>启动后先选择要处理的资源，确认后进入扫描；扫描阶段只读取冻结内容、不写入。之后的写入取决于处理模式：直接应用在确认后按批保存，需审查的模式经你确认后才应用。在正式写入前停止或关闭，都不会改写聊天、角色卡、世界书、人设或数据库。</span>
+                                                <span>扫描只读，不写入；确认后才按模式应用。中途停止或关闭不会改动数据。</span>
                                             </div>
                                             <button id="blai-deep-clean-btn" type="button" class="blai-clean-danger-button">
                                                 <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
@@ -822,7 +822,7 @@
                     <h3 class="blai-diff-modal-title"><i class="fa-solid fa-eye"></i><span class="blai-diff-title-text">净化前文透视</span></h3>
                     <div class="blai-diff-header-actions">
                         <div class="blai-diff-header-primary">
-                        <button id="blai-diff-pick-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="勾选差异项后逐条撤回">
+                        <button id="blai-diff-pick-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="勾选改写项后逐条撤回">
                             <i id="blai-diff-pick-icon" class="fa-solid fa-list-check"></i> <span id="blai-diff-pick-text">撤回所选</span>
                         </button>
                         <button id="blai-diff-revert-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="撤回净化并保护原文">
@@ -851,7 +851,7 @@
                                     <span>全文模式</span>
                                 </button>
                                 <div class="blai-diff-menu-divider" aria-hidden="true"></div>
-                                <button id="blai-diff-related-mode-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffRelatedRuleEnabled" title="点击差异文本查看命中的规则">
+                                <button id="blai-diff-related-mode-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffRelatedRuleEnabled" title="点击改写项查看命中的规则">
                                     <i id="blai-diff-related-mode-icon" class="fa-solid fa-crosshairs"></i>
                                     <span id="blai-diff-related-mode-text">相关规则：关闭</span>
                                 </button>
@@ -889,7 +889,7 @@
                                     <span class="blai-diff-stat" data-kind="ai"><i></i><strong id="blai-diff-stat-ai">0</strong><span>AI 改写</span></span>
                                 </div>
                 <div id="blai-diff-pick-bar" class="blai-diff-pick-bar" hidden>
-                    <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击差异片段勾选要撤回的内容</span>
+                    <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击改写项勾选要撤回的内容</span>
                     <button id="blai-diff-pick-confirm" type="button" class="blai-icon-btn blai-diff-pick-confirm" disabled>
                         <i class="fas fa-rotate-left"></i> <span>确认撤回</span>
                     </button>

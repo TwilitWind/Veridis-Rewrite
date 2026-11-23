@@ -164,7 +164,7 @@ export function createDiffEventsCore() {
         $('#blai-diff-modal').toggleClass('blai-diff-related-mode', enabled);
         $('#blai-diff-related-mode-icon').attr('class', enabled ? 'fa-solid fa-crosshairs blai-related-active-icon' : 'fa-solid fa-crosshairs');
         $('#blai-diff-related-mode-text').text(enabled ? '相关规则：开启' : '相关规则：关闭');
-        $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭相关规则模式' : '点击差异文本查看命中的规则');
+        $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭相关规则模式' : '点击改写项查看命中的规则');
         if (!enabled) closeDiffRelatedModal();
     };
 
@@ -256,8 +256,8 @@ export function createDiffEventsCore() {
             : $('#blai-diff-modal-content .blai-diff-change-picked').length;
         $('#blai-diff-pick-confirm').prop('disabled', count === 0);
         $('#blai-diff-pick-hint').text(count > 0
-            ? `已勾选 ${count} 处差异`
-            : '点击差异片段勾选要撤回的内容');
+            ? `已勾选 ${count} 个改写项`
+            : '点击改写项勾选要撤回的内容');
     };
 
 
@@ -266,7 +266,7 @@ export function createDiffEventsCore() {
         const canPick = enabled && !!msg && typeof msg === 'object' && !isMessageDiffReverted(msg);
         $('#blai-diff-modal').toggleClass('blai-diff-pick-mode', canPick);
         $('#blai-diff-pick-bar').prop('hidden', !canPick);
-        $('#blai-diff-pick-toggle').attr('title', canPick ? '退出撤回所选' : '勾选差异片段后撤回所选');
+        $('#blai-diff-pick-toggle').attr('title', canPick ? '退出撤回所选' : '勾选改写项后撤回所选');
         $('#blai-diff-pick-icon').attr('class', canPick ? 'fa-solid fa-list-check blai-related-active-icon' : 'fa-solid fa-list-check');
         $('#blai-diff-pick-text').text(canPick ? '退出勾选' : '撤回所选');
         if (!canPick) $('#blai-diff-modal-content .blai-diff-change-picked').removeClass('blai-diff-change-picked');
@@ -417,7 +417,7 @@ export function createDiffEventsCore() {
             || getDiffMessageByIndex(index) !== msg || getMessageDiffBranchKey(msg) !== branchKey) return;
         const notice = omitVariableUpdates(msg.mes) !== omitVariableUpdates(meta.programMes)
             ? '<div class="blai-diff-empty">当前消息已被手动编辑；撤回净化会保留你的改动，并把记录阶段里的改写尽量还原为原文（找不到的替换会跳过）。</div>' : '';
-        const empty = '<div class="blai-diff-empty">当前消息未触发差异。</div>';
+        const empty = '<div class="blai-diff-empty">当前消息没有改写项。</div>';
         contentEl.html(notice + (mode === 'full'
             ? `<div class="blai-diff-full-text">${rendered.join('') || empty}</div>`
             : rendered.join('<hr class="blai-diff-divider">') || empty));
