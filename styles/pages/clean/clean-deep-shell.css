@@ -21,7 +21,7 @@
 }
 
 /* 深度净化工作区：与「编辑规则集」弹窗同规格的居中大卡片——宽 560、
-   高 calc(100dvh - 28px)，层级紧贴遮罩之上。 */
+   高 calc(var(--blai-viewport-h) - 28px)，层级紧贴遮罩之上。 */
 #blai-deep-clean-workspace {
     position: fixed;
     top: 50%;
@@ -33,8 +33,8 @@
     padding: 0;
     width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
     max-width: var(--blai-size-560);
-    height: calc(100dvh - var(--blai-size-28));
-    max-height: calc(100dvh - var(--blai-size-28));
+    height: calc(var(--blai-viewport-h) - var(--blai-size-28));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));
     min-width: 0;
     min-height: 0;
     display: none;

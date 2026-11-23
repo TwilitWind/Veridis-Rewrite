@@ -230,7 +230,7 @@ export async function runAiRewriteForMessage(payload, options = {}) {
             const fallbackResult = applyAiProgramFallback(task, 'ai-failed');
             if (fallbackResult.applied) return { status: 'fallback-applied', fallbackResult };
         }
-        notifyAiRewriteStatus('error', 'AI 改写失败', err?.message || '请求未完成', { timeOut: 8000, extendedTimeOut: 16000 });
+        notifyAiRewriteStatus('error', 'AI 改写失败', `${err?.message || '请求未完成'}（已跳过程序改写）`, { timeOut: 8000, extendedTimeOut: 16000 });
     } finally {
         if (rewriteState.runningTask === task) rewriteState.runningTask = null;
         if (isSameAiRewriteTask(rewriteState.statusDismissedTask, task)) {

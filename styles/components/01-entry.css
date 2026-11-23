@@ -6,6 +6,15 @@
 
 #blai-wand-btn {
     cursor: pointer;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: var(--blai-space-6) !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+}
+
+#blai-wand-btn i {
+    margin: 0;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {

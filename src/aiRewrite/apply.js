@@ -141,7 +141,7 @@ function applyRewritePlan(task, selectedReplacements, mode) {
     const originalText = task.automatic === true ? currentText : task.originalText;
     let preservedTail = '';
     let trimProgramEnd = false;
-    if (task.automatic !== true && previous) {
+    if (task.automatic !== true && task.recleanse !== true && previous) {
         // MVU 追加到 trimEnd() + 两个换行之后；即使旧阶段的尾部换行
         // 也构成精确前缀，仍要保留该分隔。
         const trimmedProgram = previous.programMes.trimEnd();

@@ -213,6 +213,7 @@ export function deriveDeepCleanCompletionSummary(lifecycle) {
     let oversizedItemIndexes = null;
     let totalAiRequestCount = null;
     let failedAiRequestCount = null;
+    let aiFailureReasons = [];
     if (run.input.processingMode === 'program-ai') {
         aiFailedItemIndexes = new Set();
         oversizedItemIndexes = new Set();
@@ -223,6 +224,7 @@ export function deriveDeepCleanCompletionSummary(lifecycle) {
             failedAiRequestCount += processedRun.aiFailedRequestIndexes.length;
             processedRun.aiFailedItemIndexes.forEach((itemIndex) => aiFailedItemIndexes.add(itemIndex));
             processedRun.aiRequestPlan.oversizedItemIndexes.forEach((itemIndex) => oversizedItemIndexes.add(itemIndex));
+            aiFailureReasons = aiFailureReasons.concat(processedRun.aiFailureReasons || []);
         }
         aiFailedItemIndexes.forEach((itemIndex) => failedItemIndexes.add(itemIndex));
     }
@@ -249,6 +251,7 @@ export function deriveDeepCleanCompletionSummary(lifecycle) {
             failedAiRequestCount,
             aiFailedOriginalItemCount: aiFailedItemIndexes.size,
             oversizedAiItemCount: oversizedItemIndexes.size,
+            aiFailureReasons: aiFailureReasons.slice(0, 5),
         });
     }
 

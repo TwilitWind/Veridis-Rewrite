@@ -4,7 +4,7 @@ import { aiRewriteState } from '../state.js';
 import { logger } from '../../log.js';
 import { recordAiRewriteDebug } from '../debug.js';
 import { generationLifecycle } from '../../host/generationLifecycle.js';
-import { isSameAiRewriteTask, getAiRewriteMessageId, validateAutomaticAiRewriteContent } from '../task.js';
+import { isSameAiRewriteTask, getAiRewriteMessageId, validateAutomaticAiRewriteContent, getAiSettings } from '../task.js';
 import { getAppContext } from '../../host/appContext.js';
 import { isAssistantMessage } from '../../diff/tracking.js';
 import { getMessageDiffBranchKey } from '../../chat/messageBranch.js';
@@ -307,6 +307,11 @@ export function isNonRetryableAiRewriteError(error) {
 }
 
 export function applyAiProgramFallback(taskLike, reason = '') {
+    // 开启 AI 改写时只按「AI 全部完成 → 程序改写」的顺序提交：
+    // AI 未发出 / 请求失败 / 写回失败都不得改跑程序改写，由调用方提示原因。
+    if (getAiSettings().enabled === true) {
+        return { applied: false, reason: `AI 改写未成功，已跳过程序改写${reason ? `（${reason}）` : ''}` };
+    }
     const { chat } = getAppContext();
     const index = Number(taskLike?.index);
     if (!Array.isArray(chat) || !Number.isInteger(index) || index < 0 || index >= chat.length) {

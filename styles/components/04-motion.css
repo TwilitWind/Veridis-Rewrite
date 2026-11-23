@@ -35,6 +35,19 @@
     transform-origin: top right;
 }
 
+/* 手机端切页：位移更小、时长略长，避免「硬跳一下」的观感。 */
+@keyframes blai-page-in-mobile {
+    from { opacity: 0; transform: translate3d(0, 3px, 0); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 600px) {
+    #blai-purifier-popup .page-panel.active {
+        animation-name: blai-page-in-mobile;
+        animation-duration: var(--blai-duration-slow);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     #blai-purifier-popup .page-panel.active,
     .blai-modal-shell,

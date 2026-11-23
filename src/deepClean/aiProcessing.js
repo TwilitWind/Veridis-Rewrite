@@ -2,6 +2,7 @@ import { buildAiRewriteGenerateRawConfig, callTavernHelperGenerateRaw } from '..
 import { parseAiRewriteResponseObject, validateAiRewriteEntries } from '../aiRewrite/response.js';
 import { getPresetAiRewriteSettings } from '../presets/model.js';
 import { renderDeepCleanAiRequest } from './aiPlanning.js';
+import { buildDeepCleanProgramText } from './programProcessing.js';
 
 const deepCleanAiRequestTimeoutMs = 300_000;
 
@@ -74,66 +75,51 @@ function applyAcceptedItemRewrites(effectiveSource, requestItem, accepted) {
 }
 
 export function resolveDeepCleanFinalProposedText(run, itemIndex) {
+    const item = run.contentItems?.[itemIndex];
+    const originalText = String(item?.originalText || '');
+    // AI 改写开启时，AI 发起 / 响应失败的内容一律不进程序改写，保持原文并计入失败项。
+    if (run.input?.processingMode === 'program-ai'
+        && Array.isArray(run.aiFailedItemIndexes)
+        && run.aiFailedItemIndexes.includes(itemIndex)) {
+        return originalText;
+    }
     const aiResult = run.aiProposedResults?.find((entry) => entry?.itemIndex === itemIndex);
-    if (aiResult) return String(aiResult.aiCandidate || '');
+    const aiSource = aiResult ? String(aiResult.aiCandidate || '') : originalText;
+    if (run.input?.processingMode === 'program-ai') {
+        const compiledSemantics = run.scanResult?.compiledSemantics;
+        if (!item || !compiledSemantics) return aiSource;
+        try {
+            // AI 全部完成后才按序执行程序改写：程序规则作用于 AI 写回的文本。
+            return buildDeepCleanProgramText(run.input, item, compiledSemantics, aiSource);
+        } catch {
+            return aiSource;
+        }
+    }
     const programResult = run.programProposedResults?.find((entry) => entry?.itemIndex === itemIndex);
     if (programResult) return String(programResult.programCandidate || '');
-    return String(run.contentItems?.[itemIndex]?.originalText || '');
-}
-
-function replaceProgramCandidate(programProposedResults, itemIndex, programCandidate, originalText) {
-    const nextResults = programProposedResults.filter((entry) => entry?.itemIndex !== itemIndex);
-    if (programCandidate !== originalText) nextResults.push({ itemIndex, programCandidate });
-    return nextResults;
-}
-
-function applyPlannedProgramFallback(run, programProposedResults, requestItem) {
-    const itemIndex = requestItem.itemIndex;
-    const originalText = String(run.contentItems?.[itemIndex]?.originalText || '');
-    const programCandidate = String(run.programProposedResults
-        ?.find((entry) => entry?.itemIndex === itemIndex)
-        ?.programCandidate ?? originalText);
-    const projectedMatches = requestItem.rewriteItems
-        .flatMap((rewriteItem) => Array.isArray(rewriteItem.matches) ? rewriteItem.matches : [])
-        .filter((match) => Number.isInteger(match?.projectedStart)
-            && Number.isInteger(match?.projectedEnd))
-        .sort((left, right) => right.projectedStart - left.projectedStart
-            || right.projectedEnd - left.projectedEnd);
-    const appliedRanges = [];
-    let fallbackCandidate = programCandidate;
-    for (const match of projectedMatches) {
-        const start = match.projectedStart;
-        const end = match.projectedEnd;
-        if (start < 0
-            || end < start
-            || end > fallbackCandidate.length
-            || appliedRanges.some((range) => start < range.end && range.start < end)) {
-            continue;
-        }
-        fallbackCandidate = fallbackCandidate.slice(0, start)
-            + String(match.programFallbackText ?? '')
-            + fallbackCandidate.slice(end);
-        appliedRanges.push({ start, end });
-    }
-    return replaceProgramCandidate(programProposedResults, itemIndex, fallbackCandidate, originalText);
+    return originalText;
 }
 
 export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop } = {}) {
     const requests = Array.isArray(run.aiRequestPlan?.requests) ? run.aiRequestPlan.requests : [];
     const aiSettings = getFrozenAiSettings(run);
     const aiProposedResults = [];
-    let programProposedResults = Array.isArray(run.programProposedResults) ? [...run.programProposedResults] : [];
+    const programProposedResults = Array.isArray(run.programProposedResults) ? [...run.programProposedResults] : [];
     const failedItemIndexes = new Set();
     const failedRequestIndexes = [];
+    const failureReasons = [];
     const stoppedResult = () => ({
         aiProposedResults,
         programProposedResults,
         aiFailedItemIndexes: [...failedItemIndexes].sort((left, right) => left - right),
         aiFailedRequestIndexes: [...failedRequestIndexes],
+        aiFailureReasons: failureReasons,
         stopped: true,
     });
+    // 超限导致 AI 根本无法发起的条目也计入失败，不准改跑程序改写。
     for (const requestItem of run.aiRequestPlan?.oversizedRequestItems || []) {
-        programProposedResults = applyPlannedProgramFallback(run, programProposedResults, requestItem);
+        failedItemIndexes.add(requestItem.itemIndex);
+        failureReasons.push(`第 ${requestItem.itemIndex + 1} 项内容过长，未发起 AI`);
     }
     onProgress?.({ completed: 0, planned: requests.length });
 
@@ -144,9 +130,9 @@ export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop }
         const reconstructed = renderDeepCleanAiRequest(run, request);
         if (!hasCompleteConnection(aiSettings)) {
             failedRequestIndexes.push(requestIndex);
+            failureReasons.push('AI 连接配置不完整，已跳过程序改写');
             reconstructed.requestItems.forEach((requestItem) => {
                 failedItemIndexes.add(requestItem.itemIndex);
-                programProposedResults = applyPlannedProgramFallback(run, programProposedResults, requestItem);
             });
             completed += 1;
             onProgress?.({ completed, planned: requests.length });
@@ -169,25 +155,23 @@ export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop }
                         entriesByItemIndex.get(requestItem.itemIndex) || [],
                         itemById,
                     );
-                    const originalSource = String(run.contentItems?.[requestItem.itemIndex]?.originalText || '');
-                    const programSource = String(run.programProposedResults
-                        ?.find((entry) => entry?.itemIndex === requestItem.itemIndex)
-                        ?.programCandidate ?? originalSource);
-                    const aiCandidate = applyAcceptedItemRewrites(programSource, requestItem, accepted);
-                    if (aiCandidate !== programSource) {
+                    const originalSource = String(requestItem.requestSource
+                        ?? run.contentItems?.[requestItem.itemIndex]?.originalText ?? '');
+                    const aiCandidate = applyAcceptedItemRewrites(originalSource, requestItem, accepted);
+                    if (aiCandidate !== originalSource) {
                         aiProposedResults.push({ itemIndex: requestItem.itemIndex, aiCandidate });
                     }
-                } catch {
+                } catch (error) {
                     failedItemIndexes.add(requestItem.itemIndex);
-                    programProposedResults = applyPlannedProgramFallback(run, programProposedResults, requestItem);
+                    failureReasons.push(`第 ${requestItem.itemIndex + 1} 项 AI 结果校验失败：${error?.message || '无效回包'}`);
                 }
             }
-        } catch {
+        } catch (error) {
             if (shouldStop?.()) return stoppedResult();
             failedRequestIndexes.push(requestIndex);
+            failureReasons.push(`AI 请求失败：${error?.message || '请求未完成'}`);
             reconstructed.requestItems.forEach((requestItem) => {
                 failedItemIndexes.add(requestItem.itemIndex);
-                programProposedResults = applyPlannedProgramFallback(run, programProposedResults, requestItem);
             });
         }
         if (shouldStop?.()) return stoppedResult();
@@ -200,5 +184,6 @@ export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop }
         programProposedResults,
         aiFailedItemIndexes: [...failedItemIndexes].sort((left, right) => left - right),
         aiFailedRequestIndexes: failedRequestIndexes,
+        aiFailureReasons: failureReasons.slice(0, 5),
     };
 }

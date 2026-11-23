@@ -7,7 +7,7 @@
 .blai-scope-tag-editor-card {
     width: 100%;
     max-width: var(--blai-size-520);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: var(--blai-space-34) var(--blai-space-38) var(--blai-space-36);
@@ -104,8 +104,8 @@
 #blai-scope-tag-editor-modal .blai-scope-tag-editor-card {
     width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
     max-width: var(--blai-size-560);
-    height: calc(100dvh - var(--blai-size-28));
-    max-height: calc(100dvh - var(--blai-size-28));
+    height: calc(var(--blai-viewport-h) - var(--blai-size-28));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));
     padding: var(--blai-space-16) var(--blai-space-20) var(--blai-space-18);
     border-radius: var(--blai-radius-lg);
     box-sizing: border-box;
@@ -156,7 +156,7 @@
     position: fixed;
     inset: 0;
     width: 100vw;
-    height: 100dvh;
+    height: var(--blai-viewport-h);
     align-items: stretch;
     justify-content: stretch;
     padding: 0;
@@ -167,8 +167,8 @@
 #blai-scope-tag-editor-modal .blai-scope-tag-editor-card {
     width: 100vw !important;
     max-width: 100vw !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
+    height: var(--blai-viewport-h) !important;
+    max-height: var(--blai-viewport-h) !important;
     margin: 0 !important;
     padding: max(var(--blai-space-14), env(safe-area-inset-top)) max(var(--blai-space-14), env(safe-area-inset-right)) max(var(--blai-space-14), env(safe-area-inset-bottom)) max(var(--blai-space-14), env(safe-area-inset-left)) !important;
     border: 0 !important;

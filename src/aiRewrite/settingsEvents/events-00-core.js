@@ -7,6 +7,7 @@ import { markRulesDataDirty } from '../../rules/state.js';
 import { hasAdditionalParameters } from '../additionalParameters.js';
 import { logger } from '../../log.js';
 import { showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
+import { focusOnFinePointer } from '../../ui/popover.js';
 
 // AI 设置的核心闭包：状态与工具函数集中在此，绑定层通过返回对象读取。
 let aiApiCheckSequence = 0;
@@ -343,7 +344,7 @@ export function createAiSettingsCore() {
         const aiSettings = ensureAiRewriteSettings();
         $('#blai-ai-prompt-expanded').val(aiSettings.promptTemplate || defaultAiRewriteSettings.promptTemplate);
         $('#blai-ai-prompt-modal').addClass('blai-is-open');
-        window.setTimeout(() => $('#blai-ai-prompt-expanded').trigger('focus'), 0);
+        window.setTimeout(() => focusOnFinePointer($('#blai-ai-prompt-expanded')), 0);
     };
 
     const closeAiPromptEditor = () => {

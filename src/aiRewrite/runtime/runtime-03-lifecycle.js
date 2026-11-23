@@ -65,6 +65,10 @@ export function markAiRewriteFinalCleanseReady(payload) {
     if (taskCheck.fallbackTask) {
         const fallbackResult = applyAiProgramFallback(taskCheck.fallbackTask, taskCheck.fallbackCode || 'not-sent');
         if (!fallbackResult.applied) {
+            notifyAiRewriteStatus('error', 'AI 改写未发送', fallbackResult.reason || taskCheck.reason || '未满足发送条件', {
+                timeOut: 8000,
+                extendedTimeOut: 16000,
+            });
             clearAiRewriteStatusToast();
         }
         return true;
@@ -150,7 +154,11 @@ export function resetAiRewriteRuntimeState(reason = 'reset') {
  *   供调用方串接后续动作；未真正启动任务时不触发。
  */
 export function requestManualAiRewriteForMessage(payload, options = {}) {
-    const taskCheck = buildAiRewriteTaskCheck(payload, { logTask: true, manual: true });
+    const taskCheck = buildAiRewriteTaskCheck(payload, {
+        logTask: true,
+        manual: true,
+        recleanse: options.recleanse === true,
+    });
     const task = taskCheck.task;
     if (!task) {
         recordAiRewriteDebug('not-sent', { reason: taskCheck.reason || '未满足发送条件', manual: true }, 'warn');

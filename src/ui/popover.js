@@ -11,6 +11,14 @@ const VIEWPORT_PADDING = 8;
 const openMenus = new Set();
 let documentBound = false;
 
+// 手机/触屏打开弹窗时不自动聚焦输入框，避免软键盘意外弹出。
+export function focusOnFinePointer(target) {
+    if (!target) return;
+    if (window.matchMedia?.('(max-width: 600px), (pointer: coarse)').matches) return;
+    if (typeof target.trigger === 'function') target.trigger('focus');
+    else target.focus?.();
+}
+
 function copyThemeVars(anchor, menu) {
     const computed = window.getComputedStyle(anchor);
     THEME_VARS.forEach((name) => {
@@ -94,26 +102,13 @@ export function openMenuPopover(anchor, menu) {
     // 之前 add() 存匿名对象、这里另建对象，has(entry) 恒 false，重定位从未执行。
     const entry = { anchor, menu, instance };
     openMenus.add(entry);
-    // 弹窗/切页的入场动画带 6px 位移：动画期间量到的锚点位置与稳定后差 6px，
-    // 菜单就会停在偏移处，看起来像"第一次点没弹出、要点第二次"。
-    // 逐帧比对锚点位置，连续两帧稳定（动画落定）后再定位一次；超时兜底防止异常时漏定位。
-    let lastRect = '';
-    let stableFrames = 0;
-    let elapsed = 0;
-    const settle = () => {
-        if (!openMenus.has(entry)) return;
-        const rect = anchor.getBoundingClientRect();
-        const signature = `${rect.top}|${rect.left}|${rect.bottom}|${rect.right}`;
-        stableFrames = signature === lastRect ? stableFrames + 1 : 0;
-        lastRect = signature;
-        if (stableFrames >= 2 || elapsed >= 400) {
-            applyPosition(anchor, menu);
-            return;
-        }
-        elapsed += 16;
-        requestAnimationFrame(settle);
+    // 弹窗/切页入场动画会让锚点先偏 6px。等菜单自身的淡入动画结束再重新定位一次，
+    // 不再逐帧读 getBoundingClientRect（手机上逐帧强制重排是展开卡顿的主要来源）。
+    const settlePosition = () => {
+        if (openMenus.has(entry)) applyPosition(anchor, menu);
     };
-    requestAnimationFrame(settle);
+    menu.addEventListener('animationend', settlePosition, { once: true });
+    window.setTimeout(settlePosition, 200);
 }
 
 export function closeMenuPopover(menu) {

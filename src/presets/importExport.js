@@ -6,6 +6,7 @@
 import { defaultAiRewriteSettings, extensionName } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { markRulesDataDirty } from '../rules/state.js';
+import { focusOnFinePointer } from '../ui/popover.js';
 import { presetsRuntimeState, markPresetsUiDirty } from './state.js';
 import { deepClone, buildPresetEntry, getCurrentPresetAiRewriteSettings, normalizePresetAiRewriteSettings } from './model.js';
 import { normalizeRuleActivationSafety } from '../rules/model.js';
@@ -130,7 +131,12 @@ async function openImportChoiceModal(rules, defaultName, aiRewriteSettings = nul
         .css('display', 'flex');
     // iOS 浏览器有时需要在文件选择器返回后做一次布局。
     $modal[0]?.getBoundingClientRect();
-    window.setTimeout(() => $('#blai-import-preset-name').trigger('focus').trigger('select'), 50);
+    window.setTimeout(() => {
+        focusOnFinePointer($('#blai-import-preset-name'));
+        if (!window.matchMedia?.('(max-width: 600px), (pointer: coarse)').matches) {
+            $('#blai-import-preset-name').trigger('select');
+        }
+    }, 50);
 }
 
 async function confirmBeforeImportChoiceIfUnsaved() {

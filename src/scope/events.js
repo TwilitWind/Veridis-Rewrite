@@ -3,7 +3,7 @@ import { extensionName } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { showConfirmModal, showPromptModal, showToast } from '../ui/notifications.js';
 import { closeScopeTagsModal, openScopeTagsModal, renderScopeTagsModal } from './view.js';
-import { closeMenuPopover, openMenuPopover } from '../ui/popover.js';
+import { closeMenuPopover, openMenuPopover, focusOnFinePointer } from '../ui/popover.js';
 import { DEFAULT_SCOPE_TAG_GROUP_ID, createScopeTagGroupId, createScopeTagId, formatScopeTagInput, getBuiltinScopeTagKeyForStartTag, getCotScopeTagBuiltinKeys, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeScopeTagCollapsedGroupList, normalizeScopeTagGroupList, normalizeScopeTagList, parseScopeTagInput } from './model.js';
 
 export function bindScopeEvents() {
@@ -31,7 +31,7 @@ export function bindScopeEvents() {
     const openScopeTagEditor = (scopeTag = null) => {
         const formattedInput = scopeTag ? formatScopeTagInput(scopeTag) : ''; const tagSource = formattedInput.split('//')[0]?.trim() || ''; const tagName = tagSource.match(/^<([^<>/\s]+)>$/)?.[1] || tagSource;
         renderScopeTagGroupOptions(scopeTag?.groupId || DEFAULT_SCOPE_TAG_GROUP_ID);
-        $('#blai-scope-tag-input').val(scopeTag ? tagName : '').data('scope-edit-id', scopeTag?.id || ''); $('#blai-scope-tag-label-input').val(scopeTag?.label || ''); clearScopeTagValidationState(); renderScopeTagsModal(); $('#blai-scope-tag-editor-modal').addClass('blai-is-open').attr('aria-hidden', 'false'); window.setTimeout(() => $('#blai-scope-tag-input').trigger('focus'), 20);
+        $('#blai-scope-tag-input').val(scopeTag ? tagName : '').data('scope-edit-id', scopeTag?.id || ''); $('#blai-scope-tag-label-input').val(scopeTag?.label || ''); clearScopeTagValidationState(); renderScopeTagsModal(); $('#blai-scope-tag-editor-modal').addClass('blai-is-open').attr('aria-hidden', 'false'); window.setTimeout(() => focusOnFinePointer($('#blai-scope-tag-input')), 20);
     };
     const setScopeTagMode = (mode) => { const nextMode = mode === 'cleanse-inside' ? 'cleanse-inside' : 'protect'; if (settings.scopeTagMode === nextMode) { renderScopeTagsModal(); return; } settings.scopeTagMode = nextMode; saveSettingsDebounced(); renderScopeTagsModal(); };
     const persistScopeTagGroups = (groups, options = {}) => {

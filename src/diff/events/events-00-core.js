@@ -33,24 +33,26 @@ export function recleanseDiffMessageAtIndex(index) {
         : null;
     if (!isMessageDiffReverted(msg)) return false;
 
-    const sourceMes = typeof msg.mes === 'string' ? msg.mes : '';
+    const meta = getMessageDiffMeta(msg);
     const aiEnabled = extension_settings?.[extensionName]?.aiRewrite?.enabled === true;
 
     if (aiEnabled) {
-        // AI 改写开着：先把这条消息能命中的 AI 规则全部跑完，再在 AI 写回后的文本上做程序改写。
-        // 这里不能再传 diffSourceMes，否则程序改写会拿撤回原文重算，把 AI 结果覆盖掉。
-        const started = requestManualAiRewriteForMessage(index, {
+        // AI 改写开启时统一走「AI 全部完成 → 程序改写」的组合提交。
+        // 发起失败由 AI 运行时提示原因，不再降级为程序改写。
+        return requestManualAiRewriteForMessage(index, {
+            recleanse: true,
             onSettled: () => {
-                cleanseMessageDataAtIndex(index, { explicitRecleanse: true });
                 refreshMessageDisplay(index, { allowReloadFallback: true, emitRenderedEvent: 'auto' });
                 injectDiffButtons([index]);
                 queueIncrementalChatSave();
             },
         });
-        if (started) return true;
-        // 没有可发的 AI 任务（未配置 / 无匹配）：降级为只做程序改写。
     }
 
+    // AI 改写关闭：只按保留的原文执行一次程序改写，恢复阶段链并解除撤回保护。
+    const sourceMes = typeof meta?.originalMes === 'string'
+        ? meta.originalMes
+        : (typeof msg.mes === 'string' ? msg.mes : '');
     return cleanseMessageDataAtIndex(index, {
         diffSourceMes: sourceMes,
         explicitRecleanse: true,

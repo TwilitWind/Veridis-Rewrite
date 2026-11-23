@@ -1,6 +1,6 @@
 /** view 的分块：modal。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { rulesUiState, markRulesUiDirty } from '../state.js';
-import { closeMenuPopover } from '../../ui/popover.js';
+import { closeMenuPopover, focusOnFinePointer } from '../../ui/popover.js';
 import { parseInputToWords, isRuleActivationWarningEnabled } from '../model.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
@@ -99,7 +99,7 @@ export function openRuleSearchModal() {
     renderRuleSearchModal();
     $('#blai-rule-search-modal').css('display', 'flex').hide().fadeIn(150);
     window.setTimeout(() => {
-        $('#blai-rule-search-input').trigger('focus');
+        focusOnFinePointer($('#blai-rule-search-input'));
     }, 20);
 }
 

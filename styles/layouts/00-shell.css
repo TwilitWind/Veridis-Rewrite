@@ -122,7 +122,7 @@
 }
 
 @media screen and (max-width: 600px) {#blai-purifier-popup {
-    height: 100dvh;
+    height: var(--blai-viewport-h);
     max-width: 100vw;
     top: 0;
     left: 0;
@@ -137,7 +137,7 @@
 
 #blai-purifier-popup {
     width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
-    max-height: min(var(--blai-size-760), calc(100dvh - var(--blai-size-32)));
+    max-height: min(var(--blai-size-760), calc(var(--blai-viewport-h) - var(--blai-size-32)));
     padding: var(--blai-space-16);
     gap: var(--blai-space-10);
     border-radius: var(--blai-radius-20);
@@ -321,8 +321,8 @@
     transform: none;
     width: 100vw;
     max-width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
+    height: var(--blai-viewport-h);
+    max-height: var(--blai-viewport-h);
     padding: 0;
     gap: 0;
     border: 0;
@@ -424,10 +424,10 @@
 
 @media (max-width: 600px) {
 #blai-purifier-popup.blai-app-shell {
-    --blai-mobile-type-large: var(--blai-font-16);
-    --blai-mobile-type-medium: var(--blai-font-14);
-    --blai-mobile-type-small: var(--blai-font-12);
-    --blai-mobile-type-tiny: var(--blai-font-10);
+    --blai-mobile-type-large: var(--blai-fs-hero);
+    --blai-mobile-type-medium: var(--blai-fs-title);
+    --blai-mobile-type-small: var(--blai-fs-body);
+    --blai-mobile-type-tiny: var(--blai-fs-note);
     inset: 0;
     top: 0;
     left: 0;
@@ -436,8 +436,8 @@
     transform: none;
     width: 100vw;
     max-width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
+    height: var(--blai-viewport-h);
+    max-height: var(--blai-viewport-h);
     aspect-ratio: auto;
     border: 0;
     border-radius: 0;

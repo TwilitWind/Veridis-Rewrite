@@ -121,6 +121,8 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `debug.js` / `debugStore.js` / `debugView.js` / `communicationMonitor.js` | `debug.js` 对外入口（记录事件、导出文本）；`debugStore.js` 管常量、脱敏、localStorage 读写与事件合并（普通 100 条、关键 160 条）；`debugView.js` 中文标签表与时间线排版；`communicationMonitor.js` 通信记录（最近 10 次）。反馈页三面板数据源 |
 | `composerButton.js` / `settingsEvents.js` | 输入框快捷按钮注入、AI 页事件与两开关联动 |
 
+**执行顺序与失败边界**：开启 AI 改写时，普通聊天、透视重新净化与深度净化「程序 + AI 改写」一律先按序发起所有 AI 改写，AI 全部完成后再按序执行程序改写。`applyAiProgramFallback` 在总开关开启时直接拒绝回退；未发送、请求失败或写回失败只给非交互提示并带原因，绝不改跑程序改写。深度净化的 AI 请求基于原文构建，成功结果先落 AI 候选，最后才把程序规则作用到该候选；AI 失败项保持原文并计入失败摘要。关闭总开关时三条链路都只跑程序改写。
+
 **附加参数**：对齐酒馆原生 API 设置三项（主体参数 / 排除主体参数 / 包含请求标头），做成 API 连接区按钮 + 弹窗，按钮小圆点提示「未填写 / 已填写」。三个字段 `customIncludeBody` / `customExcludeBody` / `customIncludeHeaders` 是全局 AI 设置（不进 API 预设快照），存 YAML 文本。**关键在透传形态**：TavernHelper（JS-Slash-Runner）把 `custom_api` 三个字段各自 `YAML.stringify` 后交后端，故 `generation.js` 必须把用户文本解析成对象/数组再放入 `custom_api`，不能原样传字符串。`additionalParameters.js` 是零依赖 YAML 子集解析器（扁平键值、一层缩进对象、字符串数组、数字/布尔/null/引号串/行内 JSON、注释容错），非法行静默跳过。合并策略：用户 `custom_include_body` 为基础，插件必需的 `response_format:{type:'json_object'}` 与 UI 派生的 `repetition_penalty` 后置覆盖；`custom_exclude_body` / `custom_include_headers` 仅非空时加入。
 
 ### 净化、差异与深度净化
@@ -134,7 +136,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `diff/revertMerge.js` | `computeRevertedText(currentText, programText, originalText)`：撤回唯一入口 |
 | `diff/pickRevert.js` | 撤回所选的 DOM 采集与计算：`assignDiffRevertItemIds` 编号相邻 del/ins，`collectPickedDiffItems` 用 `Map<itemId, 节点[]>` 索引回查勾选项（避免 O(n×m)），`computePickedRevert` 换算阶段文本 |
 | `diff/preferences.js` | 透视「更多操作」菜单偏好的单一入口：`SPECS`（取值序列 + read/write）+ `cycleDiffPreference(key)` 统一切换并写 settings + `syncRelatedRuleRuntime` 打开弹窗时从 settings 恢复相关规则开关。模板按钮用 `data-blai-pref`（值必须等于 SPECS 键） |
-| `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex`：AI 改写关闭时只程序改写；开启时先 `requestManualAiRewriteForMessage(index, {onSettled})` 跑完所有 AI 规则，再以写回后的文本做程序改写（不传 `diffSourceMes`，否则覆盖 AI 结果）。透视弹窗不再有独立「AI 改写」按钮 |
+| `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex`：AI 改写关闭时以保留的 `meta.originalMes` 只跑程序改写；开启时 `requestManualAiRewriteForMessage(index, {recleanse:true, onSettled})` 在撤回保护仍未解除时按原文发起 AI 任务，AI 原子写回时清除保护并写入「原文 → AI → 程序」阶段链。发起失败只出非交互提示，不降级为程序改写。透视弹窗不再有独立「AI 改写」按钮 |
 | `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
 | `diff/tracking.js` / `retention.js` | 谁被记录、按设置裁剪历史 |
 | `rules/ruleIdentity.js` | 规则稳定身份：`computeRuleFingerprint(rule, sub)` 用「分组名+模式+查找词+替换词」算指纹（备注不纳入），`findRuleByFingerprint(rules, fp)` 精确回查。不往用户数据写 id，删改规则后指纹自然失配 |
@@ -201,7 +203,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。所有下拉菜单（11 类 `-menu` 类）的首末/独行圆角统一在 `styles/components/07-menu-fill.css`：一份 `:is()` 清单配 `&:first-child/last-child/only-child` 原生嵌套，新增菜单类只补这一处清单（其余文件里的同类选择器只管各自配色/动画/定位，不重复圆角规则）。
 
-**定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。打开后要重定位一次：弹窗与切页入场动画带 6px 位移，动画期间量到的锚点与稳定后差 6px，不补就「第一次点没弹出、要点第二次」。重定位逐帧比对锚点矩形、连续两帧稳定后再定位，400ms 超时兜底；`openMenus` 里必须存重定位回调引用的同一个 `entry` 对象，否则 `has(entry)` 恒 false、永不执行。
+**定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。打开后要重定位一次：弹窗与切页入场动画带 6px 位移，动画期间量到的锚点与稳定后差 6px，不补就「第一次点没弹出、要点第二次」。现在只在菜单自身 `animationend` 与 200ms 兜底时各定位一次，不再逐帧读矩形——手机上逐帧强制重排是展开卡顿的主要来源；`openMenus` 里必须存重定位回调引用的同一个 `entry` 对象，否则 `has(entry)` 恒 false、永不执行。
 
 **菜单两份调用约定**：`openMenuPopover(anchor, menu)` / `closeMenuPopover(menu)` 收 DOM 节点，传 jQuery 对象会被 `if (!anchor)` 拦掉、菜单静默不开。打开时给菜单设唯一 id（子规则菜单用 `#blai-subrule-menu-active`）并给触发按钮设 `aria-expanded="true"`，关闭时清掉。
 
@@ -252,10 +254,11 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 通用规则以工作区 `docs/design.md` 为准，双端布局与浮层形态见 `docs/design-responsive.md`，配色基准见 `docs/extension-api.md`「配色基准」；本项目的偏好、术语与字号档位见根目录 `DESIGN.md`。本节只记插件令牌与坑。
 
-- 颜色两层：`--bg-base`（画布）→ `--bg-surface`（卡片）。输入控件底色 `--blai-input-bg` 取 `--bg-surface`，靠 1px `--border-color` 表达可输入；跟随主题的 `--border-color` 由正文色低比例混入底色，避免描边过重。结构分隔线另走 `--blai-border-soft`（低对比半透明），不与控件描边共用。滚动条与左侧内容之间由 `--blai-scrollbar-gutter` 预留间距。三个大弹窗（规则编辑 / 规则分组 / 深度净化）顶栏、底栏与正文统一 `--bg-base`，靠细线分区。
+- 颜色两层：`--bg-base`（画布）→ `--bg-surface`（卡片）。输入控件底色 `--blai-input-bg` 取 `--bg-surface`，靠 1px `--border-color` 表达可输入；跟随酒馆主题时 `--border-color` 原样沿用宿主 `--SmartThemeBorderColor`，不再按底色智能加深。结构分隔线另走 `--blai-border-soft`（低对比半透明），不与控件描边共用。滚动条与左侧内容之间由 `--blai-scrollbar-gutter` 预留间距，但下拉菜单 `--blai-dropdown-pad` 右侧为 0，避免面板尾部出现空白。三个大弹窗（规则编辑 / 规则分组 / 深度净化）顶栏、底栏与正文统一 `--bg-base`，靠细线分区。手机端高亮统一用当前主题强调色的一层内描边，不再叠加边框、底色和外发光。
 - 焦点态用 `box-shadow: inset 0 0 0 1px var(--accent-color) !important`，不占位不抖动；hover 不加描边。禁给输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）。主题对裸标签有强声明时把 `--ui-color-sec` 重定向到 `--blai-input-bg`，不新增 `!important`；副作用是边框也读该变量，反馈页三个裸标签用同色 inset 补可见边框。`.pages` / `.page-panel` 保持透明让 `--bg-base` 透上来；日间用实色，不用半透明叠灰底（发脏）。
 - 图标统一酒馆自带 Font Awesome 6.5.2，格式 `<i class="fas fa-*" aria-hidden="true"></i>`；禁止内联 `<svg>`、CSS 拼三角/对勾、字符箭头。伪元素勾选与下拉箭头用 FA 字形码加 FA 字体；装饰线条/圆点不算图标。类名必须在 FA 6.5.2 存在，`fa-fw` / `fa-solid` / `fa-spin` 是修饰类，不参与校验。
 - 字号只用 5 档语义 token（`--blai-fs-*`），旧 `--blai-font-N` 全是别名；双端档值与禁止整体缩放见根目录 `DESIGN.md`「字号档位」。间距语义层在 `03-scale.css` 第二块：`--blai-canvas-pad`(12)、`--blai-panel-pad`、`--blai-panel-pad-tight`(10)、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`(8)、`--blai-head-pad`(12)、`--blai-row-pad`(10)。页面文件不写裸 `gap: 14px`。
+- 视口高度统一走 `--blai-viewport-h`（`100vh` 回退，支持时用 `100svh`），插件外壳与大弹窗不再直接写 `100dvh`：手机软键盘弹出时布局高度不重排，内容被键盘覆盖而非被顶起。弹窗打开时输入框不自动聚焦，避免软键盘意外弹出。
 - 两栏统一 `minmax(0, 5fr) minmax(0, 3fr)`（两端都要 `minmax(0, ...)`）与 `align-items: stretch`，不退回 `start`；断点、`box-shadow`、`grid-template-columns`、`transform` 保留字面量是刻意的。
 
 ### 反馈页与高亮的实现约束

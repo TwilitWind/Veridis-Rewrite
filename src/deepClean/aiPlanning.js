@@ -46,14 +46,14 @@ function buildRequestItem(context, itemIndex) {
     if (!item || item.aiEligible !== true || item.protectionReason) return null;
 
     const programResult = context.programProposedResults.find((entry) => entry?.itemIndex === itemIndex);
-    const effectiveSource = String(programResult?.programCandidate ?? item.originalText ?? '');
-    const programRewriteItems = Array.isArray(programResult?.rewriteItems) ? programResult.rewriteItems : [];
-    if (programRewriteItems.length === 0) return null;
+    const effectiveSource = String(programResult?.aiSourceText ?? item.originalText ?? '');
+    const aiRewriteItems = Array.isArray(programResult?.aiSourceRewriteItems) ? programResult.aiSourceRewriteItems : [];
+    if (aiRewriteItems.length === 0) return null;
 
     const itemAiSettings = getItemAiSettings(context.input, item, context.promptSettings);
     const projection = {
         requestSource: effectiveSource,
-        rewriteItems: programRewriteItems.map((rewriteItem) => ({
+        rewriteItems: aiRewriteItems.map((rewriteItem) => ({
             ...rewriteItem,
             segmentIndex: 0,
             relativeStart: rewriteItem.start,

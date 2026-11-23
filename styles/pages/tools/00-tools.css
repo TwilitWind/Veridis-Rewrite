@@ -427,12 +427,22 @@
     width: var(--blai-size-14);
     height: var(--blai-size-14);
     position: absolute;
-    top: var(--blai-space-2);
+    top: 50%;
     left: var(--blai-space-2);
-    border-radius: 50%;
-    background: var(--bg-base);
-    box-shadow: var(--blai-shadow-xs);
-    transition: transform .16s ease, background-color .16s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-font-14);
+    line-height: 1;
+    color: var(--bg-base);
+    transform: translateY(-50%);
+    transition: transform .16s ease, color .16s ease;
+}
+
+#blai-purifier-popup .blai-tools-switch-track > span::before {
+    content: "\f111";
 }
 
 #blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
@@ -441,7 +451,7 @@
 }
 
 #blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track > span {
-    transform: translateX(var(--blai-switch-travel));
+    transform: translateX(var(--blai-switch-travel)) translateY(-50%);
     background: var(--bg-surface);
 }
 

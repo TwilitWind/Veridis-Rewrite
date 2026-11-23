@@ -4,6 +4,9 @@
 
 :root {
   /* 挂在 :root 上：弹层、toast、巡览层都不在插件容器内，仍要能取到刻度。 */
+  /* 视口高度：手机端锁 small viewport，软键盘弹出时布局高度不重排。 */
+  --blai-viewport-h: 100vh;
+  --blai-viewport-h: 100svh;
   /* 间距：padding / margin / gap / inset 共用一套刻度。 */
   --blai-space-neg-2: -2px;
   --blai-space-neg-1: -1px;
@@ -261,13 +264,13 @@
   --blai-btn-pad-compact: 0 var(--blai-space-10);
 }
 
-/* 手机端 5 档字号整体收一档（浅字不再降，避免小字过小；正文/标题各降 1~2px）。 */
+/* 手机端 5 档字号：note 保 11px 下限，正文及以上统一加大一档。 */
 @media (max-width: 600px) {
 :root {
   --blai-fs-note: 11px;
-  --blai-fs-body: 12px;
-  --blai-fs-sub: 13px;
-  --blai-fs-title: 14px;
-  --blai-fs-hero: 16px;
+  --blai-fs-body: 13px;
+  --blai-fs-sub: 14px;
+  --blai-fs-title: 15px;
+  --blai-fs-hero: 17px;
 }
 }

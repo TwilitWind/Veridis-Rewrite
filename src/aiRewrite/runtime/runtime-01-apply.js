@@ -153,7 +153,9 @@ export function buildAiRewriteCandidate(payload, options = {}) {
 
     const msg = chat[index];
     if (!isAssistantMessage(msg)) return { task: null, reason: '目标消息不是助手消息' };
-    if (isMessageDiffReverted(msg)) return { task: null, reason: '目标消息已撤回净化' };
+    if (isMessageDiffReverted(msg) && options.recleanse !== true) {
+        return { task: null, reason: '目标消息已撤回净化' };
+    }
     const isAutomatic = payload?.automatic === true;
     if (isAutomatic) {
         // 总开关优先于自动触发：关闭 AI 改写时，
@@ -247,6 +249,7 @@ export function buildAiRewriteCandidate(payload, options = {}) {
             claimedMessageText: currentText,
             claimedMeta: previous,
             automatic: isAutomatic,
+            recleanse: options.recleanse === true,
             generationId: isAutomatic ? String(payload.generationId || '') : '',
             chatId: isAutomatic ? String(payload.chatId || '') : '',
             scheduleSource: isAutomatic ? String(payload.source || '') : 'manual',
@@ -305,6 +308,7 @@ export function notifyAiRewriteNotSent(taskCheckOrReason) {
     }
 
     const message = String(taskCheck?.reason || taskCheckOrReason || '未满足发送条件');
+    notifyAiRewriteStatus('error', 'AI 改写未发送', message, { timeOut: 8000, extendedTimeOut: 16000 });
     recordAiRewriteDebug('not-sent', { reason: message }, aiRewriteState.statusToast ? 'warn' : 'info');
     if (!aiRewriteState.statusToast) {
         logger.info(`AI 改写未发送：${message}`);

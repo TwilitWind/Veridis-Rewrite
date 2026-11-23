@@ -12,7 +12,7 @@
     }
 
     #blai-purifier-popup.blai-app-shell :is(.blai-feedback-local-heading h2, .blai-feedback-diagnostics-intro h2) {
-        font-size: var(--blai-font-13);
+        font-size: var(--blai-fs-sub);
     }
 
     #blai-purifier-popup.blai-app-shell :is(.blai-feedback-fieldset legend, .blai-feedback-control > span, .blai-feedback-attachments h3, .blai-feedback-preview h3, .blai-feedback-file-copy > span, .blai-feedback-diagnostic-record h3) {
@@ -70,15 +70,15 @@
 
     /* 扫描发现的非标题偏大项：下拉标签、净化按钮标签、版本数值。 */
     #blai-purifier-popup .blai-native-select-trigger {
-        font-size: var(--blai-font-11);
+        font-size: var(--blai-fs-body);
     }
 
     #blai-purifier-popup .blai-clean-toolbar-button-label {
-        font-size: var(--blai-font-11);
+        font-size: var(--blai-fs-body);
     }
 
     #blai-purifier-popup .blai-tools-version-value {
-        font-size: var(--blai-font-12);
+        font-size: var(--blai-fs-body);
     }
 
     /* 手机单列时不该沿用桌面「两栏等高」：标签少时首卡会被撑到 400px+，
@@ -92,14 +92,34 @@
         min-height: 0;
     }
 
-    /* AI 改写吐司：桌面用 calc(14pt/12.5pt + 1pt) ≈ 13.5px，手机上比正文高一档。
-       标题 12px、正文 11px，与面板内标签/说明同级。 */
+    /* AI 改写吐司：手机端随 5 档字号同步加大，标题用次级、正文用正文档。 */
     body #toast-container > .blai-ai-rewrite-toast,
     body #toast-container > .blai-ai-rewrite-toast > .toast-title {
-        font-size: var(--blai-font-12);
+        font-size: var(--blai-fs-sub);
     }
 
     body #toast-container > .blai-ai-rewrite-toast > .toast-message {
-        font-size: var(--blai-font-11);
+        font-size: var(--blai-fs-body);
+    }
+
+    /* 手机端弹窗遮罩去掉实时模糊，软键盘与长列表滚动时不再重绘整屏。 */
+    .blai-modal-shell:not(#blai-tour-layer) {
+        backdrop-filter: none;
+    }
+
+    /* 手机端高亮统一：只用当前主题强调色的一层内描边，不叠加边框/底色/外发光。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) :is(button, .blai-proxy-field):is(:hover, :focus-visible, :active),
+    :is(#blai-purifier-popup, .blai-modal-shell) .field.blai-proxy-field.is-active,
+    .blai-regex-replacement-chip.is-active {
+        border-color: transparent !important;
+        background-color: var(--bg-surface) !important;
+        outline: none !important;
+        box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+    }
+
+    .blai-diff-related-mode .blai-diff-change:hover,
+    .blai-diff-related-mode .blai-diff-change-selected {
+        outline: none !important;
+        box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
     }
 }

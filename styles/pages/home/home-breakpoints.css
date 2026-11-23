@@ -16,8 +16,8 @@
     #blai-scope-tag-editor-modal > .blai-scope-tag-editor-card {
         width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
         max-width: var(--blai-size-560);
-        height: calc(100dvh - var(--blai-size-28));
-        max-height: calc(100dvh - var(--blai-size-28));
+        height: calc(var(--blai-viewport-h) - var(--blai-size-28));
+        max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));
         border-radius: var(--blai-radius-lg);
     }
 
@@ -29,8 +29,8 @@
     #blai-subrule-edit-modal > .blai-subrule-modal-card {
         width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
         max-width: var(--blai-size-560);
-        height: calc(100dvh - var(--blai-size-28));
-        max-height: calc(100dvh - var(--blai-size-28));
+        height: calc(var(--blai-viewport-h) - var(--blai-size-28));
+        max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));
         border-radius: var(--blai-radius-lg);
         box-sizing: border-box;
     }
@@ -93,15 +93,22 @@
 }
 
 #blai-subrule-edit-modal .blai-regex-highlight-switch .blai-ai-switch-track::after {
-    content: "";
+    content: "\f111";
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-font-12);
+    line-height: 1;
     position: absolute;
-    top: var(--blai-space-2);
+    top: 50%;
     left: var(--blai-space-2);
     width: var(--blai-size-12);
     height: var(--blai-size-12);
-    border-radius: 50%;
-    background: var(--bg-surface);
-    transition: transform 160ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-surface);
+    transform: translateY(-50%);
+    transition: transform 160ms ease, color 160ms ease;
 }
 
 #blai-subrule-edit-modal .blai-regex-highlight-switch input:checked + .blai-ai-switch-track {
@@ -109,7 +116,7 @@
 }
 
 #blai-subrule-edit-modal .blai-regex-highlight-switch input:checked + .blai-ai-switch-track::after {
-    transform: translateX(var(--blai-size-12)) !important;
+    transform: translateX(var(--blai-size-12)) translateY(-50%) !important;
 }
 
 /* ---------------------------------------------------------------------------
@@ -483,4 +490,26 @@
     border-top: 0;
     box-sizing: border-box;
     flex-shrink: 0;
+}
+
+/* 手机端两个编辑弹窗：底栏压到约 36px，把高度让给内容区。 */
+@media screen and (max-width: 600px) {
+#blai-rule-edit-modal .blai-modal-actions,
+#blai-subrule-edit-modal .blai-subrule-footer {
+    padding: var(--blai-space-4) var(--blai-modal-pad-x) !important;
+}
+
+#blai-rule-edit-modal .blai-modal-actions > button,
+#blai-subrule-edit-modal .blai-subrule-footer > button {
+    height: var(--blai-size-28) !important;
+    min-height: var(--blai-size-28) !important;
+    padding: 0 var(--blai-space-10) !important;
+}
+
+/* 手机端首页规则分组容器左右留白统一 12px。 */
+#blai-purifier-popup .blai-home-card-header,
+#blai-purifier-popup .blai-home-card-body {
+    padding-left: var(--blai-space-12);
+    padding-right: var(--blai-space-12);
+}
 }

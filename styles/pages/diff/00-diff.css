@@ -583,7 +583,7 @@
     inset: 0;
     width: 100vw;
     height: 100vh;
-    height: 100dvh;
+    height: var(--blai-viewport-h);
     align-items: center;
     justify-content: center;
     padding: max(var(--blai-space-16), env(safe-area-inset-top)) var(--blai-space-16) max(var(--blai-space-16), env(safe-area-inset-bottom));
@@ -630,7 +630,7 @@
     inset: 0;
     width: 100vw;
     height: 100vh;
-    height: 100dvh;
+    height: var(--blai-viewport-h);
     align-items: center;
     justify-content: center;
     padding: max(var(--blai-space-20), env(safe-area-inset-top)) max(var(--blai-space-20), env(safe-area-inset-right)) max(var(--blai-space-20), env(safe-area-inset-bottom)) max(var(--blai-space-20), env(safe-area-inset-left));
@@ -639,7 +639,7 @@
 
 #blai-diff-related-modal > .blai-diff-related-card, .blai-diff-modal-card {
     width: min(var(--blai-size-680), 100%);
-    max-height: calc(100dvh - var(--blai-size-48));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-48));
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -687,14 +687,14 @@
 #blai-diff-related-modal > .blai-diff-related-card {
     width: 100%;
     max-width: var(--blai-size-420);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     border-radius: var(--blai-radius-lg);
 }
 
 #blai-diff-modal {
     inset: 0;
     width: 100vw;
-    height: 100dvh;
+    height: var(--blai-viewport-h);
     padding: max(var(--blai-space-20), env(safe-area-inset-top)) max(var(--blai-space-20), env(safe-area-inset-right)) max(var(--blai-space-20), env(safe-area-inset-bottom)) max(var(--blai-space-20), env(safe-area-inset-left));
     align-items: center;
     justify-content: center;
@@ -705,7 +705,7 @@
 #blai-diff-modal > .blai-diff-modal-card {
     width: 100%;
     max-width: var(--blai-size-420);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
@@ -719,7 +719,7 @@
     justify-content: center;
 }}
 
-/* 电脑端与「规则分组」弹窗同一套固定尺寸：宽 560px、高 calc(100dvh - 28px)。
+/* 电脑端与「规则分组」弹窗同一套固定尺寸：宽 560px、高 calc(var(--blai-viewport-h) - 28px)。
    内容区改为 flex 自适应，统计条 / 图例 / 操作条都固定，只有差异正文滚动。 */
 @media (min-width: 1025px) {
 #blai-diff-modal {
@@ -729,8 +729,8 @@
 #blai-diff-modal > .blai-diff-modal-card {
     width: min(var(--blai-size-560), calc(100vw - var(--blai-size-28)));
     max-width: var(--blai-size-560);
-    height: calc(100dvh - var(--blai-size-28));
-    max-height: calc(100dvh - var(--blai-size-28));
+    height: calc(var(--blai-viewport-h) - var(--blai-size-28));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));
     border-radius: var(--blai-radius-lg);
 }
 

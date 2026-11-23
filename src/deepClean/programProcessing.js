@@ -87,9 +87,12 @@ export function processDeepCleanProgramCandidates(input, contentItems, scanResul
         }
 
         if (execution.text !== originalText || projected.items.length > 0) {
+            // AI 请求必须基于原文发起，程序改写留到 AI 写回之后再按序执行。
             const proposedResult = {
                 itemIndex,
                 programCandidate: execution.text,
+                aiSourceText: originalText,
+                aiSourceRewriteItems: originalRewriteItems,
             };
             if (projected.items.length > 0) {
                 proposedResult.rewriteItems = projected.items;

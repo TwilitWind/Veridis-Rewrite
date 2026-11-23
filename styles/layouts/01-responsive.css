@@ -4,8 +4,8 @@
 #blai-purifier-popup.blai-app-shell {
     width: 100vw;
     max-width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
+    height: var(--blai-viewport-h);
+    max-height: var(--blai-viewport-h);
     grid-template-columns: 70px minmax(0, 1fr);
 }
 

@@ -148,8 +148,8 @@
     box-sizing: border-box;
     width: 100%;
     max-width: none;
-    height: 100dvh;
-    max-height: 100dvh;
+    height: var(--blai-viewport-h);
+    max-height: var(--blai-viewport-h);
     border: 0;
     border-radius: 0;
     box-shadow: none;

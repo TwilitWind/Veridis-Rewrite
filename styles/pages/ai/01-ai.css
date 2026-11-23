@@ -1,16 +1,22 @@
 /* AI 页：API 连接、生成参数、开关与两栏布局。 */
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch-track::after {
-    content: "";
+    content: "\f111";
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-font-14);
+    line-height: 1;
     width: var(--blai-size-14);
     height: var(--blai-size-14);
     position: absolute;
-    top: var(--blai-space-2);
+    top: 50%;
     left: var(--blai-space-2);
-    border-radius: 50%;
-    background: var(--bg-surface);
-    box-shadow: 0 1px 3px color-mix(in srgb, var(--bg-base) 24%, transparent);
-    transition: transform 160ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-surface);
+    transform: translateY(-50%);
+    transition: transform 160ms ease, color 160ms ease;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:checked + .blai-ai-switch-track {
@@ -19,7 +25,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:checked + .blai-ai-switch-track::after {
-    transform: translateX(var(--blai-switch-travel)) !important;
+    transform: translateX(var(--blai-switch-travel)) translateY(-50%) !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:focus-visible + .blai-ai-switch-track {
@@ -127,6 +133,10 @@
 }}
 
 @media (max-width: 600px) {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-parameter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 #blai-purifier-popup.blai-app-shell .blai-ai-settings {
     padding: var(--blai-space-12) var(--blai-space-6) var(--blai-page-bottom-gap);
     gap: var(--blai-space-18);
@@ -185,9 +195,9 @@
 
 #blai-ai-generation-modal .blai-ai-generation-modal-card {
     width: 100%;
-    height: min(var(--blai-size-640), calc(100dvh - var(--blai-size-40)));
+    height: min(var(--blai-size-640), calc(var(--blai-viewport-h) - var(--blai-size-40)));
     max-width: var(--blai-size-420);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     padding: var(--blai-space-18);
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
@@ -310,9 +320,9 @@
 
 #blai-ai-prompt-modal .blai-ai-prompt-modal-card {
     width: min(var(--blai-size-760), 100%) !important;
-    height: min(var(--blai-size-560), calc(100dvh - clamp(var(--blai-size-48), 8vw, var(--blai-size-88)))) !important;
+    height: min(var(--blai-size-560), calc(var(--blai-viewport-h) - clamp(var(--blai-size-48), 8vw, var(--blai-size-88)))) !important;
     max-width: var(--blai-size-760) !important;
-    max-height: calc(100dvh - clamp(var(--blai-size-48), 8vw, var(--blai-size-88))) !important;
+    max-height: calc(var(--blai-viewport-h) - clamp(var(--blai-size-48), 8vw, var(--blai-size-88))) !important;
     padding: var(--blai-space-18) !important;
     border-radius: var(--blai-radius-lg) !important;
 }}
@@ -387,7 +397,7 @@
 /* 附加参数弹窗：复用通用 .blai-modal-shell 的显示/遮罩/动画机制。 */
 #blai-ai-additional-modal .blai-ai-additional-modal-card {
     width: min(var(--blai-size-640), 100%);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     padding: var(--blai-space-18);
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;

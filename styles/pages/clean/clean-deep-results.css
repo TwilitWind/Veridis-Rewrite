@@ -331,3 +331,10 @@
     color: var(--text-main);
     font-variant-numeric: tabular-nums;
 }
+
+#blai-deep-clean-workspace .blai-deep-clean-ai-failure-reasons {
+    margin: var(--blai-space-8) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-fs-note);
+    line-height: 1.5;
+}

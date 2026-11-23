@@ -113,7 +113,7 @@
 
 #blai-risk-confirm-modal .blai-risk-confirm-card, #blai-risk-info-modal .blai-risk-info-card {
     width: min(var(--blai-size-440), calc(100vw - var(--blai-size-28)));
-    max-height: calc(100dvh - var(--blai-size-28));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));
     padding: var(--blai-space-18);
 }
 
@@ -164,7 +164,7 @@
 .blai-modal-shell {
     inset: 0;
     width: 100vw;
-    height: 100dvh;
+    height: var(--blai-viewport-h);
     padding: max(var(--blai-space-20), env(safe-area-inset-top)) max(var(--blai-space-20), env(safe-area-inset-right)) max(var(--blai-space-20), env(safe-area-inset-bottom)) max(var(--blai-space-20), env(safe-area-inset-left));
     align-items: center;
     justify-content: center;
@@ -178,7 +178,7 @@
 .blai-modal-shell > .blai-modal-card {
     width: 100% !important;
     max-width: var(--blai-size-420) !important;
-    max-height: calc(100dvh - var(--blai-size-40)) !important;
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40)) !important;
     padding: var(--blai-space-18) !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
     border-radius: var(--blai-radius-lg) !important;
@@ -229,7 +229,7 @@
 #blai-risk-confirm-modal > .blai-risk-confirm-card, #blai-risk-info-modal > .blai-risk-info-card {
     width: 100%;
     max-width: var(--blai-size-420);
-    max-height: calc(100dvh - var(--blai-size-40));
+    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     border-radius: var(--blai-radius-lg);
 }}
 

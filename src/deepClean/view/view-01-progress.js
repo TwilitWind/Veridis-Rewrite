@@ -156,6 +156,9 @@ export function renderDeepCleanComplete(summary) {
         ['AI 失败保留原文', summary.aiFailedOriginalItemCount],
         ['超长未执行 AI', summary.oversizedAiItemCount],
     ], 'is-ai')}
+                        ${(summary.aiFailureReasons || []).length > 0 ? `
+                            <p class="blai-deep-clean-ai-failure-reasons">未执行程序改写：${summary.aiFailureReasons.map((reason) => deepCleanSafeHtml(reason)).join('；')}</p>
+                        ` : ''}
                     </section>
                 ` : ''}
             </div>

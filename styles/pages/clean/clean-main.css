@@ -384,12 +384,22 @@
     width: var(--blai-size-14);
     height: var(--blai-size-14);
     position: absolute;
-    top: var(--blai-space-2);
+    top: 50%;
     left: var(--blai-space-2);
-    border-radius: 50%;
-    background: var(--bg-base);
-    box-shadow: var(--blai-shadow-xs);
-    transition: transform .18s ease, background-color .18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-font-14);
+    line-height: 1;
+    color: var(--bg-base);
+    transform: translateY(-50%);
+    transition: transform .18s ease, color .18s ease;
+}
+
+#blai-purifier-popup .blai-clean-switch-track > span::before {
+    content: "\f111";
 }
 
 #blai-purifier-popup .blai-clean-group-switch.is-on .blai-clean-switch-track, #blai-purifier-popup .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track, #blai-purifier-popup .blai-clean-tag-switch input:checked + .blai-clean-switch-track, #blai-purifier-popup .blai-clean-checkbox-switch input:checked + .blai-clean-switch-track {
@@ -398,6 +408,6 @@
 }
 
 #blai-purifier-popup .blai-clean-group-switch.is-on .blai-clean-switch-track > span, #blai-purifier-popup .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track > span, #blai-purifier-popup .blai-clean-tag-switch input:checked + .blai-clean-switch-track > span, #blai-purifier-popup .blai-clean-checkbox-switch input:checked + .blai-clean-switch-track > span {
-    transform: translateX(var(--blai-switch-travel));
+    transform: translateX(var(--blai-switch-travel)) translateY(-50%);
     background: var(--bg-base);
 }
