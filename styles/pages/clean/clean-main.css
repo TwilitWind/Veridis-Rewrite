@@ -354,14 +354,18 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* 开关按钮与同一行的铅笔/省略号操作按钮同规格：32×32 方框、图标居中。
+   旧的 34×20 让开关在标签行里显得比旁边的图标小一圈，左右留白也不对称。 */
 #blai-purifier-popup :is(.blai-clean-group-switch, .blai-clean-switch, .blai-clean-tag-switch, .blai-clean-checkbox-switch) {
-    width: var(--blai-size-34);
-    min-width: var(--blai-size-34);
-    height: var(--blai-size-20);
+    width: var(--blai-size-32);
+    min-width: var(--blai-size-32);
+    height: var(--blai-size-32);
+    min-height: var(--blai-size-32);
     padding: 0;
     position: relative;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     border: 0;
     background: transparent;
     color: transparent;

@@ -712,8 +712,9 @@
     --icon-size: var(--blai-fs-body);
 }
 
-/* 开启态强调色：页面文件里给轨道写了 #id 前缀的 --text-secondary，
-   这里同样带 #id / .blai-modal-shell 前缀才压得过，避免开启后仍是灰色。
+/* 开启态颜色与所在行的铅笔/竖三点等 UI 图标同色（--text-main）。
+   页面文件里给轨道写了 #id 前缀的 --text-secondary，这里同样带 #id /
+   .blai-modal-shell 前缀才压得过，避免开启后仍是灰色。
    禁用态由 ai/01-ai.css 的更强规则保留灰色。 */
 :is(#blai-purifier-popup, .blai-modal-shell) .blai-ai-switch input:checked ~ .blai-ai-switch-track,
 :is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-group-switch.is-on .blai-clean-switch-track,
@@ -721,7 +722,7 @@
 :is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-tag-switch input:checked + .blai-clean-switch-track,
 :is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-checkbox-switch input:checked + .blai-clean-switch-track,
 :is(#blai-purifier-popup, .blai-modal-shell) .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
-    color: var(--accent-color);
+    color: var(--text-main);
 }
 
 .blai-ai-switch input:checked ~ .blai-ai-switch-track .blai-switch-off,
