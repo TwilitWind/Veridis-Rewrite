@@ -9,7 +9,7 @@
  * #blai-diff-modal 祖先的 CSS 选择器都会失效。所以本测试在菜单「打开后」
  * 实测计算样式，而不是读源码里的 CSS 文本——后者是曾经骗过人的形式主义。
  *
- * 用法：CDP_PORT=9333 node test/audit/verify-diff-menu.mjs
+ * 用法：CDP_PORT=9224 node test/audit/verify-diff-menu.mjs
  * 失败时进程退出码 1，并打印逐项期望/实际，便于定位。
  */
 import fs from 'node:fs';
@@ -17,7 +17,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..'); // 脚本在 test/audit/，项目根上两级
-const PORT = process.env.CDP_PORT ?? '9222';
+const PORT = process.env.CDP_PORT ?? '9224';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const HEADER_IDS = [
     'blai-diff-pick-toggle',

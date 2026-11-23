@@ -7,7 +7,7 @@
  *   4) 扫描结果界面有口径说明、按钮文案简短、分类不再空五列；
  *   5) 新手指引的目标在桌面与手机两种视口下都能定位到可见节点。
  *
- * 用法：CDP_PORT=9333 node test/audit/verify-followup.mjs
+ * 用法：CDP_PORT=9224 node test/audit/verify-followup.mjs
  * 失败退出码 1。需要 SillyTavern(8000) 与调试浏览器均已启动。
  */
 import fs from 'node:fs';
@@ -15,7 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const PORT = process.env.CDP_PORT ?? '9333';
+const PORT = process.env.CDP_PORT ?? '9224';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
 

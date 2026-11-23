@@ -12,7 +12,7 @@ let evalJs = process.argv[3] ?? '';
 // Allow evalJS to come from a file to dodge shell quoting issues.
 if (evalJs.startsWith('@')) evalJs = fs.readFileSync(evalJs.slice(1), 'utf8');
 const waitMs = Number(process.argv[4] ?? 1200);
-const PORT = process.env.CDP_PORT ?? '9222';
+const PORT = process.env.CDP_PORT ?? '9224';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

@@ -80,7 +80,7 @@ async function connect(wsUrl) {
 
 // opt: { port, device:{width,height,dpr}, theme:'light'|'dark', url }
 export async function framePng(png, opt) {
-    const port = opt.port || '9222';
+    const port = opt.port || '9224';
     const dev = opt.device;
     const statusH = 30;
     const urlH = 54;

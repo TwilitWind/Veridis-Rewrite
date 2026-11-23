@@ -4,7 +4,7 @@ import fs from 'node:fs';
 
 let expression = process.argv[2] ?? 'document.title';
 if (expression.startsWith('@')) expression = fs.readFileSync(expression.slice(1), 'utf8');
-const PORT = process.env.CDP_PORT ?? '9222';
+const PORT = process.env.CDP_PORT ?? '9224';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const list = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json();

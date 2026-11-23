@@ -20,7 +20,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const PORT = process.env.CDP_PORT ?? '9222';
+const PORT = process.env.CDP_PORT ?? '9224';
 const TOL = 2; // px：光标 x 与前一字符右边缘的允许偏差
 
 async function connect() {

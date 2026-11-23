@@ -3,7 +3,7 @@
 // Usage: node st-input.mjs <scenario.js> [snapExpr|@file]
 //   scenario body runs with: click(sel,label) hover(sel,label) type(sel,text) key(name)
 //   snap(label) evaluate(expr) sleep(ms) send(method,params) log
-//   CDP_PORT=9222  VIEWPORT=WxH  STEP=450 (ms after each action)  KEEP_VP=1
+//   CDP_PORT=9224  VIEWPORT=WxH  STEP=450 (ms after each action)  KEEP_VP=1
 import fs from 'node:fs';
 
 const scenarioPath = process.argv[2];
@@ -15,7 +15,7 @@ if (!snapExpr) {
     snapExpr = '(() => ({ active: document.activeElement?.id || null, errors: (window.__stProbeErrors || []).slice(0, 5), docW: document.documentElement.scrollWidth, vw: innerWidth }))()';
 }
 
-const PORT = process.env.CDP_PORT ?? '9222';
+const PORT = process.env.CDP_PORT ?? '9224';
 const STEP = Number(process.env.STEP ?? 450);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

@@ -1,7 +1,7 @@
 // True mobile emulation for SillyTavern (CDP): viewport + DPR + touch + phone UA.
 // Usage: node st-mobile.mjs <outfile.png> [jsToEval|@file] [waitMs]
 //   DEVICE=iphone14|pixel7|ipad|WxH   (default iphone14)
-//   CDP_PORT=9222  NO_NAV=1 (reuse current page)  RELOAD=1 (reload in place)
+//   CDP_PORT=9224  NO_NAV=1 (reuse current page)  RELOAD=1 (reload in place)
 //   LOAD_MS=7000   DPR=3 (override)  MOBILE=0 (keep desktop UA, viewport only)
 //   RESET=1 -> clear emulation, restore desktop UA, no screenshot
 //   FRAME=1 -> draw an Android/Chrome shell around the shot (status bar,
@@ -54,7 +54,7 @@ const out = process.argv[2] ?? 'mobile.png';
 let evalJs = process.argv[3] ?? '';
 if (evalJs.startsWith('@')) evalJs = fs.readFileSync(evalJs.slice(1), 'utf8');
 const waitMs = Number(process.argv[4] ?? 1500);
-const PORT = process.env.CDP_PORT ?? '9222';
+const PORT = process.env.CDP_PORT ?? '9224';
 
 const devArg = process.env.DEVICE ?? 'iphone14';
 let dev;

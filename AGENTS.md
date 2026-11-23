@@ -17,12 +17,12 @@
 
 | 规则 | 由什么拦住 |
 |---|---|
-| 透视弹窗顶栏与 ⋮ 菜单镜像严格互斥（顶栏有→菜单不重复，顶栏无→菜单必露出） | `CDP_PORT=9333 node test/audit/verify-diff-menu.mjs`（真浏览器，桌面+手机两视口，含反证） |
+| 透视弹窗顶栏与 ⋮ 菜单镜像严格互斥（顶栏有→菜单不重复，顶栏无→菜单必露出） | `CDP_PORT=9224 node test/audit/verify-diff-menu.mjs`（真浏览器，桌面+手机两视口，含反证） |
 | 禁止用 `#blai-diff-modal` 祖先选择器控制菜单镜像显隐 | `node build-check.mjs` 第 15 条静态检查 |
-| 深度净化程序改写不报 `xxx is not defined`、勾选不回顶 | `CDP_PORT=9333 node test/audit/verify-deep-clean.mjs`（真浏览器，含双向反证） |
+| 深度净化程序改写不报 `xxx is not defined`、勾选不回顶 | `CDP_PORT=9224 node test/audit/verify-deep-clean.mjs`（真浏览器，含双向反证） |
 | 禁止「调用别处导出却没 import」（`node --check` 查不出，运行才炸） | `node test/check-imports.mjs` / `node build-check.mjs` 第 16 条静态闸门（含反证） |
-| 正则查找框高亮时光标贴字右侧、不叠进字形 | `CDP_PORT=9333 node test/audit/verify-regex-caret.mjs`（真浏览器量光标 x−字符右缘，注入 bold 反证） |
-| 三弹窗直属 body、直角高亮、主题对比色、扫描结果说明、双端导览锚点 | `CDP_PORT=9333 node test/audit/verify-followup.mjs`（真浏览器 19 项，桌面+手机） |
+| 正则查找框高亮时光标贴字右侧、不叠进字形 | `CDP_PORT=9224 node test/audit/verify-regex-caret.mjs`（真浏览器量光标 x−字符右缘，注入 bold 反证） |
+| 三弹窗直属 body、直角高亮、主题对比色、扫描结果说明、双端导览锚点 | `CDP_PORT=9224 node test/audit/verify-followup.mjs`（真浏览器 19 项，桌面+手机） |
 | 透视弹窗不再残留独立「AI 改写」入口 | `verify-diff-menu.mjs` 的 `aiRewriteGone` 断言（顶栏与菜单镜像都检查） |
 | 交差前跑通验证并附截图 | `build-css.mjs` + `build-check.mjs` + `test/audit/verify-*.mjs` + `shots/` |
 
@@ -62,7 +62,7 @@ ES module 里调用别模块导出的函数却忘了 import，`node --check` 与
 ## 测试环境
 
 - SillyTavern 在 `http://127.0.0.1:8000/`
-- 验证用独立调试浏览器：`CDP_PORT=9333`（默认 9222 被用户自己的浏览器占用且未开调试，不要用）
+- 验证用独立调试浏览器：`CDP_PORT=9224`。全项目统一这个端口，所有脚本默认值与文档都写它。用户日常浏览器占 9222 且无调试端口，不要连。
 - 源码在 `E:\Plugin Development\Veridis-Rewrite`；装机副本在
   `D:\Games\SillyTavern\SillyTavern\data\default-user\extensions\Veridis-Rewrite`
 - 改完必须跑 `node build-css.mjs` → `node build-check.mjs` →
