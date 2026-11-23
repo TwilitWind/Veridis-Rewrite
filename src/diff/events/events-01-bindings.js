@@ -21,7 +21,6 @@ export function bindDiffEventHandlers(core) {
         showRelatedRulesForDiffElement,
         syncDiffPreferenceMenuState,
         toggleCurrentDiffRevert,
-        triggerCurrentDiffAiRewrite,
         setDiffPickMode,
         syncDiffPickConfirmState,
         applySelectedDiffReverts,
@@ -131,8 +130,6 @@ diffRuntimeState.diffModalClose = closeDiffModal;
 
 
     $(document).off('click', '#blai-diff-revert-toggle').on('click', '#blai-diff-revert-toggle', () => toggleCurrentDiffRevert());
-
-    $(document).off('click', '#blai-diff-ai-rewrite').on('click', '#blai-diff-ai-rewrite', () => triggerCurrentDiffAiRewrite());
 
     $(document).off('click', '#blai-diff-baseline-btn').on('click', '#blai-diff-baseline-btn', (e) => {
         e.preventDefault();

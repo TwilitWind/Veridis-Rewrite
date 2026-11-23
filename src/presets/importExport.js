@@ -138,7 +138,7 @@ async function confirmBeforeImportChoiceIfUnsaved() {
     const settings = extension_settings[extensionName];
     const active = settings.activePreset;
     if (!active || !hasActivePresetUnsavedChanges()) return true;
-    return showConfirmModal(`当前预设 "${active}" 有未保存的改动。\n\n只导入为新预设不会修改当前规则；导入并切换或临时预览会在执行前再次确认保存。\n\n是否继续选择导入方式？`, { okText: '继续' });
+    return showConfirmModal(`当前预设 "${active}" 有未保存的改动。\n\n仅导入不会修改当前规则；导入并切换或临时预览会在执行前再次确认保存。\n\n是否继续选择导入方式？`, { okText: '继续' });
 }
 
 async function validateImportPresetName() {

@@ -162,7 +162,8 @@ export function recordAiRewriteDebug(stage, details = {}, level = 'info') {
     const stored = readStoredDebugEvents();
     stored.push(event);
     writeStoredDebugEvents(stored);
-    refreshMountedDebugDisplay(aiRewriteState.debugEvents);
+    // 面板刷新由 debug.js 的 recordAiRewriteDebug 负责（那里已正确 import）。
+    // 本函数与 debug.js 的实现重复且无外部引用，不再这里调用未导入的 refreshMountedDebugDisplay。
     let summary = '';
     try {
         summary = JSON.stringify(sanitizedDetails);

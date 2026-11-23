@@ -347,7 +347,7 @@
     flex: 1 1 0;
     min-width: 0;
     font-size: var(--blai-font-12);
-    padding: var(--blai-space-8) var(--blai-space-6);
+    padding: var(--blai-btn-pad);
 }
 
 .blai-rule-search-header {
@@ -563,6 +563,7 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     margin: var(--blai-space-10) 0;
+    padding-right: var(--blai-scrollbar-gutter);
 }}
 
 @media screen and (min-width: 601px) and (max-width: 1024px) {

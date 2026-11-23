@@ -127,7 +127,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-review-views button {
     min-height: var(--blai-size-28);
-    padding: 0 var(--blai-space-8);
+    padding: var(--blai-btn-pad-compact);
     border: 0;
     border-left: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);

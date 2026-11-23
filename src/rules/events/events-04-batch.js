@@ -34,9 +34,14 @@ export function bindRuleBatchEvents() {
         syncBatchSelectionStateFromDom(extension_settings[extensionName].rules || []);
     });
 
-    $(document).off('click', '#blai-btn-batch-transfer').on('click', '#blai-btn-batch-transfer', () => {
+    $(document).off('click', '#blai-btn-batch-copy').on('click', '#blai-btn-batch-copy', () => {
         const selectedIndexes = getSelectedIndexesFromState(extension_settings[extensionName].rules || []);
-        if (selectedIndexes.length > 0) openTransferModal(selectedIndexes);
+        if (selectedIndexes.length > 0) openTransferModal(selectedIndexes, 'copy');
+    });
+
+    $(document).off('click', '#blai-btn-batch-move').on('click', '#blai-btn-batch-move', () => {
+        const selectedIndexes = getSelectedIndexesFromState(extension_settings[extensionName].rules || []);
+        if (selectedIndexes.length > 0) openTransferModal(selectedIndexes, 'move');
     });
 
     $(document).off('click', '#blai-btn-batch-delete').on('click', '#blai-btn-batch-delete', async () => {

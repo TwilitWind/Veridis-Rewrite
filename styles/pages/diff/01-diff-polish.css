@@ -178,3 +178,35 @@
     background: var(--border-color);
     margin: var(--blai-space-4) 0;
 }
+
+/* 顶栏动作与 ⋮ 菜单镜像互斥：顶栏外显的不再在菜单里重复一遍。
+   菜单打开时会被 popover.js portal 到 body，因此这里不能用 #blai-diff-modal 祖先
+   或屏幕断点做条件——那些在 portal 后全部失效（曾导致桌面菜单四项重复）。
+   改为：镜像项与分隔线默认隐藏，由 openDiffActionsMenu 按顶栏按钮的
+   实际可见性逐项放出；选择器只依赖菜单自身，挂到哪都生效。 */
+.blai-diff-actions-menu .blai-diff-menu-action,
+.blai-diff-actions-menu .blai-diff-menu-divider {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+/* 手机端把「撤回所选」「撤回」放出来，不再全部收进 ⋮。 */
+#blai-diff-modal .blai-diff-header-primary {
+    display: flex;
+}
+#blai-diff-modal #blai-diff-pick-toggle,
+#blai-diff-modal #blai-diff-revert-toggle {
+    width: auto;
+    min-width: 0;
+    padding: 0 var(--blai-space-8);
+}
+#blai-diff-modal #blai-diff-pick-text,
+#blai-diff-modal #blai-diff-revert-text {
+    display: inline;
+}
+/* 手机端顶栏只留「撤回所选/撤回」，全文模式收进 ⋮：顶栏隐藏、菜单保留镜像，避免两处重复。
+   菜单镜像项的显隐由 openDiffActionsMenu 按顶栏实际可见性处理，不在此用祖先选择器。 */
+#blai-diff-modal #blai-diff-mode-toggle {
+    display: none;
+}
+}

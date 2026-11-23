@@ -1,5 +1,5 @@
 // 一站式样式审计入口：静态声明审计 + CDP 运行时布局审计 + 控件垂直居中审计。
-// 用法：node test/audit.mjs [static|layout|all|align] [--strict]  （默认 all）
+// 用法：node test/audit/audit.mjs [static|layout|all|align] [--strict]  （默认 all）
 //   static  只跑静态字号/双端/裁切信号审计，零依赖、无需浏览器（线索，不作最终判定）
 //   layout  只跑 CDP 运行时裁切/重叠/遮挡审计，需先启动 9224 调试 Chrome（判定）
 //   align   只跑 CDP 控件与同行文本垂直居中审计（判定）
@@ -11,12 +11,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(HERE, '..', '..'); // 脚本在 test/audit/，项目根要上两级
 const args = process.argv.slice(2);
 const strict = args.includes('--strict');
 const mode = args.find((a) => a !== '--strict') ?? 'all';
 if (!['static', 'layout', 'align', 'all'].includes(mode)) {
-    console.error('用法：node test/audit.mjs [static|layout|align|all] [--strict]');
+    console.error('用法：node test/audit/audit.mjs [static|layout|align|all] [--strict]');
     process.exit(2);
 }
 const strictEnv = strict ? { STRICT: '1' } : {};
@@ -24,7 +25,7 @@ const tmp = path.join(ROOT, 'tmp');
 if (!fs.existsSync(tmp)) fs.mkdirSync(tmp);
 
 const run = (script, env = {}) => {
-    const r = spawnSync(process.execPath, [path.join(ROOT, 'test', script)], {
+    const r = spawnSync(process.execPath, [path.join(HERE, script)], {
         cwd: ROOT,
         stdio: 'inherit',
         env: { ...process.env, ...env },
@@ -41,7 +42,7 @@ if (mode === 'layout' || mode === 'all') {
     console.log('\n[2/3] 运行时审计（判定：CDP 量真实几何；需要 CDP 9224）');
     code |= run('layout-audit.mjs', { OUT: 'tmp/layout-report.json', CDP_PORT: process.env.CDP_PORT ?? '9224', ...strictEnv });
 }
-if (mode === 'align' || mode === 'layout' || mode === 'all') {
+if (mode === 'align' || mode === 'all') {
     console.log('\n[3/3] 垂直居中审计（判定：CDP 量真实中线；需要 CDP 9224）');
     code |= run('align-audit.mjs', { OUT: 'tmp/align-report.json', CDP_PORT: process.env.CDP_PORT ?? '9224', ...strictEnv });
 }

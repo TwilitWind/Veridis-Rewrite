@@ -25,7 +25,7 @@
        在深底上等于看不见）。这里改成从正文色往底色里混，任何酒馆配色下都能拉开对比。 */
     --border-color: color-mix(
         in srgb,
-        var(--SmartThemeBodyColor) 34%,
+        var(--SmartThemeBodyColor) 20%,
         var(--bg-base)
     );
     /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
@@ -83,7 +83,7 @@
     --accent-contrast: #0B1526;
     --text-main: #C7D3E0;
     --text-secondary: #8899AA;
-    --border-color: #3A4356;
+    --border-color: #303849;
     /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
     --status-danger: #D95757;
     --status-success: #70BF56;
@@ -214,7 +214,7 @@
 #blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) .blai-home-batch-panel,
 #blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) .blai-clean-list-toolbar
 {
-    border-color: transparent;
+    border-color: var(--blai-border-soft);
 }
 
 #blai-purifier-popup:is([data-theme="light"], [data-theme="warm"]) :is(.panel, .field, .clean-row) {
@@ -260,9 +260,9 @@
 }
 
 #blai-purifier-popup:is([data-theme="dark"], [data-theme="dim"]) .blai-global-header {
-    /* 顶栏与首页顶栏同色（都是 --bg-surface），原来这条用底色混 12% 透明，
-       在深色下等于看不见，于是「预设下拉框上方没有分隔线」。改回统一边框色。 */
-    border-color: var(--border-color);
+    /* 顶栏与首页顶栏同色（都是 --bg-surface）；分隔线走低对比令牌，
+       与左栏/底栏同一档，不再用实心控件描边把顶栏压得很重。 */
+    border-color: var(--blai-border-soft);
     background: var(--bg-surface);
     box-shadow: none;
 }
@@ -292,9 +292,9 @@
     --blai-dropdown-active-ink: #FFFFFF;
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    /* 高亮整行铺满菜单：菜单内边距与行间距都为 0。
-       首行/末行由 07-menu-fill.css 补上与菜单一致的上/下圆角，中间行方角。 */
-    --blai-dropdown-pad: 0;
+    /* 高亮整行铺满菜单：上/左/下内边距为 0，只在右侧留滚动条槽，
+       避免滚动条与左侧菜单项粘连。首末行圆角由 07-menu-fill.css 补。 */
+    --blai-dropdown-pad: 0 var(--blai-scrollbar-gutter) 0 0;
     --blai-dropdown-gap: 0;
     --blai-dropdown-shadow: var(--blai-shadow-sm);
     --blai-dropdown-item-radius: 0;

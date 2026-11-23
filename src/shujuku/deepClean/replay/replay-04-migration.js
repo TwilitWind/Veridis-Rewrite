@@ -1,5 +1,5 @@
 /** replay 的分块：migration。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { parseDdlTableName, isRecord, assertCanonicalState } from './replay-00-sqlText.js';
+import { parseDdlTableName, isRecord, assertCanonicalState, cloneJson } from './replay-00-sqlText.js';
 import { stripSqlLineComments, parseDdlTableConstraints, parseDdlTableSuffix, parseSafeDefaultLiteral } from './replay-01-sqlRebind.js';
 import { requireSheetShape, canonicalJson, P1_COLUMN_CONSTRAINT_TOKENS } from './replay-03-cells.js';
 import { createSqlRuntime } from './replay-02-runtime.js';

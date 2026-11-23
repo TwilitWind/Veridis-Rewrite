@@ -187,7 +187,7 @@ export function createAiSettingsCore() {
                 return false;
             }
             if (Object.prototype.hasOwnProperty.call(aiSettings.apiPresets, name)
-                && !await showConfirmModal(`API 预设“${name}”已存在，是否覆盖？`, { danger: true, okText: '覆盖' })) return false;
+                && !await showConfirmModal(`API 预设“${name}”已存在，是否覆盖？`, { okText: '覆盖' })) return false;
         }
         aiSettings.apiPresets[name] = getCurrentAiApiPresetSnapshot(aiSettings);
         aiSettings.activeApiPreset = name;

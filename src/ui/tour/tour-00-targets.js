@@ -70,9 +70,11 @@ export function deepCleanLaunchTourTarget() {
     return document.querySelector('#blai-deep-clean-btn')?.closest('.blai-clean-danger-content');
 }
 
+// 旧版「快速选择」区已并入「当前角色卡」卡片；手机/电脑共用同一节点，
+// 不再依赖只在一端出现的标题 id，避免窄屏下定位失败。
 export function deepCleanQuickSelectionTourTarget() {
-    return document.querySelector('#blai-deep-clean-scope-title')?.closest('.blai-deep-clean-section')
-        || document.querySelector('.blai-deep-clean-settings');
+    return document.querySelector('#blai-deep-clean-workspace .blai-deep-clean-scope-card')
+        || document.querySelector('#blai-deep-clean-workspace .blai-deep-clean-options-section');
 }
 
 export function deepCleanFinalSelectionTourTarget() {

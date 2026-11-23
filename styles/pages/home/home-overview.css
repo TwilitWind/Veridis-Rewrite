@@ -213,13 +213,14 @@
 }
 
 .blai-subrule-mini-btn {
-    padding: var(--blai-space-6) var(--blai-space-10);
+    min-height: var(--blai-size-28);
+    padding: var(--blai-btn-pad-compact);
     border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);
     color: var(--text-main);
     font-size: var(--blai-font-12);
-    font-weight: var(--blai-weight-bold);
+    font-weight: var(--blai-weight-normal);
     line-height: 1.2;
     cursor: pointer;
     white-space: nowrap;

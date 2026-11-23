@@ -143,7 +143,13 @@ export function resetAiRewriteRuntimeState(reason = 'reset') {
     if (session) session.contentIdentity = null;
 }
 
-export function requestManualAiRewriteForMessage(payload) {
+/**
+ * 手动触发单条消息的 AI 改写。
+ * @param {object|number} payload 消息载荷或索引
+ * @param {{onSettled?: Function}} [options] onSettled 在任务真正结束后调用（成功/失败/取消都会触发），
+ *   供调用方串接后续动作；未真正启动任务时不触发。
+ */
+export function requestManualAiRewriteForMessage(payload, options = {}) {
     const taskCheck = buildAiRewriteTaskCheck(payload, { logTask: true, manual: true });
     const task = taskCheck.task;
     if (!task) {
@@ -168,11 +174,13 @@ export function requestManualAiRewriteForMessage(payload) {
         rawAiMatchCount: task.rawAiMatchCount,
         matchedAiRuleCount: task.matchedAiRuleCount,
     });
-    runAiRewriteForMessage(payload, {
+    const onSettled = typeof options.onSettled === 'function' ? options.onSettled : null;
+    const runPromise = runAiRewriteForMessage(payload, {
         waitForFinalCleanse: false,
         manual: true,
         preparedTask: task,
     });
+    if (onSettled) Promise.resolve(runPromise).then(onSettled, onSettled);
     return true;
 }
 

@@ -1,5 +1,5 @@
 /** lifecycle 的分块：selection。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { extensionName } from '../../settings/defaults.js';
+import { defaultAiRewriteSettings, extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { deepCleanRuntimeState } from '../state.js';
 import { logger } from '../../log.js';

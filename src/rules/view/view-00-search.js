@@ -171,7 +171,11 @@ export function focusLatestRuleCard() {
     }, 1600);
 }
 
-export function openTransferModal(ruleIndexOrIndexes) {
+/**
+ * 打开规则集转移弹窗。mode 为 'copy' / 'move' 时只留对应动作按钮，
+ * 批量面板已经把复制与移动拆成两个入口；不传时仍保留原来的双按钮（规则卡菜单）。
+ */
+export function openTransferModal(ruleIndexOrIndexes, mode = '') {
     const { extension_settings } = getAppContext();
     const settings = extension_settings[extensionName];
     const presets = settings?.presets || {};
@@ -188,6 +192,11 @@ export function openTransferModal(ruleIndexOrIndexes) {
         .filter((v) => Number.isInteger(v) && v >= 0);
     const $select = $('#blai-transfer-target');
     $select.html(targetNames.map((name) => `<option value="${safeHtml(name)}">${safeHtml(name)}</option>`).join(''));
+    const isCopy = mode === 'copy';
+    const isMove = mode === 'move';
+    $('#blai-transfer-title-text').text(isCopy ? '复制规则集' : isMove ? '移动规则集' : '复制 / 转移规则集');
+    $('#blai-transfer-copy').toggle(!isMove);
+    $('#blai-transfer-move').toggle(!isCopy);
     $('#blai-rule-transfer-modal').css('display', 'flex');
 }
 

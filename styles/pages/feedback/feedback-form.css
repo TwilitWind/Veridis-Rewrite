@@ -98,6 +98,7 @@
 
 /* 提交预览是独立主操作，用胶囊；同组的文件选择与诊断按钮保持原档位。 */
 #blai-feedback-workspace .blai-feedback-primary {
+    padding: var(--blai-btn-pad);
     background: var(--accent-color);
     color: var(--accent-contrast);
     border-radius: var(--blai-radius-sm);

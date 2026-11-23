@@ -86,7 +86,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header {
     min-width: 0;
-    padding: 0 0 var(--blai-space-10);
+    padding: 0 0 var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-header h3 {
@@ -114,7 +114,7 @@
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
     gap: var(--blai-space-6);
-    padding: var(--blai-space-14) var(--blai-space-16);
+    padding: var(--blai-space-12) var(--blai-space-14);
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
@@ -122,7 +122,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-shujuku-note {
     margin: 0;
-    padding-top: var(--blai-space-8);
+    padding-top: var(--blai-space-6);
     color: var(--text-secondary);
     font-size: var(--blai-font-9);
     line-height: 1.45;
@@ -131,17 +131,17 @@
 /* 资源分区：同住一张容器卡，内部靠细分隔线区分，不再各自套边框。 */
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel {
     min-width: 0;
-    padding: 0 0 var(--blai-space-12);
+    padding: 0 0 var(--blai-space-8);
     background: transparent;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel + .blai-deep-clean-resource-panel {
-    padding-top: var(--blai-space-12);
+    padding-top: var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
     min-width: 0;
-    padding: 0 0 var(--blai-space-8);
+    padding: 0 0 var(--blai-space-6);
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -159,7 +159,7 @@
 #blai-deep-clean-workspace .blai-deep-clean-resource-panel > .blai-deep-clean-search-field {
     width: 100%;
     min-width: 0;
-    margin-top: var(--blai-space-10);
+    margin-top: var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-search-field {
@@ -228,9 +228,9 @@
 #blai-deep-clean-workspace .blai-deep-clean-resource-list {
     min-width: 0;
     max-height: var(--blai-size-240);
-    margin-top: var(--blai-space-8);
+    margin-top: var(--blai-space-6);
     overflow-y: auto;
-    padding: 0;
+    padding: 0 var(--blai-scrollbar-gutter) 0 0;
 }
 
 /* 行间分隔线已去掉：行高/内边距同步收紧，靠 hover 底色区分行，不再留分隔线的空档。 */
@@ -273,7 +273,7 @@
 }
 
 /* 酒馆主题给原生复选框注入 ::before 勾（实测 content:"" / 8.77px），
-   与 background 的 SVG 勾叠成两个——必须一并清掉伪元素。 */
+   与自绘勾叠成两个——先清空，再只在 :checked 上画统一字形。 */
 #blai-deep-clean-workspace .blai-deep-clean-choice input::before,
 #blai-deep-clean-workspace .blai-deep-clean-choice input::after {
     content: none;
@@ -282,7 +282,21 @@
 #blai-deep-clean-workspace .blai-deep-clean-choice input:checked {
     border-color: var(--accent-color);
     background-color: var(--accent-color);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: none;
+}
+
+/* 勾号跟随主题 accent-contrast，不再写死白色：浅色强调块（浅色/自动主题）上白勾会消失。
+   与通用 .blai-custom-checkbox 同一套 FA 字形，颜色由 tokens 统一提供。 */
+#blai-deep-clean-workspace .blai-deep-clean-choice input:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    color: var(--accent-contrast);
+    font-size: var(--blai-font-10);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice-copy {
@@ -321,5 +335,41 @@
     justify-content: flex-end;
     gap: var(--blai-space-9);
     border-top: var(--blai-border-1) solid var(--border-color);
-    background: var(--bg-surface);
+    background: var(--bg-base);
+}
+
+/* 处理范围信息行：与上面的模式/预设同处「初始选择」面板，选择器独立、无层叠冲突，
+   原独立文件仅 1KB，并入本文件减少碎片（从 clean-deep-scope.css 收拢）。 */
+#blai-deep-clean-workspace .blai-deep-clean-scope-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--blai-space-4) var(--blai-space-10);
+    margin: var(--blai-space-4) 0 0;
+    padding: 0;
+    background: transparent;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scope-label {
+    font-size: var(--blai-font-11);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-secondary);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scope-name {
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scope-detail {
+    margin-left: auto;
+    font-size: var(--blai-font-11);
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scope-card.is-blocked .blai-deep-clean-scope-detail {
+    color: var(--status-danger);
 }

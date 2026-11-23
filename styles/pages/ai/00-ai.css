@@ -300,15 +300,17 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     gap: var(--blai-space-14) var(--blai-space-16);
 }
 
-/* 生成参数用三列排布：11 个数值控件由 6 行压到 4 行，左栏不再比右栏长出半屏 */
-#blai-purifier-popup.blai-app-shell .blai-ai-parameter-grid {
+/* 生成参数用三列排布：11 个数值控件由 6 行压到 4 行，左栏不再比右栏长出半屏。
+   参数区会被搬进 #blai-ai-generation-modal（已移出主容器、直属 body），
+   所以布局规则必须同时覆盖主页面与弹窗两种落点。 */
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-parameter-grid {
     min-width: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--blai-space-12) var(--blai-space-14);
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-control {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-control {
     min-width: 0;
     display: grid;
     align-content: start;
@@ -316,7 +318,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     color: var(--text-main);
 }
 
-#blai-purifier-popup.blai-app-shell :is(.blai-ai-control-label, .blai-ai-control-heading) {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) :is(.blai-ai-control-label, .blai-ai-control-heading) {
     min-width: 0;
     color: var(--text-main);
     font-size: var(--blai-font-12);
@@ -325,7 +327,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     line-height: 1.35;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-control-heading {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-control-heading {
     min-height: var(--blai-size-17);
     display: flex;
     align-items: center;
@@ -360,7 +362,7 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
 #blai-purifier-popup.blai-app-shell .blai-ai-control > .blai-input:focus, #blai-purifier-popup.blai-app-shell .blai-ai-compound-control > .blai-select-box:focus, #blai-purifier-popup.blai-app-shell .blai-ai-compound-control > .blai-input:focus, #blai-purifier-popup.blai-app-shell .blai-ai-key-control > .blai-input:focus, #blai-purifier-popup.blai-app-shell .blai-ai-prompt-input:focus {
     outline: none !important;
     outline-offset: 0 !important;
-    box-shadow: inset 0 0 0 1px var(--accent-color) !important;
+    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-compound-control {
@@ -512,5 +514,5 @@ body #toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > 
     flex: 0 0 var(--blai-size-32);
     border-radius: var(--blai-radius-full);
     background: var(--bg-surface);
-    box-shadow: inset 0 0 0 1px var(--border-color);
+    box-shadow: var(--blai-ring-inset) var(--border-color);
 }

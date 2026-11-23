@@ -15,52 +15,16 @@
     .blai-subrule-menu
 )[class] > :is([class], [role]) {
     border-radius: 0;
-}
 
-:is(
-    .blai-theme-menu,
-    .blai-native-select-menu,
-    .blai-diff-actions-menu,
-    .blai-clean-tag-menu,
-    .blai-clean-group-menu,
-    .blai-edit-filter-menu,
-    .blai-feedback-area-options,
-    .blai-rule-search-menu,
-    .blai-preset-menu,
-    .blai-home-card-menu,
-    .blai-subrule-menu
-)[class] > :is([class], [role]):first-child {
-    border-radius: var(--blai-dropdown-radius) var(--blai-dropdown-radius) 0 0;
-}
-
-:is(
-    .blai-theme-menu,
-    .blai-native-select-menu,
-    .blai-diff-actions-menu,
-    .blai-clean-tag-menu,
-    .blai-clean-group-menu,
-    .blai-edit-filter-menu,
-    .blai-feedback-area-options,
-    .blai-rule-search-menu,
-    .blai-preset-menu,
-    .blai-home-card-menu,
-    .blai-subrule-menu
-)[class] > :is([class], [role]):last-child {
-    border-radius: 0 0 var(--blai-dropdown-radius) var(--blai-dropdown-radius);
-}
-
-:is(
-    .blai-theme-menu,
-    .blai-native-select-menu,
-    .blai-diff-actions-menu,
-    .blai-clean-tag-menu,
-    .blai-clean-group-menu,
-    .blai-edit-filter-menu,
-    .blai-feedback-area-options,
-    .blai-rule-search-menu,
-    .blai-preset-menu,
-    .blai-home-card-menu,
-    .blai-subrule-menu
-)[class] > :is([class], [role]):only-child {
-    border-radius: var(--blai-dropdown-radius);
+    /* 首末行圆角：用 & 嵌套把同一份 11 类菜单清单收成一处，
+       避免四份列表各自漏改。顺序沿用原文件，only-child 放最后同时盖住首末两角。 */
+    &:first-child {
+        border-radius: var(--blai-dropdown-radius) var(--blai-dropdown-radius) 0 0;
+    }
+    &:last-child {
+        border-radius: 0 0 var(--blai-dropdown-radius) var(--blai-dropdown-radius);
+    }
+    &:only-child {
+        border-radius: var(--blai-dropdown-radius);
+    }
 }

@@ -6,7 +6,12 @@
         font-size: var(--blai-mobile-type-medium);
     }
 
-    #blai-purifier-popup.blai-app-shell :is(.blai-ai-section-header h2, .blai-clean-section-header h2, .blai-clean-danger-header h2, .blai-tools-section-header h2, .blai-feedback-local-heading h2, .blai-feedback-diagnostics-intro h2) {
+    /* AI / 工具 / 净化三页的容器标题要比容器内次级标题（12px）大一点，层级才清楚。 */
+    #blai-purifier-popup.blai-app-shell :is(.blai-ai-section-header h2, .blai-clean-section-header h2, .blai-clean-danger-header h2, .blai-tools-section-header h2) {
+        font-size: var(--blai-fs-title);
+    }
+
+    #blai-purifier-popup.blai-app-shell :is(.blai-feedback-local-heading h2, .blai-feedback-diagnostics-intro h2) {
         font-size: var(--blai-font-13);
     }
 

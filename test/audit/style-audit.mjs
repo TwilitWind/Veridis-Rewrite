@@ -1,15 +1,15 @@
 // 样式静态审计：字号分布 / 极值 / 裸值离群 / 双端覆盖 / 裁切隐患信号。
-// 用法：node test/style-audit.mjs [--json] [--strict]
+// 用法：node test/audit/style-audit.mjs [--json] [--strict]
 //   默认输出人类可读报告；--json 输出结构化结果便于脚本消费。
 //   --strict（或 STRICT=1）：发现「确定错误」退出 1。只拦客观坏 declaration，
 //   离群字号/裸写 px 在白名单内/未用 token/裁切信号只是线索，永不判错。
 // 只读，不改任何样式文件；不启动浏览器，因此检测的是「声明」而非「实际渲染」。
-// 真正的裁切/重叠/遮挡请用 test/layout-audit.mjs（CDP 实际量几何）。
+// 真正的裁切/重叠/遮挡请用 test/audit/layout-audit.mjs（CDP 实际量几何）。
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..'); // 脚本在 test/audit/，项目根上两级
 const STYLES = path.join(ROOT, 'styles');
 const ORDER = JSON.parse(fs.readFileSync(path.join(STYLES, 'ORDER.json'), 'utf8')).order;
 const jsonMode = process.argv.includes('--json');
@@ -246,7 +246,7 @@ if (jsonMode) {
     console.log(`  line-height < 1       ${report.layoutSignals.tightLineHeight.length} 处${report.layoutSignals.tightLineHeight.length ? ' → ' + report.layoutSignals.tightLineHeight.slice(0, 5).join(', ') : ''}`);
     console.log(`  height:0              ${report.layoutSignals.zeroHeight.length} 处${report.layoutSignals.zeroHeight.length ? ' → ' + report.layoutSignals.zeroHeight.slice(0, 5).join(', ') : ''}`);
     console.log();
-    console.log('注：静态只看声明。文字是否真的被裁/重叠/遮挡，需 CDP 实测 → node test/layout-audit.mjs');
+    console.log('注：静态只看声明。文字是否真的被裁/重叠/遮挡，需 CDP 实测 → node test/audit/layout-audit.mjs');
 }
 
 if (STRICT && strictErrors.length) {

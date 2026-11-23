@@ -1,5 +1,5 @@
 /** matching 的分块：compile。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { omitVariableUpdates } from '../../text/variableUpdates.js';
+import { omitVariableUpdates, collectVariableUpdateRanges } from '../../text/variableUpdates.js';
 import { logger } from '../../log.js';
 import { buildSimpleTargetPattern, buildTargetLiteralPattern, pickReplacement, resolveProcessorReplacement } from '../../rules/engine.js';
 import { compileRegexTarget } from '../../rules/regex.js';

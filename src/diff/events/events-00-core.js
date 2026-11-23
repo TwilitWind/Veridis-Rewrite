@@ -27,13 +27,30 @@ import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
 
 // 差异弹窗的一次性闭包：状态与工具函数集中在此，绑定层通过返回对象读取。
 export function recleanseDiffMessageAtIndex(index) {
-    const { chat } = getAppContext();
+    const { chat, extension_settings } = getAppContext();
     const msg = Array.isArray(chat) && Number.isInteger(index) && index >= 0 && index < chat.length
         ? chat[index]
         : null;
     if (!isMessageDiffReverted(msg)) return false;
 
     const sourceMes = typeof msg.mes === 'string' ? msg.mes : '';
+    const aiEnabled = extension_settings?.[extensionName]?.aiRewrite?.enabled === true;
+
+    if (aiEnabled) {
+        // AI 改写开着：先把这条消息能命中的 AI 规则全部跑完，再在 AI 写回后的文本上做程序改写。
+        // 这里不能再传 diffSourceMes，否则程序改写会拿撤回原文重算，把 AI 结果覆盖掉。
+        const started = requestManualAiRewriteForMessage(index, {
+            onSettled: () => {
+                cleanseMessageDataAtIndex(index, { explicitRecleanse: true });
+                refreshMessageDisplay(index, { allowReloadFallback: true, emitRenderedEvent: 'auto' });
+                injectDiffButtons([index]);
+                queueIncrementalChatSave();
+            },
+        });
+        if (started) return true;
+        // 没有可发的 AI 任务（未配置 / 无匹配）：降级为只做程序改写。
+    }
+
     return cleanseMessageDataAtIndex(index, {
         diffSourceMes: sourceMes,
         explicitRecleanse: true,
@@ -73,13 +90,33 @@ export function createDiffEventsCore() {
         const menu = $('#blai-diff-actions-menu').get(0);
         const toggle = $('#blai-diff-menu-toggle').get(0);
         if (!menu || !toggle) return;
-        // 镜像项文案跟随顶栏：撤回所选会切成「退出勾选」，全文模式会切成「切回片段」。
+        // 顶栏有的功能不在 ⋮ 菜单里重复：镜像项按对应顶栏按钮的「真实可见性」决定显隐。
+        // 菜单会被 popover.js portal 到 body，CSS 祖先选择器失效，故在此运行时同步；
+        // 顶栏按钮的可见性同时受屏幕断点与状态（如 reverted 时隐藏全文模式）影响，
+        // 直接读 computed style 才能覆盖所有情况。
+        let anyMirrorVisible = false;
         $('#blai-diff-actions-menu [data-blai-header-action]').each((_, item) => {
+            const actionId = item.getAttribute('data-blai-header-action');
+            const headerBtn = actionId ? document.getElementById(actionId) : null;
+            // offsetParent 为 null 表示该按钮被 display:none 隐藏（含断点/状态两种原因）。
+            const headerVisible = !!headerBtn && headerBtn.offsetParent !== null
+                && window.getComputedStyle(headerBtn).display !== 'none';
+            // 显式写 flex/none：菜单镜像的 CSS 基线是 display:none（防 portal 后重复），
+            // 若这里清空 style 会回退到基线而看不到，故放出时必须显式给 flex。
+            item.style.display = headerVisible ? 'none' : 'flex';
+            if (!headerVisible) anyMirrorVisible = true;
+
+            // 镜像项文案跟随顶栏：撤回所选会切成「退出勾选」，全文模式会切成「切回片段」。
             const labelId = item.getAttribute('data-blai-header-label');
             const text = labelId ? document.getElementById(labelId)?.textContent : null;
             const span = item.querySelector('span');
             if (span && text) span.textContent = text;
         });
+        // 分隔线只在确有镜像项露出时才显示，避免菜单顶部空出一条线。
+        // 同样显式给 block（基线是 none），不能靠清空 style 回退。
+        const divider = menu.querySelector('.blai-diff-menu-divider');
+        if (divider) divider.style.display = anyMirrorVisible ? 'block' : 'none';
+
         diffMenuOpen = true;
         openMenuPopover(toggle, menu);
         $('#blai-diff-actions-menu').prop('hidden', false);
@@ -142,7 +179,7 @@ export function createDiffEventsCore() {
 
     const syncDiffPositionMenuState = (settings) => {
         const shouldExposeTopButton = settings.diffButtonInExtraMenu === true;
-        $('#blai-diff-menu-pos-icon').attr('class', shouldExposeTopButton ? 'fa-solid fa-thumbtack' : 'fa-solid fa-ellipsis');
+        $('#blai-diff-menu-pos-icon').attr('class', shouldExposeTopButton ? 'fa-solid fa-thumbtack' : 'fa-solid fa-ellipsis-vertical');
         $('#blai-diff-menu-pos-text').text(shouldExposeTopButton ? '顶部按钮：外显' : '顶部按钮：收纳');
         $('#blai-diff-menu-pos-toggle').attr('title', shouldExposeTopButton ? '将顶部按钮恢复为外显' : '将顶部按钮收纳进菜单');
     };
@@ -199,12 +236,6 @@ export function createDiffEventsCore() {
         // 记录的 Original，用户自己的措辞则保留。
         $('#blai-diff-revert-toggle').attr('title', revertTitle).prop('disabled', !isReverted && !meta);
         $('#blai-diff-mode-toggle').toggle(!isReverted);
-    };
-
-
-    const syncDiffAiRewriteButtonState = (msg) => {
-        const isReverted = isMessageDiffReverted(msg);
-        $('#blai-diff-ai-rewrite').attr('title', isReverted ? '请先重新净化文本' : '对当前消息手动执行 AI 改写');
     };
 
 
@@ -322,21 +353,6 @@ export function createDiffEventsCore() {
     };
 
 
-    const triggerCurrentDiffAiRewrite = () => {
-        const index = getCurrentDiffIndex();
-        const msg = getDiffMessageByIndex(index);
-        if (!Number.isInteger(index) || index < 0 || !msg || typeof msg !== 'object') {
-            return;
-        }
-        if (isMessageDiffReverted(msg)) {
-            return;
-        }
-
-        closeDiffActionsMenu();
-        requestManualAiRewriteForMessage(index);
-    };
-
-
     const closeDiffModal = () => {
         cancelComparison();
         closeDiffActionsMenu();
@@ -361,7 +377,6 @@ export function createDiffEventsCore() {
         syncDiffPreferenceMenuState();
         syncDiffModeToggleState(mode);
         syncDiffRevertToggleState(msg);
-        syncDiffAiRewriteButtonState(msg);
         const contentEl = $('#blai-diff-modal-content');
         if (isMessageDiffReverted(msg)) {
             const current = !meta ? '历史对比文本已超出保留范围。' : msg.mes === meta.originalMes ? '当前显示为原始文本。' : '当前文本与保留原文不同。';
@@ -420,7 +435,6 @@ export function createDiffEventsCore() {
         showRelatedRulesForDiffElement,
         syncDiffPreferenceMenuState,
         toggleCurrentDiffRevert,
-        triggerCurrentDiffAiRewrite,
         setDiffPickMode,
         syncDiffPickConfirmState,
         applySelectedDiffReverts,

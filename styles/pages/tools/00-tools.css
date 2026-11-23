@@ -258,7 +258,7 @@
 
 #blai-purifier-popup .blai-tools-binding-main-action:focus-visible, #blai-purifier-popup .blai-tools-switch:focus-visible, #blai-purifier-popup .blai-tools-primary-button:focus-visible, #blai-purifier-popup #blai-diff-limit-input:focus-visible {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 78%, transparent);
-    outline-offset: 2px;
+    outline-offset: var(--blai-focus-offset);
 }
 
 #blai-purifier-popup .blai-tools-binding-row {
@@ -441,7 +441,7 @@
 }
 
 #blai-purifier-popup .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track > span {
-    transform: translateX(14px);
+    transform: translateX(var(--blai-switch-travel));
     background: var(--bg-surface);
 }
 

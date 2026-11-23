@@ -1,6 +1,6 @@
 // 运行时布局审计：文字裁切 / 元素重叠 / 遮挡 / 实际渲染字号，桌面与手机同会话测完。
 // 前置：SillyTavern 已在本地运行，且有一个开了 --remote-debugging-port=9224 的 Chrome。
-// 用法：node test/layout-audit.mjs
+// 用法：node test/audit/layout-audit.mjs
 //   CDP_PORT=9224        调试端口
 //   SCOPE=#blai-purifier-popup  审计范围
 //   OUT=report.json      另存结构化结果
@@ -17,7 +17,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..'); // 脚本在 test/audit/，项目根上两级
 const STYLES = path.join(ROOT, 'styles');
 const PORT = process.env.CDP_PORT ?? '9224';
 const SCOPE = process.env.SCOPE ?? '#blai-purifier-popup';

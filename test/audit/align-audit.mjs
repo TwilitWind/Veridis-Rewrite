@@ -1,6 +1,6 @@
 // 垂直居中审计：追踪 UI 控件是否与所在行的文本垂直居中对齐。
 // 前置：SillyTavern 已在本地运行，且有开了 --remote-debugging-port=9224 的 Chrome。
-// 用法：node test/align-audit.mjs
+// 用法：node test/audit/align-audit.mjs
 //   CDP_PORT=9224  调试端口
 //   TOL=4          中线偏差阈值（px），超过即报
 //   OUT=report.json 结构化结果

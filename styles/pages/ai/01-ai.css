@@ -19,12 +19,12 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:checked + .blai-ai-switch-track::after {
-    transform: translateX(14px) !important;
+    transform: translateX(var(--blai-switch-travel)) !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:focus-visible + .blai-ai-switch-track {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 40%, transparent) !important;
-    outline-offset: 2px !important;
+    outline-offset: var(--blai-focus-offset) !important;
 }
 
 /* 未启用 AI 改写时，自动触发开关必须是不可交互状态 —— 灰掉并禁用指针。 */
@@ -35,7 +35,7 @@
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch.is-disabled .blai-ai-switch-track {
     background: color-mix(in srgb, var(--bg-base) 6%, var(--bg-surface) 94%);
-    box-shadow: inset 0 0 0 1px var(--border-color);
+    box-shadow: var(--blai-ring-inset) var(--border-color);
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-connection-status {
@@ -103,17 +103,17 @@
     border-bottom: 0 !important;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-parameter-grid {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-parameter-grid {
     gap: var(--blai-space-12);
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-parameter-grid .blai-ai-control-label {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-parameter-grid .blai-ai-control-label {
     min-height: var(--blai-size-32);
     display: flex;
     align-items: flex-end;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-parameter-grid .blai-ai-control-heading {
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-parameter-grid .blai-ai-control-heading {
     min-height: var(--blai-size-32);
     align-items: flex-end;
 }
@@ -183,7 +183,7 @@
     box-shadow: none !important;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-card {
+#blai-ai-generation-modal .blai-ai-generation-modal-card {
     width: 100%;
     height: min(var(--blai-size-640), calc(100dvh - var(--blai-size-40)));
     max-width: var(--blai-size-420);
@@ -195,7 +195,7 @@
     overflow: hidden;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-head {
+#blai-ai-generation-modal .blai-ai-generation-modal-head {
     min-width: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -203,37 +203,37 @@
     gap: var(--blai-space-12);
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-head :is(h3, p) {
+#blai-ai-generation-modal .blai-ai-generation-modal-head :is(h3, p) {
     margin: 0;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-head h3 {
+#blai-ai-generation-modal .blai-ai-generation-modal-head h3 {
     display: flex;
     align-items: center;
     gap: var(--blai-space-7);
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-head p {
+#blai-ai-generation-modal .blai-ai-generation-modal-head p {
     margin-top: var(--blai-space-5);
     color: var(--text-secondary);
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-body {
+#blai-ai-generation-modal .blai-ai-generation-modal-body {
     min-height: 0;
-    padding-right: var(--blai-space-3);
+    padding-right: var(--blai-scrollbar-gutter);
     overflow-y: auto;
     overscroll-behavior: contain;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-body .blai-ai-section-header {
+#blai-ai-generation-modal .blai-ai-generation-modal-body .blai-ai-section-header {
     display: none !important;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-actions {
+#blai-ai-generation-modal .blai-ai-generation-modal-actions {
     margin: 0 !important;
 }
 
-#blai-purifier-popup.blai-app-shell .blai-ai-generation-modal-actions .blai-primary-btn {
+#blai-ai-generation-modal .blai-ai-generation-modal-actions .blai-primary-btn {
     width: 100%;
 }
 
@@ -424,7 +424,7 @@
     display: grid;
     align-content: start;
     gap: var(--blai-space-12);
-    padding-right: var(--blai-space-3);
+    padding-right: var(--blai-scrollbar-gutter);
     overflow-y: auto;
     overscroll-behavior: contain;
 }

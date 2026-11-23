@@ -139,7 +139,7 @@ export function showUnsavedChangesModal(message = '当前分组有未保存的�
         $('<p class="blai-plugin-dialog-text blai-dialog-body-text"></p>').text(String(message || '')).appendTo($card);
         const $actions = $('<div class="blai-modal-actions"></div>').appendTo($card);
         $('<button type="button" class="blai-secondary-btn"></button>').text('继续编辑').appendTo($actions);
-        $('<button type="button" class="blai-secondary-btn blai-danger-btn"></button>').text('放弃改动').appendTo($actions);
+        $('<button type="button" class="blai-secondary-btn"></button>').text('放弃改动').appendTo($actions);
         $('<button type="button" class="blai-primary-btn"></button>').text('保存并关闭').appendTo($actions);
 
         const close = (result) => {

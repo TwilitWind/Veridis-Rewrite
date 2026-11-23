@@ -398,6 +398,6 @@
 }
 
 #blai-purifier-popup .blai-clean-group-switch.is-on .blai-clean-switch-track > span, #blai-purifier-popup .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track > span, #blai-purifier-popup .blai-clean-tag-switch input:checked + .blai-clean-switch-track > span, #blai-purifier-popup .blai-clean-checkbox-switch input:checked + .blai-clean-switch-track > span {
-    transform: translateX(14px);
+    transform: translateX(var(--blai-switch-travel));
     background: var(--bg-base);
 }

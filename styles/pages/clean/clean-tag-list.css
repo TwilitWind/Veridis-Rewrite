@@ -13,7 +13,7 @@
 
 #blai-purifier-popup .blai-clean-group-switch:focus-visible .blai-clean-switch-track, #blai-purifier-popup .blai-clean-switch:focus-visible .blai-clean-switch-track, #blai-purifier-popup .blai-clean-tag-switch input:focus-visible + .blai-clean-switch-track, #blai-purifier-popup .blai-clean-checkbox-switch input:focus-visible + .blai-clean-switch-track {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 58%, transparent);
-    outline-offset: 2px;
+    outline-offset: var(--blai-focus-offset);
 }
 
 #blai-purifier-popup .blai-clean-tag-switch input, #blai-purifier-popup .blai-clean-checkbox-switch input {
@@ -342,15 +342,16 @@
     width: 100%;
     min-height: var(--blai-size-38);
     margin-top: var(--blai-space-14);
-    padding: 0 var(--blai-space-14);
+    padding: var(--blai-btn-pad);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--blai-space-8);
-    border: var(--blai-border-1) solid var(--status-danger);
+    border: var(--blai-border-1) solid var(--accent-color);
     border-radius: var(--blai-radius-sm);
-    background: var(--status-danger);
-    color: var(--danger-contrast);
+    background: var(--accent-color);
+    /* 实心强调块上的字必须用 accent-contrast：自动主题下 accent-ink 可能是浅灰，压在强调色底上读不清。 */
+    color: var(--accent-contrast);
     font: inherit;
     font-size: var(--blai-font-11);
     font-weight: var(--blai-weight-bold);
@@ -359,7 +360,7 @@
 }
 
 #blai-purifier-popup .blai-clean-danger-button:hover {
-    filter: brightness(.94);
+    filter: brightness(1.08);
 }
 
 #blai-purifier-popup .blai-clean-danger-button > i {

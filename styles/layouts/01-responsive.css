@@ -134,7 +134,7 @@
 /* 全局顶栏：只留 1px 细边框，不再投影（需求：顶栏底部投影改细边框） */
 #blai-purifier-popup .blai-global-header {
     border: 0;
-    border-bottom: var(--blai-border-1) solid var(--border-color);
+    border-bottom: var(--blai-border-1) solid var(--blai-border-soft);
     box-shadow: none;
 }
 
@@ -148,7 +148,7 @@
 #blai-purifier-popup .blai-home-page .blai-home-topbar,
 #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-header {
     border-radius: 0;
-    border-bottom: var(--blai-border-1) solid var(--border-color);
+    border-bottom: var(--blai-border-1) solid var(--blai-border-soft);
     box-shadow: none;
 }
 

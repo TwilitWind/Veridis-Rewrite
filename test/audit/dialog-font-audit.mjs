@@ -1,6 +1,6 @@
 // 弹窗字号审计：批量找出「确认/提示/输入」类统一弹窗及同类静态弹窗，
 // 用 CDP 在桌面/手机双视口实测正文与小控件（按钮、输入框、下拉）字号，给出推荐档位。
-// 用法：node test/dialog-font-audit.mjs
+// 用法：node test/audit/dialog-font-audit.mjs
 //   CDP_PORT=9224  调试端口（需先启动带 --remote-debugging-port 的 Chrome）
 //   OUT=tmp/dialog-font-report.json  结构化结果（可选）
 //   STRICT=1  明确违反字号层级（正文比按钮小）即退出 1；推荐档位仅提示不判错。
@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..'); // 脚本在 test/audit/，项目根上两级
 const PORT = process.env.CDP_PORT ?? '9224';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

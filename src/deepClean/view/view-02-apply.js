@@ -121,6 +121,8 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     const scopeName = scopeCharacter?.displayLabel || '当前没有打开角色卡';
 
     setDeepCleanWorkspaceHeader('', '深度净化', '初始选择', '', true);
+    // 勾选复选框会走这里整块重渲染；先记住滚动位置，重建后还原，避免一勾选就被强制拉回顶部。
+    const previousScrollTop = $('#blai-deep-clean-content .blai-deep-clean-selection-scroll').get(0)?.scrollTop || 0;
     $('#blai-deep-clean-content').html(`
         <div class="blai-deep-clean-selection">
             <div class="blai-deep-clean-selection-scroll">
@@ -194,10 +196,13 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
             </div>
             <footer class="blai-deep-clean-selection-actions">
                 <button id="blai-deep-clean-close" class="blai-deep-clean-secondary-action" type="button">取消并关闭</button>
-                <button id="blai-deep-clean-scan" class="blai-deep-clean-primary-action" type="button" ${scopeBlocked || totalSelected === 0 ? 'disabled' : ''}>开始深度净化<i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <button id="blai-deep-clean-scan" class="blai-deep-clean-primary-action" type="button" ${scopeBlocked || totalSelected === 0 ? 'disabled' : ''}>开始深度净化</button>
             </footer>
         </div>
     `);
+    // 恢复勾选前的滚动位置：整块 .html() 重建会把 scrollTop 归零，同步设回原值。
+    const scrollEl = $('#blai-deep-clean-content .blai-deep-clean-selection-scroll').get(0);
+    if (scrollEl && previousScrollTop > 0) scrollEl.scrollTop = previousScrollTop;
     offerDeepCleanTourFirstUse();
 }
 

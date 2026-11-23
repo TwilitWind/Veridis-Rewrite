@@ -91,7 +91,7 @@
     justify-content: space-between;
     gap: var(--blai-space-20);
     border-bottom: var(--blai-border-1) solid var(--border-color);
-    background: var(--bg-surface);
+    background: var(--bg-base);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-heading {
@@ -164,7 +164,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-primary-action, #blai-deep-clean-workspace .blai-deep-clean-secondary-action, #blai-deep-clean-workspace .blai-deep-clean-actions button, #blai-deep-clean-workspace .blai-deep-clean-state button, #blai-deep-clean-workspace .blai-deep-clean-review-apply button {
     min-height: var(--blai-size-36);
-    padding: 0 var(--blai-space-14);
+    padding: var(--blai-btn-pad);
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
@@ -207,7 +207,7 @@
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--blai-space-16) var(--blai-space-24);
+    padding: var(--blai-space-12) var(--blai-space-18);
 }
 
 /* 内容从上到下排布，不左右分栏：设置区在上、处理文件在下，读起来是一条直线。 */
@@ -216,28 +216,28 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
-    gap: var(--blai-panel-gap);
+    gap: var(--blai-space-12);
 }
 
 #blai-deep-clean-workspace :is(.blai-deep-clean-settings, .blai-deep-clean-resources) {
     min-width: 0;
     display: grid;
     align-content: start;
-    gap: var(--blai-panel-gap);
+    gap: var(--blai-space-12);
 }
 
 /* 每个模块是一张容器卡：容器背景色 + 圆角 + 内边距，落在画布色上形成分区。 */
 #blai-deep-clean-workspace .blai-deep-clean-section {
     min-width: 0;
-    margin-bottom: var(--blai-space-12);
-    padding: var(--blai-space-14) var(--blai-space-16);
+    margin-bottom: var(--blai-space-8);
+    padding: var(--blai-space-12) var(--blai-space-14);
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-section h3 {
-    margin: 0 0 var(--blai-space-10);
+    margin: 0 0 var(--blai-space-8);
     color: var(--text-main);
     font-size: var(--blai-font-12);
     font-weight: var(--blai-weight-bold);
@@ -268,7 +268,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: var(--blai-space-12);
+    gap: var(--blai-space-10);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-option {
@@ -277,7 +277,7 @@
     border: 0;
     min-width: 0;
     display: grid;
-    gap: var(--blai-space-6);
+    gap: var(--blai-space-4);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-option > :is(span, legend) {
@@ -292,7 +292,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--blai-space-6) var(--blai-space-16);
+    gap: var(--blai-space-6) var(--blai-space-12);
 }
 
 /* 「清理被隐藏的楼层」勾选行：与处理模式同处右侧列，文字 + 复选框一行，不加额外卡片。 */
@@ -329,7 +329,7 @@
     box-sizing: border-box;
 }
 
-/* 主题给原生复选框注入 ::before 勾，与 background 的 SVG 勾叠加——清掉伪元素。 */
+/* 主题给原生复选框注入 ::before 勾，与自绘勾叠加——先清空，再只在 :checked 上画统一字形。 */
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]::before,
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]::after {
     content: none;
@@ -338,6 +338,19 @@
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]:checked {
     border-color: var(--accent-color);
     background-color: var(--accent-color);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3.2L13 5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: none;
+}
+
+/* 勾号跟随主题 accent-contrast，与通用复选框同一套 FA 字形，避免浅色主题上看不清。 */
+#blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    color: var(--accent-contrast);
+    font-size: var(--blai-font-10);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 

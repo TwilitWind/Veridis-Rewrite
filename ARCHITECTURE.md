@@ -134,7 +134,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | `diff/revertMerge.js` | `computeRevertedText(currentText, programText, originalText)`：撤回唯一入口 |
 | `diff/pickRevert.js` | 撤回所选的 DOM 采集与计算：`assignDiffRevertItemIds` 编号相邻 del/ins，`collectPickedDiffItems` 用 `Map<itemId, 节点[]>` 索引回查勾选项（避免 O(n×m)），`computePickedRevert` 换算阶段文本 |
 | `diff/preferences.js` | 透视「更多操作」菜单偏好的单一入口：`SPECS`（取值序列 + read/write）+ `cycleDiffPreference(key)` 统一切换并写 settings + `syncRelatedRuleRuntime` 打开弹窗时从 settings 恢复相关规则开关。模板按钮用 `data-blai-pref`（值必须等于 SPECS 键） |
-| `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex` |
+| `diff/events.js` | 透视入口与撤回按钮、`recleanseDiffMessageAtIndex`：AI 改写关闭时只程序改写；开启时先 `requestManualAiRewriteForMessage(index, {onSettled})` 跑完所有 AI 规则，再以写回后的文本做程序改写（不传 `diffSourceMes`，否则覆盖 AI 结果）。透视弹窗不再有独立「AI 改写」按钮 |
 | `diff/compare.js` + `background.js` + `worker.js` | 差异计算；`compareTextPairsInBackground` / `renderDiffDocumentInBackground` 可取消后台任务 |
 | `diff/tracking.js` / `retention.js` | 谁被记录、按设置裁剪历史 |
 | `rules/ruleIdentity.js` | 规则稳定身份：`computeRuleFingerprint(rule, sub)` 用「分组名+模式+查找词+替换词」算指纹（备注不纳入），`findRuleByFingerprint(rules, fp)` 精确回查。不往用户数据写 id，删改规则后指纹自然失配 |
@@ -191,13 +191,15 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 实现为动态挂载 `.blai-modal-shell.blai-plugin-dialog` + `.blai-modal-card.blai-plugin-dialog-card`，样式在 `styles/components/02-controls.css`，居中由遮罩层 flex 保证。
 
+**挂载位置**：所有大弹窗都必须是 `templates/purifier.html` 里 `#blai-purifier-popup` 闭合标签之后的顶层节点（运行时 `$('body').append(templateHtml)`，即成为 body 直属）。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。绑定记录、高级生成参数、附加参数三个弹窗曾嵌在里面，已移出；新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点。
+
 **层级阶梯**：插件内弹窗占 `10000004`~`10000008`（卡片菜单/搜索/编辑规则/编辑分组/编辑子规则/移动/预设导入）；`.blai-plugin-dialog`（备注、删除、重命名等由弹窗内按钮触发者）及 `#blai-risk-confirm-modal`、`#blai-risk-info-modal` 一律 `10000020`——它们从别的弹窗里弹出，必须压在上面，否则遮罩盖住按钮像点了没反应。首页规则卡菜单 `.blai-home-card-menu` 与子规则菜单 `.blai-subrule-menu` 需 `10000060`。新增弹窗要么落在 `10000004`~`10000008` 且后弹的更高，要么沿用 `10000020`。
 
 四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(100dvh - 28px)` 高、16px 圆角（`styles/pages/home/home-breakpoints.css`）；600px 以下整屏（`100vw/100dvh`）、去圆角、适配安全区。
 
 **`[hidden]` 失效**：`.blai-subrule-field{display:flex!important}` 会压掉默认 `[hidden]{display:none}`，靠 `prop('hidden', …)` 切换的块都要补 `.X[hidden]{display:none!important}`（`styles/pages/home/home-overview.css` 有先例）。
 
-**下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。
+**下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。所有下拉菜单（11 类 `-menu` 类）的首末/独行圆角统一在 `styles/components/07-menu-fill.css`：一份 `:is()` 清单配 `&:first-child/last-child/only-child` 原生嵌套，新增菜单类只补这一处清单（其余文件里的同类选择器只管各自配色/动画/定位，不重复圆角规则）。
 
 **定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。打开后要重定位一次：弹窗与切页入场动画带 6px 位移，动画期间量到的锚点与稳定后差 6px，不补就「第一次点没弹出、要点第二次」。重定位逐帧比对锚点矩形、连续两帧稳定后再定位，400ms 超时兜底；`openMenus` 里必须存重定位回调引用的同一个 `entry` 对象，否则 `has(entry)` 恒 false、永不执行。
 
@@ -242,7 +244,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | `pages/<page>/` | 单页排版 home/ai/clean/tools/feedback/diff/tour | 只写该页，禁止通用组件样式 |
 | `pages/99-mobile.css` | 手机端跨页收尾：标题降档、提交反馈单列化 | 最后加载，压过各页桌面声明；只放 `@media (max-width: 600px)` |
 
-三个令牌文件：`01-palette.css`（状态色、正则高亮 `--re-*`、差异来源色）、`02-themes.css`（auto/light/dark 的 `--bg-*` / `--text-*` / `--border-color` / `--accent-*`，及 `select option` 的三段 `!important`）、`03-scale.css`（`--blai-space-*` / `--blai-font-*` / `--blai-radius-*` / `--blai-border-*` / `--blai-size-*` 与语义层）。动效节奏也在 `03-scale.css`：`--blai-duration-fast` 120ms（菜单/toast 退场）、`--blai-duration-base` 160ms（切页/toast 进场）、`--blai-duration-slow` 180ms（弹卡进场）、`--blai-ease-out`（平滑减速不过冲）；改一处全站同步。可见滚动条在 `base/00-reset.css` 挂根容器统一设 `scrollbar-color: var(--accent-color) transparent`（可继承，刻意隐藏的不受影响）。
+三个令牌文件：`01-palette.css`（状态色、正则高亮 `--re-*`、差异来源色）、`02-themes.css`（auto/light/dark 的 `--bg-*` / `--text-*` / `--border-color` / `--accent-*`，及 `select option` 的三段 `!important`）、`03-scale.css`（`--blai-space-*` / `--blai-font-*` / `--blai-radius-*` / `--blai-border-*` / `--blai-size-*` 与语义层）。动效节奏也在 `03-scale.css`：`--blai-duration-fast` 120ms（菜单/toast 退场）、`--blai-duration-base` 160ms（切页/toast 进场）、`--blai-duration-slow` 180ms（弹卡进场）、`--blai-ease-out`（平滑减速不过冲）；改一处全站同步。交互控件的重复几何也收在同一文件：`--blai-focus-offset`（焦点描边间距）、`--blai-switch-travel`（开关滑块位移）、`--blai-ring-inset`（1px 内描边环，颜色由使用处叠加）；同类重复值先找这三个，别在各页重写字面量。可见滚动条在 `base/00-reset.css` 挂根容器统一设中性灰拇指（`--blai-scrollbar-thumb`），不用强调色；刻意隐藏的不受影响。
 
 令牌挂在一组**容器选择器**而非 `:root`：`#blai-purifier-popup`、`.blai-modal-shell`、`#blai-scope-tag-editor-modal`、`#blai-rule-transfer-modal`、`#blai-diff-modal`、`#blai-rule-search-modal`、`#blai-preset-import-choice-modal`、`.blai-toast`、`#blai-loading-overlay`、`#blai-tour-layer`。弹层与 toast 不在主容器内——增删容器要同步令牌、`theme.js` 的 `data-theme` 列表与 `03-scale.css` 语义层。
 
@@ -250,7 +252,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 通用规则以工作区 `docs/design.md` 为准，双端布局与浮层形态见 `docs/design-responsive.md`，配色基准见 `docs/extension-api.md`「配色基准」；本项目的偏好、术语与字号档位见根目录 `DESIGN.md`。本节只记插件令牌与坑。
 
-- 颜色三层：`--bg-base`（画布，日间 `#F7F7F8`）→ `--bg-surface`（卡片，`#FFFFFF`）→ `--field-bg`（输入框/下拉微灰填充，无静态边框）。日间 `#F1F2F4`、夜间 `#222733`；跟随主题用 `color-mix(in srgb, var(--border-color) 16%, var(--bg-surface))`。混入比例必须小：`--border-color` 本身已是底色上一档，62% 时深色亮度台阶 1.51、16% 后约 1.11，否则发刺眼。填充式而非凹陷式；日间画布与白卡差太小，挖不出槽。
+- 颜色两层：`--bg-base`（画布）→ `--bg-surface`（卡片）。输入控件底色 `--blai-input-bg` 取 `--bg-surface`，靠 1px `--border-color` 表达可输入；跟随主题的 `--border-color` 由正文色低比例混入底色，避免描边过重。结构分隔线另走 `--blai-border-soft`（低对比半透明），不与控件描边共用。滚动条与左侧内容之间由 `--blai-scrollbar-gutter` 预留间距。三个大弹窗（规则编辑 / 规则分组 / 深度净化）顶栏、底栏与正文统一 `--bg-base`，靠细线分区。
 - 焦点态用 `box-shadow: inset 0 0 0 1px var(--accent-color) !important`，不占位不抖动；hover 不加描边。禁给输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）。主题对裸标签有强声明时把 `--ui-color-sec` 重定向到 `--blai-input-bg`，不新增 `!important`；副作用是边框也读该变量，反馈页三个裸标签用同色 inset 补可见边框。`.pages` / `.page-panel` 保持透明让 `--bg-base` 透上来；日间用实色，不用半透明叠灰底（发脏）。
 - 图标统一酒馆自带 Font Awesome 6.5.2，格式 `<i class="fas fa-*" aria-hidden="true"></i>`；禁止内联 `<svg>`、CSS 拼三角/对勾、字符箭头。伪元素勾选与下拉箭头用 FA 字形码加 FA 字体；装饰线条/圆点不算图标。类名必须在 FA 6.5.2 存在，`fa-fw` / `fa-solid` / `fa-spin` 是修饰类，不参与校验。
 - 字号只用 5 档语义 token（`--blai-fs-*`），旧 `--blai-font-N` 全是别名；双端档值与禁止整体缩放见根目录 `DESIGN.md`「字号档位」。间距语义层在 `03-scale.css` 第二块：`--blai-canvas-pad`(12)、`--blai-panel-pad`、`--blai-panel-pad-tight`(10)、`--blai-panel-gap`、`--blai-column-gap`、`--blai-head-gap`(8)、`--blai-head-pad`(12)、`--blai-row-pad`(10)。页面文件不写裸 `gap: 14px`。
@@ -261,6 +263,8 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 反馈页桌面布局高度随内容增长（不用 `minmax(0,1fr)+height:100%` 锁死），否则「涉及区域」展开时详细说明框越过固定 footer 盖住隐私说明浅字；隐私说明设 `min-height` 避免换行跳动。查找区正则高亮态 `color: transparent` 与 token 颜色必须保留强声明（同属性在控件基线规则里仍有 `!important`，加特异性压不住）。
 
 测试区命中高亮的固定做法：overlay 叠在 textarea 之下，命中时只把输入框自身背景 `--blai-input-bg` 置 transparent；**可见文字与光标始终由 textarea 自己渲染**，overlay 的文字（含 `<mark>`）一律 `color: transparent`、`mark` 不加水平 padding，只画匹配底色块。切勿反过来把 textarea 文字转透明、让 overlay 重画整段文字——那样 mark 的 padding 会把重画的字推离原生光标，光标就叠进字形里。overlay 与 textarea 必须有完全相同的边框和内边距（不要一边有边框一边又给 padding 补 1px），否则高亮块整体偏移。命中统计放测试框右上角。
+
+**查找框（`#blai-modal-sub-target`）的语法高亮**与上面的测试区相反：textarea 文字转 `transparent`、**光标由 textarea 保留**（`caret-color`），彩色字由 `.blai-regex-highlight` 覆盖层逐 token 重画。两层字形度量必须逐项一致，否则光标（textarea 画）与字（覆盖层画）错位：`font-size` 同弹窗 13px、`line-height` 同 `.blai-regex-input-wrap .blai-textarea` 的 **1.55**（不是普通 textarea 的 1.5）、`font-weight` 一律 **normal**，各 token **只用颜色区分、禁止加粗**（曾给 escape/group/quantifier 等加 bold，中文全角不受影响所以看着正常，光标前一旦有 `\A`、`(?<=`、`[]`、`?` 等西文符号就叠字）；覆盖层无边框，padding 要把 input 的 1px 边框补进去（`12px+1px / 14px+1px`）。回归脚本 `test/audit/verify-regex-caret.mjs` 真浏览器量「光标 x − 前一字符右边缘 x」并注入 bold 做反证，`CDP_PORT=9333 node test/audit/verify-regex-caret.mjs`。配对符号与匹配测试区底纹都用直角（`border-radius:0`），圆角会在符号两端和跨行接缝处吃掉底色。
 
 配对高亮的触发时机：只有 `#blai-modal-sub-target` 上真实的 `click/keyup/select` 才调用 `syncRegexBracketPairHighlight()`。打开弹窗 / 切模式 / 改高亮开关 / 输入内容一律走无参 `renderRegexHighlightPreview()`，绝不读 `selectionStart` 去配对——刚 `.val()` 进去光标停在开头符号上（或旧值末尾），会被误判为「光标贴着括号」而自动加底纹。
 
@@ -284,6 +288,8 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | 改命中规则定位 | `rules/ruleIdentity.js`（指纹）+ `rules/engine/engine-00-patterns.js`（processor 带来源）+ `engine-01-replace.js`（命中回调）+ `diff/ruleHitTrace.js`（存取回查）+ `diff/events/diffRelatedRules.js`（UI） |
 | 改全文改写上色 | `styles/pages/diff/00-diff.css`（`.blai-diff-modal-content ins/del` 用 `--blai-diff-stage-*`，片段/全文共用），改后须跑 `build-css.mjs` |
 | 改深度净化范围 | `inventory.js`（列什么）+ `contentItems.js`（读什么）+ `apply/`（写回什么）+ `view.js`（界面说明） |
+| 改扫描结果指标文案 / 布局 | `deepClean/view/view-00-selection.js` 的 `renderDeepCleanScanResult`（指标名 + 口径说明 + 按钮文案）+ `styles/pages/clean/clean-deep-processing.css` + `clean-deep-responsive.css`；计数口径以 `deepClean/scan.js` 为准 |
+| 改新手指引步骤 / 锚点 | `ui/tour/tour-01-steps.js`（文案）与 `tour-00-targets.js`（目标函数）。目标必须桌面/手机都存在且可见；手机端滚动由 `tour-02-runtime.js` 的 `phoneTourScrollOwner` 处理。改完跑 `verify-followup.mjs` 双视口断言 |
 | 改对话框外观 | `ui/notifications.js` + `styles/components/02-controls.css` 的 `.blai-plugin-dialog-card` 段 |
 | 改菜单定位 | `ui/popover.js` + 对应 `*-menu` 的 CSS |
 | 改主题配色 | `styles/tokens/02-themes.css` 对应主题的令牌段 + 该主题的特殊分区规则；新主题还要扩展 `select option` 与 `data-theme` 容器列表 |
@@ -310,11 +316,10 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 | `pages/clean/clean-scope-tags.css` | 标签（分组详情）编辑器弹窗 |
 | `pages/clean/clean-tag-list.css` | 净化页标签列表、分组开关、下拉菜单 |
 | `pages/clean/clean-deep-shell.css` | 深度净化外壳：遮罩、头部、内容区、选择与配置 |
-| `pages/clean/clean-deep-modes.css` | 深度净化：规则预设、处理模式、执行面板 |
+| `pages/clean/clean-deep-modes.css` | 深度净化：规则预设、处理模式、执行面板、处理范围信息行（原 `clean-deep-scope.css` 并入） |
 | `pages/clean/clean-deep-processing.css` | 深度净化：批处理进度、扫描与完成态 |
 | `pages/clean/clean-deep-results.css` | 深度净化：进度、结果、完成态 |
 | `pages/clean/clean-deep-responsive.css` | 深度净化响应式：900 / 600 / 920 / 700 四档媒体查询 |
-| `pages/clean/clean-deep-scope.css` | 深度净化处理范围卡片 |
 | `pages/feedback/feedback-workspace.css` | 反馈页工作区、视图标签、提交表单 |
 | `pages/feedback/feedback-form.css` | 反馈页表单控件：勾选框、按钮、状态与提示 |
 | `pages/feedback/feedback-diagnostics.css` | 反馈页本地诊断与预览、手机窄屏顶栏 |

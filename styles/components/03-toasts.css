@@ -88,6 +88,11 @@
     box-shadow: none !important;
 }
 
+/* 多行域不跟单行一起收成 0 纵向留白：附加参数、子规则等弹窗统一 area 档。 */
+.blai-modal-shell .blai-textarea {
+    padding: var(--blai-input-pad-area);
+}
+
 /* 弹窗底栏主/次按钮是独立短文案操作，统一胶囊；卡片与输入框仍用中圆角。 */
 .blai-modal-shell :is(.blai-secondary-btn, .blai-primary-btn) {
     min-height: var(--blai-size-38);
@@ -144,7 +149,7 @@
 
 #blai-purifier-popup .blai-global-icon-button:focus-visible, #blai-purifier-popup .blai-home-dataset-actions button:focus-visible, #blai-purifier-popup .blai-home-toolbar-button:focus-visible, #blai-purifier-popup .blai-home-batch-actions button:focus-visible, #blai-purifier-popup .blai-home-card-menu-toggle:focus-visible, #blai-purifier-popup .blai-home-card-pencil:focus-visible, #blai-purifier-popup .blai-home-selection-control:focus-within, #blai-purifier-popup .blai-home-enabled-control:focus-within {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 58%, transparent);
-    outline-offset: 2px;
+    outline-offset: var(--blai-focus-offset);
 }
 
 @media (prefers-reduced-motion: reduce) {#blai-purifier-popup .blai-global-icon-button, #blai-purifier-popup .blai-home-dataset-actions button, #blai-purifier-popup .blai-home-toolbar-button, #blai-purifier-popup .blai-home-batch-actions button, #blai-purifier-popup .blai-home-card-menu-toggle {
@@ -194,7 +199,9 @@
     font-size: var(--blai-font-12);
 }
 
-.blai-modal-shell :is(input, select) {
+/* 单行输入/下拉给 38px 触控高度；checkbox/radio 自绘成 15px 方块，
+   不能被这条通用规则撑高（否则在窄屏变细长条）。 */
+.blai-modal-shell :is(input:not([type="checkbox"]):not([type="radio"]), select) {
     min-height: var(--blai-size-38);
     border-radius: var(--blai-radius-sm);
 }
@@ -213,7 +220,7 @@
 
 .blai-modal-shell .blai-primary-btn, .blai-modal-shell .blai-secondary-btn, .blai-modal-shell .blai-modal-actions button, .blai-modal-shell .blai-subrule-footer button {
     min-height: var(--blai-size-36) !important;
-    padding: 0 var(--blai-space-12) !important;
+    padding: var(--blai-btn-pad) !important;
     border-radius: var(--blai-radius-sm) !important;
     font-size: var(--blai-font-12) !important;
     font-weight: var(--blai-weight-bold) !important;

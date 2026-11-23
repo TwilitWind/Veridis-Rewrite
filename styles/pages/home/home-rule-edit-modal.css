@@ -77,7 +77,7 @@
     min-width: var(--blai-size-104) !important;
     height: var(--blai-size-32) !important;
     min-height: var(--blai-size-32) !important;
-    padding: 0 var(--blai-space-16) !important;
+    padding: var(--blai-btn-pad) !important;
     font-size: var(--blai-font-13) !important;
 }
 
@@ -317,7 +317,7 @@
 /* 手机端：底栏左右内边距进一步收到 12px。高度 32px 与 actions 收紧已提为全局规则。 */
 @media screen and (max-width: 600px) {
 #blai-rule-edit-modal .blai-modal-actions > button {
-    padding: 0 var(--blai-space-12) !important;
+    padding: var(--blai-btn-pad) !important;
 }
 
 /* 两个编辑弹窗：顶栏与底栏各压 4~8px，内容区得到更多高度。 */

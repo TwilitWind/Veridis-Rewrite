@@ -177,6 +177,41 @@ if (fs.existsSync(srcDir)) {
   }
 }
 
+/* 15. portal 菜单的显隐禁止用 #blai-diff-modal 祖先选择器（打开后菜单被挂到 body，祖先选择器必失效）。
+   这条拦的是真实踩过的坑：曾写 #blai-diff-modal .blai-diff-menu-action{display:none}，
+   结果桌面 ⋮ 菜单里顶栏四项全部重复。菜单镜像显隐一律由 openDiffActionsMenu 运行时按顶栏可见性处理。 */
+for (const rel of allFiles) {
+    const text = fs.readFileSync(path.join(STYLES, rel), 'utf8');
+    // 匹配同一选择器里同时含 modal id 与菜单镜像类的规则。
+    const lines = text.split('\n');
+    lines.forEach((line, i) => {
+        const stripped = line.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+        if (!stripped || stripped.startsWith('/*')) return;
+        // 只看选择器片段（到第一个 { 为止）
+        const sel = stripped.slice(0, stripped.indexOf('{') === -1 ? stripped.length : stripped.indexOf('{'));
+        if (sel.includes('#blai-diff-modal')
+            && (sel.includes('.blai-diff-menu-action') || sel.includes('.blai-diff-menu-divider'))) {
+            fail(`styles/${rel}:${i + 1} 用 #blai-diff-modal 祖先控制 ⋮ 菜单镜像显隐，portal 到 body 后会失效；`
+                + '改由 openDiffActionsMenu 按顶栏可见性运行时设置');
+        }
+    });
+}
+
+/* 16. JS 导入完整性：调用别处导出的函数却没 import，node --check 查不出，运行到才抛 ReferenceError。
+   真实踩坑：matching-00-compile.js 漏导入 collectVariableUpdateRanges 导致「深度净化无法完成」。
+   完整实现在 test/check-imports.mjs（可单独跑、可反证），这里作为闸门强制调用。 */
+{
+  const { spawnSync } = await import('node:child_process');
+  const check = path.join(ROOT, 'test', 'check-imports.mjs');
+  if (fs.existsSync(check)) {
+    const r = spawnSync(process.execPath, [check], { cwd: ROOT, encoding: 'utf8' });
+    if (r.status !== 0) {
+      const detail = (r.stderr || r.stdout || '').trim().split('\n').slice(0, 12).join('\n');
+      fail('JS 导入完整性检查未通过（test/check-imports.mjs）：\n' + detail);
+    }
+  }
+}
+
 /* 输出 */
 for (const w of warns) console.warn('  [warn] ' + w);
 if (errors.length) {

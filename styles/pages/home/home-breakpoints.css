@@ -241,6 +241,12 @@
     background: none;
 }
 
+/* 编辑单条规则（规则详情页）：字段标签与 mini 按钮都用正常字重。
+   字段名不该抢正文层级；覆盖 home-preview-search.css 的 .blai-modal-shell 全局加粗。 */
+#blai-subrule-edit-modal .blai-field-label {
+    font-weight: var(--blai-weight-normal);
+}
+
 /* 编辑单条规则（规则详情页）：字段本身不铺垫、不加底色，
    只有字段里的输入框有底色与边框；标题直接落在弹窗底色上。 */
 #blai-subrule-edit-modal .blai-subrule-field {
@@ -444,12 +450,12 @@
     --blai-modal-pad-x: var(--blai-space-20);
 }
 
-/* 顶栏：容器色，向上/左右顶到卡片边缘 */
+/* 顶栏：画布色，向上/左右顶到卡片边缘，与正文同一底色 */
 #blai-rule-edit-modal .blai-edit-modal-head,
 #blai-subrule-edit-modal .blai-subrule-modal-header {
     margin: calc(-1 * var(--blai-modal-pad-y)) calc(-1 * var(--blai-modal-pad-x)) 0;
     padding: var(--blai-space-8) var(--blai-modal-pad-x);
-    background: var(--bg-surface);
+    background: var(--bg-base);
     border-bottom: 0;
     box-sizing: border-box;
     flex-shrink: 0;
@@ -468,12 +474,12 @@
     flex-direction: column;
 }
 
-/* 底栏：容器色，向下/左右顶到卡片边缘 */
+/* 底栏：画布色，向下/左右顶到卡片边缘，与正文同一底色 */
 #blai-rule-edit-modal .blai-modal-actions,
 #blai-subrule-edit-modal .blai-subrule-footer {
     margin: 0 calc(-1 * var(--blai-modal-pad-x)) calc(-1 * var(--blai-modal-pad-y)) !important;
     padding: var(--blai-space-8) var(--blai-modal-pad-x) !important;
-    background: var(--bg-surface);
+    background: var(--bg-base);
     border-top: 0;
     box-sizing: border-box;
     flex-shrink: 0;

@@ -22,7 +22,7 @@
 
 /* 聚焦态用内阴影描边，避免再写一条高优先级声明去压基类的 border 简写。 */
 #blai-purifier-popup #blai-diff-limit-input:focus {
-    box-shadow: inset 0 0 0 1px var(--accent-color) !important;
+    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
     outline: none !important;
 }
 
@@ -157,7 +157,7 @@
 #blai-purifier-popup .blai-tools-secondary-button {
     flex: none;
     min-height: var(--blai-size-30);
-    padding: 0 var(--blai-space-12);
+    padding: var(--blai-btn-pad-compact);
     border: var(--blai-border-1) solid var(--border-color);
     border-radius: var(--blai-radius-sm);
     background: var(--bg-surface);
@@ -185,7 +185,7 @@
 
 #blai-purifier-popup .blai-tools-primary-button {
     min-height: var(--blai-size-36);
-    padding: 0 var(--blai-space-14);
+    padding: var(--blai-btn-pad);
     border: var(--blai-border-1) solid var(--accent-color);
     border-radius: var(--blai-radius-sm);
     background: var(--accent-color);

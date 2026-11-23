@@ -428,7 +428,7 @@
     --blai-dropdown-ink: var(--text-main);
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    --blai-dropdown-pad: 0;
+    --blai-dropdown-pad: 0 var(--blai-scrollbar-gutter) 0 0;
     --blai-dropdown-gap: 0;
     --blai-dropdown-shadow: var(--blai-shadow-sm);
     --blai-dropdown-item-radius: 0;
@@ -499,7 +499,7 @@
 
 #blai-feedback-workspace .blai-feedback-control textarea {
     min-height: var(--blai-size-160);
-    padding: var(--blai-input-pad-compact);
+    padding: var(--blai-input-pad-area);
     resize: vertical;
     line-height: 1.55;
 }

@@ -40,10 +40,9 @@ export function renderDeepCleanResourcePanel({ kind, title, items, selectionKeys
     // 世界书每个角色只有一份，不需要搜索和批量选择；聊天记录有多份，保留搜索。
     const query = showSearch ? deepCleanSearchValue(searchName) : '';
     const visibleItems = showSearch ? items.filter((item) => deepCleanMatchesSearch(item, query)) : items;
-    const orderedItems = [
-        ...visibleItems.filter((item) => selectionKeys.includes(item[keyName])),
-        ...visibleItems.filter((item) => !selectionKeys.includes(item[keyName])),
-    ];
+    // 保持清单原顺序：勾选只切换 checked，不把已选项挪到前面。
+    // 之前勾选后重排会让条目位置跳动，配合整块重渲染还会被拉回顶部，体验像「强制回顶重排」。
+    const orderedItems = visibleItems;
     const searchField = showSearch ? `
                 <div class="blai-deep-clean-search-field">
                     <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
@@ -228,10 +227,10 @@ export function renderDeepCleanScanProgress(progress = {}) {
 export function renderDeepCleanScanResult(scanResult = {}) {
     const affectedByType = scanResult.affectedByType || {};
     const metrics = [
-        ['扫描项目', scanResult.scannedItemCount],
-        ['受影响项目', scanResult.affectedItemCount],
-        ['程序命中', scanResult.programHitCount],
-        ['AI 原始匹配', scanResult.aiHitCount],
+        ['已扫描内容项', scanResult.scannedItemCount],
+        ['命中内容项', scanResult.affectedItemCount],
+        ['程序命中次数', scanResult.programHitCount],
+        ['AI 匹配次数', scanResult.aiHitCount],
         ['待处理字符', scanResult.pendingCharacterCount],
     ];
     const categories = [
@@ -243,21 +242,22 @@ export function renderDeepCleanScanResult(scanResult = {}) {
     setDeepCleanWorkspaceHeader(
         '深度净化 · 扫描结果',
         '扫描结果',
-        directProgramApply ? '扫描检查点：确认后开始按批处理并直接应用。' : '扫描检查点：确认后才开始处理审核批次。',
+        directProgramApply ? '确认后按批处理并直接写入。' : '确认后逐批生成审核。',
     );
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-result" aria-label="深度净化扫描结果">
-            <header><h3>扫描完成</h3><p>结果仅描述冻结内容中的当前规则命中；尚未处理或写入。</p></header>
+            <header><h3>扫描完成</h3><p>已冻结内容并按当前规则预扫，尚未改写或写入。</p></header>
             <div class="blai-deep-clean-scan-metrics">
                 ${metrics.map(([label, value]) => `<div><span>${deepCleanSafeHtml(label)}</span><strong>${Number(value) || 0}</strong></div>`).join('')}
             </div>
+            <p class="blai-deep-clean-scan-note">内容项指聊天消息与世界书条目，不是书籍或脚本数量。命中次数按规则计，同一内容项可多次命中；待处理字符只统计命中项的原文长度。</p>
             <section class="blai-deep-clean-scan-categories" aria-labelledby="blai-deep-clean-scan-categories-title">
-                <h3 id="blai-deep-clean-scan-categories-title">受影响内容项</h3>
+                <h3 id="blai-deep-clean-scan-categories-title">命中内容项分布</h3>
                 ${categories.map(([key, label]) => `<div><span>${deepCleanSafeHtml(label)}</span><strong>${Number(affectedByType[key]) || 0}</strong></div>`).join('')}
             </section>
             <div class="blai-deep-clean-actions">
                 <button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止</button>
-                <button id="blai-deep-clean-process-program" class="blai-deep-clean-primary-action" type="button">${directProgramApply ? '开始处理并直接应用' : '开始处理审核批次'}</button>
+                <button id="blai-deep-clean-process-program" class="blai-deep-clean-primary-action" type="button">${directProgramApply ? '直接处理' : '开始处理'}</button>
             </div>
         </section>
     `);

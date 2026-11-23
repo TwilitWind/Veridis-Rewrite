@@ -12,13 +12,13 @@
 #blai-deep-clean-workspace .blai-deep-clean-processing-main {
     min-width: 0;
     min-height: 0;
-    padding: clamp(var(--blai-space-28), 5vw, var(--blai-space-64));
+    padding: clamp(var(--blai-space-20), 4vw, var(--blai-space-40));
     overflow-y: auto;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-processing-intro {
     max-width: var(--blai-size-680);
-    margin: 0 auto var(--blai-space-34);
+    margin: 0 auto var(--blai-space-24);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-processing-intro h3 {
@@ -277,12 +277,12 @@
     width: min(var(--blai-size-980), 100%);
     height: 100%;
     margin: 0 auto;
-    padding: clamp(var(--blai-space-24), 5vw, var(--blai-space-56));
+    padding: clamp(var(--blai-space-20), 4vw, var(--blai-space-40));
     overflow-y: auto;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-result > header {
-    margin-bottom: var(--blai-space-24);
+    margin-bottom: var(--blai-space-16);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-result > header h3 {
@@ -296,42 +296,71 @@
     font-size: var(--blai-font-11);
 }
 
-#blai-deep-clean-workspace :is(.blai-deep-clean-scan-metrics, .blai-deep-clean-scan-categories) {
+/* 五项指标固定三列 → 3+2 两行，不再五列挤成细条，也不出现 4+1 的孤零零末项。 */
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: var(--blai-space-12) var(--blai-space-18);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--blai-space-10) var(--blai-space-14);
 }
 
+#blai-deep-clean-workspace .blai-deep-clean-scan-note {
+    margin-top: var(--blai-space-10);
+    color: var(--text-secondary);
+    font-size: var(--blai-fs-note);
+    line-height: 1.5;
+}
+
+/* 分类只有两项，改成紧贴内容的 chip，不再占满五列后右侧空三大格。 */
 #blai-deep-clean-workspace .blai-deep-clean-scan-categories {
-    margin-top: var(--blai-space-28);
+    margin-top: var(--blai-space-18);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scan-categories h3 {
-    grid-column: 1 / -1;
-    padding: 0 0 var(--blai-space-2);
-    font-size: var(--blai-font-11);
+    flex: 0 0 100%;
+    font-size: var(--blai-fs-note);
+    font-weight: var(--blai-weight-bold);
+    color: var(--text-secondary);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-scan-metrics > div, #blai-deep-clean-workspace .blai-deep-clean-scan-categories > div {
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics > div {
     min-width: 0;
     padding: var(--blai-space-8) 0;
     display: grid;
     gap: var(--blai-space-6);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-scan-metrics span, #blai-deep-clean-workspace .blai-deep-clean-scan-categories span {
-    color: var(--text-secondary);
-    font-size: var(--blai-font-9);
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories > div {
+    min-width: 0;
+    padding: var(--blai-space-6) var(--blai-space-10);
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--blai-space-6);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-sm);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-scan-metrics strong, #blai-deep-clean-workspace .blai-deep-clean-scan-categories strong {
+#blai-deep-clean-workspace :is(.blai-deep-clean-scan-metrics, .blai-deep-clean-scan-categories) span {
+    color: var(--text-secondary);
+    font-size: var(--blai-fs-note);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics strong {
     color: var(--text-main);
-    font-size: var(--blai-font-18);
+    font-size: var(--blai-fs-hero);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories strong {
+    color: var(--text-main);
+    font-size: var(--blai-fs-sub);
     font-variant-numeric: tabular-nums;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-actions {
-    margin-top: var(--blai-space-24);
+    margin-top: var(--blai-space-18);
     display: flex;
     justify-content: flex-end;
     gap: var(--blai-space-9);

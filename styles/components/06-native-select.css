@@ -68,7 +68,7 @@
     --blai-dropdown-ink: var(--text-main);
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    --blai-dropdown-pad: 0;
+    --blai-dropdown-pad: 0 var(--blai-scrollbar-gutter) 0 0;
     --blai-dropdown-gap: 0;
     --blai-dropdown-shadow: var(--blai-shadow-sm);
     --blai-dropdown-item-radius: 0;

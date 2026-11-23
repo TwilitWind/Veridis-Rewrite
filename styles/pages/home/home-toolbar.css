@@ -283,18 +283,19 @@
     font-weight: var(--blai-weight-bold);
 }
 
-/* 操作按钮按内容宽度左对齐成组，不铺满整行；低频操作不靠等宽格子充场面。 */
+/* 操作按钮独立一行、靠右成组，与上方「编辑分组」等工具的位置对齐；
+   不铺满整行，也不做等宽格子。 */
 #blai-purifier-popup .blai-home-batch-actions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: flex-end;
     gap: var(--blai-space-10);
 }
 
 #blai-purifier-popup .blai-home-batch-actions button {
     flex: 0 0 auto;
     min-height: var(--blai-size-38);
-    padding: 0 var(--blai-space-12);
+    padding: var(--blai-btn-pad);
     display: inline-flex;
     align-items: center;
     justify-content: center;

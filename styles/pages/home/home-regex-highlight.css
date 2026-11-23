@@ -27,17 +27,21 @@
     position: absolute;
     inset: 0;
     z-index: 3;
-    /* 与输入框内边距逐像素对齐：输入框有 1px 边框，这里把那一像素补进内边距，
-       否则高亮字形会比输入框里的真字形整体偏左上 1px。 */
-    padding: calc(var(--blai-space-10) + var(--blai-border-1)) calc(var(--blai-space-14) + var(--blai-border-1));
+    /* 与输入框逐像素对齐：textarea 是 1px 边框 + --blai-input-pad-area(12px 14px)，
+       文字起点距边框盒 = 13px(纵)/15px(横)。覆盖层无边框，故把 1px 补进 padding。
+       旧值用 10px 是更早的 padding 档，textarea 改 area 档后这里没跟，纵向差 2px。 */
+    padding: calc(var(--blai-space-12) + var(--blai-border-1)) calc(var(--blai-space-14) + var(--blai-border-1));
     border: none;
     border-radius: var(--blai-radius-8);
     background: transparent;
     box-sizing: border-box;
-    /* 字体必须与输入框一致，否则高亮字形与光标位置对不齐。
-       弹窗输入框被 .blai-modal-shell 的 13px 强声明接管，这里同档，开高亮不会把字放大。 */
+    /* 字形度量必须与输入框逐项一致，否则光标（textarea 画）与彩色字（本层画）错位：
+       font-size 同弹窗 13px 档，line-height 同 .blai-regex-input-wrap .blai-textarea 的 1.55，
+       font-weight 同 textarea 的 normal（400）——各类 token 只用颜色区分，一律不加粗。
+       曾把本值当普通 textarea 的 1.5 改过，实测光标反而错位，原因是本输入框被上面的 1.55 覆盖。 */
     font-family: inherit;
     font-size: var(--blai-font-13);
+    font-weight: var(--blai-weight-normal);
     line-height: 1.55;
     letter-spacing: normal;
     word-spacing: normal;
@@ -66,7 +70,6 @@
 
 .blai-regex-tok--escape {
     color: var(--re-escape) !important;
-    font-weight: var(--blai-weight-bold) !important;
 }
 
 .blai-regex-tok--class {
@@ -75,22 +78,18 @@
 
 .blai-regex-tok--group {
     color: var(--re-group) !important;
-    font-weight: var(--blai-weight-bold) !important;
 }
 
 .blai-regex-tok--quantifier {
     color: var(--re-quant) !important;
-    font-weight: var(--blai-weight-bold) !important;
 }
 
 .blai-regex-tok--anchor {
     color: var(--re-anchor) !important;
-    font-weight: var(--blai-weight-bold) !important;
 }
 
 .blai-regex-tok--alternation {
     color: var(--re-group) !important;
-    font-weight: var(--blai-weight-bold) !important;
 }
 
 .blai-regex-tok--dot {
@@ -99,15 +98,15 @@
 
 .blai-regex-tok--flags {
     color: var(--text-secondary) !important;
-    font-weight: var(--blai-weight-bold) !important;
 }
 
 /* 括号配对底纹：光标贴着 []、()、{} 任一侧时，整对闭合范围铺主题强调色。
    只用背景与内阴影，不加 padding/border/字号，避免高亮字形与输入框里的真字错位。 */
 .blai-regex-bracket-pair {
     background: color-mix(in srgb, var(--accent-color) 22%, transparent);
-    border-radius: var(--blai-radius-4);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 42%, transparent);
+    /* 直角底纹：圆角会把配对符号两端的底色吃掉，逐字符比对时不好认边界。 */
+    border-radius: 0;
+    box-shadow: var(--blai-ring-inset) color-mix(in srgb, var(--accent-color) 42%, transparent);
 }
 
 .blai-regex-flags-hint {
@@ -236,7 +235,8 @@
 }
 
 .blai-regex-test-mark {
-    border-radius: var(--blai-radius-4);
+    /* 直角底纹：匹配块可能跨行，圆角会在换行接缝处留缺口。 */
+    border-radius: 0;
     /* 不设水平 padding：高亮块必须与实际文字严格同宽同位，否则后面每个匹配块都会累积右移。
        文字本身透明（可见文字来自上层输入框），这里只画底色。 */
     padding: 0;
@@ -310,7 +310,7 @@
 
 .blai-regex-replacement-chip.is-active {
     border-color: var(--accent-color);
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 45%, transparent);
+    box-shadow: var(--blai-ring-inset) color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
 .blai-regex-replacement-chip-main {
@@ -462,7 +462,7 @@
 
 .blai-transfer-btn {
     flex: 1;
-    padding: var(--blai-space-9) var(--blai-space-10);
+    padding: var(--blai-btn-pad);
     border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);

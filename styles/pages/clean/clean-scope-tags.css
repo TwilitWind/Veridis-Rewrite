@@ -87,8 +87,9 @@
 }
 
 .blai-scope-tag-confirm {
-    background: var(--status-danger);
-    color: var(--danger-contrast);
+    border: var(--blai-border-1) solid var(--accent-color);
+    background: var(--bg-surface);
+    color: var(--accent-ink);
 }
 
 .blai-scope-tag-cancel:hover, .blai-scope-tag-confirm:hover {

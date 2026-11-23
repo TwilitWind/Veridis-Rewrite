@@ -91,6 +91,11 @@
   --blai-duration-slow: 180ms; /* 有位移的弹卡进场 */
   --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
 
+  /* 交互控件的重复几何，收成单一出处：改写一处全站同步，避免各页写各自的字面量。 */
+  --blai-focus-offset: 2px;       /* :focus-visible 描边与控件的间距（按钮/开关/菜单项一致） */
+  --blai-switch-travel: 14px;     /* 开关滑块从关到开的横向位移 */
+  --blai-ring-inset: inset 0 0 0 var(--blai-border-1); /* 1px 内描边环，颜色由使用处叠加 */
+
   /* 圆角；--blai-radius-full 只用于本就为圆形的元素（色点、开关轨道、进度条、滚动条、圆形图标）。 */
   /* 语义档位：大组件（Modal 等承载内容的卡片）用 lg，输入类小控件（Button/Input）用 sm，全端同一档。 */
   --blai-radius-lg: var(--blai-radius-10);
@@ -232,22 +237,28 @@
   /* 列表行上下内边距 */
   --blai-row-pad: var(--blai-space-10);
 
-  /* 输入框内边距统一令牌：正文输入框 / 文本域 / 下拉框只引用这一组，
-     页面与模板里不再散写具体 padding，改一处即全站同步。 */
-  --blai-input-pad-y: var(--blai-space-14);
-  --blai-input-pad-x: var(--blai-space-16);
-  --blai-input-pad: var(--blai-input-pad-y) var(--blai-input-pad-x);
-  /* 紧凑档：弹窗、卡片里的单行输入与文本域 */
-  --blai-input-pad-compact: var(--blai-space-10) var(--blai-space-14);
-  /* 对话框输入框 / 多行提示域，保留各自原有档位，但同样收口为变量 */
-  --blai-input-pad-dialog: var(--blai-space-9) var(--blai-space-10);
-  --blai-input-pad-area: var(--blai-space-12) var(--blai-space-14);
-  /* 单行输入 / 下拉：纵向不留白，只给横向内边距 */
+  /* 输入框内边距统一令牌：只有两档——单行输入/下拉用 inline，多行文本域用 area。
+     页面与模板不得再写具体 padding；旧别名收口到这两档，避免弹窗与主页算出不同值。 */
   --blai-input-pad-inline: 0 var(--blai-space-12);
-  --blai-input-pad-inline-compact: 0 var(--blai-space-10);
-  --blai-input-pad-inline-wide: 0 var(--blai-space-14);
+  --blai-input-pad-area: var(--blai-space-12) var(--blai-space-14);
   /* 窄屏下拉：高度只有 32px，横向留白相应收紧 */
   --blai-input-pad-inline-tight: var(--blai-space-3) var(--blai-space-8);
+  /* 兼容别名：逐步迁移中仍被旧规则引用，值统一指向上面两档，不再引入第三套留白。 */
+  --blai-input-pad-y: var(--blai-space-12);
+  --blai-input-pad-x: var(--blai-space-14);
+  --blai-input-pad: var(--blai-input-pad-area);
+  --blai-input-pad-compact: var(--blai-input-pad-area);
+  --blai-input-pad-dialog: var(--blai-input-pad-area);
+  --blai-input-pad-inline-compact: var(--blai-input-pad-inline);
+  --blai-input-pad-inline-wide: var(--blai-input-pad-inline);
+
+  /* 按钮内边距：只统一「有背景色的文字按钮」，两档。
+     常规档用于弹窗主/次按钮、工具主按钮、批量与深度净化动作；
+     紧凑档用于工具条等靠 min-height 定高的横向按钮。图标方按钮与纯文字动作不引用。 */
+  --blai-btn-pad-y: var(--blai-space-8);
+  --blai-btn-pad-x: var(--blai-space-16);
+  --blai-btn-pad: var(--blai-btn-pad-y) var(--blai-btn-pad-x);
+  --blai-btn-pad-compact: 0 var(--blai-space-10);
 }
 
 /* 手机端 5 档字号整体收一档（浅字不再降，避免小字过小；正文/标题各降 1~2px）。 */

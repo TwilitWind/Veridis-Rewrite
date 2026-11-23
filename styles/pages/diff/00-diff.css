@@ -225,7 +225,8 @@
     border: var(--blai-border-2) solid var(--text-secondary);
     border-radius: var(--blai-radius-4);
     background: var(--bg-surface);
-    vertical-align: -3px;
+    /* 与所在行文本垂直居中：middle 对齐到行盒中线，不用负偏移把方块压到基线以下。 */
+    vertical-align: middle;
     line-height: var(--blai-size-16);
     text-decoration: none;
     box-sizing: border-box;
@@ -353,7 +354,7 @@
 
 .blai-diff-related-mode .blai-diff-change:hover, .blai-diff-related-mode .blai-diff-change-selected {
     outline: var(--blai-border-2) solid var(--accent-color) !important;
-    outline-offset: 2px !important;
+    outline-offset: var(--blai-focus-offset) !important;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
 }
 
@@ -665,7 +666,7 @@
     border-radius: var(--blai-radius-sm);
 }
 
-#blai-diff-mode-text, #blai-diff-revert-text, #blai-diff-ai-rewrite span {
+#blai-diff-mode-text, #blai-diff-revert-text {
     display: none;
 }
 

@@ -67,7 +67,7 @@ export function renderRuleSearchModal() {
                     </div>
                     <div class="blai-rule-search-menu-wrap">
                         <button type="button" class="blai-icon-btn blai-rule-search-menu-toggle" data-key="${item.key}" title="更多操作">
-                            <i class="fas fa-ellipsis"></i>
+                            <i class="fas fa-ellipsis-vertical"></i>
                         </button>
                         ${menuHtml}
                     </div>

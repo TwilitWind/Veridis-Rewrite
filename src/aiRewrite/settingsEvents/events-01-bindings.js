@@ -59,7 +59,7 @@ export function bindAiSettingHandlers(core) {
             return;
         }
         if (isActiveAiApiPresetDirty(aiSettings)
-            && !await showConfirmModal(`API 预设“${aiSettings.activeApiPreset}”有未保存修改，是否放弃并切换？`, { danger: true, okText: '放弃并切换' })) {
+            && !await showConfirmModal(`API 预设“${aiSettings.activeApiPreset}”有未保存修改，是否放弃并切换？`, { okText: '放弃并切换' })) {
             syncAiApiPresetSelect(aiSettings);
             return;
         }

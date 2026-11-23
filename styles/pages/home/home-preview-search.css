@@ -207,7 +207,7 @@
 
 #blai-purifier-popup .blai-home-batch-actions button {
     min-height: var(--blai-size-34);
-    padding: 0 var(--blai-space-10);
+    padding: var(--blai-btn-pad);
     gap: var(--blai-space-5);
     font-size: var(--blai-font-12);
 }
