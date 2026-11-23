@@ -93,12 +93,12 @@
     }
 
     /* AI 改写吐司：手机端随 5 档字号同步加大，标题用次级、正文用正文档。 */
-    #toast-container > .blai-ai-rewrite-toast,
-    #toast-container > .blai-ai-rewrite-toast > .toast-title {
+    #blai-ai-toast-container > .blai-ai-rewrite-toast,
+    #blai-ai-toast-container > .blai-ai-rewrite-toast > .toast-title {
         font-size: var(--blai-fs-sub);
     }
 
-    #toast-container > .blai-ai-rewrite-toast > .toast-message {
+    #blai-ai-toast-container > .blai-ai-rewrite-toast > .toast-message {
         font-size: var(--blai-fs-body);
     }
 

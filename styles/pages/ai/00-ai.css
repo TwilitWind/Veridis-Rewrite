@@ -2,32 +2,45 @@
 
 /* AI 设置、AI 编辑器/监控弹窗、AI 改写提示，以及 AI 专属响应式布局。 */
 
-/* AI 改写提示走宿主 toastr（保留 sticky/取消/进度能力），这里只把外观统一到
-   --blai-toast-* 那套固定语义色，和插件自己的 .blai-toast 一致。
-   宿主靠 .toast-error 等类塞了带 !important 的 png 背景图，必须显式覆盖掉。 */
-#toast-container > .blai-ai-rewrite-toast {
-    width: fit-content;
-    min-width: min(var(--blai-size-300), 80vw);
-    max-width: min(var(--blai-size-380), 80vw);
-    box-sizing: border-box;
-    text-align: left;
-    padding-block: var(--blai-space-12);
-    padding-right: var(--blai-space-36);
-    line-height: 1.4;
-    border-radius: var(--blai-radius-12) !important;
-    background-image: none !important;
-    color: var(--blai-toast-ink) !important;
-    box-shadow: var(--blai-shadow-sm) !important;
+/* AI 改写提示走插件自有容器，不改宿主 toastr，也不影响其他插件提示。
+   容器固定在顶部居中留白，层级取 --blai-z-toast，因此不会被透视弹窗盖住。 */
+#blai-ai-toast-container {
+    position: fixed;
+    top: var(--blai-space-24);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: var(--blai-z-toast);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--blai-space-8);
 }
 
-/* 语义背景：复用 .blai-toast 的同一组 token，不随主题变。 */
-#toast-container > .blai-ai-rewrite-toast[data-type="success"] { background-color: var(--blai-toast-success-bg) !important; }
-#toast-container > .blai-ai-rewrite-toast[data-type="error"] { background-color: var(--blai-toast-error-bg) !important; }
-#toast-container > .blai-ai-rewrite-toast[data-type="warning"] { background-color: var(--blai-toast-warning-bg) !important; }
-#toast-container > .blai-ai-rewrite-toast[data-type="info"] { background-color: var(--blai-toast-info-bg) !important; }
+#blai-ai-toast-container > .blai-ai-rewrite-toast {
+    position: relative;
+    box-sizing: border-box;
+    width: fit-content;
+    min-width: min(var(--blai-size-300), 80vw);
+    max-width: min(var(--blai-size-380), calc(100vw - var(--blai-space-24)));
+    padding: var(--blai-space-12) var(--blai-space-36) var(--blai-space-12) var(--blai-space-48);
+    text-align: left;
+    line-height: 1.4;
+    border-radius: var(--blai-radius-12);
+    background-image: none;
+    color: var(--blai-toast-ink);
+    box-shadow: var(--blai-shadow-sm);
+    pointer-events: auto;
+}
 
-/* 用 FA 字形替换宿主的 png 图标，内容与 .blai-toast 的语义图标一致。 */
-#toast-container > .blai-ai-rewrite-toast::before {
+/* 语义背景：与 .blai-toast 共用同一组 token，不随主题变。 */
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="success"] { background-color: var(--blai-toast-success-bg); }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="error"] { background-color: var(--blai-toast-error-bg); }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="warning"] { background-color: var(--blai-toast-warning-bg); }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="info"] { background-color: var(--blai-toast-info-bg); }
+
+/* 语义图标与 .blai-toast 一致，用 FA 字形而不是宿主的 png。 */
+#blai-ai-toast-container > .blai-ai-rewrite-toast::before {
     position: absolute;
     left: var(--blai-space-16);
     top: 50%;
@@ -38,12 +51,12 @@
     color: var(--blai-toast-ink);
     pointer-events: none;
 }
-#toast-container > .blai-ai-rewrite-toast[data-type="success"]::before { content: "\f058"; }
-#toast-container > .blai-ai-rewrite-toast[data-type="error"]::before { content: "\f057"; }
-#toast-container > .blai-ai-rewrite-toast[data-type="warning"]::before { content: "\f071"; }
-#toast-container > .blai-ai-rewrite-toast[data-type="info"]::before { content: "\f05a"; }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="success"]::before { content: "\f058"; }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="error"]::before { content: "\f057"; }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="warning"]::before { content: "\f071"; }
+#blai-ai-toast-container > .blai-ai-rewrite-toast[data-type="info"]::before { content: "\f05a"; }
 
-#toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast {
+#blai-ai-toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
@@ -54,17 +67,17 @@
     row-gap: 0;
 }
 
-#toast-container > .blai-ai-rewrite-toast > .toast-title {
+#blai-ai-toast-container > .blai-ai-rewrite-toast > .toast-title {
     margin: 0;
     font-size: calc(var(--blai-font-14) + 1pt);
     line-height: 1.2;
     text-align: left;
     white-space: nowrap;
-    color: var(--blai-toast-ink) !important;
+    color: var(--blai-toast-ink);
 }
 
-#toast-container > .blai-ai-rewrite-toast > .toast-message {
-    color: var(--blai-toast-ink) !important;
+#blai-ai-toast-container > .blai-ai-rewrite-toast > .toast-message {
+    color: var(--blai-toast-ink);
     min-width: 0;
     margin: 0;
     font-size: calc(var(--blai-font-12-5) + 1pt);
@@ -77,17 +90,15 @@
     overflow: hidden;
 }
 
-#toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > .toast-title {
+#blai-ai-toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > .toast-title {
     grid-area: title;
 }
 
-#toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > .toast-message {
+#blai-ai-toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > .toast-message {
     grid-area: message;
 }
 
-#toast-container > .blai-ai-rewrite-toast > .toast-close-button {
-    color: var(--blai-toast-ink) !important;
-    opacity: .85;
+#blai-ai-toast-container > .blai-ai-rewrite-toast > .toast-close-button {
     position: absolute;
     top: 0;
     right: 0;
@@ -95,6 +106,14 @@
     min-width: var(--blai-size-32);
     height: var(--blai-size-32);
     min-height: var(--blai-size-32);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--blai-toast-ink);
+    font-size: var(--blai-font-20);
+    line-height: 1;
+    text-shadow: none;
+    opacity: .85;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -103,7 +122,7 @@
     pointer-events: auto;
 }
 
-#toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > .blai-ai-toast-actions {
+#blai-ai-toast-container > .blai-ai-rewrite-toast.blai-ai-rewrite-progress-toast > .blai-ai-toast-actions {
     grid-area: action;
     display: flex;
     align-items: center;

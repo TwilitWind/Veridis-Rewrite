@@ -197,11 +197,11 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **层级阶梯**：所有 z-index 只在 `tokens/03-scale.css` 的 `--blai-z-*` 里定义，页面文件一律 `var(...)`，不写裸数字。从低到高：`--blai-z-inner`（组件内部高亮）/ `--blai-z-page`（页面浮层）/ `--blai-z-tour`（导览）/ `--blai-z-panel`（主面板）/ `--blai-z-loading`（加载遮罩）/ `--blai-z-shell`（大弹窗基底）/ `--blai-z-modal`（弹窗内再弹出的对话框，如备注、删除、重命名、风险确认）/ `--blai-z-modal-raised`（最终层）/ `--blai-z-menu`（下拉/省略号菜单）/ `--blai-z-toast`（toast，最高）。新增浮层先在这张表里选一档，不要另造数字。
 
-**toast 必居最高层**：酒馆宿主 `#toast-container` 默认 `999999`，会被透视弹窗（`--blai-z-shell`）盖住；`components/03-toasts.css` 把它提 `--blai-z-toast` 修掉这个遮挡。插件自己的 `.blai-toast` 同样取 `--blai-z-toast`。
+**toast 必居最高层**：插件自己的 `.blai-toast` 和 `#blai-ai-toast-container` 都取 `--blai-z-toast`，所以透视弹窗（`--blai-z-shell`）不会盖住提示。**不改宿主 `#toast-container`**：它的位置、层级、配色保持酒馆原生，其他插件的 toastr 不受影响。
 
-**toast 语义色**：`showToast(message, description, type)`，`type` 取 `success` / `error` / `warning` / `info`（默认 info），图标随类型切换（`fa-circle-check` / `fa-circle-xmark` / `fa-triangle-exclamation` / `fa-circle-info`）。四种背景是 `01-palette.css` 里写死的 `--blai-toast-*-bg`（绿/红/橙/蓝实心 + 白字），**不跟随主题背景变化**，02-themes.css 不覆盖它们。这组 token 同时挂在 `.blai-toast` 与 `#toast-container` 上——AI 改写提示走宿主 toastr，也在同一套色系内。新增调用点按内容语义显式传 type，别留默认 info 造成成功/失败一个样。插件 toast 位置固定在顶部居中留白（`top: 24px`），不是贴边也不是屏幕正中。
+**toast 语义色**：`showToast(message, description, type)`，`type` 取 `success` / `error` / `warning` / `info`（默认 info），图标随类型切换（`fa-circle-check` / `fa-circle-xmark` / `fa-triangle-exclamation` / `fa-circle-info`）。四种背景是 `01-palette.css` 里写死的 `--blai-toast-*-bg`（绿/红/橙/蓝实心 + 白字），**不跟随主题背景变化**，02-themes.css 不覆盖它们。这组 token 只挂在插件自有提示（`.blai-toast`、`#blai-ai-toast-container`）上，宿主 toastr 读不到。新增调用点按内容语义显式传 type，别留默认 info 造成成功/失败一个样。插件 toast 位置固定在顶部居中留白（`top: 24px`），不是贴边也不是屏幕正中。
 
-**AI 改写提示的原生 toastr**：`notifyAiRewriteStatus` 走宿主 `toastApi`（保留 sticky / 取消 / 进度条能力），生成的是 `.toast-error` 等原生类。JS 额外写 `data-type`，`pages/ai/00-ai.css` 按它套用 `--blai-toast-*` 同款配色，并把宿主带 `!important` 的 png 背景图换成 FA 字形图标。宿主用 `body #toast-container .toast-error` 设了背景色，覆盖时必须带 `!important` 且 token 要在 `#toast-container` 上可读（否则变量为空、背景透明）。位置仍随宿主 toastr（右上堆叠），未改。
+**AI 改写提示独立容器**：`notifyAiRewriteStatus` 不再调用宿主 `toastApi`，而是在 `#blai-ai-toast-container` 里自建 `.blai-ai-rewrite-toast`。仍保留 sticky、关闭按钮、终止按钮、进度标题/正文、自动消失与悬停暂停；`data-type` 决定语义色与 FA 字形图标。这样既能压在透视弹窗上、又能顶部居中，同时不动宿主和其他插件的 toastr。
 
 四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(100dvh - 28px)` 高、16px 圆角（`styles/pages/home/home-breakpoints.css`）；600px 以下整屏（`100vw/100dvh`）、去圆角、适配安全区。
 

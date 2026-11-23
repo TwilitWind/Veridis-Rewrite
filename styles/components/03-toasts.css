@@ -1,10 +1,4 @@
-/* 全局浮层提示：toast 容器与内容排版。 */
-
-/* 宿主 toastr 容器默认 999999，会被插件的透视弹窗（10000000）盖住，
-   AI 改写提示因此看不见。提升到 toast 层，并让 mouse 事件照旧穿透到下层。 */
-body > #toast-container {
-    z-index: var(--blai-z-toast) !important;
-}
+/* 插件自有浮层提示：toast 容器与内容排版。宿主 toastr 不在此接管。 */
 
 .blai-toast {
     position: fixed;

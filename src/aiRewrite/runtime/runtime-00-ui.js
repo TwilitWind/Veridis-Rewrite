@@ -18,8 +18,18 @@ export function getAiRetryCount(aiSettings) {
     return normalizeLimit(aiSettings?.maxRetries, 2, 0, 5);
 }
 
-function getToastApi() {
-    return globalThis?.toastr || (typeof window !== 'undefined' ? window.toastr : null);
+const AI_TOAST_CONTAINER_ID = 'blai-ai-toast-container';
+
+function getAiToastContainer() {
+    if (typeof document === 'undefined') return null;
+    let container = document.getElementById(AI_TOAST_CONTAINER_ID);
+    if (!container) {
+        container = document.createElement('div');
+        container.id = AI_TOAST_CONTAINER_ID;
+        container.setAttribute('role', 'presentation');
+        document.body.appendChild(container);
+    }
+    return container;
 }
 
 function getToastElement(toast) {
@@ -30,8 +40,16 @@ function getToastElement(toast) {
     return null;
 }
 
+function clearToastDismissTimer(toastElement) {
+    const timer = toastElement?.blaiDismissTimer;
+    if (!timer) return;
+    clearTimeout(timer);
+    delete toastElement.blaiDismissTimer;
+}
+
 function removeToastElement(toastElement) {
     if (!toastElement) return;
+    clearToastDismissTimer(toastElement);
     try {
         if (typeof toastElement.remove === 'function') {
             toastElement.remove();
@@ -45,28 +63,30 @@ function removeToastElement(toastElement) {
     }
 }
 
+function scheduleToastDismiss(toastElement, delay) {
+    clearToastDismissTimer(toastElement);
+    const timeout = Math.max(0, Number(delay) || 0);
+    if (!timeout) return;
+    toastElement.blaiDismissTimer = setTimeout(() => {
+        delete toastElement.blaiDismissTimer;
+        removeToastElement(toastElement);
+    }, timeout);
+}
+
+function enableToastHoverPause(toastElement, delay) {
+    const timeout = Math.max(0, Number(delay) || 0);
+    if (!timeout) return;
+    toastElement.addEventListener('mouseenter', () => clearToastDismissTimer(toastElement));
+    toastElement.addEventListener('mouseleave', () => scheduleToastDismiss(toastElement, timeout));
+}
+
 export function clearAiRewriteStatusToast(extraToastElement = null, reason = '') {
     const rewriteState = aiRewriteState;
     const clearedTask = rewriteState?.statusTask || null;
     const hadStatus = Boolean(rewriteState?.statusToast || clearedTask);
-    const toastApi = getToastApi();
     const toastElement = getToastElement(rewriteState?.statusToast);
-    if (rewriteState?.statusToast && toastApi && typeof toastApi.clear === 'function') {
-        try {
-            toastApi.clear(rewriteState.statusToast);
-        } catch (err) {
-            logger.warn('清理 AI 改写状态弹窗失败', err);
-        }
-    }
-    if (rewriteState?.statusToast && toastApi && typeof toastApi.remove === 'function') {
-        try {
-            toastApi.remove(rewriteState.statusToast);
-        } catch {
-            // 继续交由 DOM 移除处理。
-        }
-    }
     removeToastElement(toastElement);
-    if (extraToastElement && extraToastElement !== toastElement) removeToastElement(extraToastElement);
+    if (extraToastElement && extraToastElement !== toastElement) removeToastElement(getToastElement(extraToastElement));
     if (rewriteState) {
         rewriteState.statusToast = null;
         rewriteState.statusTask = null;
@@ -162,37 +182,82 @@ function attachAiRewriteTerminateAction(toast, task) {
     toastElement.appendChild(actions);
 }
 
-export function notifyAiRewriteStatus(type, title, message, options = {}) {
-    const method = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
-    const safeTitle = String(title || 'AI 改写');
-    const safeMessage = String(message || '');
-    const toastApi = getToastApi();
-    if (toastApi && typeof toastApi[method] === 'function') {
-        const sticky = options.sticky === true;
-        const task = sticky ? options.task || null : null;
-        if (sticky && task && isSameAiRewriteTask(aiRewriteState.statusDismissedTask, task)) return;
-        if (options.replaceCurrent !== false) clearAiRewriteStatusToast(null, `status-${method}`);
-        const toast = toastApi[method](safeMessage, safeTitle, {
-            timeOut: sticky ? 0 : (options.timeOut ?? 5000),
-            extendedTimeOut: sticky ? 0 : (options.extendedTimeOut ?? 10000),
-            tapToDismiss: sticky ? false : (options.tapToDismiss ?? true),
-            closeButton: options.closeButton ?? !sticky,
-            preventDuplicates: false,
-            escapeHtml: true,
-        });
-        const toastElement = getToastElement(toast);
-        toastElement?.classList?.add('blai-ai-rewrite-toast');
-        // 语义类型写到 data-type，CSS 用它套用与插件 toast 相同的固定色系。
-        toastElement?.setAttribute('data-type', method);
-        if (sticky) toastElement?.classList?.add('blai-ai-rewrite-progress-toast');
-        aiRewriteState.statusToast = sticky ? toast : null;
-        aiRewriteState.statusTask = task;
-        if (sticky) attachAiRewriteDismissAction(toast, task);
-        if (sticky && options.cancellable === true) {
-            attachAiRewriteTerminateAction(toast, task);
-        }
-        return;
+function createAiRewriteToastElement({ type, sticky, title, message, showCloseButton }) {
+    const toastElement = document.createElement('div');
+    toastElement.className = `toast toast-${type} blai-ai-rewrite-toast${sticky ? ' blai-ai-rewrite-progress-toast' : ''}`;
+    toastElement.dataset.type = type;
+    toastElement.setAttribute('role', 'status');
+    toastElement.setAttribute('aria-live', sticky ? 'polite' : 'assertive');
+
+    const titleElement = document.createElement('div');
+    titleElement.className = 'toast-title';
+    titleElement.textContent = String(title || 'AI 改写');
+    const messageElement = document.createElement('div');
+    messageElement.className = 'toast-message';
+    messageElement.textContent = String(message || '');
+    toastElement.append(titleElement, messageElement);
+
+    let closeButtonElement = null;
+    if (showCloseButton) {
+        closeButtonElement = document.createElement('button');
+        closeButtonElement.type = 'button';
+        closeButtonElement.className = 'toast-close-button';
+        closeButtonElement.textContent = '×';
+        closeButtonElement.setAttribute('aria-label', '关闭提示');
+        toastElement.appendChild(closeButtonElement);
     }
+
+    return { toastElement, closeButtonElement };
+}
+
+export function notifyAiRewriteStatus(type, title, message, options = {}) {
+    if (typeof document === 'undefined') return null;
+    const method = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+    const sticky = options.sticky === true;
+    const task = sticky ? options.task || null : null;
+    if (sticky && task && isSameAiRewriteTask(aiRewriteState.statusDismissedTask, task)) return null;
+    if (options.replaceCurrent !== false) clearAiRewriteStatusToast(null, `status-${method}`);
+
+    const showCloseButton = options.closeButton ?? !sticky;
+    const { toastElement, closeButtonElement } = createAiRewriteToastElement({
+        type: method,
+        sticky,
+        title,
+        message,
+        showCloseButton,
+    });
+    const container = getAiToastContainer();
+    if (!container) return null;
+    container.appendChild(toastElement);
+
+    if (!sticky) {
+        if (closeButtonElement) {
+            closeButtonElement.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                removeToastElement(toastElement);
+            });
+        }
+        if (options.tapToDismiss !== false) {
+            toastElement.addEventListener('click', (event) => {
+                if (event.target?.closest?.('.toast-close-button')) return;
+                removeToastElement(toastElement);
+            });
+        }
+    }
+    if (sticky) {
+        aiRewriteState.statusToast = toastElement;
+        aiRewriteState.statusTask = task;
+        if (closeButtonElement) attachAiRewriteDismissAction(toastElement, task);
+        if (options.cancellable === true) attachAiRewriteTerminateAction(toastElement, task);
+    } else {
+        aiRewriteState.statusToast = null;
+        aiRewriteState.statusTask = null;
+        const timeOut = options.timeOut ?? 5000;
+        scheduleToastDismiss(toastElement, timeOut);
+        enableToastHoverPause(toastElement, options.extendedTimeOut ?? 10000);
+    }
+    return toastElement;
 }
 
 function isLatestTrackableMessageIndex(index) {

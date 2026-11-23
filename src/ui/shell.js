@@ -92,7 +92,7 @@ export async function setupUI(renderTemplate, templateDirectory) {
         throw new TypeError('setupUI requires the current extension template directory');
     }
     logger.debug('[setupUI] 开始初始化 UI');
-    $('#blai-purifier-popup, #blai-binding-history-modal, #blai-ai-generation-modal, #blai-ai-additional-modal, #blai-rule-edit-modal, #blai-risk-confirm-modal, #blai-risk-info-modal, #blai-deep-clean-backdrop, #blai-deep-clean-workspace, #blai-feedback-workspace, #blai-rule-transfer-modal, #blai-preset-import-choice-modal, #blai-rule-search-modal, #blai-scope-tags-modal, #blai-scope-tag-editor-modal, #blai-diff-modal, #blai-subrule-edit-modal, #blai-ai-prompt-modal, #blai-loading-overlay, .blai-toast').remove();
+    $('#blai-purifier-popup, #blai-binding-history-modal, #blai-ai-generation-modal, #blai-ai-additional-modal, #blai-rule-edit-modal, #blai-risk-confirm-modal, #blai-risk-info-modal, #blai-deep-clean-backdrop, #blai-deep-clean-workspace, #blai-feedback-workspace, #blai-rule-transfer-modal, #blai-preset-import-choice-modal, #blai-rule-search-modal, #blai-scope-tags-modal, #blai-scope-tag-editor-modal, #blai-diff-modal, #blai-subrule-edit-modal, #blai-ai-prompt-modal, #blai-loading-overlay, #blai-ai-toast-container, .blai-toast').remove();
 
     const ensureExtensionPanelEntry = () => {
         if ($('#blai-extension-settings-entry').length || !$('#extensions_settings').length) return;
