@@ -64,14 +64,14 @@
 #blai-purifier-popup .blai-icon-btn,
 .blai-modal-shell .blai-icon-btn
 {
-    min-width: var(--blai-size-34) !important;
-    width: var(--blai-size-34) !important;
-    height: var(--blai-size-34) !important;
+    min-width: var(--blai-size-34);
+    width: var(--blai-size-34);
+    height: var(--blai-size-34);
     border-radius: var(--blai-radius-12) !important;
     border: var(--blai-border-1) solid var(--border-color) !important;
     background: transparent !important;
     color: var(--text-main) !important;
-    box-shadow: none !important;
+    box-shadow: none;
 }
 
 #blai-purifier-popup .blai-icon-btn:hover,
@@ -82,7 +82,7 @@
 }
 
 #blai-purifier-popup .blai-select-box, #blai-purifier-popup .blai-input, .blai-modal-shell .blai-input, .blai-modal-shell .blai-textarea, .blai-modal-shell .blai-select-box {
-    min-height: var(--blai-size-38) !important;
+    min-height: var(--blai-size-38);
     /* 单行输入框/下拉框统一 13px：.blai-input 基线的 18px 只该留给多行文本域，
        否则提示语（placeholder）会比同排控件大一整号。 */
     font-size: var(--blai-font-13) !important;
@@ -91,8 +91,8 @@
     border: var(--blai-border-1) solid var(--border-color) !important;
     padding: var(--blai-input-pad-inline);
     background: var(--blai-input-bg) !important;
-    color: var(--text-main) !important;
-    box-shadow: none !important;
+    color: var(--text-main);
+    box-shadow: none;
 }
 
 /* 多行域不跟单行一起收成 0 纵向留白：附加参数、子规则等弹窗统一 area 档。 */

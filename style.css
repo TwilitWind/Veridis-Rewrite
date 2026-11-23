@@ -34,7 +34,7 @@
 .blai-highlight-flash{animation: blaiHighlightFlash 0.8s ease-in-out 2;will-change: filter}
 .blai-visually-hidden{position: absolute;width: var(--blai-size-1);height: var(--blai-size-1);padding: 0;margin: var(--blai-space-neg-1);overflow: hidden;clip: rect(0,0,0,0);white-space: nowrap;border: 0}
 #blai-purifier-popup,#blai-purifier-popup *{text-shadow: none}
-#blai-wand-btn{cursor: pointer;display: inline-flex !important;align-items: center !important;gap: var(--blai-space-6) !important;line-height: 1 !important;white-space: nowrap !important}
+#blai-wand-btn{cursor: pointer;display: inline-flex !important;align-items: center !important;gap: var(--blai-space-6) !important;line-height: 1;white-space: nowrap}
 #blai-wand-btn i{margin: 0}
 .blai-extension-settings-entry .inline-drawer-content{padding: var(--blai-space-8) 0 var(--blai-space-12)}
 .blai-extension-open-btn{width: min(var(--blai-size-260),100%);min-height: var(--blai-size-38);display: inline-flex;align-items: center;justify-content: center;gap: var(--blai-space-8);border-radius: var(--blai-radius-sm);font-size: var(--blai-font-14);font-weight: var(--blai-weight-bold);white-space: nowrap}
@@ -146,9 +146,9 @@
 .blai-toast-title{display: block}
 .blai-toast-description{display: block;font-size: var(--blai-font-12);font-weight: var(--blai-weight-normal);line-height: 1.35}
 .blai-toast.blai-show{opacity: 1;transform: translate(-50%,0) scale(1);transition-duration: var(--blai-duration-base)}
-#blai-purifier-popup .blai-icon-btn,.blai-modal-shell .blai-icon-btn{min-width: var(--blai-size-34) !important;width: var(--blai-size-34) !important;height: var(--blai-size-34) !important;border-radius: var(--blai-radius-12) !important;border: var(--blai-border-1) solid var(--border-color) !important;background: transparent !important;color: var(--text-main) !important;box-shadow: none !important}
+#blai-purifier-popup .blai-icon-btn,.blai-modal-shell .blai-icon-btn{min-width: var(--blai-size-34);width: var(--blai-size-34);height: var(--blai-size-34);border-radius: var(--blai-radius-12) !important;border: var(--blai-border-1) solid var(--border-color) !important;background: transparent !important;color: var(--text-main) !important;box-shadow: none}
 #blai-purifier-popup .blai-icon-btn:hover,.blai-modal-shell .blai-icon-btn:hover{background: var(--bg-surface) !important;transform: none !important}
-#blai-purifier-popup .blai-select-box,#blai-purifier-popup .blai-input,.blai-modal-shell .blai-input,.blai-modal-shell .blai-textarea,.blai-modal-shell .blai-select-box{min-height: var(--blai-size-38) !important;font-size: var(--blai-font-13) !important;border-radius: var(--blai-radius-sm) !important;border: var(--blai-border-1) solid var(--border-color) !important;padding: var(--blai-input-pad-inline);background: var(--blai-input-bg) !important;color: var(--text-main) !important;box-shadow: none !important}
+#blai-purifier-popup .blai-select-box,#blai-purifier-popup .blai-input,.blai-modal-shell .blai-input,.blai-modal-shell .blai-textarea,.blai-modal-shell .blai-select-box{min-height: var(--blai-size-38);font-size: var(--blai-font-13) !important;border-radius: var(--blai-radius-sm) !important;border: var(--blai-border-1) solid var(--border-color) !important;padding: var(--blai-input-pad-inline);background: var(--blai-input-bg) !important;color: var(--text-main);box-shadow: none}
 .blai-modal-shell .blai-textarea{padding: var(--blai-input-pad-area)}
 .blai-modal-shell :is(.blai-secondary-btn,.blai-primary-btn){min-height: var(--blai-size-38);border-radius: var(--blai-radius-sm);border: var(--blai-border-1) solid var(--border-color);background: transparent;color: var(--text-main);font-size: var(--blai-font-13);font-weight: var(--blai-weight-bold);box-shadow: none}
 .blai-modal-shell .blai-primary-btn,.blai-modal-shell .blai-primary-btn:hover{background: var(--accent-color) !important;border-color: var(--accent-color) !important;color: var(--accent-contrast) !important}

@@ -6,11 +6,13 @@
 
 #blai-wand-btn {
     cursor: pointer;
+    /* display/align-items/gap 对抗酒馆输入栏的 !important 强声明，必须保留。
+       line-height/white-space 无对抗，实测移除 !important 计算值不变。 */
     display: inline-flex !important;
     align-items: center !important;
     gap: var(--blai-space-6) !important;
-    line-height: 1 !important;
-    white-space: nowrap !important;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 #blai-wand-btn i {

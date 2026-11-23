@@ -207,6 +207,8 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **`[hidden]` 失效**：`.blai-subrule-field{display:flex!important}` 会压掉默认 `[hidden]{display:none}`，靠 `prop('hidden', …)` 切换的块都要补 `.X[hidden]{display:none!important}`（`styles/pages/home/home-overview.css` 有先例）。
 
+**`!important` 治理**：默认禁止，准入仅三类——对抗宿主/主题的强声明、`[hidden]` 强开关、内联定位。量化基线见 `test/audit/important-audit.mjs`（计数只许降），视觉防回归见 `style-snapshot.mjs`（双视口×双主题×五页面的计算样式 digest）。减量只能删「实测移除后计算样式零变化」的声明：用 CSSOM 临时去掉 `!important` 量真实计算值，或改完跑快照比对，任一处变化就回退。已知必须保留的类别：魔法棒 `display/align-items/gap`（宿主输入栏强声明）、按钮禁用态 `opacity/filter`、全屏弹窗覆盖、输入框字号与边框色、菜单内联定位。`.blai-icon-btn` 的尺寸/阴影、输入框 `min-height/字色/阴影` 这类自有控件无对抗，已安全移除。
+
 **下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。所有下拉菜单（11 类 `-menu` 类）的首末/独行圆角统一在 `styles/components/07-menu-fill.css`：一份 `:is()` 清单配 `&:first-child/last-child/only-child` 原生嵌套，新增菜单类只补这一处清单（其余文件里的同类选择器只管各自配色/动画/定位，不重复圆角规则）。
 
 **定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。打开后要重定位一次：弹窗与切页入场动画带 6px 位移，动画期间量到的锚点与稳定后差 6px，不补就「第一次点没弹出、要点第二次」。现在只在菜单自身 `animationend` 与 200ms 兜底时各定位一次，不再逐帧读矩形——手机上逐帧强制重排是展开卡顿的主要来源；`openMenus` 里必须存重定位回调引用的同一个 `entry` 对象，否则 `has(entry)` 恒 false、永不执行。

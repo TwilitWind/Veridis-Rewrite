@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-23T07:04:35.796Z",
+  "generatedAt": "2026-11-23T07:31:18.876Z",
   "props": [
     "display",
     "visibility",
@@ -107,83 +107,83 @@
   "combos": {
     "desktop|light|overview": {
       "elementCount": 222,
-      "digest": "ee0393666f64ba0723b86e8ba88856eb4b9ad227949e4e9ccc4192f883082da6"
+      "digest": "9b442d5f3dd64e2a7e1c2703eeff26acf0a8e234e9abc49651739ed160ba1eb9"
     },
     "desktop|light|ai": {
       "elementCount": 152,
-      "digest": "984c8e7b0f6c15072cf03358dd9f63d70d56dc0dd55807a132c87ce693e401c8"
+      "digest": "eb869ea7e30ef7476f8f03a8cf2f6b4b772209c055b98d2e000f01677917c525"
     },
     "desktop|light|clean": {
       "elementCount": 125,
-      "digest": "1fa6d53c6c3cb019919b39ea500523ce39bf29e5c42c338425d58adfa22c557a"
+      "digest": "2891c4747a39f6dea28e7afa00fe010af27453fcffec5c08dfaacf3f5c8cf986"
     },
     "desktop|light|tools": {
       "elementCount": 118,
-      "digest": "89a20bb364b2e5867efd49af649fd1b3f62accc6200eb9396def161eb1783db6"
+      "digest": "e44294e82016ba2a286f9b3195812284ccc7c4e299c5a8d067321c60593f1f8d"
     },
     "desktop|light|feedback": {
       "elementCount": 14,
-      "digest": "4eb54d5e56bf87d60a8bf6e37cd7b82552f8a7bfebeeeb59f5faa0fecfedab56"
+      "digest": "9f423d40b486668e26aef43cff4e6ae8aad684402e254daa42cbf97f11363763"
     },
     "desktop|dark|overview": {
       "elementCount": 222,
-      "digest": "753001228c69308b0724ea1dd0091d4f7da9830c0c3b37245e5accf61e39d82c"
+      "digest": "e154ebd1d11fbb3796968f855ad6773a8d96507e7a53d1ad67d27874d3684094"
     },
     "desktop|dark|ai": {
       "elementCount": 152,
-      "digest": "55d1e0a369bc77886b13c7205066c03a73fa9d97b21aa473de7fefd1a6f4d069"
+      "digest": "0004a3a69d854ff0211d6b240578f596eaf1777750433e97e668b8b504204c78"
     },
     "desktop|dark|clean": {
       "elementCount": 125,
-      "digest": "59158520836177b357fcf73cbcaf6723911b9e1e0077ad69f1087ef7d1f5f40b"
+      "digest": "9198367dd3cdc5a6a88ef9535c060c869b8d0774eaf9298edb2e5d08500dd135"
     },
     "desktop|dark|tools": {
       "elementCount": 118,
-      "digest": "d5ab5d8f6e4d1822a6f40c2327441e75fea293e19448e189684deb2ceaa7f4a5"
+      "digest": "bb21603e3871f3da04f80a4c7ce5851897710fc2b920ca42bb6d15a983b41363"
     },
     "desktop|dark|feedback": {
       "elementCount": 14,
-      "digest": "c348217103ada98ce15d2d4c2fc11988be19eb0b91f8a1949948d18d39239e2a"
+      "digest": "03d31b696c5641f6562f07a86f5380f76fa07aa7bff3d9ec317634f6ef1e0c3e"
     },
     "mobile|light|overview": {
       "elementCount": 222,
-      "digest": "12572be21908c76e15a1690bdd7f199e7ffa2eda16b3012dec257541a14171bb"
+      "digest": "052c2163de3cbadd4fb812fb4e027649cf61837771ca36fb4611ccd9d1068762"
     },
     "mobile|light|ai": {
       "elementCount": 113,
-      "digest": "d6c8e6ea66ca3c9f2e521e992cdaa2952d24f49bc618c23b7469b7de0d9560d0"
+      "digest": "06755465cb2a2cbae14a9aa0221213f18e9b403388c558b71aa03b3382d06b02"
     },
     "mobile|light|clean": {
       "elementCount": 125,
-      "digest": "66425af55cf5d52d2360e6c2a4525768aed243b1bf149eb20eb14914570f25a7"
+      "digest": "f24069aae92b9772a9ce86da556d956f542feae06a44db48a405fee1a5d7802f"
     },
     "mobile|light|tools": {
       "elementCount": 118,
-      "digest": "713e116e4156491f460280e81ec69bffd9db2d481ecbb307a8ec3ef48907622c"
+      "digest": "dd468c7ab7fa68da6e191580038099677c490db838caaec2cf071a0c92be4696"
     },
     "mobile|light|feedback": {
       "elementCount": 14,
-      "digest": "91e2c16d3aa6eb23a4ed7fdc0108ec3c36b31a0686e2f19cfc59281dc885aede"
+      "digest": "0c380fa33d6d56b302a268d06e476b8620d4cffa49498578d51084bbc54d8400"
     },
     "mobile|dark|overview": {
       "elementCount": 222,
-      "digest": "e3599d48e4c988a0ec7d5b30b8fb02e8615ef7348de083c7154e720ec83bd859"
+      "digest": "9e217cd8eaf3f379ee79f8e9e6aa75c06297f632c198eaacbcbb381abad144b1"
     },
     "mobile|dark|ai": {
       "elementCount": 113,
-      "digest": "3b156992026632dd645f4871f39f3323b3876282958d2f379288f4f3794cec56"
+      "digest": "5684e186416839141b17248195663cd8d8799d367f23617aab44c48d2f13cc20"
     },
     "mobile|dark|clean": {
       "elementCount": 125,
-      "digest": "f18d795a60e178ed166c181c850952491bd1e8902e6d6a6e8c414ddbcf133d05"
+      "digest": "9821ccc2f942e1d7e5c9b25634500b47edc0d804ea93f46c9c6dfa699aabaddd"
     },
     "mobile|dark|tools": {
       "elementCount": 118,
-      "digest": "bf5d53a9e5d956a1a8debe0e1d84570da53ae0dce1da61ff351d463ca2e69ff0"
+      "digest": "873f2072621ea8ea8988212f31635b9bcd3e28b7f035cd4b004070dfec7e994b"
     },
     "mobile|dark|feedback": {
       "elementCount": 14,
-      "digest": "40c6a35815a1a291e21952e98535cd6e3429d903a3cf8ea1d2fd00545db47e85"
+      "digest": "b60a3003b7772b363088110e43c99d1f80e8a7908ba179280615f2aaa0d391bc"
     }
   }
 }

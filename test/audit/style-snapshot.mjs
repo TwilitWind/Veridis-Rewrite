@@ -53,8 +53,11 @@ const CAPTURE = function (props, pseudoProps, theme, page) {
         for (let node = el; node && node.nodeType === 1 && node !== document.body; node = node.parentElement) {
             const parent = node.parentElement;
             const index = parent ? Array.prototype.indexOf.call(parent.children, node) : 0;
+            // class 顺序在框架重渲染时会变（active.blai-x vs blai-x.active），
+            // 排序并剔除主题切换注入的 scheme-* 动态类，保证同一元素 key 稳定。
             const cls = typeof node.className === 'string'
-                ? node.className.trim().split(/\s+/).slice(0, 3).join('.') : '';
+                ? node.className.trim().split(/\s+/).filter((c) => c && !/^scheme-/.test(c))
+                    .sort().slice(0, 3).join('.') : '';
             parts.unshift(`${node.tagName.toLowerCase()}${node.id ? `#${node.id}` : ''}${cls ? `.${cls}` : ''}[${index}]`);
         }
         return parts.join(' > ');
@@ -146,7 +149,21 @@ for (const viewport of VIEWPORTS) {
                 mod.showResponsivePage(${JSON.stringify(pageName)});
                 return true;
             })()`);
-            await sleep(280);
+            // tools 的规则集列表、feedback 的运行日志都是异步渲染。固定 sleep 会踩到
+            // 「日志还没加载」的中间态（feedback 元素数 14 vs 29），基线随刷新时机漂移。
+            // 轮询到目标面板后代数量连续两次相同再采集，保证每次都等到稳定态。
+            await evaluate(`(async () => {
+                const panel = document.querySelector('#blai-purifier-popup .page-panel[data-page="${pageName}"]');
+                if (!panel) return true;
+                let last = -1, stable = 0;
+                for (let i = 0; i < 40 && stable < 2; i++) {
+                    await new Promise((r) => setTimeout(r, 100));
+                    const n = panel.querySelectorAll('*').length;
+                    stable = (n === last) ? stable + 1 : 0;
+                    last = n;
+                }
+                return true;
+            })()`);
             const comboKey = `${viewport.name}|${theme}|${pageName}`;
             combos[comboKey] = await evaluate(`(${CAPTURE.toString()})(${JSON.stringify(PROPS)}, ${JSON.stringify(PSEUDO_PROPS)}, ${JSON.stringify(theme)}, ${JSON.stringify(pageName)})`);
             console.log(`${comboKey}: ${combos[comboKey].elementCount ?? 0} 个元素`);
