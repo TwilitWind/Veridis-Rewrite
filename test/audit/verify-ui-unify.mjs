@@ -159,6 +159,40 @@ try {
     check('②b 弹窗退场播 blai-fade-out', modalAnim.anim === 'blai-fade-out', JSON.stringify(modalAnim));
     await evaluate(send, `document.querySelector('.blai-modal-shell')?.classList.remove('blai-is-leaving')`);
 
+    // ===== ②d 动效节奏：退场更快，且 JS/CSS 共用同一组令牌 =====
+    const timing = await evaluate(send, `(() => {
+        const root = getComputedStyle(document.documentElement);
+        const probe = document.createElement('div');
+        probe.className = 'blai-home-card-menu';
+        document.body.appendChild(probe);
+        const menuIn = getComputedStyle(probe).animationDuration;
+        probe.remove();
+        const out = document.createElement('div');
+        out.className = 'page-panel blai-is-leaving';
+        const popup = document.getElementById('blai-purifier-popup');
+        popup.appendChild(out);
+        const pageOut = getComputedStyle(out).animationDuration;
+        out.remove();
+        const shell = document.querySelector('.blai-modal-shell');
+        const card = shell?.querySelector('.blai-modal-card');
+        return {
+            fast: root.getPropertyValue('--blai-duration-fast').trim(),
+            base: root.getPropertyValue('--blai-duration-base').trim(),
+            slow: root.getPropertyValue('--blai-duration-slow').trim(),
+            pageIn: getComputedStyle(document.querySelector('.page-panel.active')).animationDuration,
+            pageOut,
+            shellIn: shell ? getComputedStyle(shell).animationDuration : null,
+            cardIn: card ? getComputedStyle(card).animationDuration : null,
+            menuIn,
+        };
+    })()`);
+    check('②d 退场比进场短（80/120/140ms）',
+        timing.fast === '80ms' && timing.base === '120ms' && timing.slow === '140ms', JSON.stringify(timing));
+    check('②d 切页/菜单/弹窗淡入淡出走统一时长',
+        timing.pageOut === '0.08s' && timing.pageIn === '0.08s' && timing.menuIn === '0.08s'
+        && (!timing.shellIn || timing.shellIn === '0.12s')
+        && (!timing.cardIn || timing.cardIn === '0.14s'), JSON.stringify(timing));
+
     // ===== ②c 快速来回切换的竞态 =====
     for (const page of ['overview', 'ai', 'overview', 'ai', 'overview']) {
         await evaluate(send, `document.querySelector('[data-page-target="${page}"]')?.click()`);

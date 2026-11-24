@@ -9,9 +9,31 @@
  */
 
 const LEAVE_CLASS = 'blai-is-leaving';
-const LEAVE_MS = 130; // 与 --blai-duration-fast(120ms) 对齐，留一点动画结束事件的缓冲。
+const ANIMATION_END_BUFFER_MS = 20;
+const FALLBACK_FAST_MS = 80;
+const FALLBACK_BASE_MS = 120;
 
 const leaveTokens = new WeakMap();
+
+function readDurationToken(name, fallback) {
+    if (typeof window === 'undefined' || !window.getComputedStyle || !window.document?.documentElement) return fallback;
+    const raw = String(window.getComputedStyle(window.document.documentElement).getPropertyValue(name) || '').trim();
+    const value = Number.parseFloat(raw);
+    if (!Number.isFinite(value) || value <= 0) return fallback;
+    return raw.endsWith('ms') ? value : value * 1000;
+}
+
+/** 退场/进场时长统一取 tokens/03-scale.css，避免 JS 与 CSS 各写一份后漂移。 */
+export function getFadeDuration(phase = 'in') {
+    return phase === 'out'
+        ? readDurationToken('--blai-duration-fast', FALLBACK_FAST_MS)
+        : readDurationToken('--blai-duration-base', FALLBACK_BASE_MS);
+}
+
+/** 动画结束兜底定时器：多留一点缓冲，避免 animationend 漏触发时提前切换。 */
+export function getFadeExitMs() {
+    return getFadeDuration('out') + ANIMATION_END_BUFFER_MS;
+}
 
 function prefersReducedMotion() {
     return !!(typeof window !== 'undefined'
@@ -55,7 +77,7 @@ export function fadeOutThen(el, done) {
         node.classList.remove(LEAVE_CLASS);
         if (leaveTokens.get(node) === cancel) leaveTokens.delete(node);
     };
-    const timer = setTimeout(finish, LEAVE_MS);
+    const timer = setTimeout(finish, getFadeExitMs());
 
     leaveTokens.set(node, cancel);
     node.addEventListener('animationend', onEnd);

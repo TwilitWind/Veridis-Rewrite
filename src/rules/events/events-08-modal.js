@@ -5,6 +5,7 @@ import { refreshDiffViewer } from '../../diff/state.js';
 import { rulesUiState, hasUnsavedEditGroupChanges, clearEditGroupBaseline } from '.././state.js';
 import { parseInputToWords } from '.././model.js';
 import { showToast, showUnsavedChangesModal } from '../../ui/notifications.js';
+import { getFadeDuration } from '../../ui/motion.js';
 import { clearRuleSearchEditFlow, closeTransferModal, getSingleRuleReplacementValues, hasPendingRegexReplacementInput, openRuleSearchModal, renderSubrulesToModal } from '.././view.js';
 
 export function bindRuleModalActionEvents() {
@@ -79,7 +80,7 @@ export function bindRuleModalActionEvents() {
             return;
         }
 
-        $('#blai-subrule-edit-modal').fadeOut(150);
+        $('#blai-subrule-edit-modal').fadeOut(getFadeDuration('out'));
         renderSubrulesToModal();
         // 普通编辑流程只把规则写进当前分组草稿，此前没有任何成功反馈；
         // 搜索直编/关联流程走上面的 saveCurrentEditingRule，已有吐司，不在此重复。
@@ -103,7 +104,7 @@ export function bindRuleModalActionEvents() {
             });
             return;
         }
-        $('#blai-subrule-edit-modal').fadeOut(150);
+        $('#blai-subrule-edit-modal').fadeOut(getFadeDuration('out'));
     });
 
     const closeEditGroupModal = () => {

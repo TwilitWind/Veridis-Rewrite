@@ -1,6 +1,13 @@
 # 变更记录
 
-按用户可感知结果记录；`3.5 r87` 为当前修订，`r1–r69` 已按功能归档，原 r 号仅作追溯。设置主键 `ultimate_purifier_ai_rewrite` 与上游一致。使用说明见 [README.md](README.md)，内部实现见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+按用户可感知结果记录；`3.5 r88` 为当前修订，`r1–r69` 已按功能归档，原 r 号仅作追溯。设置主键 `ultimate_purifier_ai_rewrite` 与上游一致。使用说明见 [README.md](README.md)，内部实现见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+
+---
+
+## 3.5 r88（淡入淡出提速）
+
+- **切换更跟手**：页面、弹窗、菜单与提示条的淡入淡出整体缩短，退场比进场更快，点完立刻有反馈，不再有拖沓感。
+- **节奏依然顺滑**：沿用平滑减速缓动与纯透明度过渡，没有位移或缩放，菜单不会跳动；偏好减少动态效果时仍直接切换。
 
 ---
 

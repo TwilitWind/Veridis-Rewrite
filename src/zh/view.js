@@ -2,6 +2,7 @@
  * 只负责中文字典的安装/弹窗 DOM 投影。它不负责字典下载/存储语义。
  */
 import { zhRuntimeState } from './state.js';
+import { getFadeDuration } from '../ui/motion.js';
 
 function showProgressOverlay({ title, statusText, cancelText = '停止', onCancel = null }) {
     const themeMode = String($('#blai-purifier-popup').attr('data-theme') || 'auto');
@@ -64,7 +65,7 @@ export function openZhDictionaryModal(stats = {}, options = {}) {
 }
 
 export function closeZhDictionaryModal() {
-    $('#blai-zh-dictionary-modal').fadeOut(120);
+    $('#blai-zh-dictionary-modal').fadeOut(getFadeDuration('out'));
 }
 
 function updateProgressOverlay(progressRatio, statusText) {

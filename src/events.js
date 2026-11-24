@@ -10,6 +10,7 @@ import { closeRuleSearchModal, renderTags } from './rules/view.js';
 import { syncPersonaDescriptionProtectionControl } from './ui/personaProtection.js';
 import { normalizeZhVariantSettings } from './zh/dictionary.js';
 import { showConfirmModal } from './ui/notifications.js';
+import { getFadeDuration } from './ui/motion.js';
 import { bindHostLifecycleEvents } from './host/lifecycleEvents.js';
 import { bindAiSettingsEvents } from './aiRewrite/settingsEvents.js';
 import { bindThemeEvents } from './ui/theme.js';
@@ -32,7 +33,7 @@ export function bindEvents() {
         renderTags();
         renderScopeTagsModal();
         // 进场用 base 节奏（与 --blai-duration-base 一致），退场用 fast，避免整块慢淡出。
-        $('#blai-purifier-popup').css('display', 'grid').hide().fadeIn(160);
+        $('#blai-purifier-popup').css('display', 'grid').hide().fadeIn(getFadeDuration('in'));
         offerMainTourFirstUse();
     };
     bindComposerButtonAiRewriteEvent(eventSource);
@@ -66,7 +67,7 @@ export function bindEvents() {
         updateLegacyPurifierWarning();
         const legacyEntry = document.getElementById('bl-extension-settings-entry') || document.getElementById('bl-wand-btn');
         if (legacyEntry) {
-            $('#blai-purifier-popup').fadeOut(120);
+            $('#blai-purifier-popup').fadeOut(getFadeDuration('out'));
             legacyEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
             legacyEntry.classList.remove('blai-legacy-target-flash');
             void legacyEntry.offsetWidth;
@@ -79,7 +80,7 @@ export function bindEvents() {
         // 改动已由 markRulesDataDirty 的钩子实时写回预设快照，关闭无需再弹「未保存」确认。
         closeRuleSearchModal({ reset: true });
         closeScopeTagsModal({ reset: true });
-        $('#blai-purifier-popup').fadeOut(120);
+        $('#blai-purifier-popup').fadeOut(getFadeDuration('out'));
     });
     const settings = extension_settings[extensionName];
     normalizeZhVariantSettings(settings);

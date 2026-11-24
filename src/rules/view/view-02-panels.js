@@ -1,5 +1,6 @@
 /** view 的分块：panels。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { rulesUiState, captureEditGroupBaseline } from '../state.js';
+import { getFadeDuration } from '../../ui/motion.js';
 import { safeHtml } from '../../ui/html.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
@@ -137,7 +138,7 @@ export function openSingleRuleModal(index, options = {}) {
     $('#blai-modal-sub-mode').trigger('change');
     $('#blai-modal-sub-rewrite-mode').trigger('change');
     if (options.hideEditModal === true) $('#blai-rule-edit-modal').hide();
-    $('#blai-subrule-edit-modal').css('display', 'flex').hide().fadeIn(150);
+    $('#blai-subrule-edit-modal').css('display', 'flex').hide().fadeIn(getFadeDuration('in'));
 }
 
 export function openEditModal(index = -1, options = {}) {

@@ -680,7 +680,7 @@
     justify-content: center;
     opacity: 0.45;
     cursor: pointer;
-    transition: opacity 0.2s, color 0.2s;
+    transition: opacity var(--blai-duration-fast) var(--blai-ease-out), color var(--blai-duration-fast) var(--blai-ease-out);
     color: var(--text-main);
 }
 

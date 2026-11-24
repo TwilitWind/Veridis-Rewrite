@@ -1,8 +1,6 @@
 // 只负责临时 toast 与共享风险弹窗的呈现，不负责其业务判断。
 // 退场时长与 --blai-duration-fast 保持一致，避免动画未播完就被移除。
-import { fadeOutThen } from './motion.js';
-
-const TOAST_EXIT_MS = 120;
+import { fadeOutThen, getFadeExitMs } from './motion.js';
 
 // 语义类型 → Font Awesome 图标；默认 info。
 const TOAST_ICONS = {
@@ -30,7 +28,7 @@ export function showToast(message, description, type = 'info') {
     setTimeout(() => $toast.addClass('blai-show'), 10);
     setTimeout(() => {
         $toast.removeClass('blai-show');
-        setTimeout(() => $toast.remove(), TOAST_EXIT_MS);
+        setTimeout(() => $toast.remove(), getFadeExitMs());
     }, hasDescription ? 6000 : 2000);
 }
 

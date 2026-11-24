@@ -93,10 +93,10 @@
      这不是正文排版字重，只用于图标伪元素，正文一律走上面两类。 */
   --blai-weight-icon: 900;
 
-  /* 动效节奏：淡入淡出、展开收起的时长与缓动统一从这里取值。 */
-  --blai-duration-fast: 120ms; /* 菜单浮层等即显元素的退场 */
-  --blai-duration-base: 160ms; /* 页面面板、toast 进场 */
-  --blai-duration-slow: 180ms; /* 有位移的弹卡进场 */
+  /* 动效节奏：短、快、不回弹；参考 Material Motion 的非对称节奏——退场比进场更短。 */
+  --blai-duration-fast: 80ms;  /* 淡出、菜单、切页、toast */
+  --blai-duration-base: 120ms; /* 弹窗遮罩与通用淡入 */
+  --blai-duration-slow: 140ms; /* 弹卡与有位移的过渡 */
   --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
 
   /* 层级阶梯：全部浮层只从这里取值，不要在页面文件里写裸 z-index。
