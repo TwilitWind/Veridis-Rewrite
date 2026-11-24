@@ -8,11 +8,13 @@
     cursor: pointer;
     /* display/align-items/gap 对抗酒馆输入栏的 !important 强声明，必须保留。
        line-height/white-space 无对抗，实测移除 !important 计算值不变。 */
-    display: inline-flex !important;
-    align-items: center !important;
-    /* 与酒馆原生魔法棒条目一致：原生 #extensionsMenu 的 column-gap 是 10px（双端相同）。 */
+    display: flex !important;
+    align-items: baseline !important;
+    /* 与酒馆原生魔法棒条目（.list-group-item.flex-container.flexGap5）逐项对齐：
+       block 级 flex、baseline 对齐、normal 行高、10px 列距。原生项是 flex + baseline，
+       早先用 inline-flex + center 会让图标与文字相对原生条目错位、看起来缩进更深。 */
     gap: var(--blai-space-10) !important;
-    line-height: 1;
+    line-height: normal;
     white-space: nowrap;
 }
 

@@ -451,6 +451,21 @@
     overflow: hidden;
 }
 
+/* 关闭叉号与标题同处一行、贴最右；标题与说明留给左列，叉号单独占右列。 */
+#blai-ai-model-manage-modal .blai-ai-prompt-modal-head {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--blai-space-12);
+}
+
+#blai-ai-model-manage-modal #blai-ai-model-manage-close,
+#blai-ai-model-manage-modal .blai-ai-model-manage-delete {
+    border: none !important;
+    box-shadow: none !important;
+}
+
 #blai-ai-model-manage-modal .blai-ai-model-manage-list {
     min-height: 0;
     display: grid;

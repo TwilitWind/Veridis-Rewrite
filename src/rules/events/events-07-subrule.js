@@ -131,6 +131,9 @@ export function bindRuleSubruleEditorEvents() {
             const value = String($(this).attr('data-value') || 'program');
             const $select = $('#blai-modal-sub-rewrite-mode');
             if ($select.val() !== value) $select.val(value).trigger('change');
+            // 无论值是否已一致都同步一次高亮：手机端曾出现 select 已是 ai、但分段高亮
+            // 停在 program 的失步，看着像「选了 AI 改写却没有蓝底白字」。
+            applySubruleRewriteModeUI();
         });
 
     $(document).off('input', '#blai-modal-sub-target').on('input', '#blai-modal-sub-target', () => {

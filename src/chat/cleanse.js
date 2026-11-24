@@ -8,7 +8,7 @@ import { isAssistantMessage } from '../diff/tracking.js';
 import { refreshDiffViewer } from '../diff/state.js';
 import { ensureMessageDiffButton, injectDiffButtons } from '../diff/view.js';
 import { getMessageDomNode } from '../dom/message.js';
-import { commitCurrentMessageText, getMessageDiffBranchKey } from './messageBranch.js';
+import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from './messageBranch.js';
 import { getMessageDiffMeta, isMessageDiffReverted, migrateChatDiffMetadata, writeMessageDiffProgram } from '../diff/messageMeta.js';
 import { maintainDiffRetention } from '../diff/retention.js';
 import { markHostChatDirtyFromIndex } from '../integrations/tauriTavern.js';
@@ -121,6 +121,13 @@ export function cleanseMessageDataAtIndex(index, options = {}) {
                 changedSwipeCount++;
             }
         }
+    }
+
+    // 显式重新净化与 AI 提交路径对齐：先释放撤回态残留的 display_text（宿主优先显示它），
+    // 再同步当前 swipe，避免手机端正文被旧显示文本盖住、看起来像没重新改写。
+    if (options.explicitRecleanse === true) {
+        clearMessageDisplayText(msg);
+        syncCurrentSwipeExtra(msg);
     }
 
     const { metadataChanged } = syncMessageDiffMetadata(msg, sourceMes, msg.mes);

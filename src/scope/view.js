@@ -96,7 +96,7 @@ export function renderScopeTagsModal() {
 
     $('#blai-scope-tag-total-count').text(String(displayScopeTags.length));
     $('#blai-scope-tag-editor-title').text(isEditing ? '编辑标签' : '新增标签');
-    $('#blai-scope-tag-save').text('确认');
+    $('#blai-scope-tag-save').text(isEditing ? '确认' : '创建');
     $('#blai-scope-tag-reset').text('取消');
     $('#blai-scope-mode-protect')
         .toggleClass('is-active', !isCleanseInsideMode)

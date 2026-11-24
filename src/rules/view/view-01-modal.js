@@ -20,8 +20,8 @@ export function renderRuleSearchModal() {
         $body.html(`${renderRuleSearchHistoryHtml()}
             <div class="blai-rule-search-empty">
                 <div class="blai-rule-search-empty-icon"><i class="fas fa-magnifying-glass"></i></div>
-                <div class="blai-rule-search-empty-title">边打字边搜索</div>
-                <div class="blai-rule-search-empty-text">输入关键词后会立即在下方列出匹配规则</div>
+                <div class="blai-rule-search-empty-title">搜索规则</div>
+                <div class="blai-rule-search-empty-text">输入关键词并确认，即可在下方列出匹配规则</div>
             </div>
         `);
         return;

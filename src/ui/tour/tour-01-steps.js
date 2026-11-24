@@ -7,7 +7,7 @@ export const mainSteps = [
     { page: 'overview', title: '当前规则集', badge: '基础', body: '这里显示当前查看和使用的净化规则集。\n\n规则集中的规则可以在下方添加、编辑、启用或停用。', target: currentRulesetTourTarget },
     { page: 'overview', title: '导入预设', badge: '基础', body: '可直接导入 AI 改写预设。预设可在帖子内下载；手机端点预设框右侧的竖向省略号，在菜单里选择导入。', target: presetImportTourTarget },
     { page: 'overview', title: '编辑规则', badge: '基础', body: '「添加」用于建立新的规则组，现有规则显示在下方。\n\n规则改动会在关闭插件或切换规则集时提示保存；搜索、批量编辑和反序排序用于规则管理。', target: ruleToolsTourTarget },
-    { page: 'ai', title: 'AI 改写', badge: '按需', body: 'AI 页面包含 API、API Key、模型和「启用改写」设置。\n\n启用 AI 改写的规则会使用这里配置的连接和模型。', target: '#blai-ai-connection-title' },
+    { page: 'ai', title: 'AI 改写', badge: '按需', body: 'AI 页面包含 API、API Key、模型和「启用 AI 改写」设置。\n\n启用 AI 改写的规则会使用这里配置的连接和模型。', target: '#blai-ai-connection-title' },
     { page: 'ai', title: '其他生成参数', badge: '高级', body: '这里包含 Top P、Top K、Max Tokens、惩罚参数、重试、超时、单次条目和 Context 等生成与请求参数。\n\n它们分别控制采样范围、输出长度、请求行为和单次处理规模。', target: aiAdvancedGenerationTourTarget },
     { page: 'clean', title: '标签作用范围', badge: '可选', body: '这个设置用于限制 XML 标签内容的净化范围。\n\n「保护特定标签」会排除启用标签中的内容；「净化特定标签」只处理启用标签中的内容。\n\n在「保护特定标签」模式下，如果没有启用任何标签，不会额外限制净化范围，普通内容会照常净化。', target: '#blai-clean-scope-title' },
     { page: 'clean', title: '深度净化', badge: '高级', body: '深度净化批量处理已有的角色、聊天分支、User 设定、世界书和相关数据。', target: deepCleanLaunchTourTarget },

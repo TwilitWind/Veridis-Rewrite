@@ -51,5 +51,6 @@
 | 文件 | 选择器 / 属性 | 对抗对象 | 不能用 token / 特异性的原因 | 登记日期 |
 | --- | --- | --- | --- | --- |
 | `styles/pages/home/home-rule-edit-modal.css` | `.blai-modal-close-x { border: 0 !important }` | 主题对裸 `button` 的强声明 | 提高特异性仍压不过；叉号必须无边框 | 2026-11-24 |
+| `styles/pages/ai/01-ai.css` | `#blai-ai-model-manage-close, .blai-ai-model-manage-delete { border: none !important; box-shadow: none !important }` | 主题对裸 `button` 的边框/阴影强声明 | 与既有叉号同类，提高特异性仍压不过；管理弹窗两个叉号必须无边框 | 2026-11-24 |
 
 新增条目时，先在 `docs/design/design.md`「CSS 编写规则 → !important 准入门槛」粘贴原因与已排除方案，再登记这张表；不要只改 `quality-baseline.json` 绕过闸门。

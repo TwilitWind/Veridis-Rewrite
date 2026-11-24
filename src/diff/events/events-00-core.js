@@ -54,10 +54,14 @@ export function recleanseDiffMessageAtIndex(index) {
     const sourceMes = typeof meta?.originalMes === 'string'
         ? meta.originalMes
         : (typeof msg.mes === 'string' ? msg.mes : '');
-    return cleanseMessageDataAtIndex(index, {
+    const changed = cleanseMessageDataAtIndex(index, {
         diffSourceMes: sourceMes,
         explicitRecleanse: true,
     });
+    // 与 AI 提交路径对称：用旧 DOM 快照盖住这次重绘，赢过 Tauri 手机端宿主的窗口化重绘。
+    // 数据清理与标脏已在 cleanse 内完成；injectDiffButtons / 存盘由 toggleCurrentDiffRevert 收尾统一处理。
+    refreshMessageDisplay(index, { atomic: true, emitRenderedEvent: 'auto' });
+    return changed;
 }
 
 

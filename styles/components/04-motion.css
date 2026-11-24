@@ -7,15 +7,11 @@
     to { opacity: 1; }
 }
 
-@keyframes blai-fade-rise {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: none; }
-}
-
-/* 切页只做极轻的淡入，避免整页从透明浮起造成「闪一下」。 */
+/* 切页与弹卡只做纯淡入，不叠 transform：portal 菜单由 popover.js 精确定位，
+   锚点若因入场动画先位移再归位，菜单会在二次定位时往上跳。 */
 @keyframes blai-page-in {
-    from { opacity: .82; transform: translateY(2px); }
-    to { opacity: 1; transform: none; }
+    from { opacity: .82; }
+    to { opacity: 1; }
 }
 
 #blai-purifier-popup .page-panel.active {
@@ -26,9 +22,9 @@
     animation: blai-fade-in var(--blai-duration-base) var(--blai-ease-out) both;
 }
 
-/* 弹卡比遮罩晚一点、位移小一点，两层错开才顺，不是整块硬淡。 */
+/* 弹卡比遮罩晚一点出现，两层错开才顺；只做淡入、不位移，避免菜单锚点跟着动。 */
 .blai-modal-shell .blai-modal-card {
-    animation: blai-fade-rise var(--blai-duration-slow) var(--blai-ease-out) both;
+    animation: blai-fade-in var(--blai-duration-slow) var(--blai-ease-out) both;
 }
 
 /* portal 菜单由 popover.js 用 left/top 精确定位；入场动画只做淡入，

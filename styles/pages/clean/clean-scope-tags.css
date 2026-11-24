@@ -82,14 +82,15 @@
 }
 
 .blai-scope-tag-cancel {
-    background: var(--bg-surface);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: transparent;
     color: var(--text-secondary);
 }
 
 .blai-scope-tag-confirm {
     border: var(--blai-border-1) solid var(--accent-color);
-    background: var(--bg-surface);
-    color: var(--accent-ink);
+    background: var(--accent-color);
+    color: var(--accent-contrast);
 }
 
 .blai-scope-tag-cancel:hover, .blai-scope-tag-confirm:hover {

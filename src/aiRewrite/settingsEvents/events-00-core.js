@@ -276,7 +276,7 @@ export function createAiSettingsCore() {
         }
     };
 
-    // 自动触发依赖「启用改写」；未启用时把开关置灰并禁用，避免用户开了一个不会生效的选项。
+    // 自动触发依赖「启用 AI 改写」；未启用时把开关置灰并禁用，避免用户开了一个不会生效的选项。
     const syncAiAutoTriggerAvailability = (aiSettings) => {
         const aiEnabled = aiSettings?.enabled === true;
         $('#blai-ai-auto-trigger-enabled')
@@ -286,7 +286,7 @@ export function createAiSettingsCore() {
             .toggleClass('is-disabled', !aiEnabled);
         $('#blai-ai-auto-trigger-enabled')
             .closest('.blai-ai-switch')
-            .attr('title', aiEnabled ? '' : '先开启「启用改写」，自动触发才会生效');
+            .attr('title', aiEnabled ? '' : '先开启「启用 AI 改写」，自动触发才会生效');
     };
 
     const syncAiRewriteSettingsUI = () => {

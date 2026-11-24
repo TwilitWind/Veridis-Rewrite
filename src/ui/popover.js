@@ -115,17 +115,11 @@ export function openMenuPopover(anchor, menu) {
     menu.style.setProperty('z-index', resolvePortalZIndex(), 'important');
     document.body.appendChild(menu);
     const instance = applyPosition(anchor, menu);
-    // 存同一个 entry 引用，供下方重定位与关闭逻辑共用。
-    // 之前 add() 存匿名对象、这里另建对象，has(entry) 恒 false，重定位从未执行。
+    // 只定位一次：弹窗/切页入场动画已改为纯淡入，锚点不再位移，
+    // 无需二次重定位。原先 animationend + 200ms 的补偿会在锚点归位后重算，
+    // 导致菜单「弹出后又往上跳」，与用户期望的稳定位置冲突。
     const entry = { anchor, menu, instance };
     openMenus.add(entry);
-    // 弹窗/切页入场动画会让锚点先偏 6px。等菜单自身的淡入动画结束再重新定位一次，
-    // 不再逐帧读 getBoundingClientRect（手机上逐帧强制重排是展开卡顿的主要来源）。
-    const settlePosition = () => {
-        if (openMenus.has(entry)) applyPosition(anchor, menu);
-    };
-    menu.addEventListener('animationend', settlePosition, { once: true });
-    window.setTimeout(settlePosition, 200);
 }
 
 export function closeMenuPopover(menu) {

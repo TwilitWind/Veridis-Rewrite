@@ -34,7 +34,7 @@
 .blai-highlight-flash{animation: blaiHighlightFlash 0.8s ease-in-out 2;will-change: filter}
 .blai-visually-hidden{position: absolute;width: var(--blai-size-1);height: var(--blai-size-1);padding: 0;margin: var(--blai-space-neg-1);overflow: hidden;clip: rect(0,0,0,0);white-space: nowrap;border: 0}
 #blai-purifier-popup,#blai-purifier-popup *{text-shadow: none}
-#blai-wand-btn{cursor: pointer;display: inline-flex !important;align-items: center !important;gap: var(--blai-space-10) !important;line-height: 1;white-space: nowrap}
+#blai-wand-btn{cursor: pointer;display: flex !important;align-items: baseline !important;gap: var(--blai-space-10) !important;line-height: normal;white-space: nowrap}
 #blai-wand-btn i{margin: 0}
 .blai-extension-settings-entry .inline-drawer-content{padding: var(--blai-space-8) 0 var(--blai-space-12)}
 .blai-extension-open-btn{width: min(var(--blai-size-260),100%);min-height: var(--blai-size-38);display: inline-flex;align-items: center;justify-content: center;gap: var(--blai-space-8);border-radius: var(--blai-radius-sm);font-size: var(--blai-font-14);font-weight: var(--blai-weight-bold);white-space: nowrap}
@@ -176,13 +176,11 @@
 #blai-purifier-popup select option:disabled,.blai-modal-shell select option:disabled,#blai-scope-tag-editor-modal select option:disabled,#blai-rule-transfer-modal select option:disabled,#blai-diff-modal select option:disabled,#blai-preset-import-choice-modal select option:disabled,#blai-feedback-workspace select option:disabled{color: var(--text-secondary) !important}
 @keyframes blai-fade-in{from{opacity: 0}
 to{opacity: 1}}
-@keyframes blai-fade-rise{from{opacity: 0;transform: translateY(6px)}
-to{opacity: 1;transform: none}}
-@keyframes blai-page-in{from{opacity: .82;transform: translateY(2px)}
-to{opacity: 1;transform: none}}
+@keyframes blai-page-in{from{opacity: .82}
+to{opacity: 1}}
 #blai-purifier-popup .page-panel.active{animation: blai-page-in var(--blai-duration-fast) var(--blai-ease-out) both}
 .blai-modal-shell{animation: blai-fade-in var(--blai-duration-base) var(--blai-ease-out) both}
-.blai-modal-shell .blai-modal-card{animation: blai-fade-rise var(--blai-duration-slow) var(--blai-ease-out) both}
+.blai-modal-shell .blai-modal-card{animation: blai-fade-in var(--blai-duration-slow) var(--blai-ease-out) both}
 :is(.blai-home-card-menu,.blai-subrule-menu,.blai-rule-search-menu,.blai-clean-tag-menu,.blai-clean-group-menu,.blai-diff-actions-menu,.blai-edit-filter-menu){animation: blai-fade-in var(--blai-duration-fast) var(--blai-ease-out) both}
 @media (max-width: 600px){#blai-purifier-popup .page-panel.active{animation-name: blai-page-in;animation-duration: var(--blai-duration-fast)}}
 @media (prefers-reduced-motion: reduce){#blai-purifier-popup .page-panel.active,.blai-modal-shell,.blai-modal-shell .blai-modal-card,:is(.blai-home-card-menu,.blai-subrule-menu,.blai-rule-search-menu,.blai-clean-tag-menu,.blai-clean-group-menu,.blai-diff-actions-menu,.blai-edit-filter-menu){animation: none}}
@@ -1032,8 +1030,8 @@ to{opacity: 1;transform: none}}
 .blai-scope-tag-field-help{color: var(--text-secondary);font-size: var(--blai-font-14);line-height: 1.45}
 .blai-scope-tag-editor-actions{display: flex;align-items: center;justify-content: flex-end;gap: var(--blai-space-18);margin-top: var(--blai-space-26)}
 .blai-scope-tag-cancel,.blai-scope-tag-confirm{min-width: var(--blai-size-96);min-height: var(--blai-size-56);padding: 0 var(--blai-btn-pad-x);border: none;border-radius: var(--blai-radius-14);font-size: var(--blai-font-18);font-weight: var(--blai-weight-bold);line-height: 1;cursor: pointer;transition: transform var(--blai-duration-slow) var(--blai-ease-out),filter var(--blai-duration-slow) var(--blai-ease-out),background-color var(--blai-duration-slow) var(--blai-ease-out)}
-.blai-scope-tag-cancel{background: var(--bg-surface);color: var(--text-secondary)}
-.blai-scope-tag-confirm{border: var(--blai-border-1) solid var(--accent-color);background: var(--bg-surface);color: var(--accent-ink)}
+.blai-scope-tag-cancel{border: var(--blai-border-1) solid var(--border-color);background: transparent;color: var(--text-secondary)}
+.blai-scope-tag-confirm{border: var(--blai-border-1) solid var(--accent-color);background: var(--accent-color);color: var(--accent-contrast)}
 .blai-scope-tag-cancel:hover,.blai-scope-tag-confirm:hover{filter: brightness(1.03) !important}
 .blai-scope-tag-cancel:active,.blai-scope-tag-confirm:active{transform: scale(0.98) !important}
 @media screen and (min-width: 601px){#blai-scope-tag-editor-modal .blai-scope-tag-editor-card{width: min(var(--blai-size-560),calc(100vw - var(--blai-size-28)));max-width: var(--blai-size-560);height: calc(var(--blai-viewport-h) - var(--blai-size-28));max-height: calc(var(--blai-viewport-h) - var(--blai-size-28));padding: var(--blai-space-16) var(--blai-space-20) var(--blai-space-18);border-radius: var(--blai-radius-lg);box-sizing: border-box}
@@ -1763,6 +1761,8 @@ to{opacity: 1;transform: none}}
 #blai-ai-additional-modal .blai-ai-additional-modal-actions{margin: 0;justify-content: flex-end}
 #blai-ai-model-manage-modal{z-index: var(--blai-z-modal);padding: var(--blai-space-14);align-items: center;justify-content: center}
 #blai-ai-model-manage-modal .blai-ai-model-manage-card{width: min(var(--blai-size-420),100%);max-height: min(70vh,var(--blai-size-560));display: grid;grid-template-rows: auto minmax(0,1fr) auto;gap: var(--blai-space-12);padding: var(--blai-space-18);border-radius: var(--blai-radius-lg);overflow: hidden}
+#blai-ai-model-manage-modal .blai-ai-prompt-modal-head{min-width: 0;display: grid;grid-template-columns: minmax(0,1fr) auto;align-items: start;gap: var(--blai-space-12)}
+#blai-ai-model-manage-modal #blai-ai-model-manage-close,#blai-ai-model-manage-modal .blai-ai-model-manage-delete{border: none !important;box-shadow: none !important}
 #blai-ai-model-manage-modal .blai-ai-model-manage-list{min-height: 0;display: grid;gap: var(--blai-space-4);overflow-y: auto}
 #blai-ai-model-manage-modal .blai-ai-model-manage-row{display: flex;align-items: center;justify-content: space-between;gap: var(--blai-space-8);min-height: var(--blai-size-36);padding: 0 var(--blai-space-10);border: var(--blai-border-1) solid var(--border-color);border-radius: var(--blai-radius-sm);background: var(--blai-input-bg)}
 #blai-ai-model-manage-modal .blai-ai-model-manage-name{min-width: 0;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;color: var(--text-main);font-size: var(--blai-font-13)}
