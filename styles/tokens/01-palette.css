@@ -15,6 +15,8 @@
 #blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
     --status-danger: #B6494B;
     --status-success: #5D8A68;
+    /* 危险语义的浅底文字：说明气泡里的清理警告用这一档，不直接用实心危险红。 */
+    --blai-text-danger-soft: color-mix(in srgb, var(--status-danger) 72%, var(--text-main));
     /* 净化透视四种来源的实心圆点 / 改写文字色。夜间在 02-themes.css 覆盖为亮一档。 */
     --blai-diff-original: #6B7280;
     --blai-diff-program: #3D6FB4;
@@ -47,13 +49,14 @@
     /* 危险实心块（删除类按钮）上的文字色 */
     --danger-contrast: #FFFFFF;
 
-    /* 正则表达式语法高亮（日间值，夜间在 dark 段覆盖） */
-    --re-escape: #C25E00;
-    --re-class: #2A7B9B;
-    --re-group: #7A4FA8;
-    --re-quant: #C4463F;
-    --re-anchor: #5C7D00;
-    --re-error: #C4433F;
+    /* 正则表达式语法高亮：保留色相，明度跟酒馆正文色混合。
+       浅色主题自动压暗、深色主题自动提亮，避免固定十六进制色在某一主题下发虚。 */
+    --re-escape: color-mix(in srgb, #C25E00 72%, var(--text-main));
+    --re-class: color-mix(in srgb, #2A7B9B 72%, var(--text-main));
+    --re-group: color-mix(in srgb, #7A4FA8 72%, var(--text-main));
+    --re-quant: color-mix(in srgb, #C4463F 72%, var(--text-main));
+    --re-anchor: color-mix(in srgb, #5C7D00 72%, var(--text-main));
+    --re-error: color-mix(in srgb, #C4433F 72%, var(--text-main));
     /* 匹配测试区命中高亮：柔和琥珀，日间压低浓度，避免盖住文字 */
     --blai-test-match-bg: rgba(214, 158, 46, 0.32);
     /* 强调色拆三个角色，不可混用：

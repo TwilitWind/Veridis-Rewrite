@@ -1,4 +1,4 @@
-import { resolveDeepCleanFinalProposedText } from './aiProcessing.js';
+import { resolveFinalProposedText } from './aiProcessing.js';
 import { compareTextPairsInBackground } from '../diff/background.js';
 
 // 在跳转或应用之前会先等待用户待定的编辑；被取代的工作会被终止。
@@ -59,7 +59,7 @@ export function getDeepCleanReviewItemIndexes(processedRun, itemIndexes = null) 
     candidateItemIndexes.forEach((itemIndex) => {
         const item = contentItems[itemIndex];
         if (typeof item?.originalText !== 'string') return;
-        if (!item.protectionReason && resolveDeepCleanFinalProposedText(processedRun, itemIndex) === item.originalText) return;
+        if (!item.protectionReason && resolveFinalProposedText(processedRun, itemIndex) === item.originalText) return;
         reviewItemIndexes.push(itemIndex);
     });
     return reviewItemIndexes;
@@ -70,7 +70,7 @@ function createDeepCleanReviewRuns(text, source) {
     return value ? [{ source, text: value }] : [];
 }
 
-export function resolveDeepCleanReviewRunsText(runs = []) {
+export function resolveReviewRunsText(runs = []) {
     return Array.isArray(runs)
         ? runs.reduce((text, run) => text + String(run?.text ?? ''), '')
         : '';
@@ -102,7 +102,7 @@ function appendDeepCleanReviewRunRange(target, runs, start, length) {
 
 async function updateDeepCleanReviewRuns(runs, editedText, signal) {
     const previousRuns = Array.isArray(runs) ? runs : [];
-    const previousText = resolveDeepCleanReviewRunsText(previousRuns);
+    const previousText = resolveReviewRunsText(previousRuns);
     const nextText = String(editedText ?? '');
     if (previousText === nextText) return previousRuns;
 
@@ -169,7 +169,7 @@ export async function createDeepCleanReviewSession(processedRun, itemIndexes = n
     const reviewItemIndexes = getDeepCleanReviewItemIndexes(processedRun, itemIndexes);
     const comparisons = await compareTextPairsInBackground(reviewItemIndexes.map(itemIndex => ({
         oldText: getContentItem(processedRun, itemIndex).originalText,
-        newText: resolveDeepCleanFinalProposedText(processedRun, itemIndex),
+        newText: resolveFinalProposedText(processedRun, itemIndex),
     })), { signal });
     return {
         processedRun,
@@ -224,7 +224,7 @@ export function resolveDeepCleanReviewedText(session, itemIndex) {
     const entry = getReviewEntry(session, itemIndex);
     if (!entry) return null;
     return entry.blocks.reduce((text, block) => {
-        if (block.type === 'equal') return text + resolveDeepCleanReviewRunsText(block.runs);
-        return text + resolveDeepCleanReviewRunsText(block.active === 'old' ? block.oldRuns : block.newRuns);
+        if (block.type === 'equal') return text + resolveReviewRunsText(block.runs);
+        return text + resolveReviewRunsText(block.active === 'old' ? block.oldRuns : block.newRuns);
     }, '');
 }

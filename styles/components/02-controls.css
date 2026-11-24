@@ -647,6 +647,8 @@
     grid-template-columns: 1fr;
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
+    max-height: var(--blai-dropdown-max-height);
+    overflow-y: auto;
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);
     background: var(--blai-dropdown-bg);
@@ -707,45 +709,45 @@
     color: inherit;
 }
 
-/* 滑动开关：图标本体即开关（Font Awesome fa-toggle-off / fa-toggle-on），
-   轨道与圆点不再自绘。默认显示 off，勾选态显示 on。 */
-.blai-switch-on { display: none; }
-.blai-switch-off { display: inline-block; }
-
-/* 酒馆宿主用 .fa-solid:not(#load-spinner){font-size:var(--icon-size)} 把所有
-   FA 图标锁成 13.5px。fa-toggle-* 字形在字体框里留白较多，13px 看着偏小；
-   这里单独把开关图标提到 15px，按钮外框仍是 32×32，不与同行按钮一起放大。 */
+/* 滑动开关：纯 CSS 轨道 + 滑块，不依赖 Font Awesome / SVG。
+   页面只保留一个空 track 节点，开启态由父级 :checked / aria-pressed / .is-on 决定。 */
 :is(.blai-ai-switch-track, .blai-clean-switch-track, .blai-tools-switch-track) {
-    --icon-size: var(--blai-font-15);
+    --blai-switch-knob: color-mix(in srgb, white 94%, var(--bg-surface));
+    --blai-switch-offset: 0px;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    width: var(--blai-switch-track-width);
+    height: var(--blai-switch-track-height);
+    padding: 0 var(--blai-space-2);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--text-secondary) 42%, var(--border-color));
+    border-radius: var(--blai-radius-full);
+    background: color-mix(in srgb, var(--text-secondary) 16%, var(--bg-surface));
+    transition: background-color var(--blai-duration-fast) var(--blai-ease-out), border-color var(--blai-duration-fast) var(--blai-ease-out);
 }
 
-/* 开启态颜色与所在行的铅笔/竖三点等 UI 图标同色（--text-main）。
-   页面文件里给轨道写了 #id 前缀的 --text-secondary，这里同样带 #id /
-   .blai-modal-shell 前缀才压得过，避免开启后仍是灰色。
-   禁用态由 ai/01-ai.css 的更强规则保留灰色。 */
-:is(#blai-purifier-popup, .blai-modal-shell) .blai-ai-switch input:checked ~ .blai-ai-switch-track,
-:is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-group-switch.is-on .blai-clean-switch-track,
-:is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track,
-:is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-tag-switch input:checked + .blai-clean-switch-track,
-:is(#blai-purifier-popup, .blai-modal-shell) .blai-clean-checkbox-switch input:checked + .blai-clean-switch-track,
-:is(#blai-purifier-popup, .blai-modal-shell) .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
-    color: var(--text-main);
+:is(.blai-ai-switch-track, .blai-clean-switch-track, .blai-tools-switch-track)::before {
+    width: var(--blai-switch-knob-size);
+    height: var(--blai-switch-knob-size);
+    flex: 0 0 auto;
+    margin-inline-start: var(--blai-switch-offset);
+    border-radius: var(--blai-radius-full);
+    background: var(--blai-switch-knob);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--bg-base) 28%, transparent);
+    content: '';
+    transition: margin-inline-start var(--blai-duration-fast) var(--blai-ease-out), background-color var(--blai-duration-fast) var(--blai-ease-out);
 }
 
-.blai-ai-switch input:checked ~ .blai-ai-switch-track .blai-switch-off,
-.blai-clean-group-switch.is-on .blai-clean-switch-track .blai-switch-off,
-.blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track .blai-switch-off,
-.blai-clean-tag-switch input:checked + .blai-clean-switch-track .blai-switch-off,
-.blai-clean-checkbox-switch input:checked + .blai-clean-switch-track .blai-switch-off,
-.blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track .blai-switch-off {
-    display: none;
-}
-
-.blai-ai-switch input:checked ~ .blai-ai-switch-track .blai-switch-on,
-.blai-clean-group-switch.is-on .blai-clean-switch-track .blai-switch-on,
-.blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track .blai-switch-on,
-.blai-clean-tag-switch input:checked + .blai-clean-switch-track .blai-switch-on,
-.blai-clean-checkbox-switch input:checked + .blai-clean-switch-track .blai-switch-on,
-.blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track .blai-switch-on {
-    display: inline-block;
+.blai-ai-switch input:checked ~ .blai-ai-switch-track,
+.blai-clean-group-switch.is-on .blai-clean-switch-track,
+.blai-clean-switch[aria-pressed="true"] .blai-clean-switch-track,
+.blai-clean-tag-switch input:checked + .blai-clean-switch-track,
+.blai-clean-checkbox-switch input:checked + .blai-clean-switch-track,
+.blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
+    --blai-switch-knob: color-mix(in srgb, white 94%, var(--bg-surface));
+    --blai-switch-offset: calc(100% - var(--blai-switch-knob-size));
+    border-color: var(--accent-color);
+    background: var(--accent-color);
 }

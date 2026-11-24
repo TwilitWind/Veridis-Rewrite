@@ -11,7 +11,7 @@ import { logger } from '../log.js';
 import { getCurrentCharacterContext, getCurrentChatCompletionPresetName } from '../host/context.js';
 import { deepClone } from './model.js';
 import { renderTags } from '../rules/view.js';
-import { buildPresetEntry, getCurrentPresetAiRewriteSettings, getPresetAiRewriteSettings, getPresetRules } from './model.js';
+import { buildPresetEntry, getActivePresetAiSettings, getPresetAiRewriteSettings, getPresetRules } from './model.js';
 import { showToast } from '../ui/notifications.js';
 import { getPresetForCharacter } from './bindings.js';
 import { refreshCharacterBindingUI, syncPresetAiRewriteGenerationSettingsUI, updateToolbarUI } from './view.js';
@@ -30,7 +30,7 @@ function hasPresetContentChanges(currentRules, savedPresetEntry, currentAiRewrit
 
     const savedAiRewrite = getPresetAiRewriteSettings(savedPresetEntry);
     if (!savedAiRewrite) return false;
-    return JSON.stringify(getCurrentPresetAiRewriteSettings(currentAiRewrite)) !== JSON.stringify(savedAiRewrite);
+    return JSON.stringify(getActivePresetAiSettings(currentAiRewrite)) !== JSON.stringify(savedAiRewrite);
 }
 
 export function hasActivePresetUnsavedChanges() {
@@ -61,7 +61,7 @@ export function saveActivePresetSnapshot(options = {}) {
         if (options.toast !== false) showToast('当前为临时预设，请点「新建」保存。', undefined, 'warning');
         return false;
     }
-    settings.presets[active] = buildPresetEntry(settings.rules || [], getCurrentPresetAiRewriteSettings(settings.aiRewrite));
+    settings.presets[active] = buildPresetEntry(settings.rules || [], getActivePresetAiSettings(settings.aiRewrite));
     saveSettingsDebounced();
     markRulesDataDirty({ rulesUi: false });
     if (options.toast !== false) showToast('已保存', undefined, 'success');
@@ -76,7 +76,7 @@ export function syncActivePresetSnapshot() {
     const settings = extension_settings[extensionName];
     const active = String(settings.activePreset || '');
     if (!active) return false;
-    settings.presets[active] = buildPresetEntry(settings.rules || [], getCurrentPresetAiRewriteSettings(settings.aiRewrite));
+    settings.presets[active] = buildPresetEntry(settings.rules || [], getActivePresetAiSettings(settings.aiRewrite));
     saveSettingsDebounced();
     return true;
 }

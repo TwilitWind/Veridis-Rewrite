@@ -100,12 +100,12 @@
     --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.46);
     /* 深灰蓝底配白字，避免浅蓝底在深主题下发荧光；蓝同步去青。 */
     --blai-dropdown-active-bg: #47567E;
-    --re-escape: #FF8F40;
-    --re-class: #39BAE6;
-    --re-group: #D2A6FF;
-    --re-quant: #F07178;
-    --re-anchor: #AAD94C;
-    --re-error: #D95757;
+    --re-escape: color-mix(in srgb, #FF8F40 76%, var(--text-main));
+    --re-class: color-mix(in srgb, #39BAE6 76%, var(--text-main));
+    --re-group: color-mix(in srgb, #D2A6FF 76%, var(--text-main));
+    --re-quant: color-mix(in srgb, #F07178 76%, var(--text-main));
+    --re-anchor: color-mix(in srgb, #AAD94C 76%, var(--text-main));
+    --re-error: color-mix(in srgb, #D95757 76%, var(--text-main));
     /* 深底上适当提高浓度，柔和不刺眼 */
     --blai-test-match-bg: rgba(230, 170, 60, 0.38);
 }
@@ -139,6 +139,12 @@
     --blai-diff-ai: #8A6A9E;
     --blai-diff-manual: #8D7A3F;
     --blai-dropdown-active-bg: #A85832;
+    --re-escape: color-mix(in srgb, #C25E00 72%, var(--text-main));
+    --re-class: color-mix(in srgb, #2A7B9B 72%, var(--text-main));
+    --re-group: color-mix(in srgb, #7A4FA8 72%, var(--text-main));
+    --re-quant: color-mix(in srgb, #C4463F 72%, var(--text-main));
+    --re-anchor: color-mix(in srgb, #5C7D00 72%, var(--text-main));
+    --re-error: color-mix(in srgb, #C4433F 72%, var(--text-main));
     --blai-test-match-bg: rgba(190, 150, 60, 0.30);
 }
 
@@ -176,12 +182,12 @@
     --blai-scrollbar-thumb: rgba(255, 255, 255, 0.24);
     --blai-scrollbar-thumb-hover: rgba(255, 255, 255, 0.38);
     --blai-dropdown-active-bg: #4A6147;
-    --re-escape: #EBCB8B;
-    --re-class: #A3BE8C;
-    --re-group: #B48EAD;
-    --re-quant: #BF616A;
-    --re-anchor: #8FBCBB;
-    --re-error: #BF616A;
+    --re-escape: color-mix(in srgb, #EBCB8B 76%, var(--text-main));
+    --re-class: color-mix(in srgb, #A3BE8C 76%, var(--text-main));
+    --re-group: color-mix(in srgb, #B48EAD 76%, var(--text-main));
+    --re-quant: color-mix(in srgb, #BF616A 76%, var(--text-main));
+    --re-anchor: color-mix(in srgb, #8FBCBB 76%, var(--text-main));
+    --re-error: color-mix(in srgb, #BF616A 76%, var(--text-main));
     --blai-test-match-bg: rgba(235, 203, 139, 0.32);
 }
 
@@ -281,7 +287,7 @@
     .blai-home-card-menu, .blai-subrule-menu, .blai-preset-menu,
     .blai-rule-search-menu, .blai-edit-filter-menu,
     .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu,
-    .blai-theme-menu
+    .blai-theme-menu, .blai-portal-menu
 ) {
     --blai-dropdown-bg: var(--bg-surface);
     --blai-dropdown-ink: var(--text-main);
@@ -290,17 +296,23 @@
     --blai-dropdown-active-ink: #FFFFFF;
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    /* 高亮整行铺满菜单：上/左/下内边距为 0，只在右侧留滚动条槽，
-       避免滚动条与左侧菜单项粘连。首末行圆角由 07-menu-fill.css 补。 */
-    --blai-dropdown-pad: 0;
-    --blai-dropdown-gap: 0;
+    /* 菜单四方向留白：容器四周 6px、行间 2px，每行自带小圆角。
+       对齐成熟组件做法——高亮块不贴菜单边，避免色块顶破圆角、滚动条粘连文字。 */
+    --blai-dropdown-pad: var(--blai-space-6);
+    --blai-dropdown-gap: var(--blai-space-2);
     --blai-dropdown-shadow: var(--blai-shadow-sm);
-    --blai-dropdown-item-radius: 0;
+    --blai-dropdown-item-radius: var(--blai-radius-sm);
     --blai-dropdown-item-pad-x: var(--blai-space-10);
     --blai-dropdown-item-height: var(--blai-size-28);
+    /* 图标列固定宽度：不同 Font Awesome 字形本身宽窄不一，若让图标自适应，
+       同一列选项的文字起点会逐个错开；固定列宽后所有行文字严格对齐。 */
+    --blai-dropdown-icon-slot: var(--blai-size-16);
     --blai-dropdown-item-font: var(--blai-font-13);
     /* 下拉列表内的字体一律不加粗；选中态用底色 / 文字色区分，不用字重。 */
     --blai-dropdown-item-weight: var(--blai-weight-normal);
+    /* 菜单高度统一上限：约 12 行 / 视口 60%，取小者。popover.js 会再按
+       锚点上下可用空间收紧（写内联 max-height），两者叠加即「三者取最小」。 */
+    --blai-dropdown-max-height: min(var(--blai-size-340), 60vh);
 }
 
 :where(

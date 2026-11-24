@@ -150,7 +150,7 @@
 }
 
 #blai-purifier-popup .blai-zh-dict-state-text {
-    flex: 1 1 auto;
+    flex: 1 1 0%;
     min-width: 0;
 }
 
@@ -198,7 +198,7 @@
     white-space: nowrap;
     box-shadow: none;
     cursor: pointer;
-    transition: background-color .16s ease, transform .12s ease;
+    transition: background-color var(--blai-duration-base) var(--blai-ease-out), transform var(--blai-duration-fast) var(--blai-ease-out);
 }
 
 #blai-purifier-popup .blai-tools-primary-button:hover {
@@ -224,7 +224,7 @@
 #blai-purifier-popup .blai-tools-version-update-action {
     grid-column: 1;
     grid-row: auto;
-    justify-self: start;
+    justify-self: end;
 }
 
 #blai-purifier-popup .blai-tools-version-body {

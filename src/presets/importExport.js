@@ -8,7 +8,7 @@ import { getAppContext } from '../host/appContext.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { focusOnFinePointer } from '../ui/popover.js';
 import { presetsRuntimeState, markPresetsUiDirty } from './state.js';
-import { deepClone, buildPresetEntry, getCurrentPresetAiRewriteSettings, normalizePresetAiRewriteSettings } from './model.js';
+import { deepClone, buildPresetEntry, getActivePresetAiSettings, normalizePresetAiRewriteSettings } from './model.js';
 import { normalizeRuleActivationSafety } from '../rules/model.js';
 import { syncPresetAiRewriteGenerationSettingsUI, updateToolbarUI } from './view.js';
 import { renderTags } from '../rules/view.js';
@@ -17,7 +17,7 @@ import { showAlertModal, showConfirmModal, showToast } from '../ui/notifications
 export function buildCurrentPresetEntry(rules) {
     const { extension_settings } = getAppContext();
     const settings = extension_settings[extensionName];
-    return buildPresetEntry(rules, getCurrentPresetAiRewriteSettings(settings.aiRewrite));
+    return buildPresetEntry(rules, getActivePresetAiSettings(settings.aiRewrite));
 }
 
 function extractPresetImportAiRewriteSettings(payload) {
@@ -81,7 +81,7 @@ export function buildPresetExportPayload(settings) {
     return {
         type: 'veridis-rewrite-preset',
         version: 2,
-        ...buildPresetEntry(buildPresetExportRules(settings.rules), getCurrentPresetAiRewriteSettings(settings.aiRewrite)),
+        ...buildPresetEntry(buildPresetExportRules(settings.rules), getActivePresetAiSettings(settings.aiRewrite)),
     };
 }
 

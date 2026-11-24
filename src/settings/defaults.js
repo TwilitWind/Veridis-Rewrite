@@ -254,7 +254,7 @@ export function migrateKnownAiRewritePrompt(promptTemplate) {
         : String(promptTemplate || '');
 }
 
-export function needsCustomGlobalPromptMigrationConfirmation(aiRewrite) {
+export function needsPromptMigrationConfirm(aiRewrite) {
     if (!aiRewrite || typeof aiRewrite !== 'object') return false;
     const promptTemplate = String(aiRewrite.promptTemplate || '');
     return aiRewrite.globalPromptMigrationDecisionMade !== true

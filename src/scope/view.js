@@ -3,13 +3,13 @@ import { extensionName } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { showResponsivePage } from '../ui/shell.js';
 import { safeHtml } from '../ui/html.js';
-import { COT_SCOPE_TAG_DISPLAY_TEXT, DEFAULT_SCOPE_TAG_GROUP_ID, DEFAULT_SCOPE_TAG_GROUP_NAME, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeScopeTagCollapsedGroupList, normalizeScopeTagGroupList } from './model.js';
+import { COT_SCOPE_TAG_DISPLAY_TEXT, DEFAULT_SCOPE_TAG_GROUP_ID, DEFAULT_SCOPE_TAG_GROUP_NAME, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeCollapsedGroupList, normalizeScopeTagGroupList } from './model.js';
 function getScopeTagGroupsForSettings(settings = {}) {
     return normalizeScopeTagGroupList(settings?.scopeTagGroups);
 }
 
 function getScopeTagCollapsedGroupSet(settings = {}, groups = []) {
-    return new Set(normalizeScopeTagCollapsedGroupList(settings?.scopeTagCollapsedGroups, groups));
+    return new Set(normalizeCollapsedGroupList(settings?.scopeTagCollapsedGroups, groups));
 }
 
 function getScopeTagDisplayGroupId(scopeTag, groupIds) {
@@ -40,7 +40,7 @@ function buildScopeTagChipHtml(scopeTag, editId, index = 0, total = 1) {
             <div class="blai-clean-tag-actions">
                 <label class="blai-clean-tag-switch" title="启用或停用该标签">
                     <input type="checkbox" class="blai-clean-tag-toggle-input" data-id="${safeHtml(scopeTag.id)}" ${checkedAttr}>
-                    <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
+                    <span class="blai-clean-switch-track" aria-hidden="true"></span>
                 </label>
                 <button type="button" class="blai-clean-tag-action blai-clean-tag-edit" data-id="${safeHtml(scopeTag.id)}" title="编辑此标签" aria-label="编辑此标签"><i class="fas fa-pen" aria-hidden="true"></i></button>
                 <div class="blai-clean-tag-menu-wrap">
@@ -144,7 +144,7 @@ export function renderScopeTagsModal() {
                 </button>
                 <div class="blai-clean-group-controls">
                     <button type="button" class="${groupToggleClass}" data-group-id="${safeHtml(group.id)}" aria-pressed="${String(isGroupEnabled)}" title="${safeHtml(groupToggleTitle)}" ${groupToggleDisabled}>
-                        <span class="blai-clean-switch-track" aria-hidden="true"><i class="fa-solid fa-toggle-off blai-switch-off"></i><i class="fa-solid fa-toggle-on blai-switch-on"></i></span>
+                        <span class="blai-clean-switch-track" aria-hidden="true"></span>
                     </button>
                     <button type="button" class="blai-clean-tag-action blai-clean-group-edit" data-group-id="${safeHtml(group.id)}" title="编辑分组名称" aria-label="编辑分组名称"><i class="fas fa-pen" aria-hidden="true"></i></button>
                     <div class="blai-clean-group-menu-wrap">

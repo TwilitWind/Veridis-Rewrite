@@ -62,6 +62,10 @@
   --blai-fs-sub: 14px;
   --blai-fs-title: 15px;
   --blai-fs-hero: 18px;
+  /* 弹窗顶栏控件：文字比正文小半档、图标比标题略大，
+     避免「标题已看清、右侧开关和叉号却像缩了一号」。 */
+  --blai-fs-control: 13px;
+  --blai-fs-control-icon: 16px;
 
   /* 旧数字 token → 5 档别名（映射见 docs/font-convergence-plan.md）。 */
   --blai-font-8: var(--blai-fs-note);
@@ -113,6 +117,16 @@
   /* 交互控件的重复几何，收成单一出处：改写一处全站同步，避免各页写各自的字面量。 */
   --blai-focus-offset: 2px;       /* :focus-visible 描边与控件的间距（按钮/开关/菜单项一致） */
   --blai-ring-inset: inset 0 0 0 var(--blai-border-1); /* 1px 内描边环，颜色由使用处叠加 */
+  /* 说明按钮与说明气泡：工具页与 API 页共用同一套几何。 */
+  --blai-info-trigger-size: var(--blai-size-18);
+  --blai-info-popover-width: var(--blai-size-280);
+  --blai-info-popover-gap: var(--blai-space-8);
+  --blai-info-popover-pad: var(--blai-space-12);
+  --blai-info-popover-radius: var(--blai-radius-10);
+  /* 纯 CSS 开关：轨道与滑块尺寸只在这里定义，组件文件不再写字面量。 */
+  --blai-switch-track-width: var(--blai-size-32);
+  --blai-switch-track-height: var(--blai-size-18);
+  --blai-switch-knob-size: var(--blai-size-14);
 
   /* 圆角；--blai-radius-full 只用于本就为圆形的元素（色点、开关轨道、进度条、滚动条、圆形图标）。 */
   /* 语义档位：大组件（Modal 等承载内容的卡片）用 lg，输入类小控件（Button/Input）用 sm，全端同一档。 */
@@ -289,5 +303,7 @@
   --blai-fs-sub: 15px;
   --blai-fs-title: 16px;
   --blai-fs-hero: 18px;
+  --blai-fs-control: 14px;
+  --blai-fs-control-icon: 18px;
 }
 }

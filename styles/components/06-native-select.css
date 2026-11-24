@@ -54,6 +54,22 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+}
+
+.blai-native-select-label i,
+.blai-native-select-item i {
+    flex: 0 0 auto;
+    color: var(--accent-ink);
+}
+
+/* 图标进固定列并居中，文字起点不再随字形宽度漂移。 */
+.blai-native-select-item i {
+    justify-self: center;
+    width: var(--blai-dropdown-icon-slot);
+    text-align: center;
 }
 
 .blai-native-select-caret {
@@ -68,12 +84,7 @@
     --blai-dropdown-ink: var(--text-main);
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    --blai-dropdown-pad: 0;
-    --blai-dropdown-gap: 0;
     --blai-dropdown-shadow: var(--blai-shadow-sm);
-    --blai-dropdown-item-radius: 0;
-    --blai-dropdown-item-pad-x: var(--blai-space-10);
-    --blai-dropdown-item-height: var(--blai-size-28);
     --blai-dropdown-item-font: var(--blai-font-13);
     --blai-dropdown-item-weight: var(--blai-weight-normal);
     position: fixed;
@@ -82,7 +93,7 @@
     min-width: var(--blai-size-120);
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
-    max-height: min(var(--blai-size-360), 60vh);
+    max-height: var(--blai-dropdown-max-height);
     overflow-y: auto;
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);
@@ -96,9 +107,13 @@
 }
 
 .blai-native-select-item {
-    display: flex;
+    display: grid;
+    grid-template-columns: var(--blai-dropdown-icon-slot) minmax(0, 1fr);
     align-items: center;
+    gap: var(--blai-space-6);
     width: 100%;
+    min-width: 0;
+    white-space: nowrap;
     min-height: var(--blai-dropdown-item-height);
     padding: 0 var(--blai-dropdown-item-pad-x);
     border: 0;
@@ -123,6 +138,17 @@
     color: var(--text-secondary);
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.blai-native-select-item-text {
+    min-width: 0;
+}
+
+/* 只有内容真的超出视口上限、菜单被强制收窄时才省略；
+   普通选项一律完整显示，不提前打省略号。 */
+.blai-native-select-menu.is-width-capped .blai-native-select-item-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .blai-native-select-group {

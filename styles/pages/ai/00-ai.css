@@ -158,7 +158,6 @@
 #blai-ai-prompt-modal .blai-ai-prompt-modal-card {
     width: 100vw !important;
     height: var(--blai-viewport-h) !important;
-    height: var(--blai-viewport-h) !important;
     max-width: none !important;
     max-height: none !important;
     border-radius: 0 !important;
@@ -168,13 +167,6 @@
     gap: var(--blai-space-12) !important;
     overflow: hidden !important;
 }
-
-@media (max-width: 600px) {#blai-ai-prompt-modal > .blai-ai-prompt-modal-card {
-    width: 100% !important;
-    max-width: var(--blai-size-420) !important;
-    max-height: calc(var(--blai-viewport-h) - var(--blai-size-40)) !important;
-    border-radius: var(--blai-radius-lg) !important;
-}}
 
 #blai-ai-prompt-modal .blai-ai-prompt-modal-head {
     min-width: 0;
@@ -252,35 +244,6 @@
     align-items: center;
     gap: var(--blai-space-7);
     min-width: 0;
-}
-
-#blai-purifier-popup.blai-app-shell .blai-ai-info-btn {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--blai-size-18);
-    height: var(--blai-size-18);
-    min-width: var(--blai-size-18);
-    padding: 0;
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: 50%;
-    background: var(--bg-surface);
-    color: var(--text-secondary);
-    font-size: var(--blai-font-11);
-    line-height: 1;
-    cursor: pointer;
-    box-shadow: none;
-    transition: color .16s ease, border-color .16s ease;
-}
-
-#blai-purifier-popup.blai-app-shell .blai-ai-info-btn:hover {
-    color: var(--accent-ink) !important;
-    border-color: currentColor !important;
-}
-
-#blai-purifier-popup.blai-app-shell .blai-ai-info-btn:focus-visible {
-    outline: none !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-section-header p {
@@ -511,13 +474,27 @@
     height: var(--blai-size-40);
 }
 
-/* 模型区：一行 = 模型下拉（自动拉取 / 手动填写两个分组）+ 手动填写 + 刷新 */
+/* 模型区：一行 = 模型下拉 + 操作菜单触发器；三个动作收进省略号菜单。 */
 #blai-purifier-popup.blai-app-shell .blai-ai-model-row {
     min-width: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--blai-space-6);
+}
+
+.blai-ai-model-actions-menu {
+    min-width: var(--blai-size-180);
+}
+
+.blai-ai-model-actions-menu .blai-preset-menu-item {
+    gap: var(--blai-space-8);
+    justify-content: flex-start;
+}
+
+.blai-ai-model-actions-menu .blai-preset-menu-item[aria-disabled="true"] {
+    opacity: .45;
+    cursor: default;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-model-select optgroup {
@@ -604,7 +581,7 @@
 #blai-purifier-popup.blai-app-shell .blai-ai-switch-track {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex: 0 0 auto;
     font-size: var(--blai-font-18);
     line-height: 1;

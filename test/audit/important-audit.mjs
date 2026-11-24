@@ -3,7 +3,7 @@
 //   --json            输出结构化 JSON（供脚本消费）
 //   --strict          任一文件 !important 数量高于基线即退出 1
 //   --update-baseline 把当前每文件 !important 数量写回 styles/quality-baseline.json
-// 依据：E:/Plugin Development/docs/design.md「CSS 编写规则」——数量只许降，
+// 依据：E:/Plugin Development/docs/design/design.md「CSS 编写规则」——数量只许降，
 // 第三方主题注入的 !important 才准入，且必须注释对抗对象。
 import fs from 'node:fs';
 import path from 'node:path';

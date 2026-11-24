@@ -1,0 +1,74 @@
+/* 通用说明按钮与说明气泡：工具页楼层数与 API 连接共用。
+   气泡由 popover.js 挂到 body，字体、边框、投影都必须由自身令牌解析，不能依赖插件容器。 */
+
+#blai-purifier-popup .blai-info-trigger {
+    flex: 0 0 auto;
+    width: var(--blai-info-trigger-size);
+    height: var(--blai-info-trigger-size);
+    min-width: var(--blai-info-trigger-size);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--blai-radius-full);
+    background: transparent;
+    color: var(--text-secondary);
+    box-shadow: none;
+    font: inherit;
+    font-size: var(--blai-fs-note);
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--blai-duration-fast) var(--blai-ease-out),
+        background-color var(--blai-duration-fast) var(--blai-ease-out);
+}
+
+#blai-purifier-popup .blai-info-trigger:hover,
+#blai-purifier-popup .blai-info-trigger[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    color: var(--accent-ink);
+}
+
+#blai-purifier-popup .blai-info-trigger:focus-visible {
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 78%, transparent);
+    outline-offset: var(--blai-focus-offset);
+}
+
+.blai-info-popover {
+    --blai-dropdown-bg: var(--bg-surface);
+    --blai-dropdown-border: var(--border-color);
+    --blai-dropdown-shadow: var(--blai-shadow-sm);
+    position: fixed;
+    z-index: var(--blai-z-menu);
+    box-sizing: border-box;
+    display: grid;
+    gap: var(--blai-info-popover-gap);
+    width: min(var(--blai-info-popover-width), calc(100vw - var(--blai-space-16)));
+    padding: var(--blai-info-popover-pad);
+    border: var(--blai-border-1) solid var(--blai-dropdown-border);
+    border-radius: var(--blai-info-popover-radius);
+    background: var(--blai-dropdown-bg);
+    box-shadow: var(--blai-dropdown-shadow);
+    color: var(--text-main);
+    font-size: var(--blai-fs-note);
+    line-height: 1.55;
+    text-wrap: pretty;
+}
+
+.blai-info-popover[hidden] {
+    display: none;
+}
+
+.blai-info-popover-title {
+    color: var(--text-main);
+    font-size: var(--blai-fs-body);
+    font-weight: var(--blai-weight-bold);
+}
+
+.blai-info-popover > span {
+    color: var(--text-secondary);
+}
+
+.blai-info-popover .blai-info-popover-warning {
+    color: var(--blai-text-danger-soft);
+}

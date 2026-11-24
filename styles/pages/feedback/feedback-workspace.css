@@ -428,10 +428,10 @@
     --blai-dropdown-ink: var(--text-main);
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    --blai-dropdown-pad: 0 var(--blai-scrollbar-gutter) 0 0;
-    --blai-dropdown-gap: 0;
+    --blai-dropdown-pad: var(--blai-space-6) calc(var(--blai-space-6) + var(--blai-scrollbar-gutter)) var(--blai-space-6) var(--blai-space-6);
+    --blai-dropdown-gap: var(--blai-space-2);
     --blai-dropdown-shadow: var(--blai-shadow-sm);
-    --blai-dropdown-item-radius: 0;
+    --blai-dropdown-item-radius: var(--blai-radius-sm);
     --blai-dropdown-item-pad-x: var(--blai-space-10);
     --blai-dropdown-item-height: var(--blai-size-28);
     position: fixed;

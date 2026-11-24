@@ -202,7 +202,7 @@ function createAiRewriteToastElement({ type, sticky, title, message, showCloseBu
         closeButtonElement = document.createElement('button');
         closeButtonElement.type = 'button';
         closeButtonElement.className = 'toast-close-button';
-        closeButtonElement.textContent = '×';
+        closeButtonElement.innerHTML = '<i class="fas fa-xmark" aria-hidden="true"></i>';
         closeButtonElement.setAttribute('aria-label', '关闭提示');
         toastElement.appendChild(closeButtonElement);
     }
@@ -348,7 +348,7 @@ function getLiveAiRewriteTargets() {
     return targets;
 }
 
-export function getActiveAiRewriteBranchKeyForMessage(messageRef) {
+export function getActiveBranchKey(messageRef) {
     const target = getLiveAiRewriteTargets().find(entry => entry.messageRef === messageRef);
     return String(target?.branchKey || '');
 }

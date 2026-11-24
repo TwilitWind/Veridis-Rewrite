@@ -1,6 +1,6 @@
 /** tour 的分块：steps。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { showResponsivePage } from '../shell.js';
-import { activeNavigationTarget, toolsPageTourTarget, aiAdvancedGenerationTourTarget, currentRulesetTourTarget, presetImportTourTarget, ruleToolsTourTarget, deepCleanLaunchTourTarget, deepCleanQuickSelectionTourTarget, deepCleanFinalSelectionTourTarget, deepCleanPresetTourTarget, deepCleanOptionsTourTarget, escapeHtml } from './tour-00-targets.js';
+import { activeNavigationTarget, toolsPageTourTarget, feedbackPageTourTarget, aiAdvancedGenerationTourTarget, currentRulesetTourTarget, presetImportTourTarget, ruleToolsTourTarget, deepCleanLaunchTourTarget, deepCleanQuickSelectionTourTarget, deepCleanFinalSelectionTourTarget, deepCleanPresetTourTarget, deepCleanOptionsTourTarget, escapeHtml } from './tour-00-targets.js';
 
 export const mainSteps = [
     { title: 'Veridis Rewrite 的五个区域', badge: '基础', body: '首页用于管理规则集和规则；AI 页面配置模型改写；净化页面包含标签作用范围和深度净化；工具页面包含预设绑定解析与附加功能；反馈页面用于运行日志、AI 上下文与提交反馈。\n\n电脑端在左侧栏切换，手机端在底部栏切换。', target: activeNavigationTarget },
@@ -12,8 +12,8 @@ export const mainSteps = [
     { page: 'clean', title: '标签作用范围', badge: '可选', body: '这个设置用于限制 XML 标签内容的净化范围。\n\n「保护特定标签」会排除启用标签中的内容；「净化特定标签」只处理启用标签中的内容。\n\n在「保护特定标签」模式下，如果没有启用任何标签，不会额外限制净化范围，普通内容会照常净化。', target: '#blai-clean-scope-title' },
     { page: 'clean', title: '深度净化', badge: '高级', body: '深度净化批量处理已有的角色、聊天分支、User 设定、世界书和相关数据。', target: deepCleanLaunchTourTarget },
     { page: 'tools', title: '工具页', badge: '高级 / 按需', body: '这里包含预设绑定解析，以及合并在一起的「附加功能」：AI 改写快捷键、净化结果楼层数、数据库自动净化和简繁转换 (OpenCC)。', target: toolsPageTourTarget },
-    { page: 'tools', title: '净化结果楼层数', badge: '按需', body: '这里设置可以查看多少个最近楼层的插件净化结果。\n\n例如设置为 5 条时，Veridis Rewrite 会保留最近 5 个可追踪楼层的净化结果供查看和审查。\n\n这个设置只控制净化结果的保留 / 查看范围，不会改变净化规则本身。', target: 'label[for="blai-diff-limit-input"]' },
-    { page: 'feedback', title: '反馈与诊断', badge: '排查问题 / 提交反馈', body: '排查 AI 改写问题时，可在「AI 上下文」查看本次实际发送给 AI 的内容和返回结果；这些内容只在本地显示。\n\n提交匿名反馈前会先展示完整 JSON 预览，只有你选择的诊断附件会随反馈发送。', target: '#blai-feedback-workspace' },
+    { page: 'tools', title: '净化结果楼层数', badge: '按需', body: '控制可查看净化结果的最近消息数。\n\n只统计最近的非用户消息，通常是 AI 回复。这个值同时控制透视按钮的显示范围。\n\n调小会立即清理超出范围的记录；调大不会恢复已清理的记录。记录保存在聊天消息中，刷新后仍能看到。', target: 'label[for="blai-diff-limit-input"]' },
+    { page: 'feedback', title: '反馈与诊断', badge: '排查问题 / 提交反馈', body: '排查 AI 改写问题时，可在「AI 上下文」查看本次实际发送给 AI 的内容和返回结果；这些内容只在本地显示。\n\n提交匿名反馈前会先展示完整 JSON 预览，只有你选择的诊断附件会随反馈发送。', target: feedbackPageTourTarget },
     { title: 'Veridis Rewrite 界面导览完成', body: '首页用于管理规则集和规则；\nAI 页面配置 AI 改写；\n净化页面包含标签作用范围和深度净化；\n工具页面包含预设绑定解析与附加功能；\n反馈页面用于运行日志、AI 上下文与提交反馈。', centered: true, finish: '完成导览' },
 ];
 
@@ -34,12 +34,12 @@ function previewHtml(kind) {
 
 export function cardHtml(step, index, total) {
     const description = step.body.split('\n').map((line) => line ? `<p>${escapeHtml(line)}</p>` : '').join('');
-    return `<section class="blai-tour-card blai-modal-card ${step.centered || step.preview ? 'blai-tour-centered' : ''}" role="dialog" aria-modal="true" aria-labelledby="blai-tour-title"><div class="blai-tour-card-head"><span>步骤 ${index + 1} / ${total}</span>${step.badge ? `<b>${escapeHtml(step.badge)}</b>` : ''}</div><h2 id="blai-tour-title">${escapeHtml(step.title)}</h2><div class="blai-tour-copy">${description}</div>${step.extra || ''}${step.preview ? previewHtml(step.preview) : ''}<div class="blai-tour-actions"><button type="button" data-tour-action="previous" ${index === 0 ? 'disabled' : ''}>上一步</button>${step.finish ? `<button type="button" class="blai-tour-primary" data-tour-action="finish">${escapeHtml(step.finish)}</button>` : `<button type="button" class="blai-tour-primary" data-tour-action="next">下一步</button>`}<button type="button" data-tour-action="skip" aria-label="跳过并关闭导览">跳过</button></div></section>`;
+    return `<section class="blai-tour-card ${step.centered || step.preview ? 'blai-tour-centered' : ''}" role="dialog" aria-modal="true" aria-labelledby="blai-tour-title"><div class="blai-tour-card-head"><span>步骤 ${index + 1} / ${total}</span>${step.badge ? `<b>${escapeHtml(step.badge)}</b>` : ''}</div><h2 id="blai-tour-title">${escapeHtml(step.title)}</h2><div class="blai-tour-copy">${description}</div>${step.extra || ''}${step.preview ? previewHtml(step.preview) : ''}<div class="blai-tour-actions"><button type="button" data-tour-action="previous" ${index === 0 ? 'disabled' : ''}>上一步</button>${step.finish ? `<button type="button" class="blai-tour-primary" data-tour-action="finish">${escapeHtml(step.finish)}</button>` : `<button type="button" class="blai-tour-primary" data-tour-action="next">下一步</button>`}<button type="button" data-tour-action="skip" aria-label="跳过并关闭导览">跳过</button></div></section>`;
 }
 
 export function welcomeHtml(kind) {
     const deepClean = kind === 'deep-clean';
-    return `<section class="blai-tour-card blai-modal-card blai-tour-centered" role="dialog" aria-modal="true" aria-labelledby="blai-tour-welcome-title"><p class="blai-tour-kicker">${deepClean ? '深度净化导览' : 'Veridis Rewrite 导览'}</p><h2 id="blai-tour-welcome-title">第一次使用 ${deepClean ? '深度净化' : 'Veridis Rewrite'}？</h2><div class="blai-tour-copy"><p>${deepClean ? '深度净化用于批量处理已有内容，包含程序处理、AI 改写和人工审查等处理路径。' : '导览说明 Veridis Rewrite 的主要界面区域与相关设置。'}</p>${deepClean ? '<p>导览覆盖扫描和审查界面，不会运行深度净化或修改内容。</p>' : ''}</div><div class="blai-tour-actions"><button type="button" class="blai-tour-primary" data-tour-action="start">开始导览</button><button type="button" data-tour-action="direct">直接使用</button></div></section>`;
+    return `<section class="blai-tour-card blai-tour-centered" role="dialog" aria-modal="true" aria-labelledby="blai-tour-welcome-title"><p class="blai-tour-kicker">${deepClean ? '深度净化导览' : 'Veridis Rewrite 导览'}</p><h2 id="blai-tour-welcome-title">第一次使用 ${deepClean ? '深度净化' : 'Veridis Rewrite'}？</h2><div class="blai-tour-copy"><p>${deepClean ? '深度净化用于批量处理已有内容，包含程序处理、AI 改写和人工审查等处理路径。' : '导览说明 Veridis Rewrite 的主要界面区域与相关设置。'}</p>${deepClean ? '<p>导览覆盖扫描和审查界面，不会运行深度净化或修改内容。</p>' : ''}</div><div class="blai-tour-actions"><button type="button" class="blai-tour-primary" data-tour-action="start">开始导览</button><button type="button" data-tour-action="direct">直接使用</button></div></section>`;
 }
 
 export function removeLayer() {
@@ -51,7 +51,7 @@ export function restoreTourPresentation(tour) {
 }
 
 function clamp(value, minimum, maximum) {
-    return Math.min(Math.max(value, minimum), maximum);
+    return Math.min(Math.max(value, minimum), Math.max(minimum, maximum));
 }
 
 function popoverCandidate(side, exclusion, popover, viewport, margin) {

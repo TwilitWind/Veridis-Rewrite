@@ -2,7 +2,7 @@
 const PORTAL_CLASS = 'blai-portal-menu';
 const ANCHOR_MARK = 'data-blai-popover-anchor';
 const THEME_VARS = ['--bg-base', '--bg-surface', '--accent-color', '--text-main', '--text-secondary', '--border-color', '--status-danger', '--status-success', '--blai-dropdown-active-bg', '--blai-dropdown-active-ink', '--blai-shadow-color', '--blai-shadow-sm', '--blai-dropdown-shadow'];
-const CLEARED_STYLES = ['position', 'top', 'left', 'right', 'bottom', 'margin', 'transform', 'will-change', 'z-index'];
+const CLEARED_STYLES = ['position', 'top', 'left', 'right', 'bottom', 'margin', 'transform', 'will-change', 'z-index', 'max-height'];
 const IMPORTANT_POSITION_PROPS = ['position', 'left', 'top', 'right', 'bottom', 'transform', 'margin', 'max-height'];
 const MENU_GAP = 6;
 // 菜单统一挂到 body 并压在所有界面之上（仅次于 toast），避免被弹窗、面板、滚动容器裁剪或盖住。
@@ -37,13 +37,22 @@ function copyThemeVars(anchor, menu) {
 
 function positionManually(anchor, menu) {
     const anchorRect = anchor.getBoundingClientRect();
+    // 先还原上一次的内联限高，量出菜单的自然高度；CSS 的 --blai-dropdown-max-height
+    // 仍是基础上限，这里只按锚点可用空间再收紧一层。
+    menu.style.removeProperty('max-height');
     const menuWidth = menu.offsetWidth;
-    const menuHeight = menu.offsetHeight;
+    const naturalHeight = menu.offsetHeight;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const spaceBelow = viewportHeight - anchorRect.bottom - MENU_GAP - VIEWPORT_PADDING;
     const spaceAbove = anchorRect.top - MENU_GAP - VIEWPORT_PADDING;
-    const flipUp = spaceBelow < menuHeight && spaceAbove > spaceBelow;
+    const flipUp = spaceBelow < naturalHeight && spaceAbove > spaceBelow;
+    const available = Math.max(0, Math.floor(flipUp ? spaceAbove : spaceBelow));
+    // 可用空间不足时收紧高度并让菜单自身滚动；空间足够则撤掉内联限高，交回 CSS token。
+    if (naturalHeight > available) {
+        menu.style.setProperty('max-height', `${available}px`, 'important');
+    }
+    const menuHeight = Math.min(naturalHeight, available);
     const left = Math.min(
         Math.max(VIEWPORT_PADDING, anchorRect.right - menuWidth),
         Math.max(VIEWPORT_PADDING, viewportWidth - menuWidth - VIEWPORT_PADDING),

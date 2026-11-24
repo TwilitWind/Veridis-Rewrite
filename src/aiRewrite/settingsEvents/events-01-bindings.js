@@ -3,7 +3,7 @@
  */
 import { defaultAiRewriteSettings, normalizeAiSamplingSettings } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
-import { showAlertModal, showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
+import { showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
 import { openMenuPopover, closeMenuPopover } from '../../ui/popover.js';
 import { injectDiffButtons } from '../../diff/view.js';
 
@@ -50,6 +50,40 @@ function bindAiApiPresetActionsMenu() {
     });
 }
 
+function bindAiModelActionsMenu() {
+    const toggle = document.getElementById('blai-ai-model-actions-toggle');
+    const menu = document.getElementById('blai-ai-model-actions-menu');
+    if (!toggle || !menu) return;
+
+    const close = () => {
+        closeMenuPopover(menu);
+        menu.setAttribute('hidden', '');
+        toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    $(document).off('click', '#blai-ai-model-actions-toggle').on('click', '#blai-ai-model-actions-toggle', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!menu.hasAttribute('hidden')) {
+            close();
+            return;
+        }
+        // 刷新动作可能在拉取中被禁用，菜单里同步成不可点，避免点了没反应。
+        menu.querySelectorAll('.blai-preset-menu-item').forEach((item) => {
+            if (item.disabled) item.setAttribute('aria-disabled', 'true');
+            else item.removeAttribute('aria-disabled');
+        });
+        menu.removeAttribute('hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        openMenuPopover(toggle, menu);
+    });
+
+    // 三个菜单项仍是原来的按钮 id，已有业务绑定不用改；这里只负责收起菜单。
+    menu.addEventListener('click', (event) => {
+        if (event.target.closest('.blai-preset-menu-item')) close();
+    });
+}
+
 export function bindAiSettingHandlers(core) {
     const { saveSettingsDebounced } = getAppContext();
     const {
@@ -64,6 +98,7 @@ export function bindAiSettingHandlers(core) {
         runAiModelsHealthCheck,
         syncAiRewriteSettingsUI,
         updateAiRewriteSetting,
+        removeManualAiModel,
         openAiPromptEditor,
         closeAiPromptEditor,
         closeAiGenerationEditor,
@@ -71,15 +106,7 @@ export function bindAiSettingHandlers(core) {
         openAiAdditionalEditor,
         closeAiAdditionalEditor,
         applyAiPromptEditor,
-        AI_REWRITE_ORDER_NOTE,
     } = core;
-
-
-
-    $(document).off('click', '#blai-ai-connection-info').on('click', '#blai-ai-connection-info', function(event) {
-        event.preventDefault();
-        showAlertModal(AI_REWRITE_ORDER_NOTE, { okText: '明白了', allowHtml: true });
-    });
 
 
     $(document).off('change', '#blai-ai-enabled').on('change', '#blai-ai-enabled', function() {
@@ -143,6 +170,7 @@ export function bindAiSettingHandlers(core) {
     });
 
     bindAiApiPresetActionsMenu();
+    bindAiModelActionsMenu();
 
 
     $(document).off('input change', '#blai-ai-base-url').on('input change', '#blai-ai-base-url', function() {
@@ -188,6 +216,60 @@ export function bindAiSettingHandlers(core) {
         showToast(`已加入模型列表：${value}`, undefined, 'success');
     });
 
+
+    // 手动模型管理弹窗：逐个列出手动填写的模型，每个单独清除。
+    const renderManualModelManageList = () => {
+        const list = document.getElementById('blai-ai-model-manage-list');
+        if (!list) return;
+        const aiSettings = ensureAiRewriteSettings();
+        const manualModels = normalizeAiModelOptions(aiSettings.manualModels);
+        list.replaceChildren();
+        if (manualModels.length === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'blai-ai-model-manage-empty';
+            empty.textContent = '还没有手动填写的模型。';
+            list.appendChild(empty);
+            return;
+        }
+        manualModels.forEach((modelId) => {
+            const row = document.createElement('div');
+            row.className = 'blai-ai-model-manage-row';
+            const name = document.createElement('span');
+            name.className = 'blai-ai-model-manage-name';
+            name.textContent = modelId;
+            const del = document.createElement('button');
+            del.type = 'button';
+            del.className = 'blai-icon-btn blai-ai-model-manage-delete';
+            del.title = `清除 ${modelId}`;
+            del.setAttribute('aria-label', `清除手动模型 ${modelId}`);
+            del.innerHTML = '<i class="fas fa-xmark" aria-hidden="true"></i>';
+            del.addEventListener('click', async () => {
+                if (!await showConfirmModal(`清除手动模型“${modelId}”吗？`, { danger: true, okText: '清除' })) return;
+                const result = removeManualAiModel(modelId);
+                if (!result.removed) return;
+                showToast(`已清除手动模型：${modelId}`, undefined, 'success');
+                renderManualModelManageList();
+            });
+            row.append(name, del);
+            list.appendChild(row);
+        });
+    };
+    const closeManualModelManage = () => {
+        $('#blai-ai-model-manage-modal').hide().attr('aria-hidden', 'true');
+    };
+
+    $(document).off('click', '#blai-ai-model-manage').on('click', '#blai-ai-model-manage', (e) => {
+        e.preventDefault();
+        renderManualModelManageList();
+        $('#blai-ai-model-manage-modal').show().attr('aria-hidden', 'false');
+    });
+    $(document).off('click', '#blai-ai-model-manage-close, #blai-ai-model-manage-done').on('click', '#blai-ai-model-manage-close, #blai-ai-model-manage-done', (e) => {
+        e.preventDefault();
+        closeManualModelManage();
+    });
+    $(document).off('click', '#blai-ai-model-manage-modal').on('click', '#blai-ai-model-manage-modal', function(e) {
+        if (e.target === this) closeManualModelManage();
+    });
 
     $(document).off('input change', '#blai-ai-temperature, #blai-ai-top-p, #blai-ai-top-k, #blai-ai-frequency-penalty, #blai-ai-presence-penalty, #blai-ai-repetition-penalty, #blai-ai-max-tokens, #blai-ai-timeout, #blai-ai-max-retries, #blai-ai-max-items, #blai-ai-max-context').on('input change', '#blai-ai-temperature, #blai-ai-top-p, #blai-ai-top-k, #blai-ai-frequency-penalty, #blai-ai-presence-penalty, #blai-ai-repetition-penalty, #blai-ai-max-tokens, #blai-ai-timeout, #blai-ai-max-retries, #blai-ai-max-items, #blai-ai-max-context', function() {
         const id = String(this.id || '');

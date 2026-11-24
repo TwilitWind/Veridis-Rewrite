@@ -107,14 +107,14 @@ export function finishOrDeferAiRewriteApply(task, accepted) {
     return finishAiRewriteApply(task, accepted);
 }
 
-export function getPendingApplyCountForMessageKey(messageKey) {
+export function getPendingApplyCount(messageKey) {
     return aiRewriteState.pendingApply
         && getTaskMessageKey(aiRewriteState.pendingApply.task) === messageKey
         ? 1
         : 0;
 }
 
-export function flushPendingAiRewriteApplyForMessageKey(messageKey) {
+export function flushPendingApply(messageKey) {
     const rewriteState = aiRewriteState;
     const entry = rewriteState.pendingApply;
     if (!entry || getTaskMessageKey(entry.task) !== messageKey) return 0;

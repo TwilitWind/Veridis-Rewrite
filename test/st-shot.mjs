@@ -3,9 +3,12 @@
 //   CLIP=<css selector> SCALE=3   -> screenshot only that element, enlarged
 //   FRONT=1                       -> Page.bringToFront first (needed before sampling animations)
 //   EXPECT_OPEN=<sel[,sel...]>    -> 截图前确认目标可见且非 0 尺寸，否则拒绝出图（防「截到空页还当证据」）
+//   EXPECT_CONTENT='<rowSelector>[:<min>]' -> 截图前确认内容区真的有数据行（默认至少 1 行），否则拒绝出图
+//   SEED_JS=<js|@file.js>         -> 出图前跑一次性种子脚本（酒馆数据为空时造样例），执行失败即拒绝出图
 //   EXPECT_MAXIMIZED=1            -> 截图前确认浏览器窗口 maximized/fullscreen，否则拒绝出图
-//   每次出图写 <outfile>.json sidecar：视口、窗口状态、目标可见性、控制台错误——让证据可追溯。
+//   每次出图写 <outfile>.json sidecar：视口、窗口状态、目标可见性、内容行数、控制台错误——让证据可追溯。
 import fs from 'node:fs';
+import { parseExpectContent, contentProbeExpression, contentFailureMessage } from './evidence-proof.mjs';
 
 const out = process.argv[2] ?? 'shot.png';
 let evalJs = process.argv[3] ?? '';
@@ -65,6 +68,34 @@ async function main() {
         await sleep(Number(process.env.LOAD_MS ?? 6000));
     }
 
+    // ---- 证据定义与种子：必须在打开界面前跑，否则空数据态会被当证据 ----
+    const contentSpec = parseExpectContent(process.env.EXPECT_CONTENT);
+    const seedJs = process.env.SEED_JS
+        ? (process.env.SEED_JS.startsWith('@') ? fs.readFileSync(process.env.SEED_JS.slice(1), 'utf8') : process.env.SEED_JS)
+        : '';
+    const evidence = {
+        out, checkedAt: new Date().toISOString(),
+        evalJs: evalJs || null, seedJs: seedJs || null, waitMs,
+        expectOpen: process.env.EXPECT_OPEN ?? null,
+        expectContent: contentSpec,
+        content: null,
+        expectMaximized: process.env.EXPECT_MAXIMIZED === '1',
+        viewport: null, windowState: null, openTargets: [], consoleErrors: [],
+    };
+    const failEvidence = (msg) => {
+        console.error('EVIDENCE FAIL:', msg);
+        ws.close();
+        process.exit(3);
+    };
+
+    if (seedJs) {
+        const r = await send('Runtime.evaluate', { expression: seedJs, awaitPromise: true, returnByValue: true });
+        if (r.exceptionDetails) {
+            failEvidence(`SEED_JS 执行失败：${r.exceptionDetails.exception?.description || JSON.stringify(r.exceptionDetails)}`);
+        }
+        console.error('SEED =>', r.result?.value);
+    }
+
     if (evalJs) {
         const r = await send('Runtime.evaluate', {
             expression: evalJs,
@@ -75,20 +106,6 @@ async function main() {
         else if (r.result?.value !== undefined) console.error('EVAL =>', r.result.value);
         await sleep(waitMs);
     }
-
-    // ---- 证据有效性前置校验：截图前先确认「窗口状态 + 目标真的可见」，否则不出图 ----
-    const evidence = {
-        out, checkedAt: new Date().toISOString(),
-        evalJs: evalJs || null, waitMs,
-        expectOpen: process.env.EXPECT_OPEN ?? null,
-        expectMaximized: process.env.EXPECT_MAXIMIZED === '1',
-        viewport: null, windowState: null, openTargets: [], consoleErrors: [],
-    };
-    const failEvidence = (msg) => {
-        console.error('EVIDENCE FAIL:', msg);
-        ws.close();
-        process.exit(3);
-    };
 
     // 视口与控制台错误：这两项无论是否设期望都记录，供事后追溯。
     const vp = await send('Runtime.evaluate', {
@@ -132,6 +149,17 @@ async function main() {
         if (bad.length) {
             failEvidence(`目标不可见：${bad.map((t) => `${t.sel}(${t.reason})`).join(', ')}；先打开目标弹窗/页面再截图`);
         }
+    }
+
+    if (contentSpec) {
+        const r = await send('Runtime.evaluate', {
+            expression: contentProbeExpression(contentSpec),
+            returnByValue: true,
+        });
+        evidence.content = r.result?.value ?? null;
+        const message = contentFailureMessage(contentSpec, evidence.content);
+        if (message) failEvidence(message);
+        console.error('CONTENT =>', JSON.stringify(evidence.content));
     }
 
     // CLIP=<selector> 只截该元素，SCALE 放大倍数（默认 3），用于看清小控件。

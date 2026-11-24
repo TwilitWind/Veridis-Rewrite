@@ -130,7 +130,8 @@
         max-width: var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24)));
         max-height: var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24)));
     }
-    #blai-tour-layer .blai-tour-card:not(.blai-tour-centered) { position: fixed; }
+    #blai-tour-layer .blai-tour-card { position: fixed; }
+    #blai-tour-layer .blai-tour-centered { top: 50%; left: 50%; transform: translate(-50%, -50%); }
     #blai-tour-layer .blai-tour-review-main { grid-template-columns: minmax(0, 1fr); }
     #blai-tour-layer .blai-tour-review-area { border-right: 0; }
     #blai-tour-layer .blai-tour-review-lookahead { min-height: var(--blai-size-38); border-top: var(--blai-border-1) solid var(--border-color); }

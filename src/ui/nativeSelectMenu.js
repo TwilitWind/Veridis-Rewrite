@@ -14,6 +14,7 @@ const WRAPPER_CLASS = 'blai-native-select-wrap';
 const TRIGGER_CLASS = 'blai-native-select-trigger';
 const MENU_CLASS = 'blai-native-select-menu';
 const ITEM_CLASS = 'blai-native-select-item';
+const ITEM_TEXT_CLASS = 'blai-native-select-item-text';
 const LABEL_CLASS = 'blai-native-select-label';
 const GROUP_CLASS = 'blai-native-select-group';
 
@@ -32,19 +33,28 @@ function selectedOption(select) {
     return select?.selectedOptions?.[0] || [...(select?.options || [])].find((option) => option.selected) || null;
 }
 
+// 选项可用 data-blai-icon 指定 Font Awesome 图标类（如 fa-puzzle-piece），
+// 由自绘触发器与菜单项统一渲染，替代在 option 文本里塞 emoji。
+function optionIconHtml(option) {
+    const icon = String(option?.getAttribute?.('data-blai-icon') || '').trim();
+    if (!/^fa[sb]?[ -]/.test(icon) && !/^fa[sb]?-/.test(icon)) return '';
+    return `<i class="fas ${icon}" aria-hidden="true"></i>`;
+}
+
 function currentLabel(select, placeholder) {
     const option = selectedOption(select);
     if (!option) return placeholder || '';
     // 空值选项（如「请选择」）用占位文案，避免选中后触发器空白。
     if (option.value === '' && placeholder) return placeholder;
+    const icon = optionIconHtml(option);
     // 两级文案（预设 / 分组）：optgroup 标签拼在前面，让收起时也能看出属于哪个预设。
     if (select.getAttribute('data-blai-select-two-level') === 'true') {
         const groupLabel = String(option.parentElement?.label || '').trim();
         const text = String(option.textContent || '').trim();
-        if (groupLabel) return `${groupLabel} / ${text}`;
-        return text;
+        if (groupLabel) return `${icon}<span>${escapeHtml(groupLabel)} / ${escapeHtml(text)}</span>`;
+        return `${icon}<span>${escapeHtml(text)}</span>`;
     }
-    return option.textContent || '';
+    return `${icon}<span>${escapeHtml(option.textContent || '')}</span>`;
 }
 
 function buildMenuHtml(select, placeholder) {
@@ -72,12 +82,15 @@ function optionHtml(option, placeholder) {
     const disabled = option.disabled ? ' aria-disabled="true"' : '';
     const selected = option.selected ? ' aria-selected="true"' : '';
     const title = option.title ? ` title="${escapeHtml(option.title)}"` : '';
-    return `<button type="button" class="${ITEM_CLASS}" role="option" data-value="${escapeHtml(value)}"${disabled}${selected}${title}>${escapeHtml(text)}</button>`;
+    const icon = optionIconHtml(option);
+    // 文字单独包一层：菜单项禁止换行后，超长选项靠 span 省略，不会把图标挤歪。
+    return `<button type="button" class="${ITEM_CLASS}" role="option" data-value="${escapeHtml(value)}"${disabled}${selected}${title}>${icon}<span class="${ITEM_TEXT_CLASS}">${escapeHtml(text)}</span></button>`;
 }
 
 function syncTrigger(select, state) {
     if (!state.trigger) return;
-    state.labelEl.textContent = currentLabel(select, state.placeholder);
+    // 图标来自硬编码 data 属性、文案经 escapeHtml，innerHTML 安全。
+    state.labelEl.innerHTML = currentLabel(select, state.placeholder);
     state.trigger.setAttribute('aria-label', state.ariaLabel || select.getAttribute('aria-label') || '下拉选择');
     state.trigger.classList.toggle('is-empty', !selectedOption(select) || selectedOption(select).value === '');
 }
@@ -86,6 +99,23 @@ function syncMenu(select, state) {
     if (!state.menu) return;
     state.menu.innerHTML = buildMenuHtml(select, state.placeholder);
     syncTrigger(select, state);
+}
+
+// 菜单自身是 grid + minmax(0,1fr)，getBoundingClientRect() 不会把长文案算进固有宽度。
+// 直接读文字的 scrollWidth，再加图标列、间距与两侧 padding，得到「不换行所需宽度」。
+function naturalMenuWidth(menu) {
+    const px = (value) => parseFloat(value) || 0;
+    const nodes = [...menu.querySelectorAll(`.${ITEM_TEXT_CLASS}, .${GROUP_CLASS}-label`)];
+    const text = nodes.reduce((max, node) => Math.max(max, node.scrollWidth), 0);
+    const item = menu.querySelector(`.${ITEM_CLASS}`);
+    const itemStyle = item ? getComputedStyle(item) : null;
+    const menuStyle = getComputedStyle(menu);
+    const icon = item?.querySelector('i')?.getBoundingClientRect().width || 0;
+    const gap = itemStyle ? px(itemStyle.columnGap) : 0;
+    const itemPad = itemStyle ? px(itemStyle.paddingLeft) + px(itemStyle.paddingRight) : 0;
+    const shell = px(menuStyle.paddingLeft) + px(menuStyle.paddingRight)
+        + px(menuStyle.borderLeftWidth) + px(menuStyle.borderRightWidth);
+    return Math.ceil(shell + itemPad + icon + gap + text);
 }
 
 function closeMenu(state) {
@@ -98,11 +128,23 @@ function closeMenu(state) {
 
 function openMenu(select, state) {
     if (!state.menu || !state.trigger) return;
-    state.menu.style.width = `${Math.round(state.trigger.getBoundingClientRect().width)}px`;
-    openMenuPopover(state.trigger, state.menu);
-    state.menu.hidden = false;
-    state.trigger.setAttribute('aria-expanded', 'true');
+    // 先填内容再量宽：菜单要撑到「不换行的最长选项」，而不是被触发器宽度卡住。
+    // 宽度取 max(触发器, 内容自然宽)，再受视口减去两侧留白约束；
+    // popover.js 仍负责右对齐与翻转，宽菜单不会越出屏幕。
     syncMenu(select, state);
+    // 先撤掉上一次的窄化标记，否则 overflow:hidden 会让这次量到的自然宽度偏小。
+    state.menu.classList.remove('is-width-capped');
+    state.menu.style.removeProperty('width');
+    state.menu.hidden = false;
+    const triggerWidth = state.trigger.getBoundingClientRect().width;
+    const naturalWidth = naturalMenuWidth(state.menu);
+    const cap = Math.max(120, window.innerWidth - 16);
+    const wanted = Math.max(triggerWidth, naturalWidth);
+    // 只有超出视口才退化成省略号；常规选项保持完整文案。
+    state.menu.classList.toggle('is-width-capped', wanted > cap);
+    state.menu.style.width = `${Math.round(Math.min(wanted, cap))}px`;
+    openMenuPopover(state.trigger, state.menu);
+    state.trigger.setAttribute('aria-expanded', 'true');
 }
 
 /**

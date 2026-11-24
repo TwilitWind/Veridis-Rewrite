@@ -12,6 +12,7 @@ const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const STYLES = path.join(ROOT, 'styles');
 const MAX_BYTES = 30 * 1024;
 const TARGET_BYTES = 25 * 1024;
+const IMPORTANT_BUDGET = 5;
 
 const errors = [];
 const warns = [];
@@ -126,20 +127,33 @@ for (const rel of allFiles) {
   if (hits.length) fail(`styles/${rel} 里有硬编码颜色 ${[...new Set(hits)].join(' ')}，应改用 var(--token)`);
 }
 
-/* 11. !important 增量不得高于基线 */
+/* 11. !important 增量预算：累计 +1~+5 只记账不吵，超过 +5 才拦截并要求登记豁免。
+   基线结构是 { note, base: { 路径: {hex, px, important} } }。早期版本直接读 baseline[rel]，
+   取到 undefined 后退化成 0，于是每个文件都被判成「从 0 涨上来」。 */
 const baselinePath = path.join(STYLES, 'quality-baseline.json');
 if (fs.existsSync(baselinePath)) {
   const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
-  // 基线结构是 { note, base: { 路径: {hex, px, important} } }。早期版本直接读 baseline[rel]，
-  // 取到 undefined 后退化成 0，于是每个文件都被判成「从 0 涨上来」，这条闸门形同虚设。
   const baseMap = baseline.base ?? baseline;
+  const drift = [];
   for (const rel of allFiles) {
     const text = fs.readFileSync(path.join(STYLES, rel), 'utf8');
     // 注释里解释「为什么需要 !important」不算一次使用，和 important-audit.mjs 口径保持一致。
     const declarations = text.replace(/\/\*[\s\S]*?\*\//g, '');
-    const also = (declarations.match(/!important/g) || []).length;
+    const now = (declarations.match(/!important/g) || []).length;
     const was = baseMap[rel]?.important ?? 0;
-    if (also > was) warn(`styles/${rel} 的 !important 从 ${was} 涨到 ${also}`);
+    if (now > was) drift.push({ rel, was, now, delta: now - was });
+  }
+  const totalDrift = drift.reduce((sum, row) => sum + row.delta, 0);
+  if (totalDrift > IMPORTANT_BUDGET) {
+    const rows = drift.map((row) => `  - styles/${row.rel}: ${row.was} → ${row.now}（+${row.delta}）`).join('\n');
+    fail(`!important 相对基线累计 +${totalDrift}，超过 ${IMPORTANT_BUDGET} 处未登记预算：\n${rows}\n`
+      + '  处理顺序：\n'
+      + '  1) 按工作区 docs/design/design.md §CSS 编写规则「!important 准入门槛」写明原因和已排除的替代方案；\n'
+      + '  2) 在 docs/architecture/style-tokens.md「!important 例外登记」补文件、选择器/属性、对抗对象；\n'
+      + '  3) 确认后运行 node test/audit/important-audit.mjs --update-baseline 重置预算，再跑 node build-check.mjs');
+  } else if (totalDrift > 0) {
+    console.log(`  [info] !important 未登记增量 +${totalDrift}（预算 ${IMPORTANT_BUDGET}）：`
+      + drift.map((row) => `${row.rel} +${row.delta}`).join('、'));
   }
 }
 

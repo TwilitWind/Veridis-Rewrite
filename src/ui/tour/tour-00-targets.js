@@ -43,6 +43,12 @@ export function toolsPageTourTarget() {
         : document.querySelector('#blai-purifier-popup .rail [data-page-target="tools"]');
 }
 
+export function feedbackPageTourTarget() {
+    return isPhone()
+        ? document.querySelector('#blai-purifier-popup .bottom-nav [data-page-target="feedback"]')
+        : document.querySelector('#blai-purifier-popup .rail [data-page-target="feedback"]');
+}
+
 export function aiAdvancedGenerationTourTarget() {
     return isPhone()
         ? document.querySelector('#blai-ai-generation-open')

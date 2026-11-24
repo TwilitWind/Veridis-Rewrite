@@ -186,10 +186,10 @@
 }
 
 @media (max-width: 600px) {
-    /* 手机端首页规则卡左右留白加大到 10px，避免规则分组贴着屏幕左右边缘；
+    /* 手机端首页规则卡外边距 12px，与顶栏文字起点对齐；顶栏自身不动。
        反馈页仍沿用紧凑的 6px 边距。用变量合并为单条强制声明，不抬高闸门基线。 */
     #blai-purifier-popup .blai-home-page .blai-home-rules {
-        --blai-mobile-content-margin: var(--blai-space-10);
+        --blai-mobile-content-margin: var(--blai-space-12);
     }
 
     #blai-purifier-popup .blai-feedback-page .blai-feedback-workspace-content {
@@ -201,8 +201,8 @@
         margin: var(--blai-mobile-content-margin, var(--blai-space-6)) !important;
     }
 
-    /* 五页背景左右内边距统一：.pages 不留白，AI/净化/工具内容容器自己收 6px，
-       与首页卡片、反馈页的 6px 边距一致。 */
+    /* 五页背景左右内边距统一：.pages 不留白，AI/净化/工具内容容器自己收 6px；
+       首页规则卡单独收 12px 与顶栏文字对齐，反馈页 6px。 */
     #blai-purifier-popup.blai-app-shell .pages {
         padding: 0;
     }}

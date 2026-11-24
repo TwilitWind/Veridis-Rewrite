@@ -24,6 +24,7 @@ import { syncRelatedRuleRuntime } from '../preferences.js';
 import { assignDiffRevertItemIds, collectPickedDiffItems, computePickedRevert } from '../pickRevert.js';
 import { requestManualAiRewriteForMessage } from '../../aiRewrite/index.js';
 import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
+import { buildEmptyRewriteHint } from '../emptyHint.js';
 
 // 差异弹窗的一次性闭包：状态与工具函数集中在此，绑定层通过返回对象读取。
 export function recleanseDiffMessageAtIndex(index) {
@@ -131,6 +132,8 @@ export function createDiffEventsCore() {
             .attr('min', minTrackedDiffMessages)
             .attr('max', maxTrackedDiffMessages)
             .val(normalized);
+        const scopeText = document.getElementById('blai-diff-limit-info-scope');
+        if (scopeText) scopeText.textContent = `只统计最近 ${normalized} 条非用户消息，通常是 AI 回复。`;
     };
 
 
@@ -541,7 +544,7 @@ export function createDiffEventsCore() {
         // 手改提示是「手改」来源在弹窗里的可见载体，带上 data-diff-section 供筛选隐藏。
         const notice = omitVariableUpdates(msg.mes) !== omitVariableUpdates(meta.programMes)
             ? '<div class="blai-diff-empty" data-diff-section="manual"><i class="fa-solid fa-pen" aria-hidden="true"></i>当前消息已被手动编辑；撤回净化会保留你的改动，并把记录阶段里的改写尽量还原为原文（找不到的替换会跳过）。</div>' : '';
-        const empty = '<div class="blai-diff-empty"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>当前消息没有改写项。</div>';
+        const empty = buildEmptyRewriteHint();
         contentEl.html(notice + (mode === 'full'
             ? `<div class="blai-diff-full-text">${rendered.join('') || empty}</div>`
             : rendered.join('<hr class="blai-diff-divider">') || empty));

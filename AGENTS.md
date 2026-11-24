@@ -24,7 +24,11 @@
 | 正则查找框高亮不叠字 | `CDP_PORT=9224 node test/audit/verify-regex-caret.mjs`（量光标 x−字符右缘） |
 | 三弹窗直属 body、主题对比色、扫描说明、双端导览锚点 | `CDP_PORT=9224 node test/audit/verify-followup.mjs` |
 | 透视来源图例、筛选折叠、定位高亮单线、浅字说明、手机四字文案 | `CDP_PORT=9224 node test/audit/verify-diff-stats-legend.mjs`（桌面 + 手机） |
-| 交差前跑通验证并附截图 | `build-css.mjs` + `build-check.mjs` + `test/audit/verify-*.mjs` + `shots/` |
+| 手机五档字号、AI 双开关同排且紧跟文字、首页规则卡外边距、底栏上下内边距 | `CDP_PORT=9224 node test/audit/verify-ai-mobile.mjs`（先开主界面再切 AI，量几何 + 截图） |
+| 交差前按改动选跑验证并附截图 | 必跑 `node build-css.mjs` + `node build-check.mjs`（`check-imports` 已内含）；只跑命中的 `verify-*` 并附对应截图；全量 7 个仅在改验证框架 / 发版前跑 |
+| 截图不能是“面板打开但 0 行数据”的空壳 | `st-shot` / `st-mobile` 必给 `EXPECT_CONTENT='<行选择器>:1'`；数据为空时先 `SEED_JS=@test/fixtures/seed-home.js`，harness 用 `capture(..., { expectContent })` |
+
+一次性探针不要写成 `verify-*.mjs`：放 `test/tmp/`（已忽略），用完删除，不进本表、`test/SKILL.md` 或全量清单。只有用户反复报过、或守住长期不变量的检查才沉淀成 `verify-*`。
 
 ## 已知陷阱：portal 菜单
 
@@ -45,7 +49,7 @@ ES module 漏 import 不会被 `node --check` 或 CSS 构建闸门发现，只�
 ## 测试环境
 
 - SillyTavern：`http://127.0.0.1:8000/`
-- CDP：`CDP_PORT=9224`，端口约定与启动见工作区 `AGENTS.md` 和 `docs/testing.md` §2。
+- CDP：`CDP_PORT=9224`，端口约定与启动见工作区 `AGENTS.md` 和 `docs/testing/testing.md` §2。
 - 源码：`E:\Plugin Development\Veridis-Rewrite`
 - 装机副本：`D:\Games\SillyTavern\SillyTavern\data\default-user\extensions\Veridis-Rewrite`
 - 改完跑：`node build-css.mjs` → `node build-check.mjs` → `node test/sync.mjs <源> <装机副本>`。

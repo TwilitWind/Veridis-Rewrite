@@ -13,7 +13,7 @@ export function tourError(operation, error) {
     } catch (themeError) {
         throw new Error(`${operation}，且无法显示错误信息：${themeError.message}`);
     }
-    layer.innerHTML = `<section class="blai-tour-card blai-modal-card blai-tour-centered" role="alertdialog" aria-modal="true" aria-labelledby="blai-tour-error-title"><p class="blai-tour-kicker">导览无法继续</p><h2 id="blai-tour-error-title">${escapeHtml(operation)}</h2><p>${escapeHtml(error instanceof Error ? error.message : error)}</p><div class="blai-tour-actions"><button type="button" data-tour-action="close-error">关闭</button></div></section>`;
+    layer.innerHTML = `<section class="blai-tour-card blai-tour-centered" role="alertdialog" aria-modal="true" aria-labelledby="blai-tour-error-title"><p class="blai-tour-kicker">导览无法继续</p><h2 id="blai-tour-error-title">${escapeHtml(operation)}</h2><p>${escapeHtml(error instanceof Error ? error.message : error)}</p><div class="blai-tour-actions"><button type="button" data-tour-action="close-error">关闭</button></div></section>`;
     annotateTauriMobileSurfaces();
     layer.querySelector('button')?.focus();
     layer.addEventListener('click', (event) => {

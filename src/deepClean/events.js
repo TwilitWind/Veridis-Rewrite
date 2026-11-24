@@ -35,14 +35,14 @@ import {
     renderDeepCleanApplyProgress,
     renderDeepCleanComplete,
     renderDeepCleanStopped,
-    showDeepCleanInitialSelectionError,
+    showInitialSelectionError,
 } from './view.js';
 
 export function bindDeepCleanEvents() {
 const showReviewError = (error) => {
     logger.error('[Deep Clean] Review comparison failed', error);
     if (getDeepCleanReviewSession()) requestDeepCleanStop();
-    showDeepCleanInitialSelectionError(error);
+    showInitialSelectionError(error);
 };
 const withReadyReview = async (action) => {
     const session = getDeepCleanReviewSession();
@@ -83,7 +83,7 @@ $(document).off('click', '#blai-deep-clean-btn').on('click', '#blai-deep-clean-b
         renderDeepCleanSelection(await startDeepCleanRun());
     } catch (error) {
         logger.error('[Deep Clean] 读取 Initial Selection 资源失败', error);
-        showDeepCleanInitialSelectionError(error);
+        showInitialSelectionError(error);
     }
 });
 
@@ -100,7 +100,7 @@ $(document).off('click', '#blai-deep-clean-scan').on('click', '#blai-deep-clean-
         else if (deepCleanRuntimeState.deepCleanPhase === 'stopped') renderDeepCleanStopped();
     } catch (error) {
         logger.error('[Deep Clean] scan failed', error);
-        showDeepCleanInitialSelectionError(error);
+        showInitialSelectionError(error);
     }
 });
 
@@ -115,7 +115,7 @@ $(document).off('click', '#blai-deep-clean-process-program').on('click', '#blai-
         else if (deepCleanRuntimeState.deepCleanPhase === 'stopped') renderDeepCleanStopped();
     } catch (error) {
         logger.error('[Deep Clean] Batch processing failed', error);
-        showDeepCleanInitialSelectionError(error);
+        showInitialSelectionError(error);
     }
 });
 
@@ -211,7 +211,7 @@ $(document).off('click', '#blai-deep-clean-apply').on('click', '#blai-deep-clean
         else if (result?.complete) renderDeepCleanComplete(result.summary);
     } catch (error) {
         logger.error('[Deep Clean] apply failed', error);
-        showDeepCleanInitialSelectionError(error);
+        showInitialSelectionError(error);
     }
 });
 

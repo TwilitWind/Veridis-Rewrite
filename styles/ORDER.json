@@ -12,6 +12,7 @@
   "components/05-loading-overlay.css",
   "components/06-native-select.css",
   "components/07-menu-fill.css",
+  "components/08-info-popover.css",
   "layouts/00-shell.css",
   "layouts/01-responsive.css",
   "pages/tour/00-tour.css",

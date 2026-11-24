@@ -1,7 +1,7 @@
 // 负责把已复核/已提议的深度净化变更转换为有序的资源持久化单元，并串行执行、汇总进度与结果。它不实现具体资源的写入。
 
 import { getSillyTavernContextSnapshot } from '../../host/context.js';
-import { resolveDeepCleanFinalProposedText } from '../aiProcessing.js';
+import { resolveFinalProposedText } from '../aiProcessing.js';
 import { resolveDeepCleanReviewedText } from '../review.js';
 import { applyCharacterUnit } from './character.js';
 import { applyBranchUnit, currentOpenCharacterBranch } from './chat.js';
@@ -36,7 +36,7 @@ function collectProposedChanges(processedRun, itemIndexes) {
         if (!item || typeof item.originalText !== 'string') {
             throw new Error(`Deep Clean proposed Item cannot be resolved: ${itemIndex}`);
         }
-        const reviewedText = resolveDeepCleanFinalProposedText(processedRun, itemIndex);
+        const reviewedText = resolveFinalProposedText(processedRun, itemIndex);
         if (reviewedText === item.originalText) continue;
         changes.push({
             itemIndex,

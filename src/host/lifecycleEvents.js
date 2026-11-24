@@ -15,7 +15,7 @@ import { queueIncrementalChatSave } from '../chat/persistence.js';
 import { markHostChatDirtyFromIndex } from '../integrations/tauriTavern.js';
 import { getCurrentCharacterContext, getCurrentChatIdentity } from './context.js';
 import { getMvuIntegrationSignal } from '../integrations/mvu.js';
-import { getActiveAiRewriteBranchKeyForMessage, handleAiRewriteGenerationStarted, hasInvalidAiRewriteTarget, isLiveAiRewriteTargetMessage, markAiRewriteFinalCleanseReady, recordAiRewriteRuntimeDebug, resetAiRewriteRuntimeState, validateAiRewriteMessageTarget } from '../aiRewrite/index.js';
+import { getActiveBranchKey, handleAiRewriteGenerationStarted, hasInvalidAiRewriteTarget, isLiveAiRewriteTargetMessage, markAiRewriteFinalCleanseReady, recordAiRewriteRuntimeDebug, resetAiRewriteRuntimeState, validateAiRewriteMessageTarget } from '../aiRewrite/index.js';
 import { classifyHostGenerationStart, generationLifecycle } from './generationLifecycle.js';
 import { handleStreamingToken, injectDiffButtonsStreamingSafe, resetStreamingProcessorInstallFailureState } from './streaming.js';
 import { initDomObserver, initPersonaProtectionObserver } from '../dom/observer.js';
@@ -277,7 +277,7 @@ export function bindHostLifecycleEvents() {
         const msg = Number.isInteger(messageId) && messageId >= 0 && Array.isArray(chat) ? chat[messageId] : null;
         if (!msg || !Number.isInteger(deletedSwipeIndex) || deletedSwipeIndex < 0) return;
 
-        const activeBranchKey = getActiveAiRewriteBranchKeyForMessage(msg);
+        const activeBranchKey = getActiveBranchKey(msg);
         const branchMatch = /^swipe:(\d+)$/.exec(activeBranchKey);
         const activeBranchIndex = branchMatch ? Number(branchMatch[1]) : -1;
         const invalidatesActiveBranch = activeBranchIndex >= 0 && deletedSwipeIndex <= activeBranchIndex;

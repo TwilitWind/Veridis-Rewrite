@@ -1,5 +1,5 @@
 export {
-    getActiveAiRewriteBranchKeyForMessage,
+    getActiveBranchKey,
     handleAiRewriteGenerationStarted,
     hasInvalidAiRewriteTarget,
     isLiveAiRewriteTargetMessage,

@@ -34,7 +34,7 @@ export function normalizePresetAiRewriteSettings(value) {
     };
 }
 
-export function getCurrentPresetAiRewriteSettings(aiRewriteSettings = null) {
+export function getActivePresetAiSettings(aiRewriteSettings = null) {
     return normalizePresetAiRewriteSettings(aiRewriteSettings || defaultAiRewriteSettings)
         || normalizePresetAiRewriteSettings(defaultAiRewriteSettings);
 }

@@ -20,6 +20,7 @@ import { bindDiffEvents } from './diff/events.js';
 import { bindDeepCleanEvents } from './deepClean/events.js';
 import { bindComposerButtonAiRewriteEvent, updateComposerButtonSetting } from './aiRewrite/composerButton.js';
 import { bindFeedbackEvents, openFeedbackPage } from './feedback/events.js';
+import { bindInfoPopoverEvents } from './ui/infoPopover.js';
 import { bindTourEvents, offerMainTourFirstUse } from './ui/tour.js';
 
 export function bindEvents() {
@@ -36,6 +37,7 @@ export function bindEvents() {
     };
     bindComposerButtonAiRewriteEvent(eventSource);
     bindFeedbackEvents();
+    bindInfoPopoverEvents();
     bindTourEvents();
 
     $(document).off('click', '#blai-wand-btn, #blai-wand-btn-panel').on('click', '#blai-wand-btn, #blai-wand-btn-panel', openPurifier);

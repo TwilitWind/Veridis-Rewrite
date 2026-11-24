@@ -8,7 +8,7 @@ import { getAiRewriteMessageId, validateAiRewriteFinalization, validateAutomatic
 import { generationLifecycle } from '../../host/generationLifecycle.js';
 import { groupRewriteItemsByPrompt } from '../planning.js';
 import { clearAiRewriteStatusToast, getAiRewriteMessageKey, applyAiProgramFallback, cancelAiRewriteTask, notifyAiRewriteStatus, notifyAiRewriteProgress } from './runtime-00-ui.js';
-import { getPendingApplyCountForMessageKey, flushPendingAiRewriteApplyForMessageKey, buildAiRewriteTaskCheck } from './runtime-01-apply.js';
+import { getPendingApplyCount, flushPendingApply, buildAiRewriteTaskCheck } from './runtime-01-apply.js';
 import { scheduleAiRewriteForMessage, runAiRewriteForMessage } from './runtime-02-task.js';
 
 export function markAiRewriteFinalCleanseReady(payload) {
@@ -40,12 +40,12 @@ export function markAiRewriteFinalCleanseReady(payload) {
         index,
         branchKey,
         sequence: rewriteState.finalCleanseSequence,
-        pendingApplyCount: getPendingApplyCountForMessageKey(messageKey),
+        pendingApplyCount: getPendingApplyCount(messageKey),
         generationId: validation.session.generationId,
         chatId: validation.session.chatId,
     });
-    const hadPendingApply = getPendingApplyCountForMessageKey(messageKey) > 0;
-    flushPendingAiRewriteApplyForMessageKey(messageKey);
+    const hadPendingApply = getPendingApplyCount(messageKey) > 0;
+    flushPendingApply(messageKey);
     if (hadPendingApply) return true;
 
     if (validation.session.requestState !== 'idle') {

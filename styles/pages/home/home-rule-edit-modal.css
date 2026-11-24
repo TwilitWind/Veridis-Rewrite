@@ -36,7 +36,13 @@
 }
 
 #blai-rule-edit-modal .blai-edit-modal-head #blai-edit-cancel-x {
-    font-size: var(--blai-font-16);
+    font-size: var(--blai-fs-control-icon);
+    line-height: 1;
+}
+
+/* 关闭叉号的实际字形单独放大：按钮盒保持 28px，不顶开顶栏。 */
+:is(#blai-rule-edit-modal .blai-edit-head-actions, #blai-subrule-edit-modal .blai-subrule-modal-header) .blai-modal-close-x i {
+    font-size: var(--blai-fs-control-icon);
     line-height: 1;
 }
 
@@ -88,6 +94,42 @@
     padding: var(--blai-space-9) var(--blai-space-12) !important;
     height: auto !important;
     min-height: var(--blai-size-36) !important;
+}
+
+/* 处理方式：两项切换用分段按钮，不用下拉也不做单选圈。
+   保留隐藏 select 作数据锚点，下方内容随 change 切换（AI 模式多一条单条改写要求）。 */
+#blai-subrule-edit-modal .blai-subrule-rewrite-segment {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--blai-space-4);
+    padding: var(--blai-space-4);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-8);
+    background: var(--bg-surface);
+}
+
+#blai-subrule-edit-modal .blai-subrule-rewrite-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--blai-space-6);
+    min-width: 0;
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-8);
+    border: 0;
+    border-radius: var(--blai-radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-bold);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#blai-subrule-edit-modal .blai-subrule-rewrite-option.is-active {
+    background: var(--accent-color);
+    color: var(--accent-contrast);
 }
 
 /* 名称字段与「映射规则列表」标签的上下留白收紧，让出高度给规则列表。 */

@@ -74,7 +74,7 @@ function applyAcceptedItemRewrites(effectiveSource, requestItem, accepted) {
     return candidate;
 }
 
-export function resolveDeepCleanFinalProposedText(run, itemIndex) {
+export function resolveFinalProposedText(run, itemIndex) {
     const item = run.contentItems?.[itemIndex];
     const originalText = String(item?.originalText || '');
     // AI 改写开启时，AI 发起 / 响应失败的内容一律不进程序改写，保持原文并计入失败项。

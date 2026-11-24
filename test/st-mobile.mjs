@@ -4,12 +4,16 @@
 //   CDP_PORT=9224  NO_NAV=1 (reuse current page)  RELOAD=1 (reload in place)
 //   LOAD_MS=7000   DPR=3 (override)  MOBILE=0 (keep desktop UA, viewport only)
 //   RESET=1 -> clear emulation, restore desktop UA, no screenshot
+//   EXPECT_OPEN / EXPECT_CONTENT='<rowSelector>[:<min>]' -> refuse a blank/empty screenshot
+//   SEED_JS=<js|@file.js> -> run a fixture script before opening the panel; failure refuses screenshot
 //   FRAME=1 -> draw an Android/Chrome shell around the shot (status bar,
 //              address bar, gesture bar). FRAME_THEME=light|dark forces it;
 //              default follows the page's active theme. FRAME_URL sets the
 //              address text (default 127.0.0.1:8000).
+//   每次出图写 <outfile>.json sidecar：视口、手机探针、内容行数、控制台错误。
 import fs from 'node:fs';
 import { framePng } from './mobile-frame.mjs';
+import { parseExpectContent, contentProbeExpression, contentFailureMessage } from './evidence-proof.mjs';
 
 const DEVICES = {
     iphone14: {
@@ -168,6 +172,29 @@ await sleep(Number(process.env.LOAD_MS ?? 7000));
 const p = await probe();
 console.error('PROBE =>', JSON.stringify(p));
 
+const failEvidence = (msg) => {
+    console.error('EVIDENCE FAIL:', msg);
+    ws.close();
+    process.exit(3);
+};
+const contentSpec = parseExpectContent(process.env.EXPECT_CONTENT);
+const seedJs = process.env.SEED_JS
+    ? (process.env.SEED_JS.startsWith('@') ? fs.readFileSync(process.env.SEED_JS.slice(1), 'utf8') : process.env.SEED_JS)
+    : '';
+const evidence = {
+    out, checkedAt: new Date().toISOString(), device: devArg, probe,
+    evalJs: evalJs || null, seedJs: seedJs || null,
+    expectOpen: process.env.EXPECT_OPEN ?? null,
+    expectContent: contentSpec, openTargets: [], content: null,
+    consoleErrors: p?.errors ?? [],
+};
+
+if (seedJs) {
+    const r = await send('Runtime.evaluate', { expression: seedJs, awaitPromise: true, returnByValue: true });
+    if (r.exceptionDetails) failEvidence(`SEED_JS 执行失败：${r.exceptionDetails.exception?.description || JSON.stringify(r.exceptionDetails)}`);
+    console.error('SEED =>', r.result?.value);
+}
+
 if (evalJs) {
     const r = await send('Runtime.evaluate', { expression: evalJs, awaitPromise: true, returnByValue: true });
     if (r.exceptionDetails) console.error('EVAL ERROR', JSON.stringify(r.exceptionDetails));
@@ -176,6 +203,33 @@ if (evalJs) {
         console.error('EVAL =>', typeof v === 'string' ? v : JSON.stringify(v));
     }
     await sleep(waitMs);
+}
+
+if (evidence.expectOpen) {
+    const selectors = evidence.expectOpen.split(',').map((s) => s.trim()).filter(Boolean);
+    const r = await send('Runtime.evaluate', {
+        expression: `(${JSON.stringify(selectors)}).map(s => {
+            const el = document.querySelector(s);
+            if (!el) return { sel: s, ok: false, reason: 'not found' };
+            const st = getComputedStyle(el), b = el.getBoundingClientRect();
+            const visible = st.display !== 'none' && st.visibility !== 'hidden' && Number(st.opacity) !== 0;
+            if (!visible) return { sel: s, ok: false, reason: 'hidden' };
+            if (b.width <= 1 || b.height <= 1) return { sel: s, ok: false, reason: 'zero-size' };
+            return { sel: s, ok: true, w: +b.width.toFixed(1), h: +b.height.toFixed(1) };
+        })`,
+        returnByValue: true,
+    });
+    evidence.openTargets = r.result?.value ?? [];
+    const bad = evidence.openTargets.filter((t) => !t.ok);
+    if (bad.length) failEvidence(`目标不可见：${bad.map((t) => `${t.sel}(${t.reason})`).join(', ')}`);
+}
+
+if (contentSpec) {
+    const r = await send('Runtime.evaluate', { expression: contentProbeExpression(contentSpec), returnByValue: true });
+    evidence.content = r.result?.value ?? null;
+    const message = contentFailureMessage(contentSpec, evidence.content);
+    if (message) failEvidence(message);
+    console.error('CONTENT =>', JSON.stringify(evidence.content));
 }
 
 const shot = await send('Page.captureScreenshot', { format: 'png', fromSurface: true, captureBeyondViewport: false });
@@ -200,5 +254,7 @@ if (process.env.FRAME === '1') {
     }
 }
 fs.writeFileSync(out, png);
-console.log(JSON.stringify({ saved: out, device: devArg, framed, probe: p }));
+evidence.framed = framed;
+fs.writeFileSync(`${out}.json`, JSON.stringify(evidence, null, 2));
+console.log(JSON.stringify({ saved: out, sidecar: `${out}.json`, device: devArg, framed, probe: p }));
 ws.close();

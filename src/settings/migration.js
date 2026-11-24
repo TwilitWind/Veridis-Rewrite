@@ -4,13 +4,13 @@
 import * as extensionsModule from "../../../../../extensions.js";
 import { saveSettingsDebounced } from "../../../../../../script.js";
 
-import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsCustomGlobalPromptMigrationConfirmation, normalizeAiSamplingSettings, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
+import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsPromptMigrationConfirm, normalizeAiSamplingSettings, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { logger } from '../log.js';
 import { cleanupInvalidPresetBindings } from '../presets/bindings.js';
-import { buildPresetEntry, getCurrentPresetAiRewriteSettings, getPresetAiRewriteSettings, getPresetRules } from '../presets/model.js';
+import { buildPresetEntry, getActivePresetAiSettings, getPresetAiRewriteSettings, getPresetRules } from '../presets/model.js';
 import { normalizeRuleActivationSafety } from '../rules/model.js';
-import { mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeScopeTagCollapsedGroupList, normalizeScopeTagGroupList } from '../scope/model.js';
+import { mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeCollapsedGroupList, normalizeScopeTagGroupList } from '../scope/model.js';
 import { normalizeZhVariantSettings, restoreZhDictionaryPackageFromCache } from '../zh/dictionary.js';
 
 const { extension_settings } = extensionsModule;
@@ -185,7 +185,7 @@ export function ensureSettingsShape() {
     if (!settings.characterBindings || typeof settings.characterBindings !== 'object') settings.characterBindings = {};
     if (!settings.chatCompletionPresetBindings || typeof settings.chatCompletionPresetBindings !== 'object') settings.chatCompletionPresetBindings = {};
     settings.scopeTagGroups = normalizeScopeTagGroupList(settings.scopeTagGroups);
-    settings.scopeTagCollapsedGroups = normalizeScopeTagCollapsedGroupList(settings.scopeTagCollapsedGroups, settings.scopeTagGroups);
+    settings.scopeTagCollapsedGroups = normalizeCollapsedGroupList(settings.scopeTagCollapsedGroups, settings.scopeTagGroups);
     settings.scopeTagBuiltinDismissed = normalizeScopeTagBuiltinDismissedList(settings.scopeTagBuiltinDismissed);
     settings.scopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed);
     if (!['protect', 'cleanse-inside'].includes(settings.scopeTagMode)) settings.scopeTagMode = 'protect';
@@ -216,7 +216,7 @@ export function ensureSettingsShape() {
     cleanupInvalidPresetBindings();
 }
 
-export { needsCustomGlobalPromptMigrationConfirmation, resolveCustomGlobalPromptMigration };
+export { needsPromptMigrationConfirm, resolveCustomGlobalPromptMigration };
 
 function normalizeRuleShape(rule, index = 0) {
     if (!rule || typeof rule !== 'object') return;
@@ -275,7 +275,7 @@ function normalizePresetEntriesShape(settings) {
         settings.presets[name] = buildPresetEntry(
             rules,
             getPresetAiRewriteSettings({ ...presetEntry, aiRewrite: migratedAiRewrite })
-                || getCurrentPresetAiRewriteSettings(settings.aiRewrite)
+                || getActivePresetAiSettings(settings.aiRewrite)
         );
     });
 }
@@ -303,7 +303,7 @@ export function migrateOldData() {
             normalizeRulesListShape(settings.rules);
 
             if (Object.keys(settings.presets).length === 0) {
-                settings.presets["默认存档"] = buildPresetEntry(settings.rules, getCurrentPresetAiRewriteSettings(settings.aiRewrite));
+                settings.presets["默认存档"] = buildPresetEntry(settings.rules, getActivePresetAiSettings(settings.aiRewrite));
                 settings.activePreset = "默认存档";
             }
         }

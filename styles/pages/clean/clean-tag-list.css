@@ -29,7 +29,7 @@
 #blai-purifier-popup .blai-clean-tag-group-body {
     display: grid;
     grid-template-rows: 1fr;
-    transition: grid-template-rows .18s ease;
+    transition: grid-template-rows var(--blai-duration-slow) var(--blai-ease-out);
 }
 
 #blai-purifier-popup .blai-clean-tag-group.is-collapsed .blai-clean-tag-group-body {
@@ -52,7 +52,7 @@
     align-items: center;
     gap: var(--blai-space-10);
     background: transparent;
-    transition: background-color .18s ease, opacity .18s ease;
+    transition: background-color var(--blai-duration-slow) var(--blai-ease-out), opacity var(--blai-duration-slow) var(--blai-ease-out);
 }
 
 #blai-purifier-popup .blai-clean-tag-item + .blai-clean-tag-item {
@@ -180,7 +180,7 @@
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
     position: fixed;
-    max-height: calc(var(--blai-viewport-h) - var(--blai-size-16));
+    max-height: var(--blai-dropdown-max-height);
     overflow-y: auto;
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);
@@ -355,7 +355,7 @@
     font-size: var(--blai-font-11);
     font-weight: var(--blai-weight-bold);
     box-shadow: none;
-    transition: filter .18s ease;
+    transition: filter var(--blai-duration-slow) var(--blai-ease-out);
 }
 
 #blai-purifier-popup .blai-clean-danger-button:hover {

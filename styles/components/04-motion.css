@@ -12,13 +12,14 @@
     to { opacity: 1; transform: none; }
 }
 
-@keyframes blai-fade-drop {
-    from { opacity: 0; transform: translateY(-4px) scale(.985); }
+/* 切页只做极轻的淡入，避免整页从透明浮起造成「闪一下」。 */
+@keyframes blai-page-in {
+    from { opacity: .82; transform: translateY(2px); }
     to { opacity: 1; transform: none; }
 }
 
 #blai-purifier-popup .page-panel.active {
-    animation: blai-fade-rise var(--blai-duration-base) var(--blai-ease-out) both;
+    animation: blai-page-in var(--blai-duration-fast) var(--blai-ease-out) both;
 }
 
 .blai-modal-shell {
@@ -30,21 +31,16 @@
     animation: blai-fade-rise var(--blai-duration-slow) var(--blai-ease-out) both;
 }
 
+/* portal 菜单由 popover.js 用 left/top 精确定位；入场动画只做淡入，
+   不能再叠 transform（scale/translate），否则弹出瞬间视觉上会往右上角偏一下。 */
 :is(.blai-home-card-menu, .blai-subrule-menu, .blai-rule-search-menu, .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu, .blai-edit-filter-menu) {
-    animation: blai-fade-drop var(--blai-duration-fast) var(--blai-ease-out) both;
-    transform-origin: top right;
-}
-
-/* 手机端切页：位移更小、时长略长，避免「硬跳一下」的观感。 */
-@keyframes blai-page-in-mobile {
-    from { opacity: 0; transform: translate3d(0, 3px, 0); }
-    to { opacity: 1; transform: none; }
+    animation: blai-fade-in var(--blai-duration-fast) var(--blai-ease-out) both;
 }
 
 @media (max-width: 600px) {
     #blai-purifier-popup .page-panel.active {
-        animation-name: blai-page-in-mobile;
-        animation-duration: var(--blai-duration-slow);
+        animation-name: blai-page-in;
+        animation-duration: var(--blai-duration-fast);
     }
 }
 

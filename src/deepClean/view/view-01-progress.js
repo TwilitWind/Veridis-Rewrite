@@ -1,8 +1,8 @@
 /** view 的分块：progress。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { deepCleanRuntimeState } from '../state.js';
 import { renderFullTextDiffBlocks } from '../../diff/compare.js';
-import { resolveDeepCleanReviewRunsText, resolveDeepCleanReviewedText } from '../review.js';
-import { resolveDeepCleanFinalProposedText } from '../aiProcessing.js';
+import { resolveReviewRunsText, resolveDeepCleanReviewedText } from '../review.js';
+import { resolveFinalProposedText } from '../aiProcessing.js';
 import { deepCleanBatchStageLabels, deepCleanBatchSummaryBodyHtml, deepCleanSafeHtml, setDeepCleanWorkspaceHeader, deepCleanMeasuredProgress, deepCleanBatchSummaryHtml } from './view-00-selection.js';
 
 function deepCleanBatchProgressText(progress = {}) {
@@ -179,11 +179,11 @@ export function renderDeepCleanReviewDocument(entry) {
     }).join('');
     const operations = entry.blocks.flatMap((block, blockIndex) => {
         if (block.type === 'equal') {
-            const text = resolveDeepCleanReviewRunsText(block.runs);
+            const text = resolveReviewRunsText(block.runs);
             return text === '' ? [] : [{ type: 'equal', text, runs: block.runs, blockIndex, atomic: true }];
         }
-        const oldText = resolveDeepCleanReviewRunsText(block.oldRuns);
-        const newText = resolveDeepCleanReviewRunsText(block.newRuns);
+        const oldText = resolveReviewRunsText(block.oldRuns);
+        const newText = resolveReviewRunsText(block.newRuns);
         return [
             { type: 'delete', text: oldText, runs: block.oldRuns, blockIndex, branch: 'old', active: block.active, isEmpty: oldText === '', isPureDeletion: newText === '', atomic: true, forceRender: oldText === '' },
             { type: 'insert', text: newText, runs: block.newRuns, blockIndex, branch: 'new', active: block.active, isEmpty: newText === '', atomic: true, forceRender: newText === '' },
@@ -260,7 +260,7 @@ export function renderDeepCleanReviewView(session, itemIndex, item, entry) {
     }
     const projections = {
         original: { label: '冻结原版', text: item.originalText },
-        cleaned: { label: '初始净化后结果', text: resolveDeepCleanFinalProposedText(session.processedRun, itemIndex) },
+        cleaned: { label: '初始净化后结果', text: resolveFinalProposedText(session.processedRun, itemIndex) },
         final: { label: '当前最终结果', text: resolveDeepCleanReviewedText(session, itemIndex) },
     };
     const projection = projections[viewMode];

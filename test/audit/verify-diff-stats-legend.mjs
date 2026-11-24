@@ -15,15 +15,14 @@
  * 用法：CDP_PORT=9224 node test/audit/verify-diff-stats-legend.mjs
  * 失败时退出码 1，并打印逐项期望/实际；截图落在 shots/ 下。
  */
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { collectDiffStats } from '../../src/diff/diffStats.js';
+import {
+    connect, evaluate, waitFor, reloadAndWait, capture as captureEvidence,
+    snapshotAiSettings, normalizeAiSettings, restoreAiSettings,
+} from './_harness.mjs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const SHOTS = path.join(ROOT, 'shots');
-const PORT = process.env.CDP_PORT ?? '9224';
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const capture = (send, name) => captureEvidence(send, name, { expectOpen: ['#blai-diff-modal-content'] });
 
 const PROBE = `(() => {
     const modal = document.getElementById('blai-diff-modal');
@@ -173,49 +172,7 @@ const PROBE = `(() => {
     };
 })()`;
 
-async function connect() {
-    const list = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json();
-    const page = list.find((target) => target.type === 'page' && target.url.includes('127.0.0.1:8000'))
-        || list.find((target) => target.type === 'page');
-    if (!page) throw new Error('没有可用的调试页面');
-    const ws = new WebSocket(page.webSocketDebuggerUrl);
-    let id = 0;
-    const pending = new Map();
-    ws.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-        if (!message.id || !pending.has(message.id)) return;
-        const { resolve, reject } = pending.get(message.id);
-        pending.delete(message.id);
-        message.error ? reject(new Error(JSON.stringify(message.error))) : resolve(message.result);
-    });
-    await new Promise((resolve, reject) => {
-        ws.addEventListener('open', resolve, { once: true });
-        ws.addEventListener('error', reject, { once: true });
-    });
-    const send = (method, params = {}) => new Promise((resolve, reject) => {
-        const mid = ++id;
-        pending.set(mid, { resolve, reject });
-        ws.send(JSON.stringify({ id: mid, method, params }));
-    });
-    return { ws, send };
-}
-
-async function evaluate(send, expression) {
-    const result = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true });
-    if (result.exceptionDetails) {
-        throw new Error('页面脚本异常：' + JSON.stringify(result.exceptionDetails.exception?.description || result.exceptionDetails));
-    }
-    return result.result?.value;
-}
-
-async function waitFor(send, expression, label, tries = 50) {
-    for (let i = 0; i < tries; i++) {
-        if (await evaluate(send, expression)) return;
-        await sleep(300);
-    }
-    throw new Error(`等待超时：${label}`);
-}
-
+// 本脚本历史签名是 check(failures, condition, message)，且只在失败时列明细。
 function check(failures, condition, message) {
     if (!condition) failures.push(message);
 }
@@ -264,14 +221,6 @@ function checkNotices(failures, label, snapshot) {
     });
 }
 
-async function capture(send, name) {
-    fs.mkdirSync(SHOTS, { recursive: true });
-    const result = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
-    const target = path.join(SHOTS, name);
-    fs.writeFileSync(target, Buffer.from(result.data, 'base64'));
-    return path.relative(ROOT, target).replace(/\\/g, '/');
-}
-
 function unitCheckManualCount(failures) {
     const emptyEl = { querySelectorAll: () => [] };
     const makeMsg = (mes, programMes, reverted = false) => ({
@@ -297,23 +246,24 @@ async function main() {
     unitCheckManualCount(failures);
 
     const { ws, send } = await connect();
-    await send('Runtime.enable');
-    await send('Page.enable');
-    await send('Network.enable');
-    await send('Network.setCacheDisabled', { cacheDisabled: true });
-    await send('Page.addScriptToEvaluateOnNewDocument', {
-        source: `window.__verifyStatsErrors = [];
-            addEventListener('error', e => window.__verifyStatsErrors.push(String(e.message)));
-            addEventListener('unhandledrejection', e => window.__verifyStatsErrors.push(String(e.reason)));`,
-    });
-    await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
-    await send('Page.reload', { ignoreCache: true });
-
-    await waitFor(send, `(() => {
+    let aiBaseline = null;
+    let report = null;
+    try {
+        // 本脚本用「重新净化」复位差异项，必须固定为程序改写；真实设置另有快照，结束恢复。
+        aiBaseline = await snapshotAiSettings(send);
+        await normalizeAiSettings(send);
+        await sleep(800);
+        await send('Page.addScriptToEvaluateOnNewDocument', {
+            source: `window.__verifyStatsErrors = [];
+                addEventListener('error', e => window.__verifyStatsErrors.push(String(e.message)));
+                addEventListener('unhandledrejection', e => window.__verifyStatsErrors.push(String(e.reason)));`,
+        });
+        await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+    await reloadAndWait(send, `(() => {
         const b = document.querySelector('.blai-diff-btn-bottom');
         const modal = document.getElementById('blai-diff-modal');
-        return document.readyState === 'complete' && !!b && !!modal && b.offsetParent !== null;
-    })()`, '页面就绪且存在透视入口与弹窗节点');
+        return !!b && !!modal && b.offsetParent !== null;
+    })()`, '页面就绪且存在透视入口与弹窗节点', 120);
 
     // 先确保弹窗真的打开、事件已绑定；上一轮可能把消息留在撤回态，需先重新净化。
     await waitFor(send, `(() => {
@@ -324,8 +274,20 @@ async function main() {
     })()`, '透视弹窗打开并完成渲染', 120);
     const preflight = await evaluate(send, PROBE);
     if (preflight.reverted) {
-        await evaluate(send, `(() => { document.getElementById('blai-diff-revert-toggle')?.click(); return true; })()`);
-        await waitFor(send, `(() => { const s = ${PROBE}; return !s.reverted && !s.comparing && s.groups > 0; })()`, '预置重新净化', 80);
+        // 重载后弹窗可能被异步关闭；前置必须按真实状态重试，不能假设节点仍在。
+        await waitFor(send, `(() => {
+            const modal = document.getElementById('blai-diff-modal');
+            if (modal && getComputedStyle(modal).display === 'none') {
+                document.querySelector('.blai-diff-btn-bottom')?.click();
+                return false;
+            }
+            const s = ${PROBE};
+            if (s.reverted && !s.comparing) {
+                document.getElementById('blai-diff-revert-toggle')?.click();
+                return false;
+            }
+            return !s.reverted && !s.comparing && s.groups > 0;
+        })()`, '预置重新净化', 80);
     }
 
     await waitFor(send, `(() => {
@@ -497,9 +459,7 @@ async function main() {
 
     await evaluate(send, `(() => { document.getElementById('blai-diff-modal-close')?.click(); return true; })()`);
     await send('Emulation.clearDeviceMetricsOverride');
-    ws.close();
-
-    console.log(JSON.stringify({
+    report = {
         labels: initial.sources.map((item) => item.label),
         counts: initial.stats,
         reverted: reverted.stats,
@@ -515,7 +475,20 @@ async function main() {
         },
         screenshots: [desktopShot, filterShot, mobileShot],
         failures,
-    }, null, 2));
+    };
+    } finally {
+        if (aiBaseline) {
+            await restoreAiSettings(send, aiBaseline);
+            const actualAi = await snapshotAiSettings(send);
+            check(failures, JSON.stringify(actualAi) === JSON.stringify(aiBaseline),
+                `审计后 AI 设置对象已恢复：${JSON.stringify(actualAi)} / ${JSON.stringify(aiBaseline)}`);
+            if (report) report.failures = failures;
+        }
+        await send('Emulation.clearDeviceMetricsOverride').catch(() => {});
+        ws.close();
+    }
+
+    console.log(JSON.stringify(report, null, 2));
     if (failures.length) process.exit(1);
 }
 

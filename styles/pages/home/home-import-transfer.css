@@ -265,7 +265,7 @@
     padding: var(--blai-dropdown-pad);
     display: grid;
     gap: var(--blai-dropdown-gap);
-    max-height: calc(var(--blai-viewport-h) - var(--blai-size-16));
+    max-height: var(--blai-dropdown-max-height);
     overflow-y: auto;
     background: var(--blai-dropdown-bg);
     border: var(--blai-border-1) solid var(--blai-dropdown-border);

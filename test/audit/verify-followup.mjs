@@ -168,6 +168,7 @@ try {
             { page: 'overview', names: ['activeNavigationTarget', 'currentRulesetTourTarget', 'presetImportTourTarget', 'ruleToolsTourTarget'] },
             { page: 'ai', names: ['aiAdvancedGenerationTourTarget'] },
             { page: 'tools', names: ['toolsPageTourTarget'] },
+            { page: 'feedback', names: ['feedbackPageTourTarget'] },
         ];
         const badDetails = [];
         let targetCount = 0;

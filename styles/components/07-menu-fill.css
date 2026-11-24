@@ -1,5 +1,6 @@
-/* 下拉菜单高亮/悬停整行铺满：菜单内边距与行距由 token 归零，
-   这里补首末行圆角，让色块贴边但不顶破菜单圆角。中间行保持方角。 */
+/* 下拉菜单项圆角：菜单四方向留白、行间留缝后，每行自带小圆角，
+   高亮块不贴菜单边。圆角值统一取 --blai-dropdown-item-radius，
+   避免像旧版那样为「首末行补角」单列一份清单、漏改一处就露直角。 */
 
 :is(
     .blai-theme-menu,
@@ -14,17 +15,5 @@
     .blai-home-card-menu,
     .blai-subrule-menu
 )[class] > :is([class], [role]) {
-    border-radius: 0;
-
-    /* 首末行圆角：用 & 嵌套把同一份 11 类菜单清单收成一处，
-       避免四份列表各自漏改。顺序沿用原文件，only-child 放最后同时盖住首末两角。 */
-    &:first-child {
-        border-radius: var(--blai-dropdown-radius) var(--blai-dropdown-radius) 0 0;
-    }
-    &:last-child {
-        border-radius: 0 0 var(--blai-dropdown-radius) var(--blai-dropdown-radius);
-    }
-    &:only-child {
-        border-radius: var(--blai-dropdown-radius);
-    }
+    border-radius: var(--blai-dropdown-item-radius);
 }

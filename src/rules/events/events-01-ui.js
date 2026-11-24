@@ -3,7 +3,7 @@ import { subruleModeUIMap, validateRegexTargetField, syncRegexAssistUi } from '.
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { markRulesDataDirty, rulesUiState } from '.././state.js';
-import { buildPresetEntry, deepClone, getCurrentPresetAiRewriteSettings, getPresetAiRewriteSettings, getPresetRules } from '../../presets/model.js';
+import { buildPresetEntry, deepClone, getActivePresetAiSettings, getPresetAiRewriteSettings, getPresetRules } from '../../presets/model.js';
 import { showToast } from '../../ui/notifications.js';
 import { closeTransferModal, getSingleRuleReplacementValues, renderTags, setSingleRuleReplacementEditor } from '.././view.js';
 
@@ -44,6 +44,14 @@ export function applySubruleRewriteModeUI() {
     $('#blai-modal-sub-ai-prompt-field').prop('hidden', !isAiMode);
     $('#blai-modal-sub-ai-prompt').prop('disabled', !isAiMode);
     $('#blai-modal-sub-ai-prompt-hint').text('只填写这条规则命中时的特殊处理；通用风格仍由全局提示词控制。');
+
+    // 分段按钮只做视觉态；真实值仍在隐藏 select 上，业务读写路径保持不变。
+    const segment = document.getElementById('blai-modal-sub-rewrite-mode-segment');
+    segment?.querySelectorAll('.blai-subrule-rewrite-option').forEach((button) => {
+        const active = button.getAttribute('data-value') === rewriteMode;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
 }
 
 export function runRuleTransfer(isMove) {
@@ -78,7 +86,7 @@ export function runRuleTransfer(isMove) {
     movingRules.forEach((rule) => targetRules.push(deepClone(rule)));
     settings.presets[targetPreset] = buildPresetEntry(
         targetRules,
-        getPresetAiRewriteSettings(targetEntry) || getCurrentPresetAiRewriteSettings(settings.aiRewrite)
+        getPresetAiRewriteSettings(targetEntry) || getActivePresetAiSettings(settings.aiRewrite)
     );
     if (isMove) {
         for (let i = uniqueIndexes.length - 1; i >= 0; i--) {

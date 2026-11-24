@@ -90,7 +90,7 @@ export function bindRuleSubruleEditorEvents() {
             openSubruleTransferModal(index);
         } else if (action === 'remark') {
             const sub = list[index];
-            const newRemark = await showPromptModal("📝 快捷修改规则备注：\n(若不需要备注，请直接清空并点击确定)", sub.remark || '', { okText: '确定' });
+            const newRemark = await showPromptModal('快捷修改规则备注：\n(若不需要备注，请直接清空并点击确定)', sub.remark || '', { okText: '确定' });
             if (newRemark !== null) {
                 sub.remark = newRemark.trim();
                 renderSubrulesToModal();
@@ -125,6 +125,13 @@ export function bindRuleSubruleEditorEvents() {
     $(document).off('change', '#blai-modal-sub-rewrite-mode').on('change', '#blai-modal-sub-rewrite-mode', function() {
         applySubruleRewriteModeUI();
     });
+
+    $(document).off('click', '#blai-modal-sub-rewrite-mode-segment .blai-subrule-rewrite-option')
+        .on('click', '#blai-modal-sub-rewrite-mode-segment .blai-subrule-rewrite-option', function() {
+            const value = String($(this).attr('data-value') || 'program');
+            const $select = $('#blai-modal-sub-rewrite-mode');
+            if ($select.val() !== value) $select.val(value).trigger('change');
+        });
 
     $(document).off('input', '#blai-modal-sub-target').on('input', '#blai-modal-sub-target', () => {
         validateRegexTargetField();

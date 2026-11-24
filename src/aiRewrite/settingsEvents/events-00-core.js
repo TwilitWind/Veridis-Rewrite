@@ -125,17 +125,18 @@ export function createAiSettingsCore() {
                 custom.disabled = !selectedModel;
                 fragment.appendChild(custom);
             }
-            if (fetchedModels.length > 0) {
-                const autoGroup = document.createElement('optgroup');
-                autoGroup.label = '自动拉取';
-                fetchedModels.forEach((modelId) => autoGroup.appendChild(new Option(modelId, modelId)));
-                fragment.appendChild(autoGroup);
-            }
+            // 手动填写在前、自动拉取在后：用户主动加的模型优先可见。
             if (manualModels.length > 0) {
                 const manualGroup = document.createElement('optgroup');
                 manualGroup.label = '手动填写';
                 manualModels.forEach((modelId) => manualGroup.appendChild(new Option(modelId, modelId)));
                 fragment.appendChild(manualGroup);
+            }
+            if (fetchedModels.length > 0) {
+                const autoGroup = document.createElement('optgroup');
+                autoGroup.label = '自动拉取';
+                fetchedModels.forEach((modelId) => autoGroup.appendChild(new Option(modelId, modelId)));
+                fragment.appendChild(autoGroup);
             }
         }
         $select.empty().append(fragment).val(selectedModel);
@@ -397,6 +398,25 @@ export function createAiSettingsCore() {
         $('#blai-ai-generation-modal-close').trigger('focus');
     };
 
+    // 从「手动填写」里移除单个模型；同时处理当前选中项与其它引用。
+    const removeManualAiModel = (modelId) => {
+        const aiSettings = ensureAiRewriteSettings();
+        const target = String(modelId || '').trim();
+        if (!target) return { removed: false, wasSelected: false };
+        const manualModels = normalizeAiModelOptions(aiSettings.manualModels);
+        if (!manualModels.includes(target)) return { removed: false, wasSelected: false };
+        const wasSelected = String(aiSettings.model || '').trim() === target;
+        aiSettings.manualModels = manualModels.filter((value) => value !== target);
+        if (wasSelected) {
+            // 删掉当前项后回退到剩余手动项、再回退到自动拉取项，都没有则留空。
+            const remaining = [...normalizeAiModelOptions(aiSettings.manualModels), ...normalizeAiModelOptions(aiSettings.modelOptions)];
+            aiSettings.model = remaining[0] || '';
+        }
+        saveSettingsDebounced();
+        syncAiRewriteSettingsUI();
+        return { removed: true, wasSelected };
+    };
+
     const applyAiPromptEditor = () => {
         const value = String($('#blai-ai-prompt-expanded').val() || defaultAiRewriteSettings.promptTemplate);
         $('#blai-ai-prompt').val(value);
@@ -413,17 +433,11 @@ export function createAiSettingsCore() {
     aiMobileLayoutMedia.addEventListener('change', syncAiResponsiveLayout);
 
 
-    // 直角引号已去掉，关键词改由 <span> 承载强调色；调用处显式声明 allowHtml（文案为硬编码，非用户输入）。
-    const AI_REWRITE_ORDER_NOTE = [
-        '开启<span class="blai-dialog-em">启用改写</span>后，插件先按规则条目顺序从上到下执行所有<span class="blai-dialog-em">AI 改写</span>条目，再执行<span class="blai-dialog-em">程序改写</span>条目。',
-        '关闭<span class="blai-dialog-em">启用改写</span>后，所有<span class="blai-dialog-em">AI 改写</span>条目会被自动过滤，只运行<span class="blai-dialog-em">程序改写</span>条目。',
-        '规则条目在列表中自上而下的排列顺序，就是实际的执行顺序。',
-    ].join('\n');
-
     return {
         settings,
         ensureAiRewriteSettings,
         normalizeAiModelOptions,
+        removeManualAiModel,
         isActiveAiApiPresetDirty,
         syncAiApiPresetSelect,
         saveCurrentAiApiPreset,
@@ -439,6 +453,5 @@ export function createAiSettingsCore() {
         openAiAdditionalEditor,
         closeAiAdditionalEditor,
         applyAiPromptEditor,
-        AI_REWRITE_ORDER_NOTE,
     };
 }

@@ -118,7 +118,7 @@
     font: inherit;
     text-align: left;
     box-shadow: none;
-    transition: border-color .18s ease, background-color .18s ease, color .18s ease;
+    transition: border-color var(--blai-duration-slow) var(--blai-ease-out), background-color var(--blai-duration-slow) var(--blai-ease-out), color var(--blai-duration-slow) var(--blai-ease-out);
 }
 
 #blai-purifier-popup .blai-clean-mode-card::after {
@@ -318,7 +318,7 @@
     line-height: 1;
     text-align: center;
     color: var(--text-secondary);
-    transition: transform .18s ease;
+    transition: transform var(--blai-duration-slow) var(--blai-ease-out);
 }
 
 /* 分组折叠时内容区没了，顶栏底部分隔线会变成一条悬空横线，收起来 */
@@ -375,7 +375,7 @@
 #blai-purifier-popup .blai-clean-switch-track {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     line-height: 1;
     color: var(--text-secondary);
 }

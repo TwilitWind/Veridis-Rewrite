@@ -20,7 +20,7 @@ import { performGlobalChatMaintenance } from './src/chat/cleanse.js';
 import { isTauriTavernHost, waitForTauriTavernReady } from './src/integrations/tauriTavern.js';
 import { isBaiBaiToolkitInstalled } from './src/integrations/baiBai.js';
 import { isLoreFrameInstalled } from './src/integrations/loreFrame.js';
-import { createDefaultSettings, ensureSettingsShape, maybeCopyLegacySettings, maybeImportModifiedSettingsIntoSharedNamespace, migrateOldData, needsCustomGlobalPromptMigrationConfirmation, resolveCustomGlobalPromptMigration } from './src/settings/migration.js';
+import { createDefaultSettings, ensureSettingsShape, maybeCopyLegacySettings, maybeImportModifiedSettingsIntoSharedNamespace, migrateOldData, needsPromptMigrationConfirm, resolveCustomGlobalPromptMigration } from './src/settings/migration.js';
 import { syncComposerButtonScript } from './src/aiRewrite/composerButton.js';
 import { readExtensionManifest } from './src/host/extensionManifest.js';
 import { resolveExtensionIdentity } from './src/host/extensionIdentity.js';
@@ -147,7 +147,7 @@ jQuery(() => {
         if (isLoreFrameInstalled()) logger.info('[词汇映射] 已启用 LoreFrame 兼容层');
         await setupUI(extensionsModule.renderExtensionTemplateAsync, templateDirectory);
         const aiRewrite = extension_settings[extensionName].aiRewrite;
-        if (needsCustomGlobalPromptMigrationConfirmation(aiRewrite)) {
+        if (needsPromptMigrationConfirm(aiRewrite)) {
             const accepted = await showRiskConfirmModal('【词汇映射】的全局提示词写法已经更新。检测到你当前使用的是自定义提示词，是否应用新版默认全局提示词？');
             resolveCustomGlobalPromptMigration(aiRewrite, accepted);
             saveSettingsDebounced();

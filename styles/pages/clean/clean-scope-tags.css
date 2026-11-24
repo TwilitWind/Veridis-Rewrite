@@ -78,7 +78,7 @@
     font-weight: var(--blai-weight-bold);
     line-height: 1;
     cursor: pointer;
-    transition: transform 0.18s ease, filter 0.18s ease, background-color 0.18s ease;
+    transition: transform var(--blai-duration-slow) var(--blai-ease-out), filter var(--blai-duration-slow) var(--blai-ease-out), background-color var(--blai-duration-slow) var(--blai-ease-out);
 }
 
 .blai-scope-tag-cancel {

@@ -94,7 +94,7 @@ export function closeDeepCleanInitialSelection() {
     $('#blai-deep-clean-workspace').removeClass('blai-is-open').attr('aria-hidden', 'true');
 }
 
-export function showDeepCleanInitialSelectionError(error) {
+export function showInitialSelectionError(error) {
     setDeepCleanWorkspaceHeader('深度净化无法完成', '请查看错误信息后结束当前工作区。');
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-state blai-deep-clean-error-state" aria-label="深度净化错误">

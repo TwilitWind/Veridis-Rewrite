@@ -79,7 +79,7 @@ export function normalizeScopeTagGroupList(entries) {
     return groups.length > 0 ? groups : [{ id: DEFAULT_SCOPE_TAG_GROUP_ID, name: DEFAULT_SCOPE_TAG_GROUP_NAME }];
 }
 
-export function normalizeScopeTagCollapsedGroupList(entries, groups = []) {
+export function normalizeCollapsedGroupList(entries, groups = []) {
     if (!Array.isArray(entries)) return [];
     const validGroupIds = new Set(normalizeScopeTagGroupList(groups).map((group) => group.id));
     const seen = new Set();
@@ -166,7 +166,7 @@ export function formatScopeTagInput(scopeTag) {
     return label ? `${startTag}${SCOPE_TAG_LABEL_SEPARATOR}${label}` : startTag;
 }
 
-export function getBuiltinScopeTagKeyForStartTag(startTag = '') {
+export function getBuiltinStartTagKey(startTag = '') {
     return normalizeScopeTagBuiltinKey('', String(startTag ?? '').trim());
 }
 

@@ -6,7 +6,7 @@
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { markRulesDataDirty, rulesUiState } from '../state.js';
-import { buildPresetEntry, deepClone, getCurrentPresetAiRewriteSettings, getPresetAiRewriteSettings, getPresetRules } from '../../presets/model.js';
+import { buildPresetEntry, deepClone, getActivePresetAiSettings, getPresetAiRewriteSettings, getPresetRules } from '../../presets/model.js';
 import { safeHtml } from '../../ui/html.js';
 import { renderSubrulesToModal } from './view-02-panels.js';
 import { showToast } from '../../ui/notifications.js';
@@ -149,7 +149,7 @@ export function runSubruleTransfer() {
         const entry = settings.presets[presetName];
         settings.presets[presetName] = buildPresetEntry(
             targetRules,
-            getPresetAiRewriteSettings(entry) || getCurrentPresetAiRewriteSettings(settings.aiRewrite)
+            getPresetAiRewriteSettings(entry) || getActivePresetAiSettings(settings.aiRewrite)
         );
     }
 
