@@ -1,5 +1,5 @@
 import { defaultAiRewriteSettings } from '../settings/defaults.js';
-import { mergeScopeTagsWithBuiltins } from '../scope/model.js';
+import { mergeScopeTagsWithBuiltins, findNextScopeTagMatch } from '../scope/model.js';
 import { collectXmlCommentRanges, maskXmlCommentRanges } from './commentProtection.js';
 import { recordAiRewriteDebug } from './debug.js';
 import { collectVariableUpdateRanges } from '../text/variableUpdates.js';
@@ -20,18 +20,6 @@ function normalizePositiveInteger(value, fallback) {
 function getEnabledScopeTags(settings) {
     const scopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed);
     return scopeTags.filter((tag) => tag?.enabled !== false);
-}
-
-function findNextScopeTagMatch(text, fromIndex, scopeTags) {
-    let nextMatch = null;
-    for (const scopeTag of scopeTags) {
-        const startIndex = text.indexOf(scopeTag.startTag, fromIndex);
-        if (startIndex < 0) continue;
-        if (!nextMatch || startIndex < nextMatch.index || (startIndex === nextMatch.index && scopeTag.startTag.length > nextMatch.scopeTag.startTag.length)) {
-            nextMatch = { index: startIndex, scopeTag };
-        }
-    }
-    return nextMatch;
 }
 
 export function collectScopeRanges(text, settings) {

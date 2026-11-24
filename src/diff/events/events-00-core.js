@@ -13,6 +13,7 @@ import { maintainDiffRetention } from '../retention.js';
 import { escapeHtml } from '../compare.js';
 import { omitVariableUpdates } from '../../text/variableUpdates.js';
 import { renderDiffDocumentInBackground } from '../background.js';
+import { fadeOutThen } from '../../ui/motion.js';
 import { collectAiScopeSegments } from '../../aiRewrite/matching.js';
 import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from '../../chat/messageBranch.js';
 import { getMessageDiffMeta, isMessageDiffReverted, setMessageDiffReverted, writeMessageDiffAiStage, writeMessageDiffProgram } from '../messageMeta.js';
@@ -157,8 +158,9 @@ export function createDiffEventsCore() {
 
 
     const closeDiffRelatedModal = ({ clearSelection = true } = {}) => {
+        const $modal = $('#blai-diff-related-modal');
         $('#blai-diff-related-body').empty();
-        $('#blai-diff-related-modal').hide();
+        fadeOutThen($modal, () => $modal.hide());
         if (clearSelection) $('#blai-diff-modal-content .blai-diff-change-selected').removeClass('blai-diff-change-selected');
     };
 
@@ -485,7 +487,8 @@ export function createDiffEventsCore() {
         diffRuntimeState.diffFilterEnabled = false;
         diffRuntimeState.diffSelectedSources = [];
         syncDiffFilterState();
-        $('#blai-diff-modal').hide();
+        const $diffModal = $('#blai-diff-modal');
+        fadeOutThen($diffModal, () => $diffModal.hide());
         diffRuntimeState.currentMessage = null;
     };
 

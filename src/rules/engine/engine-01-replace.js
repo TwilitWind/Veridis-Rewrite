@@ -1,5 +1,5 @@
 /** engine 的分块：replace。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { mergeScopeTagsWithBuiltins, collectMvuStatusPlaceholderRanges } from '../../scope/model.js';
+import { mergeScopeTagsWithBuiltins, collectMvuStatusPlaceholderRanges, findNextScopeTagMatch } from '../../scope/model.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { programRuntimeState } from '../state.js';
@@ -88,18 +88,6 @@ function getEnabledScopeTagsForSettings(settings = {}) {
 
 function getScopeTagModeForSettings(settings = {}) {
     return settings?.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect';
-}
-
-function findNextScopeTagMatch(text, fromIndex, scopeTags) {
-    let nextMatch = null;
-    for (const scopeTag of scopeTags) {
-        const startIndex = text.indexOf(scopeTag.startTag, fromIndex);
-        if (startIndex < 0) continue;
-        if (!nextMatch || startIndex < nextMatch.index || (startIndex === nextMatch.index && scopeTag.startTag.length > nextMatch.scopeTag.startTag.length)) {
-            nextMatch = { index: startIndex, scopeTag };
-        }
-    }
-    return nextMatch;
 }
 
 export function applyScopedCompiledReplacementsWithTrackedRanges(originalText, processors = [], scopeSettings = {}, ranges = [], options = {}) {

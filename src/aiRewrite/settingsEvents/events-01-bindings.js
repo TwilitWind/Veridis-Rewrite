@@ -6,6 +6,7 @@ import { getAppContext } from '../../host/appContext.js';
 import { showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
 import { openMenuPopover, closeMenuPopover } from '../../ui/popover.js';
 import { injectDiffButtons } from '../../diff/view.js';
+import { fadeOutThen } from '../../ui/motion.js';
 
 function bindAiApiPresetActionsMenu() {
     const toggle = document.getElementById('blai-ai-preset-actions-toggle');
@@ -255,7 +256,8 @@ export function bindAiSettingHandlers(core) {
         });
     };
     const closeManualModelManage = () => {
-        $('#blai-ai-model-manage-modal').hide().attr('aria-hidden', 'true');
+        const $modal = $('#blai-ai-model-manage-modal');
+        fadeOutThen($modal, () => $modal.hide().attr('aria-hidden', 'true'));
     };
 
     $(document).off('click', '#blai-ai-model-manage').on('click', '#blai-ai-model-manage', (e) => {

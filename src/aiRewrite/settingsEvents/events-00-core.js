@@ -8,6 +8,7 @@ import { hasAdditionalParameters } from '../additionalParameters.js';
 import { logger } from '../../log.js';
 import { showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
 import { focusOnFinePointer } from '../../ui/popover.js';
+import { syncAiGenerationFieldsUI, setValueIfNotFocused } from '../generationFields.js';
 
 // AI 设置的核心闭包：状态与工具函数集中在此，绑定层通过返回对象读取。
 let aiApiCheckSequence = 0;
@@ -54,13 +55,6 @@ export function createAiSettingsCore() {
         } catch {
             return true;
         }
-    };
-
-    const getAiTimeoutSeconds = (timeoutMs) => {
-        const parsed = Number(timeoutMs);
-        const fallback = Number(defaultAiRewriteSettings.timeoutMs) || 120000;
-        const normalizedMs = Number.isFinite(parsed) ? parsed : fallback;
-        return Math.min(Math.max(Math.round(normalizedMs / 1000), 1), 120);
     };
 
     const setAiApiCheckState = (state, title = '') => {
@@ -291,10 +285,6 @@ export function createAiSettingsCore() {
 
     const syncAiRewriteSettingsUI = () => {
         const aiSettings = ensureAiRewriteSettings();
-        const setValueIfNotFocused = (selector, value) => {
-            const $field = $(selector);
-            if (!$field.is(':focus')) $field.val(value);
-        };
         $('#blai-ai-enabled').prop('checked', aiSettings.enabled === true);
         $('#blai-ai-auto-trigger-enabled').prop('checked', aiSettings.autoTriggerEnabled === true);
         $('#blai-ai-protect-comments').prop('checked', aiSettings.protectXmlComments === true);
@@ -302,19 +292,7 @@ export function createAiSettingsCore() {
         setValueIfNotFocused('#blai-ai-api-key', aiSettings.apiKey || '');
         syncAiApiPresetSelect(aiSettings);
         syncAiModelControl(aiSettings);
-        setValueIfNotFocused('#blai-ai-temperature', aiSettings.temperature);
-        setValueIfNotFocused('#blai-ai-top-p', aiSettings.topP);
-        setValueIfNotFocused('#blai-ai-top-k', aiSettings.topK);
-        setValueIfNotFocused('#blai-ai-frequency-penalty', aiSettings.frequencyPenalty);
-        setValueIfNotFocused('#blai-ai-presence-penalty', aiSettings.presencePenalty);
-        setValueIfNotFocused('#blai-ai-repetition-penalty', aiSettings.repetitionPenalty);
-        setValueIfNotFocused('#blai-ai-max-tokens', aiSettings.maxTokens);
-        setValueIfNotFocused('#blai-ai-timeout', getAiTimeoutSeconds(aiSettings.timeoutMs));
-        setValueIfNotFocused('#blai-ai-max-retries', aiSettings.maxRetries);
-        setValueIfNotFocused('#blai-ai-max-items', aiSettings.maxItemsPerRequest);
-        setValueIfNotFocused('#blai-ai-max-context', aiSettings.maxContextChars);
-        setValueIfNotFocused('#blai-ai-prompt', aiSettings.promptTemplate || defaultAiRewriteSettings.promptTemplate);
-        setValueIfNotFocused('#blai-ai-prompt-expanded', aiSettings.promptTemplate || defaultAiRewriteSettings.promptTemplate);
+        syncAiGenerationFieldsUI(aiSettings);
         // 附加参数回显与按钮填写状态。
         setValueIfNotFocused('#blai-ai-custom-include-body', aiSettings.customIncludeBody || '');
         setValueIfNotFocused('#blai-ai-custom-exclude-body', aiSettings.customExcludeBody || '');

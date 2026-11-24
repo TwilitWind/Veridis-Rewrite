@@ -41,6 +41,8 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 实现为动态挂载 `.blai-modal-shell.blai-plugin-dialog` + `.blai-modal-card.blai-plugin-dialog-card`，样式在 `styles/components/02-controls.css`，居中由遮罩层 flex 保证。
 
+**顺序淡入淡出**由 `src/ui/motion.js` 统一提供：切页、通用对话框与反馈页标签切换都先给旧内容加 `.blai-is-leaving` 播淡出，动画结束再隐藏/渲染新内容。动画只改 `opacity`，不叠 `transform`，避免 portal 菜单锚点位移；同一元素重复触发时旧任务作废，快速来回切换只认最后一次。时长取自 `03-scale.css` 的动效令牌，JS 兜底定时器与 jQuery 淡入淡出也读同一组值，不在调用点写死。
+
 **挂载位置**：所有大弹窗都必须是 `templates/purifier.html` 里 `#blai-purifier-popup` 闭合标签之后的顶层节点（运行时 `$('body').append(templateHtml)`，即成为 body 直属）。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点。
 
 **层级阶梯**：所有 z-index 只在 `tokens/03-scale.css` 的 `--blai-z-*` 里定义，页面文件一律 `var(...)`，不写裸数字。从低到高：`--blai-z-inner`（组件内部高亮）/ `--blai-z-page`（页面浮层）/ `--blai-z-tour`（导览）/ `--blai-z-panel`（主面板）/ `--blai-z-loading`（加载遮罩）/ `--blai-z-shell`（大弹窗基底）/ `--blai-z-modal`（弹窗内再弹出的对话框，如备注、删除、重命名、风险确认）/ `--blai-z-modal-raised`（最终层）/ `--blai-z-menu`（下拉/省略号菜单）/ `--blai-z-toast`（toast，最高）。新增浮层先在这张表里选一档，不要另造数字。
@@ -59,7 +61,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。所有下拉菜单（11 类 `-menu` 类）的首末/独行圆角统一在 `styles/components/07-menu-fill.css`：一份 `:is()` 清单配 `&:first-child/last-child/only-child` 原生嵌套，新增菜单类只补这一处清单（其余文件里的同类选择器只管各自配色/动画/定位，不重复圆角规则）。
 
-**定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。打开后要重定位一次：弹窗与切页入场动画带 6px 位移，动画期间量到的锚点与稳定后差 6px，不补就「第一次点没弹出、要点第二次」。现在只在菜单自身 `animationend` 与 200ms 兜底时各定位一次（逐帧读矩形会让手机展开卡顿）；`openMenus` 里必须存重定位回调引用的同一个 `entry` 对象，否则 `has(entry)` 恒 false、永不执行。
+**定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。弹窗与切页入场动画已改为纯淡入，锚点不再位移，菜单打开时定位一次即可；再加 `animationend` 或 200ms 兜底重算反而会让菜单「弹出后又往上跳」。`openMenus` 里必须存 `entry` 同一个对象，否则 `has(entry)` 恒 false、永不执行。
 
 **菜单两份调用约定**：`openMenuPopover(anchor, menu)` / `closeMenuPopover(menu)` 收 DOM 节点，传 jQuery 对象会被 `if (!anchor)` 拦掉、菜单静默不开。打开时给菜单设唯一 id（子规则菜单用 `#blai-subrule-menu-active`）并给触发按钮设 `aria-expanded="true"`，关闭时清掉。
 

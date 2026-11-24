@@ -7,19 +7,40 @@
     to { opacity: 1; }
 }
 
-/* 切页与弹卡只做纯淡入，不叠 transform：portal 菜单由 popover.js 精确定位，
-   锚点若因入场动画先位移再归位，菜单会在二次定位时往上跳。 */
+/* 切页与弹卡只做纯淡入，不叠 transform / scale：portal 菜单由 popover.js 精确定位，
+   锚点若因入场动画先位移再归位，菜单会在二次定位时往上跳；页面本身也不能缩放。 */
 @keyframes blai-page-in {
-    from { opacity: .82; }
+    from { opacity: 0; }
     to { opacity: 1; }
+}
+
+/* 退场：只淡到 0，不叠 transform。JS 在切换前给旧面板/弹窗加 .blai-is-leaving，
+   动画结束后再真正 display:none；纯透明度不会扰动 portal 菜单的定位。 */
+@keyframes blai-fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 #blai-purifier-popup .page-panel.active {
     animation: blai-page-in var(--blai-duration-fast) var(--blai-ease-out) both;
 }
 
+/* 正在退场的面板：仍保持 active 的布局，只把透明度淡到 0。
+   切页改为顺序过渡（旧页淡完再显示新页），同一时刻只有一个面板参与布局；
+   不做交叉淡入淡出，也不叠 position/transform/scale，避免不同布局同帧叠加看成缩放。 */
+#blai-purifier-popup .page-panel.blai-is-leaving {
+    pointer-events: none;
+    animation: blai-fade-out var(--blai-duration-fast) var(--blai-ease-out) both;
+}
+
 .blai-modal-shell {
     animation: blai-fade-in var(--blai-duration-base) var(--blai-ease-out) both;
+}
+
+/* 弹窗退场：整层淡出。JS 关闭前加 .blai-is-leaving，播完再 hide/remove。 */
+.blai-modal-shell.blai-is-leaving {
+    animation: blai-fade-out var(--blai-duration-fast) var(--blai-ease-out) both;
+    pointer-events: none;
 }
 
 /* 弹卡比遮罩晚一点出现，两层错开才顺；只做淡入、不位移，避免菜单锚点跟着动。 */

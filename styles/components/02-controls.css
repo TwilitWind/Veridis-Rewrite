@@ -490,7 +490,7 @@
 
 .blai-modal-actions .blai-secondary-btn, .blai-modal-actions .blai-primary-btn, .blai-modal-actions button {
     flex: 1;
-    padding: var(--blai-btn-pad);
+    padding: var(--blai-modal-btn-pad);
     font-size: var(--blai-font-14);
     display: flex;
     justify-content: center;
@@ -559,7 +559,7 @@
     flex: 0 0 auto;
     width: auto;
     min-width: var(--blai-size-84);
-    padding: var(--blai-btn-pad);
+    padding: var(--blai-modal-btn-pad);
 }
 
 .blai-plugin-dialog button.blai-danger-btn {

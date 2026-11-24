@@ -59,8 +59,9 @@ CDP_PORT=9224 NO_NAV=1 \
 | `audit/verify-deep-clean.mjs` | 深度净化程序改写链路无未导入引用、勾选后不强制回顶 |
 | `audit/verify-regex-caret.mjs` | 查找框语法高亮不叠字；注入 bold 做反证 |
 | `audit/verify-followup.mjs` | 大弹窗直属 body、主题对比色、导览锚点、扫描说明 |
+| `audit/verify-ui-unify.mjs` | 四项 UI 统一：省略号竖版、顺序淡出淡入（同一时刻只一页参与布局，动画期间几何/transform 恒定）+快速切换竞态、toast 酒馆原生四色与纯透明度过渡、弹窗底部按钮双端内边距；含人为缩放反证 |
 
-**分层**：静态闸门每次跑（`node build-css.mjs && node build-check.mjs`，后者已含 `check-imports`）；`verify-*.mjs` 只跑本次命中的脚本，全量 7 个只在改 harness / 发版前跑。一次性探针放 `test/tmp/`（已忽略），用完删除，不要新写 `verify-*.mjs` 或加进本表。
+**分层**：静态闸门每次跑（`node build-css.mjs && node build-check.mjs`，后者已含 `check-imports`）；`verify-*.mjs` 只跑本次命中的脚本，全量 8 个只在改 harness / 发版前跑。一次性探针放 `test/tmp/`（已忽略），用完删除，不要新写 `verify-*.mjs` 或加进本表。
 
 ## 验证标准（硬性）
 
@@ -75,6 +76,8 @@ CDP_PORT=9224 NO_NAV=1 \
 ## 本项目专属环境
 
 - 调试 Chrome 端口用 `9224`（不是 9222——那是用户日常浏览器，无调试端口）。
+- "真浏览器 / 真浏览器回归"= 带 `9224` 调试端口的独立实例，不是用户已开的日常 Chrome；判断就绪只看 `9224/json/version`。验证任务里由 agent 自行按工作区 `docs/testing/testing.md` §2 启动，不等用户、不因用户已开浏览器而停下询问。
+- 启动用工具的 `run_in_background: true` 直接受管后台任务，**不尾随 `&`、不套 `exec`**（会被 shell 退出误杀）；整个验证期间保持存活，只在验证全部完成后由 agent 主动停掉该任务。
 - 装机副本：`D:/Games/SillyTavern/SillyTavern/data/default-user/extensions/Veridis-Rewrite`。
 - 改样式后要 `node build-css.mjs` → `node build-check.mjs` → `node test/sync.mjs <源> <装机副本>`，否则装机副本还是旧的，浏览器里看不到改动。
 - 样式真源是 `styles/` 下的分文件，根目录 `style.css` 是构建产物，别直接改产物。

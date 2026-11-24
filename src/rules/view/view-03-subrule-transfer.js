@@ -11,6 +11,7 @@ import { safeHtml } from '../../ui/html.js';
 import { renderSubrulesToModal } from './view-02-panels.js';
 import { showToast } from '../../ui/notifications.js';
 import { syncNativeSelect } from '../../ui/nativeSelectMenu.js';
+import { fadeOutThen } from '../../ui/motion.js';
 
 function collectTransferTargets() {
     const { extension_settings } = getAppContext();
@@ -111,7 +112,8 @@ export function backSubruleTransferPresetStep() {
 
 export function closeSubruleTransferModal() {
     rulesUiState.currentTransferSubruleIndex = -1;
-    $('#blai-subrule-transfer-modal').hide();
+    const $modal = $('#blai-subrule-transfer-modal');
+    fadeOutThen($modal, () => $modal.hide());
 }
 
 export function runSubruleTransfer() {

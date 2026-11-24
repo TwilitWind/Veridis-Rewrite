@@ -5,7 +5,8 @@
     /* 顶部居中、离顶部留一段距离（不是贴边），不随主题背景变化。 */
     top: var(--blai-space-24);
     left: 50vw;
-    transform: translate(-50%, -12px) scale(0.95);
+    /* 只做透明度淡入淡出：固定水平居中，不叠 translateY / scale，避免看起来先放大再缩回。 */
+    transform: translateX(-50%);
     opacity: 0;
     width: max-content;
     max-width: 85vw;
@@ -26,7 +27,7 @@
     box-shadow: var(--blai-shadow-sm);
     z-index: var(--blai-z-toast);
     pointer-events: none;
-    transition: opacity var(--blai-duration-fast) var(--blai-ease-out), transform var(--blai-duration-fast) var(--blai-ease-out);
+    transition: opacity var(--blai-duration-fast) var(--blai-ease-out);
 }
 
 .blai-toast[data-type="success"] { background: var(--blai-toast-success-bg); }
@@ -57,7 +58,7 @@
 
 .blai-toast.blai-show {
     opacity: 1;
-    transform: translate(-50%, 0) scale(1);
+    /* 位置恒定，只让 opacity 变化；不再写 transform，否则会从 scale(.95) 放大到 1。 */
     transition-duration: var(--blai-duration-base);
 }
 
@@ -161,6 +162,9 @@
 
 @media (prefers-reduced-motion: reduce) {#blai-purifier-popup .blai-global-icon-button, #blai-purifier-popup .blai-home-dataset-actions button, #blai-purifier-popup .blai-home-toolbar-button, #blai-purifier-popup .blai-home-batch-actions button, #blai-purifier-popup .blai-home-card-menu-toggle {
     transition: none;
+}
+.blai-toast {
+    transition: none;
 }}
 
 #blai-purifier-popup.blai-app-shell .page-panel:not([data-page="overview"]) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(#blai-scope-quick-input), #blai-purifier-popup.blai-app-shell .page-panel:not([data-page="overview"]) select, #blai-purifier-popup.blai-app-shell .page-panel:not([data-page="overview"]) textarea {
@@ -227,7 +231,7 @@
 
 .blai-modal-shell .blai-primary-btn, .blai-modal-shell .blai-secondary-btn, .blai-modal-shell .blai-modal-actions button, .blai-modal-shell .blai-subrule-footer button {
     min-height: var(--blai-size-36) !important;
-    padding: var(--blai-btn-pad) !important;
+    padding: var(--blai-modal-btn-pad) !important;
     border-radius: var(--blai-radius-sm) !important;
     font-size: var(--blai-font-12) !important;
     font-weight: var(--blai-weight-bold) !important;

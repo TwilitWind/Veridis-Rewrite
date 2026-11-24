@@ -8,37 +8,15 @@ import { presetsRuntimeState, markPresetsUiDirty } from './state.js';
 import { getPresetBindingHistory, getPresetBindingResolution } from './bindings.js';
 import { getCurrentCharacterContext, getCurrentChatCompletionPresetName } from '../host/context.js';
 import { safeHtml } from '../ui/html.js';
-
-function getAiTimeoutSeconds(timeoutMs) {
-    const parsed = Number(timeoutMs);
-    const fallback = Number(defaultAiRewriteSettings.timeoutMs) || 120000;
-    const normalizedMs = Number.isFinite(parsed) ? parsed : fallback;
-    return Math.min(Math.max(Math.round(normalizedMs / 1000), 1), 120);
-}
+import { syncAiGenerationFieldsUI } from '../aiRewrite/generationFields.js';
 
 export function syncPresetAiRewriteGenerationSettingsUI(settings) {
     const aiSettings = {
         ...defaultAiRewriteSettings,
         ...(settings?.aiRewrite && typeof settings.aiRewrite === 'object' ? settings.aiRewrite : {}),
     };
-    const setValueIfNotFocused = (selector, value) => {
-        const $field = $(selector);
-        if (!$field.is(':focus')) $field.val(value);
-    };
     $('#blai-ai-protect-comments').prop('checked', aiSettings.protectXmlComments === true);
-    setValueIfNotFocused('#blai-ai-temperature', aiSettings.temperature);
-    setValueIfNotFocused('#blai-ai-top-p', aiSettings.topP);
-    setValueIfNotFocused('#blai-ai-top-k', aiSettings.topK);
-    setValueIfNotFocused('#blai-ai-frequency-penalty', aiSettings.frequencyPenalty);
-    setValueIfNotFocused('#blai-ai-presence-penalty', aiSettings.presencePenalty);
-    setValueIfNotFocused('#blai-ai-repetition-penalty', aiSettings.repetitionPenalty);
-    setValueIfNotFocused('#blai-ai-max-tokens', aiSettings.maxTokens);
-    setValueIfNotFocused('#blai-ai-timeout', getAiTimeoutSeconds(aiSettings.timeoutMs));
-    setValueIfNotFocused('#blai-ai-max-retries', aiSettings.maxRetries);
-    setValueIfNotFocused('#blai-ai-max-items', aiSettings.maxItemsPerRequest);
-    setValueIfNotFocused('#blai-ai-max-context', aiSettings.maxContextChars);
-    setValueIfNotFocused('#blai-ai-prompt', aiSettings.promptTemplate || defaultAiRewriteSettings.promptTemplate);
-    setValueIfNotFocused('#blai-ai-prompt-expanded', aiSettings.promptTemplate || defaultAiRewriteSettings.promptTemplate);
+    syncAiGenerationFieldsUI(aiSettings);
 }
 
 export function renderBindingHistory() {

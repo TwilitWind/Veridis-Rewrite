@@ -2,13 +2,15 @@
    这些值被五套主题共同继承；主题相关的覆盖见 02-themes.css。
    间距/字号/圆角/尺寸刻度见 03-scale.css。 */
 
-/* toast 语义色：固定同色系实心背景 + 白字，不跟随主题背景变化。
-   只挂在插件自有提示上；宿主 toastr 与其他插件提示不读取这组变量。 */
+/* toast 语义色：对齐酒馆原生 toastr 的默认背景色（SillyTavern public/style.css
+   的 .toast-success/.toast-error/.toast-warning/.toast-info），固定值 + 白字。
+   酒馆那四色是硬编码而非 CSS 变量，因此这里也固定、不随主题变化；
+   只挂在插件自有提示上，宿主 toastr 与其他插件提示不读取这组变量。 */
 .blai-toast, #blai-ai-toast-container {
-    --blai-toast-success-bg: #3F8F5C;
-    --blai-toast-error-bg: #B6494B;
-    --blai-toast-warning-bg: #B8791F;
-    --blai-toast-info-bg: #3D6FB4;
+    --blai-toast-success-bg: #5d9e5d;
+    --blai-toast-error-bg: #a83c36;
+    --blai-toast-warning-bg: #e29325;
+    --blai-toast-info-bg: #4092aa;
     --blai-toast-ink: #FFFFFF;
 }
 

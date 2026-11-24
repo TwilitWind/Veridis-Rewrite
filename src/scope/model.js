@@ -261,6 +261,20 @@ export function mergeScopeTagsWithBuiltins(entries, dismissedBuiltinKeys = []) {
     return merged;
 }
 
+// 在 fromIndex 之后找最早出现的 scope tag；同一位置多个标签时取 startTag 更长的（更具体）。
+// 规则引擎（applyScopedCompiledReplacements）与 AI 改写分组（collectScopeRanges）共用，避免两处实现漂移。
+export function findNextScopeTagMatch(text, fromIndex, scopeTags) {
+    let nextMatch = null;
+    for (const scopeTag of scopeTags) {
+        const startIndex = text.indexOf(scopeTag.startTag, fromIndex);
+        if (startIndex < 0) continue;
+        if (!nextMatch || startIndex < nextMatch.index || (startIndex === nextMatch.index && scopeTag.startTag.length > nextMatch.scopeTag.startTag.length)) {
+            nextMatch = { index: startIndex, scopeTag };
+        }
+    }
+    return nextMatch;
+}
+
 export function isCotScopeSkippingEnabled(settings = null) {
     const resolvedSettings = settings || getAppContext().extension_settings?.[extensionName] || {};
     const scopeTags = mergeScopeTagsWithBuiltins(

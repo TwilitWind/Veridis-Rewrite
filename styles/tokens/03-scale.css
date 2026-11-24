@@ -291,6 +291,9 @@
   --blai-btn-pad-x: var(--blai-space-12);
   --blai-btn-pad: var(--blai-btn-pad-y) var(--blai-btn-pad-x);
   --blai-btn-pad-compact: 0 var(--blai-space-10);
+  /* 弹窗/对话框底部操作按钮的统一内边距：右对齐与居中铺满整行的按钮同值。
+     桌面与手机在各自 :root 里分别定义（见本文件末尾的手机 media），当前取值相同但可独立调整。 */
+  --blai-modal-btn-pad: var(--blai-btn-pad);
   /* 开关与同排文字/图标之间的横向间距：全站只有一个值，避免各行疏密不一。 */
   --blai-switch-gap: var(--blai-space-8);
 }
@@ -305,5 +308,7 @@
   --blai-fs-hero: 18px;
   --blai-fs-control: 14px;
   --blai-fs-control-icon: 18px;
+  /* 弹窗底部按钮：手机端单独一档，与桌面分离；当前同为 8px 12px。 */
+  --blai-modal-btn-pad: var(--blai-btn-pad);
 }
 }

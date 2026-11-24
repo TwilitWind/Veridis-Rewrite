@@ -1,5 +1,7 @@
 // 只负责临时 toast 与共享风险弹窗的呈现，不负责其业务判断。
 // 退场时长与 --blai-duration-fast 保持一致，避免动画未播完就被移除。
+import { fadeOutThen } from './motion.js';
+
 const TOAST_EXIT_MS = 120;
 
 // 语义类型 → Font Awesome 图标；默认 info。
@@ -35,11 +37,16 @@ export function showToast(message, description, type = 'info') {
 export function showRiskConfirmModal(message) {
     return new Promise((resolve) => {
         const $modal = $('#blai-risk-confirm-modal');
+        let settled = false;
         const finish = (confirmed) => {
-            $modal.hide().attr('aria-hidden', 'true');
+            if (settled) return;
+            settled = true;
             $('#blai-risk-confirm-cancel, #blai-risk-confirm-ok').off('.blaiRiskConfirm');
             $modal.off('.blaiRiskConfirm');
-            resolve(confirmed);
+            fadeOutThen($modal, () => {
+                $modal.hide().attr('aria-hidden', 'true');
+                resolve(confirmed);
+            });
         };
 
         $('#blai-risk-confirm-text').text(String(message || ''));
@@ -54,10 +61,13 @@ export function showRiskConfirmModal(message) {
 
 export function showRiskInfoModal(message) {
     const $modal = $('#blai-risk-info-modal');
+    let settled = false;
     const close = () => {
-        $modal.hide().attr('aria-hidden', 'true');
+        if (settled) return;
+        settled = true;
         $('#blai-risk-info-close').off('.blaiRiskInfo');
         $modal.off('.blaiRiskInfo');
+        fadeOutThen($modal, () => $modal.hide().attr('aria-hidden', 'true'));
     };
 
     $('#blai-risk-info-text').text(String(message || ''));
@@ -95,10 +105,15 @@ function openPluginDialog({ message, value = null, placeholder = '', okText = '�
             .toggleClass('blai-danger-btn', danger === true)
             .appendTo($actions);
 
+        let settled = false;
         const close = (result) => {
+            if (settled) return;
+            settled = true;
             $(document).off('keydown.blaiPluginDialog');
-            $modal.remove();
-            resolve(result);
+            fadeOutThen($modal, () => {
+                $modal.remove();
+                resolve(result);
+            });
         };
         $actions.on('click', 'button', function () {
             const isOk = $(this).hasClass('blai-primary-btn');
@@ -153,10 +168,15 @@ export function showUnsavedChangesModal(message = '当前分组有未保存的�
         $('<button type="button" class="blai-secondary-btn" data-choice="discard"></button>').text('放弃改动').appendTo($actions);
         $('<button type="button" class="blai-primary-btn" data-choice="save"></button>').text('保存并关闭').appendTo($actions);
 
+        let settled = false;
         const close = (result) => {
+            if (settled) return;
+            settled = true;
             $(document).off('keydown.blaiUnsavedChanges');
-            $modal.remove();
-            resolve(result);
+            fadeOutThen($modal, () => {
+                $modal.remove();
+                resolve(result);
+            });
         };
         $actions.on('click', 'button', function () {
             close($(this).attr('data-choice'));

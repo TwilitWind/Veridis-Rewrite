@@ -176,18 +176,25 @@ try {
             await evaluate(send, `(() => {
                 const t = document.querySelector('[data-page-target="${group.page}"]'); if (t) t.click();
             })()`);
-            await sleep(350);
-            const tourTargets = await evaluate(send, `(async () => {
-            const base = '/scripts/extensions/third-party/Veridis-Rewrite/';
-            const t = await import(base + 'src/ui/tour/tour-00-targets.js');
-            const out = ${JSON.stringify(group.names)}.map(n => {
-                try {
-                    const el = t[n]();
-                    return { n, ok: !!el && el.offsetWidth > 0 && el.offsetHeight > 0 };
-                } catch (e) { return { n, ok: false, error: String(e && e.message || e) }; }
-            });
-            return out;
-        })()`);
+            // 顺序淡出淡入是两段动画，后台标签页还可能节流定时器：轮询到目标真的可见再判，
+            // 不用固定 sleep（350ms 偶发落在淡入之前，会假报导览目标不可见）。
+            const measureExpr = `(async () => {
+                const base = '/scripts/extensions/third-party/Veridis-Rewrite/';
+                const t = await import(base + 'src/ui/tour/tour-00-targets.js');
+                return ${JSON.stringify(group.names)}.map(n => {
+                    try {
+                        const el = t[n]();
+                        const ok = !!el && el.offsetWidth > 0 && el.offsetHeight > 0;
+                        return { n, ok, ...(!ok && el ? { parent: el.parentElement?.id || el.parentElement?.className || null, display: getComputedStyle(el).display, w: el.offsetWidth, h: el.offsetHeight } : {}) };
+                    } catch (e) { return { n, ok: false, error: String(e && e.message || e) }; }
+                });
+            })()`;
+            let tourTargets = [];
+            for (let i = 0; i < 25; i++) {
+                tourTargets = await evaluate(send, measureExpr);
+                if (tourTargets.every((t) => t.ok)) break;
+                await sleep(120);
+            }
             targetCount += tourTargets.length;
             badDetails.push(...tourTargets.filter((t) => !t.ok));
         }

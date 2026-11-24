@@ -16,31 +16,6 @@ import { showToast } from '../ui/notifications.js';
 import { getPresetForCharacter } from './bindings.js';
 import { refreshCharacterBindingUI, syncPresetAiRewriteGenerationSettingsUI, updateToolbarUI } from './view.js';
 
-function normalizeRulesForPresetComparison(rules) {
-    return (Array.isArray(rules) ? rules : []).map((rule) => {
-        const normalized = deepClone(rule || {});
-        return normalized;
-    });
-}
-
-function hasPresetContentChanges(currentRules, savedPresetEntry, currentAiRewrite) {
-    const rulesChanged = JSON.stringify(normalizeRulesForPresetComparison(currentRules))
-        !== JSON.stringify(normalizeRulesForPresetComparison(getPresetRules(savedPresetEntry)));
-    if (rulesChanged) return true;
-
-    const savedAiRewrite = getPresetAiRewriteSettings(savedPresetEntry);
-    if (!savedAiRewrite) return false;
-    return JSON.stringify(getActivePresetAiSettings(currentAiRewrite)) !== JSON.stringify(savedAiRewrite);
-}
-
-export function hasActivePresetUnsavedChanges() {
-    const { extension_settings } = getAppContext();
-    const settings = extension_settings[extensionName];
-    const active = settings.activePreset;
-    if (!active) return false;
-    return hasPresetContentChanges(settings.rules || [], settings.presets[active] || [], settings.aiRewrite);
-}
-
 function applyPresetAiRewriteSettings(settings, presetEntry) {
     const presetAiRewrite = getPresetAiRewriteSettings(presetEntry);
     if (!presetAiRewrite) return;

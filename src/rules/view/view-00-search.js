@@ -5,6 +5,7 @@ import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { showAlertModal } from '../../ui/notifications.js';
 import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
+import { fadeOutThen } from '../../ui/motion.js';
 
 export function formatReplacementCandidatePreview(value) {
     const normalized = String(value ?? '').replace(/\r/g, '');
@@ -202,7 +203,8 @@ export function openTransferModal(ruleIndexOrIndexes, mode = '') {
 
 export function closeTransferModal() {
     rulesUiState.currentTransferRuleIndexes = [];
-    $('#blai-rule-transfer-modal').hide();
+    const $modal = $('#blai-rule-transfer-modal');
+    fadeOutThen($modal, () => $modal.hide());
 }
 
 let activeSearchMenu = null;

@@ -74,6 +74,9 @@
 }
 
 #blai-purifier-popup .page-panel {
+    /* 所有页面占 .pages 的同一 grid 单元：任一页显示时都落在同一套居中/宽度/内边距里，
+       顺序淡出淡入只改透明度，不会有位置或尺寸的跳变。 */
+    grid-area: 1 / 1;
     gap: var(--blai-space-10);
     scrollbar-width: none;
 }
@@ -343,6 +346,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .pages {
+    display: grid;
     min-height: 0;
     overflow: hidden;
     padding: var(--blai-space-14);

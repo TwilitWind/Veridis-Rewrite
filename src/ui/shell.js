@@ -6,6 +6,7 @@ import { markPresetsUiDirty } from '../presets/state.js';
 import { markRulesUiDirty } from '../rules/state.js';
 import { logger } from '../log.js';
 import { startNativeSelectEnhancer } from './nativeSelectMenu.js';
+import { cancelFadeOut, fadeOutThen, restartFadeIn } from './motion.js';
 
 function applyTauriMobileSurface(selector, surface) {
     $(selector).attr('data-tt-mobile-surface', surface);
@@ -71,9 +72,29 @@ export function showResponsivePage(pageId = 'overview') {
     const $popup = $('#blai-purifier-popup');
     if (!$popup.length) return;
 
-    $popup.find('.page-panel').each(function() {
-        $(this).toggleClass('active', String($(this).attr('data-page') || '') === normalizedPage);
-    });
+    const $panels = $popup.find('.page-panel');
+    const $target = $panels.filter((_, node) => String(node.dataset.page || '') === normalizedPage);
+
+    // 先作废所有未完成的淡出：快速来回切页时只允许最后一次点击决定最终页面，
+    // 旧定时器不能再把刚确定的页面撤掉。cancelFadeOut 会同时清掉 .blai-is-leaving。
+    $panels.each((_, node) => cancelFadeOut(node));
+
+    const $current = $panels.filter('.active').not($target);
+    if ($current.length) {
+        // 顺序过渡：旧页先单独淡出；淡完才隐藏旧页、显示新页并淡入。
+        // 不做交叉淡入淡出——两页布局不同，同帧叠在同格会被看成放大再收回。
+        $panels.not($current).removeClass('active');
+        fadeOutThen($current, () => {
+            $current.removeClass('active');
+            $target.addClass('active');
+            restartFadeIn($target);
+        });
+    } else {
+        // 目标页已经是当前页（或首次显示）：直接清掉残留的旧 active，保证同时只有一页。
+        $panels.not($target).removeClass('active');
+        $target.addClass('active');
+        if (!$target.hasClass('blai-is-leaving')) restartFadeIn($target);
+    }
     $popup.find('.rail-btn, .nav-item').each(function() {
         $(this).toggleClass('active', String($(this).attr('data-page-target') || '') === normalizedPage);
     });
