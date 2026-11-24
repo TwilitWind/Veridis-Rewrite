@@ -203,6 +203,33 @@ try {
         race.activePages.length === 1 && race.activePages[0] === 'overview' && race.leavingPages.length === 0,
         JSON.stringify(race));
 
+    // ===== ②e 分段控制器：切换后选中项仍有强调色与文字（不靠单一 CSS 来源） =====
+    const segment = await evaluate(send, `(() => {
+        const modal = document.getElementById('blai-subrule-edit-modal');
+        if (!modal) return null;
+        const previousDisplay = modal.style.display;
+        modal.style.setProperty('display', 'flex', 'important');
+        const sel = document.getElementById('blai-modal-sub-rewrite-mode');
+        sel.value = 'program';
+        jQuery(sel).trigger('change');
+        document.querySelector('#blai-modal-sub-rewrite-mode-segment [data-value="ai"]')?.click();
+        const ai = document.querySelector('#blai-modal-sub-rewrite-mode-segment [data-value="ai"]');
+        const program = document.querySelector('#blai-modal-sub-rewrite-mode-segment [data-value="program"]');
+        const snap = {
+            select: sel.value,
+            aiBg: ai?.style.getPropertyValue('background-color'),
+            aiColor: ai?.style.getPropertyValue('color'),
+            aiPressed: ai?.getAttribute('aria-pressed'),
+            programBg: program?.style.getPropertyValue('background-color'),
+        };
+        modal.style.display = previousDisplay;
+        return snap;
+    })()`);
+    check('②e 切换后选中项仍有底色与文字',
+        segment?.select === 'ai' && segment.aiPressed === 'true'
+        && String(segment.aiBg).includes('accent-color') && String(segment.aiColor).includes('accent-contrast')
+        && segment.programBg === 'transparent', JSON.stringify(segment));
+
     // ===== ④ 手机端按钮内边距 =====
     await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
     await sleep(300);

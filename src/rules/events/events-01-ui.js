@@ -51,6 +51,10 @@ export function applySubruleRewriteModeUI() {
         const active = button.getAttribute('data-value') === rewriteMode;
         button.classList.toggle('is-active', active);
         button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        // 内联一次：手机端主题里若有更高优先级规则，样式表里的 .is-active 会被压掉，
+        // 表现为「选了 AI 改写，蓝底白字却一起消失」。内联色值跟着主题令牌走，不写死颜色。
+        button.style.setProperty('background-color', active ? 'var(--accent-color)' : 'transparent');
+        button.style.setProperty('color', active ? 'var(--accent-contrast)' : 'var(--text-secondary)');
     });
 }
 

@@ -14,6 +14,8 @@ import { escapeHtml } from '../compare.js';
 import { omitVariableUpdates } from '../../text/variableUpdates.js';
 import { renderDiffDocumentInBackground } from '../background.js';
 import { fadeOutThen } from '../../ui/motion.js';
+import { markRegexDirty } from '../../rules/state.js';
+import { showToast } from '../../ui/notifications.js';
 import { collectAiScopeSegments } from '../../aiRewrite/matching.js';
 import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from '../../chat/messageBranch.js';
 import { getMessageDiffMeta, isMessageDiffReverted, setMessageDiffReverted, writeMessageDiffAiStage, writeMessageDiffProgram } from '../messageMeta.js';
@@ -55,10 +57,14 @@ export function recleanseDiffMessageAtIndex(index) {
     const sourceMes = typeof meta?.originalMes === 'string'
         ? meta.originalMes
         : (typeof msg.mes === 'string' ? msg.mes : '');
+    // 手机端曾出现「撤回后重新净化，程序规则却没跑」：处理器缓存仍是旧规则。
+    // 显式重新净化强制重建一次，确保这次一定按当前规则执行。
+    markRegexDirty(true);
     const changed = cleanseMessageDataAtIndex(index, {
         diffSourceMes: sourceMes,
         explicitRecleanse: true,
     });
+    showToast(changed ? '已按当前程序规则重新净化' : '已重新净化：这条原文没有程序规则命中', undefined, changed ? 'success' : 'info');
     // 与 AI 提交路径对称：用旧 DOM 快照盖住这次重绘，赢过 Tauri 手机端宿主的窗口化重绘。
     // 数据清理与标脏已在 cleanse 内完成；injectDiffButtons / 存盘由 toggleCurrentDiffRevert 收尾统一处理。
     refreshMessageDisplay(index, { atomic: true, emitRenderedEvent: 'auto' });

@@ -59,7 +59,7 @@ CDP_PORT=9224 NO_NAV=1 \
 | `audit/verify-deep-clean.mjs` | 深度净化程序改写链路无未导入引用、勾选后不强制回顶 |
 | `audit/verify-regex-caret.mjs` | 查找框语法高亮不叠字；注入 bold 做反证 |
 | `audit/verify-followup.mjs` | 大弹窗直属 body、主题对比色、导览锚点、扫描说明 |
-| `audit/verify-ui-unify.mjs` | 四项 UI 统一：省略号竖版、顺序淡出淡入（同一时刻只一页参与布局，动画期间几何/transform 恒定）+快速切换竞态与 80/120/140ms 时长断言、toast 酒馆原生四色与纯透明度过渡、弹窗底部按钮双端内边距；含人为缩放反证 |
+| `audit/verify-ui-unify.mjs` | 四项 UI 统一：省略号竖版、顺序淡出淡入（同一时刻只一页参与布局，动画期间几何/transform 恒定）+快速切换竞态与 80/120/140ms 时长断言、分段切换后选中项内联强调色、toast 酒馆原生四色与纯透明度过渡、弹窗底部按钮双端内边距；含人为缩放反证 |
 
 **分层**：静态闸门每次跑（`node build-css.mjs && node build-check.mjs`，后者已含 `check-imports`）；`verify-*.mjs` 只跑本次命中的脚本，全量 8 个只在改 harness / 发版前跑。一次性探针放 `test/tmp/`（已忽略），用完删除，不要新写 `verify-*.mjs` 或加进本表。
 
