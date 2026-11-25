@@ -64,7 +64,7 @@ export function ensureMessageDiffButton(index, messageNode) {
         } else if (!existing) {
             const button = document.createElement('div');
             button.className = 'mes_button blai-diff-btn blai-diff-btn-top fa-solid fa-clock-rotate-left interactable';
-            button.title = '溯源净化前文';
+            button.title = '查看净化对比';
             button.setAttribute('data-index', String(index));
             button.setAttribute('tabindex', '0');
             button.setAttribute('role', 'button');
@@ -91,7 +91,7 @@ export function ensureMessageDiffButton(index, messageNode) {
         } else if (!existingBottom && parent) {
             const btnBottom = document.createElement('div');
             btnBottom.className = 'blai-diff-btn blai-diff-btn-bottom fa-solid fa-clock-rotate-left interactable';
-            btnBottom.title = '溯源净化前文 (尾部触发)';
+            btnBottom.title = '查看净化对比（尾部触发）';
             btnBottom.setAttribute('data-index', String(index));
             btnBottom.setAttribute('tabindex', '0');
             btnBottom.setAttribute('role', 'button');

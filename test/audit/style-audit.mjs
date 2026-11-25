@@ -8,6 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFontScale, stripComments } from './_font-scale.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..'); // 脚本在 test/audit/，项目根上两级
 const STYLES = path.join(ROOT, 'styles');
@@ -15,35 +16,8 @@ const ORDER = JSON.parse(fs.readFileSync(path.join(STYLES, 'ORDER.json'), 'utf8'
 const jsonMode = process.argv.includes('--json');
 const STRICT = process.argv.includes('--strict') || process.env.STRICT === '1';
 
-const stripComments = (src) => src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
-
-/* 从 03-scale.css 取字号 token 白名单。
-   token 有两种写法：直接 px（5 档语义 --blai-fs-*）与 var() 别名（旧 --blai-font-N 指向 5 档）。
-   先收集直接 px，再解引用别名，得到每个 token 的最终 px。 */
-const scaleText = stripComments(fs.readFileSync(path.join(STYLES, 'tokens', '03-scale.css'), 'utf8'));
-const tokenMap = new Map();
-const aliasMap = new Map();
-for (const m of scaleText.matchAll(/(--(?:blai-font|blai-fs)-[\w-]+)\s*:\s*([\d.]+)px/g)) {
-    // 不覆盖已存在值：03-scale 末尾的手机 @media 会重定义 5 档，
-    // 审计以桌面档值为准（手机档在运行时审计里单独量）。
-    if (!tokenMap.has(m[1])) tokenMap.set(m[1], Number(m[2]));
-}
-for (const m of scaleText.matchAll(/(--(?:blai-font|blai-fs)-[\w-]+)\s*:\s*var\(\s*(--[\w-]+)\s*\)/g)) {
-    aliasMap.set(m[1], m[2]);
-}
-const resolvePx = (name, seen = new Set()) => {
-    if (tokenMap.has(name)) return tokenMap.get(name);
-    if (aliasMap.has(name) && !seen.has(name)) {
-        seen.add(name);
-        return resolvePx(aliasMap.get(name), seen);
-    }
-    return null;
-};
-for (const [name, target] of aliasMap) {
-    const px = resolvePx(target);
-    if (px != null) tokenMap.set(name, px);
-}
-const allowedPx = new Set(tokenMap.values());
+// 白名单口径：桌面档 + 旧数字别名，解析规则在 _font-scale.mjs 一处定义。
+const { tokenMap, aliasMap, allowedPx } = readFontScale(STYLES);
 
 /* 轻量 CSS 扫描：切出每条声明，带行号与 media 上下文 */
 function scanDeclarations(rel) {

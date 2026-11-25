@@ -9,22 +9,23 @@ import {
     collectDeepCleanAiMatches,
     createDeepCleanMatcherSettings,
     getDeepCleanItemAiScopeSettings,
+    scopeSettingsForDeepCleanItem,
 } from './scan.js';
 
-function getProgramScopeSettings(input) {
+function getProgramScopeSettings(input, item) {
     const semantics = input.processingSemantics || {};
-    return {
+    return scopeSettingsForDeepCleanItem({
         scopeTags: semantics.scopeTags || [],
         scopeTagBuiltinDismissed: semantics.scopeTagBuiltinDismissed || [],
         scopeTagMode: semantics.scopeTagMode || 'protect',
-    };
+    }, item);
 }
 
 export function buildDeepCleanProgramExecution(input, item, compiledSemantics, sourceText, ranges = []) {
     return applyScopedCompiledReplacementsWithTrackedRanges(
         String(sourceText || ''),
         compiledSemantics.programProcessors,
-        getProgramScopeSettings(input),
+        getProgramScopeSettings(input, item),
         ranges,
     );
 }
@@ -56,14 +57,15 @@ export function processDeepCleanProgramCandidates(input, contentItems, scanResul
         }
 
         const settings = createDeepCleanMatcherSettings(input);
+        const itemSettings = scopeSettingsForDeepCleanItem(settings, item);
         const aiSettings = getDeepCleanItemAiScopeSettings(input);
         const matches = item.aiEligible === true
-            ? collectDeepCleanAiMatches(input, item, compiledSemantics, settings)
+            ? collectDeepCleanAiMatches(input, item, compiledSemantics, itemSettings)
             : [];
         const originalRewriteItems = buildRewriteItems(
             originalText,
             matches,
-            settings,
+            itemSettings,
             aiSettings,
             { createId: (targetIndex) => `item-${itemIndex}-hit-${targetIndex + 1}` },
         );

@@ -100,7 +100,16 @@ export function resolveFinalProposedText(run, itemIndex) {
     return originalText;
 }
 
-export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop } = {}) {
+function getCachedAiCandidate(cache, requestItem) {
+    if (!(cache instanceof Map)) return null;
+    const cached = cache.get(requestItem.itemIndex);
+    if (!cached || typeof cached.aiCandidate !== 'string') return null;
+    const sourceText = String(requestItem.requestSource ?? '');
+    if (cached.sourceText !== sourceText) return null;
+    return cached.aiCandidate;
+}
+
+export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop, previewCache } = {}) {
     const requests = Array.isArray(run.aiRequestPlan?.requests) ? run.aiRequestPlan.requests : [];
     const aiSettings = getFrozenAiSettings(run);
     const aiProposedResults = [];
@@ -117,7 +126,13 @@ export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop }
         stopped: true,
     });
     // 超限导致 AI 根本无法发起的条目也计入失败，不准改跑程序改写。
+    // 预览阶段已经成功生成过结果的条目即使超限也直接复用，不再重复请求。
     for (const requestItem of run.aiRequestPlan?.oversizedRequestItems || []) {
+        const cached = getCachedAiCandidate(previewCache, requestItem);
+        if (cached !== null) {
+            aiProposedResults.push({ itemIndex: requestItem.itemIndex, aiCandidate: cached });
+            continue;
+        }
         failedItemIndexes.add(requestItem.itemIndex);
         failureReasons.push(`第 ${requestItem.itemIndex + 1} 项内容过长，未发起 AI`);
     }
@@ -127,7 +142,24 @@ export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop }
     for (let requestIndex = 0; requestIndex < requests.length; requestIndex++) {
         const request = requests[requestIndex];
         if (shouldStop?.()) return stoppedResult();
-        const reconstructed = renderDeepCleanAiRequest(run, request);
+        const fullRequest = renderDeepCleanAiRequest(run, request);
+        const pendingItems = [];
+        for (const requestItem of fullRequest.requestItems) {
+            const cached = getCachedAiCandidate(previewCache, requestItem);
+            if (cached !== null) aiProposedResults.push({ itemIndex: requestItem.itemIndex, aiCandidate: cached });
+            else pendingItems.push(requestItem);
+        }
+        if (pendingItems.length === 0) {
+            completed += 1;
+            onProgress?.({ completed, planned: requests.length });
+            continue;
+        }
+        const pendingRequest = {
+            ...request,
+            itemIndexes: pendingItems.map((requestItem) => requestItem.itemIndex),
+            requestItems: pendingItems,
+        };
+        const reconstructed = renderDeepCleanAiRequest(run, pendingRequest);
         if (!hasCompleteConnection(aiSettings)) {
             failedRequestIndexes.push(requestIndex);
             failureReasons.push('AI 连接配置不完整，已跳过程序改写');
@@ -158,9 +190,8 @@ export async function executeDeepCleanAiRequests(run, { onProgress, shouldStop }
                     const originalSource = String(requestItem.requestSource
                         ?? run.contentItems?.[requestItem.itemIndex]?.originalText ?? '');
                     const aiCandidate = applyAcceptedItemRewrites(originalSource, requestItem, accepted);
-                    if (aiCandidate !== originalSource) {
-                        aiProposedResults.push({ itemIndex: requestItem.itemIndex, aiCandidate });
-                    }
+                    // 成功回包即使没有改动也要记录，预览缓存才能命中并避免正式执行时重复请求。
+                    aiProposedResults.push({ itemIndex: requestItem.itemIndex, aiCandidate });
                 } catch (error) {
                     failedItemIndexes.add(requestItem.itemIndex);
                     failureReasons.push(`第 ${requestItem.itemIndex + 1} 项 AI 结果校验失败：${error?.message || '无效回包'}`);

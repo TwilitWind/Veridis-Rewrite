@@ -12,6 +12,16 @@
     box-shadow: 0 12px 30px var(--blai-modal-shadow);
 }
 
+/* 正文三档字号：只映射到现成的五档语义刻度，手机端整档 +1px 自动生效，
+   不在档位里写裸 px。默认中档，JS 把选择写到 data-diff-font-size 上。 */
+#blai-diff-modal {
+    --blai-diff-font-small: var(--blai-fs-body);
+    --blai-diff-font-medium: var(--blai-fs-title);
+    --blai-diff-font-large: var(--blai-fs-hero);
+}
+#blai-diff-modal[data-diff-font-size="small"] { --blai-diff-body-font-size: var(--blai-diff-font-small); }
+#blai-diff-modal[data-diff-font-size="large"] { --blai-diff-body-font-size: var(--blai-diff-font-large); }
+
 /* 顶栏两行：标题独占一行；第二行四个功能按钮贴左，⋯ 与 × 贴右。 */
 #blai-diff-modal .blai-diff-modal-header {
     justify-content: flex-start;
@@ -64,7 +74,8 @@
 #blai-diff-modal .blai-diff-modal-header {
     flex-wrap: nowrap;
     gap: var(--blai-space-8);
-    padding: var(--blai-space-6) var(--blai-space-12);
+    /* 上下留白比工具行紧，线不画在顶栏下方后内容顺势上移。 */
+    padding: var(--blai-space-4) var(--blai-diff-inline-pad) var(--blai-space-2);
 }
 
 #blai-diff-modal .blai-diff-modal-title {
@@ -106,10 +117,38 @@
 }
 }
 
-/* 工具行单行紧凑排布：来源区可横向滚动，筛选开关与定位固定贴右。 */
+/* 工具行单行紧凑排布：来源区可横向滚动，筛选开关与定位固定贴右。
+   顶栏与工具行是一组，分隔线统一落在这一行下方；筛选展开时再下移到筛选面板。 */
 #blai-diff-modal .blai-diff-toolbar {
     gap: var(--blai-space-4);
-    padding: var(--blai-space-6) var(--blai-space-12);
+    padding: var(--blai-space-4) var(--blai-diff-inline-pad);
+    border-bottom: var(--blai-border-1) solid var(--blai-diff-divider);
+}
+
+#blai-diff-modal .blai-diff-toolbar:has(+ .blai-diff-filter-panel:not([hidden])) {
+    /* 必须撤掉整条边框：只把颜色改 transparent 仍占 1px，会画出两条线。 */
+    border-bottom: 0;
+}
+
+#blai-diff-modal .blai-diff-filter-panel:not([hidden]) {
+    border-bottom: var(--blai-border-1) solid var(--blai-diff-divider);
+}
+
+/* 说明文字做成浅色提示块：与正文有底色、描边和段距三重区分，
+   不再和「原文 / 改写」正文混成一片。末条不留下方段距。 */
+#blai-diff-modal .blai-diff-modal-content .blai-diff-empty {
+    margin: 0 0 var(--blai-space-12);
+    padding: var(--blai-space-10) var(--blai-space-12);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 26%, var(--border-color));
+    border-radius: var(--blai-radius-8);
+    background: color-mix(in srgb, var(--accent-color) 6%, var(--bg-surface));
+    color: var(--text-secondary);
+    font-size: var(--blai-font-12);
+    line-height: 1.6;
+}
+
+#blai-diff-modal .blai-diff-modal-content > .blai-diff-empty:last-child {
+    margin-bottom: 0;
 }
 
 /* 手机端：透视属长文本重内容，用全屏自适应而非居中卡片。
@@ -135,7 +174,7 @@
 /* 手机端工具行贴顶、内边距收紧；来源区可横滑，筛选与定位保留触摸区。 */
 #blai-diff-modal .blai-diff-toolbar {
     gap: var(--blai-space-2);
-    padding: var(--blai-space-4) var(--blai-space-8);
+    padding: var(--blai-space-4) var(--blai-diff-inline-pad);
     flex-shrink: 0;
 }
 
@@ -159,7 +198,7 @@
 }
 
 #blai-diff-modal .blai-diff-filter-panel {
-    padding: 0 var(--blai-space-8) var(--blai-space-6);
+    padding: 0 var(--blai-diff-inline-pad) var(--blai-space-6);
 }
 
 #blai-diff-modal .blai-diff-nav-btn {
@@ -178,6 +217,14 @@
 
 /* ⋮ 菜单里的分隔线：把顶栏动作镜像与偏好项分组，两端都显示。 */
 .blai-diff-menu-divider {
+    height: var(--blai-border-1);
+    background: var(--border-color);
+    margin: var(--blai-space-4) 0;
+}
+
+/* 字号与行距/段距之间的分组线。独立的 class：镜像分隔线会被 openDiffActionsMenu
+   强制隐藏，这条必须一直显示，不与之共用选择器，也不受 portal 后祖先选择器影响。 */
+.blai-diff-menu-typography-divider {
     height: var(--blai-border-1);
     background: var(--border-color);
     margin: var(--blai-space-4) 0;

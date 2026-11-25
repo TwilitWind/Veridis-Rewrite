@@ -6,20 +6,14 @@
 
 #blai-wand-btn {
     cursor: pointer;
-    /* display/align-items/gap 对抗酒馆输入栏的 !important 强声明，必须保留。
-       line-height/white-space 无对抗，实测移除 !important 计算值不变。 */
+    /* 复用酒馆原生魔法棒条目的契约（.list-group-item.flex-container.flexGap5）：
+       baseline 对齐、10px 列距、窄菜单里允许换行。display/align/gap 的 !important
+       用于防止输入栏强声明覆盖；不能加 white-space:nowrap，否则窄屏下文字不换行，
+       缩进会与换行的原生条目不一致。 */
     display: flex !important;
     align-items: baseline !important;
-    /* 与酒馆原生魔法棒条目（.list-group-item.flex-container.flexGap5）逐项对齐：
-       block 级 flex、baseline 对齐、normal 行高、10px 列距。原生项是 flex + baseline，
-       早先用 inline-flex + center 会让图标与文字相对原生条目错位、看起来缩进更深。 */
     gap: var(--blai-space-10) !important;
     line-height: normal;
-    white-space: nowrap;
-}
-
-#blai-wand-btn i {
-    margin: 0;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {

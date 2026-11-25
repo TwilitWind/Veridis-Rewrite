@@ -21,7 +21,8 @@ const isChangeElement = (node) => node?.nodeType === 1
  */
 export function assignDiffRevertItemIds(contentEl) {
     if (!contentEl) return;
-    const changes = Array.from(contentEl.querySelectorAll('del.blai-diff-change, ins.blai-diff-change'));
+    const changes = Array.from(contentEl.querySelectorAll('del.blai-diff-change, ins.blai-diff-change'))
+        .filter(node => ['ai', 'program'].includes(node.getAttribute('data-blai-diff-section')));
     const paired = new Set();
     let itemIndex = 0;
     for (const element of changes) {

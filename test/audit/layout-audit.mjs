@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFontScale } from './_font-scale.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..'); // 脚本在 test/audit/，项目根上两级
 const STYLES = path.join(ROOT, 'styles');
@@ -27,14 +28,8 @@ const NO_MOBILE = process.env.NO_MOBILE === '1';
 const PAGES = process.env.PAGES ?? 'all'; // all=遍历所有标签页；current=只测当前激活页
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/* 字号 token 白名单：用来标记「实际渲染但非设计 token」的字号。
-   5 档语义 token（--blai-fs-*）在桌面 :root 与手机 @media 各定义一次，
-   两段都收进白名单，否则手机档会被误标成非 token。 */
-const scaleText = fs.readFileSync(path.join(STYLES, 'tokens', '03-scale.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-const allowedFontPx = new Set(
-    [...scaleText.matchAll(/--blai-fs-[\w-]+\s*:\s*([\d.]+)px/g)]
-        .map((m) => Number(m[1]))
-);
+/* 运行时字号白名单：桌面档与手机档都算设计 token，解析在 _font-scale.mjs 一处定义。 */
+const { allowedAllPx: allowedFontPx } = readFontScale(STYLES);
 
 const list = await (await fetch(`http://127.0.0.1:${PORT}/json/list`)).json();
 const page = list.find((t) => t.type === 'page');

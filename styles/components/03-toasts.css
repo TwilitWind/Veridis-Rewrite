@@ -5,8 +5,8 @@
     /* 顶部居中、离顶部留一段距离（不是贴边），不随主题背景变化。 */
     top: var(--blai-space-24);
     left: 50vw;
-    /* 只做透明度淡入淡出：固定水平居中，不叠 translateY / scale，避免看起来先放大再缩回。 */
-    transform: translateX(-50%);
+    /* 居中用 translateX，进入/退出让 Y 方向从所在边缘滑入 16px，不叠 scale。 */
+    transform: translate(-50%, calc(-1 * var(--blai-space-16)));
     opacity: 0;
     width: max-content;
     max-width: 85vw;
@@ -27,7 +27,8 @@
     box-shadow: var(--blai-shadow-sm);
     z-index: var(--blai-z-toast);
     pointer-events: none;
-    transition: opacity var(--blai-duration-fast) var(--blai-ease-out);
+    transition: opacity var(--blai-duration-fast) var(--blai-ease-out),
+                transform var(--blai-duration-fast) var(--blai-ease-out);
 }
 
 .blai-toast[data-type="success"] { background: var(--blai-toast-success-bg); }
@@ -58,8 +59,9 @@
 
 .blai-toast.blai-show {
     opacity: 1;
-    /* 位置恒定，只让 opacity 变化；不再写 transform，否则会从 scale(.95) 放大到 1。 */
-    transition-duration: var(--blai-duration-base);
+    transform: translate(-50%, 0);
+    /* 入场比退场慢；退场移除本类后自动反向滑回顶部并淡出。 */
+    transition-duration: var(--blai-duration-slow);
 }
 
 #blai-purifier-popup .blai-icon-btn,

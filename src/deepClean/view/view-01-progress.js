@@ -49,16 +49,16 @@ export function renderDeepCleanBatchProgress(progress = {}) {
         ];
     const activeIndex = Math.max(pipeline.findIndex((entry) => entry.id === progress.stage), 0);
     setDeepCleanWorkspaceHeader(
-        '深度净化进行中',
+        '深度清理进行中',
         directProgramApply
             ? '按冻结后受影响内容项的原始顺序处理并直接应用当前批次。'
             : '按冻结后受影响内容项的原始顺序处理当前审核批次。',
     );
     $('#blai-deep-clean-content').html(`
-        <div class="blai-deep-clean-processing" aria-label="${directProgramApply ? '深度净化直接应用批次处理进度' : '深度净化审核批次处理进度'}">
+        <div class="blai-deep-clean-processing" aria-label="${directProgramApply ? '深度清理直接应用批次处理进度' : '深度清理审核批次处理进度'}">
             <main class="blai-deep-clean-processing-main">
                 <div class="blai-deep-clean-processing-intro">
-                    <h3>${directProgramApply ? '正在处理并直接应用' : '深度净化进行中'}</h3>
+                    <h3>${directProgramApply ? '正在处理并直接应用' : '深度清理进行中'}</h3>
                     <p>${deepCleanSafeHtml(deepCleanBatchProgressText(progress) + completedBatchText)}</p>
                 </div>
                 <ol class="blai-deep-clean-pipeline">
@@ -99,64 +99,86 @@ export function renderDeepCleanLookaheadProgress(progress = null) {
 export function renderDeepCleanStopped() {
     setDeepCleanWorkspaceHeader('', '');
     $('#blai-deep-clean-content').html(`
-        <section class="blai-deep-clean-state blai-deep-clean-stopped-state" aria-label="深度净化已停止">
+        <section class="blai-deep-clean-state blai-deep-clean-stopped-state" aria-label="深度清理已停止">
             <i class="fas fa-stop-circle" aria-hidden="true"></i>
-            <h3>深度净化 · 已停止</h3>
+            <h3>深度清理 · 已停止</h3>
             <p>未正式应用的当前审核批次与预处理结果已丢弃；之前成功应用的结果保持不变。</p>
             <button id="blai-deep-clean-close" type="button">关闭</button>
         </section>
     `);
 }
 
-export function renderDeepCleanComplete(summary) {
+export function renderDeepCleanComplete(summary = {}) {
     const renderMetrics = (metrics, className = '') => `
         <dl class="blai-deep-clean-completion-metrics ${className}">
             ${metrics.map(([label, value]) => `
                 <div>
                     <dt>${deepCleanSafeHtml(label)}</dt>
-                    <dd>${Number(value).toLocaleString('zh-CN')}</dd>
+                    <dd>${Number(value || 0).toLocaleString('zh-CN')}</dd>
                 </div>
             `).join('')}
         </dl>
     `;
+    const affected = Number(summary.affectedItemCount) || 0;
+    const applied = Number(summary.appliedItemCount) || 0;
+    const failed = Number(summary.failedItemCount) || 0;
+    const skipped = Number(summary.skippedItemCount) || 0;
+    const aiFailed = Number(summary.aiFailedOriginalItemCount) || 0;
     const hasAiSummary = Object.hasOwn(summary, 'totalAiRequestCount');
+    const noHits = affected === 0;
+    const hasFailures = failed > 0 || aiFailed > 0 || (Number(summary.failedAiRequestCount) || 0) > 0;
+    let title = '清理完成';
+    let description = skipped > 0
+        ? `本次清理已写入 ${applied} 个内容项，${skipped} 个已跳过。`
+        : `本次清理已写入 ${applied} 个内容项。`;
+    let icon = 'fa-check';
+    if (noHits) {
+        title = '没有找到需要清理的内容';
+        description = '本次扫描命中 0 个内容项，未写入任何更改。';
+        icon = 'fa-circle-info';
+    } else if (hasFailures) {
+        title = '清理已结束，部分内容未写入';
+        description = `${applied} 个内容项已写入，${failed} 个未写入；失败项保持原文。`;
+        icon = 'fa-triangle-exclamation';
+    }
     setDeepCleanWorkspaceHeader('', '');
     $('#blai-deep-clean-content').html(`
-        <section class="blai-deep-clean-state blai-deep-clean-complete-state" aria-label="深度净化已完成">
-            <i class="fas fa-check" aria-hidden="true"></i>
-            <h3>深度净化 · 已完成</h3>
-            <p>所有批次均已处理，冻结范围内的受影响 Content Items 均已得到最终结果。</p>
+        <section class="blai-deep-clean-state blai-deep-clean-complete-state" aria-label="${deepCleanSafeHtml(title)}">
+            <i class="fas ${icon}" aria-hidden="true"></i>
+            <h3>${deepCleanSafeHtml(title)}</h3>
+            <p>${deepCleanSafeHtml(description)}</p>
             <div class="blai-deep-clean-completion-summary">
                 <section aria-labelledby="blai-deep-clean-completion-scope">
                     <h4 id="blai-deep-clean-completion-scope">处理范围</h4>
                     ${renderMetrics([
-        ['角色资源', summary.characterResourceCount],
-        ['聊天分支', summary.chatBranchResourceCount],
-        ['扫描 Content Items', summary.scannedItemCount],
-        ['受影响 Content Items', summary.affectedItemCount],
+        ['角色卡', summary.characterResourceCount],
+        ['聊天记录', summary.chatBranchResourceCount],
+        ['扫描内容项', summary.scannedItemCount],
+        ['命中内容项', summary.affectedItemCount],
     ])}
                 </section>
                 <section aria-labelledby="blai-deep-clean-completion-outcome">
-                    <h4 id="blai-deep-clean-completion-outcome">Item 结果</h4>
+                    <h4 id="blai-deep-clean-completion-outcome">处理结果</h4>
                     ${renderMetrics([
-        ['成功应用', summary.appliedItemCount],
-        ['保留原文', summary.retainedOriginalItemCount],
-        ['失败', summary.failedItemCount],
-        ['未处理', summary.unprocessedItemCount],
+        ['已写入', summary.appliedItemCount],
+        ['保持原文', summary.retainedOriginalItemCount],
+        ['写入失败', summary.failedItemCount],
+        ['已跳过', summary.skippedItemCount],
     ])}
                 </section>
                 ${hasAiSummary ? `
                     <section aria-labelledby="blai-deep-clean-completion-ai">
-                        <h4 id="blai-deep-clean-completion-ai">Program + AI</h4>
+                        <h4 id="blai-deep-clean-completion-ai">AI 调用</h4>
                         ${renderMetrics([
-        ['AI Requests', summary.totalAiRequestCount],
-        ['成功 Requests', summary.successfulAiRequestCount],
-        ['失败 Requests', summary.failedAiRequestCount],
-        ['AI 失败保留原文', summary.aiFailedOriginalItemCount],
-        ['超长未执行 AI', summary.oversizedAiItemCount],
+        ['AI 请求数', summary.totalAiRequestCount],
+        ['成功请求', summary.successfulAiRequestCount],
+        ['失败请求', summary.failedAiRequestCount],
+        ['AI 失败项（保持原文）', summary.aiFailedOriginalItemCount],
+        ['内容过长，未调用 AI', summary.oversizedAiItemCount],
     ], 'is-ai')}
+                        ${aiFailed > 0 ? '<p class="blai-deep-clean-ai-failure-reasons">AI 改写失败的内容保持原文，未执行程序改写。</p>' : ''}
                         ${(summary.aiFailureReasons || []).length > 0 ? `
-                            <p class="blai-deep-clean-ai-failure-reasons">未执行程序改写：${summary.aiFailureReasons.map((reason) => deepCleanSafeHtml(reason)).join('；')}</p>
+                            <p class="blai-deep-clean-ai-failure-reasons">未执行原因：${summary.aiFailureReasons.map((reason) => deepCleanSafeHtml(reason)).join('；')}</p>
                         ` : ''}
                     </section>
                 ` : ''}

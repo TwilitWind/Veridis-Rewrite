@@ -112,7 +112,10 @@
        自绘下拉触发器本身就有 1px 描边，必须排除，否则悬停会把边框一起抹掉。 */
     /* 无边框控件（底部导航、纯图标按钮）悬停不画描边；但带边框的控件
        必须保留边框色，否则点击/悬停时「背景框」消失，只剩一块无色文字。 */
-    :is(#blai-purifier-popup, .blai-modal-shell) button:hover {
+    /* 选中态例外：触摸后的 :hover 会粘滞到下一次点击，若连选中项一起抹底色，
+       分段控制器切换后要再点空白处才会显示高亮。.is-active / aria-pressed 是真实状态，
+       不属于「悬停误触发」，必须保留。 */
+    :is(#blai-purifier-popup, .blai-modal-shell) button:not(.is-active):not([aria-pressed="true"]):hover {
         background-color: transparent !important;
         box-shadow: none !important;
     }

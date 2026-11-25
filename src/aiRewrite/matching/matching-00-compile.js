@@ -103,7 +103,7 @@ export function compileAiMatchers(settings, options = {}) {
             const mode = subRule.mode || 'text';
             const targets = Array.isArray(subRule.targets) ? subRule.targets : [];
             const replacements = Array.isArray(subRule.replacements) ? subRule.replacements : [];
-            const ruleLabel = subRule.remark || rule.name || `合集 ${ruleIndex + 1}`;
+            const ruleLabel = subRule.remark || rule.name || `规则分组 ${ruleIndex + 1}`;
             const base = {
                 ruleIndex,
                 subRuleIndex,

@@ -1,6 +1,6 @@
 # 词汇映射 · 关键机制
 
-净化管道、撤回、深度净化范围、差异记录、页面导航、弹窗浮层、命名空间与存储键。鸟瞰与边界见根目录 [ARCHITECTURE.md](../../ARCHITECTURE.md)。
+净化管道、撤回、深度清理范围、差异记录、页面导航、弹窗浮层、命名空间与存储键。鸟瞰与边界见根目录 [ARCHITECTURE.md](../../ARCHITECTURE.md)。
 
 ## 四、关键机制
 
@@ -14,9 +14,19 @@
 
 `computeRevertedText(currentText, programText, originalText)` 把「原文 → 程序改写」与「程序改写 → 当前文本」两组差异合并成组：组内未被用户改动的部分还原原文，改过的保留用户文本，定位不到的替换跳过。**撤回按钮可用条件只看 `meta` 是否存在**，不要求当前正文与记录一致——这是「手动编辑后仍能撤回」的关键，别退回文本相等判断。
 
-### 深度净化范围
+显式重新净化以当前 `msg.mes` 为程序规则输入，兼容撤回后保留的手动改动。没有手改时提交走 `setMessageDiffProgramMes` 只刷新 `programMes`，**不覆盖 `originalMes`**；当前正文与已存原文不同（用户手改过）时，以手改后的当前正文重建本次 `originalMes / programMes`，否则透视弹窗无法展示这次真正发生的改写。结果提示由 `diff/recleanseFeedback.js` 按正文是否真的变化给出，元数据变化不算改写成功。
+
+透视弹窗的界面说明由 `diff/diffCopy.js` 统一定义：标题旁「改写说明」承载完整取文流程，空基线、已撤回、手改、勾选撤回四个场景只在就近位置显示一句。改文案只改这一处，不要把同一段规则散回事件函数或按钮 `title`。
+
+手改不是只显示计数：渲染时额外加入 `manual` 对比段（`programMes → 当前正文`），用与图例一致的手改色标出真实片段。计数沿用 `diffStats.js` 的连续块口径：相邻增删算同一块，隔开的块分别计数。手改节点不带 `data-blai-revert-item`，因此可筛选、可高亮，但不会被「撤回所选」误选。
+
+### 深度清理范围
 
 只允许两类资源：当前角色卡的世界书、当前角色卡的聊天记录；`contentItems.js` 里 `includeCharacterText` 与 `includeShujuku` 显式传 `false`。`is_system === true` **不是**跳过条件——`/hide` 隐藏的楼层正是这种消息，要参与处理并标 `isHidden` 供复核界面显示「已隐藏」；`apply/chat.js` 与 `contentItems.js` 两处判断必须同步。运行设置的「规则预设」取自 `settings.presets`，经 `frozenRunInput` 冻结到本次运行，结束不写回全局当前预设。
+
+**世界书不受标签作用域约束**：`cleanse-inside`（只处理 `<content>`/`<game>` 内文本）只对聊天消息有意义；世界书条目是配置数据、没有这类包裹标签，`scan.js` 的 `scopeSettingsForDeepCleanItem` 会把它的 `scopeTags` 清空并切回 `protect`。扫描（`scan.js`）、程序改写（`programProcessing.js` 的 `getProgramScopeSettings` 与 AI 改写项）三处都要调用该辅助函数，漏一处就会出现「勾选世界书却 0 命中、完成页照样报成功」的假成功。回归 `node test/audit/verify-deep-clean-worldbook.mjs`（纯 Node，含旧行为反证）。
+
+**预览是扫描后的可选层**：`scan.js` 在扫描时顺手记录 `affectedItemModes`，`preview.js` 据此提供「全部 / 程序改写 / AI 改写 / 已取消」筛选与逐条导航。程序预览用同一套规则引擎计算；AI 预览按需请求并缓存 `aiCandidate`，`executeDeepCleanAiRequests` 用 `previewCache` 跳过已生成条目的重复请求，正式执行仍是「AI 写回后再跑程序改写」。取消项只写进 `lifecycle.skippedItemIndexes`，`takeNextDeepCleanBatch` 直接跳过，完成页计入「已跳过」而不是伪装成成功写入。预览列表只渲染当前窗口条目，切换条目会取消上一个预览请求。回归 `node test/audit/verify-deep-clean-preview.mjs`（纯 Node）与 `CDP_PORT=9224 node test/audit/verify-copy-preview.mjs`（桌面 + 手机）。
 
 ### 差异记录与分支
 
@@ -41,7 +51,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 实现为动态挂载 `.blai-modal-shell.blai-plugin-dialog` + `.blai-modal-card.blai-plugin-dialog-card`，样式在 `styles/components/02-controls.css`，居中由遮罩层 flex 保证。
 
-**顺序淡入淡出**由 `src/ui/motion.js` 统一提供：切页、通用对话框与反馈页标签切换都先给旧内容加 `.blai-is-leaving` 播淡出，动画结束再隐藏/渲染新内容。动画只改 `opacity`，不叠 `transform`，避免 portal 菜单锚点位移；同一元素重复触发时旧任务作废，快速来回切换只认最后一次。时长取自 `03-scale.css` 的动效令牌，JS 兜底定时器与 jQuery 淡入淡出也读同一组值，不在调用点写死。
+**切页是 fade through，弹窗走退场后切换**：`showResponsivePage` 在点击当帧把 `.active` 唯一地切到目标页（导览与业务代码读到的永远是目标页），旧页保留布局加 `.blai-is-leaving` 淡出 80ms，新页加 `.blai-is-entering` 等旧页退完再淡入 120ms。待办切换只存在 `pendingPageSwap` 一处，快速连点作废旧任务，最终只留最后一次目标。弹窗与反馈页标签的退场后切换由 `src/ui/motion.js` 的 `fadeOutThen` 提供。切页/弹窗只改 `opacity`，弹卡入场允许在卡片自身叠轻 scale；portal 菜单的定位元素不叠 `transform`。时长取自 `03-scale.css` 的动效令牌，JS 兜底定时器与 jQuery 淡入淡出也读同一组值，不在调用点写死。横向 push/pop 禁用，理由见 `DESIGN.md`。
 
 **挂载位置**：所有大弹窗都必须是 `templates/purifier.html` 里 `#blai-purifier-popup` 闭合标签之后的顶层节点（运行时 `$('body').append(templateHtml)`，即成为 body 直属）。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点。
 
@@ -61,7 +71,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。所有下拉菜单（11 类 `-menu` 类）的首末/独行圆角统一在 `styles/components/07-menu-fill.css`：一份 `:is()` 清单配 `&:first-child/last-child/only-child` 原生嵌套，新增菜单类只补这一处清单（其余文件里的同类选择器只管各自配色/动画/定位，不重复圆角规则）。
 
-**定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。弹窗与切页入场动画已改为纯淡入，锚点不再位移，菜单打开时定位一次即可；再加 `animationend` 或 200ms 兜底重算反而会让菜单「弹出后又往上跳」。`openMenus` 里必须存 `entry` 同一个对象，否则 `has(entry)` 恒 false、永不执行。
+**定位只手动计算，不用 Popper.js**：Popper 用非 `!important` 的内联 `left/top`，这里为压过主题注入必须用 `!important`，混用会「菜单停在视口右上角」（弹窗内必现，`.blai-modal-shell` 的 `backdrop-filter` 形成包含块）。切页入场不动锚点，弹卡 scale 只在卡片上，portal 菜单的入场位移只加在子元素上，因此菜单打开时定位一次即可；再加 `animationend` 或 200ms 兜底重算反而会让菜单「弹出后又往上跳」。`openMenus` 里必须存 `entry` 同一个对象，否则 `has(entry)` 恒 false、永不执行。导览提示框另走 `calculateTourPopoverPlacement`：按收缩后尺寸算坐标并夹回视口，贴边目标不能再用未收缩宽度算 left。没有锚点的居中步骤（欢迎页、完成页、错误页、preview）走 `positionCenteredTour`：显式关掉 CSS `translate(-50%,-50%)`，按视口中心与最终尺寸算 `left/top`，否则手机上 `top:50%` 被压成 0 时整张卡会飞出屏幕上方。
 
 **菜单两份调用约定**：`openMenuPopover(anchor, menu)` / `closeMenuPopover(menu)` 收 DOM 节点，传 jQuery 对象会被 `if (!anchor)` 拦掉、菜单静默不开。打开时给菜单设唯一 id（子规则菜单用 `#blai-subrule-menu-active`）并给触发按钮设 `aria-expanded="true"`，关闭时清掉。
 

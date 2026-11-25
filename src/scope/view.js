@@ -2,6 +2,7 @@
 import { extensionName } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { showResponsivePage } from '../ui/shell.js';
+import { renderWithFlip } from '../ui/motion.js';
 import { safeHtml } from '../ui/html.js';
 import { COT_SCOPE_TAG_DISPLAY_TEXT, DEFAULT_SCOPE_TAG_GROUP_ID, DEFAULT_SCOPE_TAG_GROUP_NAME, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeCollapsedGroupList, normalizeScopeTagGroupList } from './model.js';
 function getScopeTagGroupsForSettings(settings = {}) {
@@ -56,7 +57,7 @@ function buildScopeTagChipHtml(scopeTag, editId, index = 0, total = 1) {
     `;
 }
 
-export function renderScopeTagsModal() {
+export function renderScopeTagsModal({ animate = false } = {}) {
     const $list = $('#blai-scope-tags-list');
     if (!$list.length) return;
 
@@ -171,7 +172,17 @@ export function renderScopeTagsModal() {
         `;
     }).join('');
 
-    $list.html(html || `<div class="blai-empty-state">${isCleanseInsideMode ? '当前没有标签，新增并启用后才会净化标签内内容。' : '当前没有标签，新增后即可保护对应标签内容。'}</div>`);
+    const emptyHtml = `<div class="blai-empty-state">${isCleanseInsideMode ? '当前没有标签，新增并启用后才会净化标签内内容。' : '当前没有标签，新增后即可保护对应标签内容。'}</div>`;
+    if (!html || !animate) {
+        $list.html(html || emptyHtml);
+        return;
+    }
+    renderWithFlip($list, html, {
+        selector: '.blai-clean-tag-group, .blai-clean-tag-item',
+        getKey: (el) => (el.classList.contains('blai-clean-tag-group')
+            ? `group:${el.getAttribute('data-group-id') || ''}`
+            : `tag:${el.getAttribute('data-id') || ''}`),
+    });
 }
 
 export function openScopeTagsModal() {

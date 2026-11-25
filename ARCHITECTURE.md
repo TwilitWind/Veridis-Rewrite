@@ -88,6 +88,7 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 - **深度净化只两类资源**：当前角色卡的世界书与聊天记录；`is_system === true` 不是跳过条件（`/hide` 楼层要参与并标 `isHidden`）；运行预设经 `frozenRunInput` 冻结，结束不写回全局。
 - **页面与导航是成对的**：五个 page id（`overview` / `ai` / `clean` / `tools` / `feedback`），宽屏 `.rail` 与窄屏 `.bottom-nav` 两处都要有 `[data-page-target]` 按钮。
 - **原生对话框一律禁用**：`window.confirm/alert/prompt` 统一走 `ui/notifications.js`；所有大弹窗是 body 直属节点，不在 `#blai-purifier-popup` 内。
+- **转场单一状态源**：切页待办只在 `ui/shell.js` 的 `pendingPageSwap`，可复用的退场/FLIP 在 `ui/motion.js`，portal 定位只由 `ui/popover.js` 写 `left/top`；动效不得改定位元素的 transform，也不做横向 push/pop。
 - **z-index 只走 token**：所有层级在 `tokens/03-scale.css` 的 `--blai-z-*`，页面文件一律 `var(...)`；toast 取最高层，不改宿主 `#toast-container`。
 - **设置命名空间是数据主键**：`ultimate_purifier_ai_rewrite`（`settings/defaults.js` 的 `extensionName`）不可随显示名改动，否则既有规则、预设、AI 配置读不到。
 

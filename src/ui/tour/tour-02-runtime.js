@@ -1,7 +1,7 @@
 /** tour 的分块：runtime。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { annotateTauriMobileSurfaces, showResponsivePage } from '../shell.js';
 import { escapeHtml, createThemedTourLayer, requiredTarget, isPhone, currentMainPage, markGuidedTourSeen, guidedTourSeen } from './tour-00-targets.js';
-import { removeLayer, restoreTourPresentation, positionTourPopover, cardHtml, mainSteps, deepCleanSteps, welcomeHtml } from './tour-01-steps.js';
+import { removeLayer, restoreTourPresentation, positionTourPopover, positionCenteredTour, cardHtml, mainSteps, deepCleanSteps, welcomeHtml } from './tour-01-steps.js';
 
 let activeTour = null;
 
@@ -15,6 +15,7 @@ export function tourError(operation, error) {
     }
     layer.innerHTML = `<section class="blai-tour-card blai-tour-centered" role="alertdialog" aria-modal="true" aria-labelledby="blai-tour-error-title"><p class="blai-tour-kicker">导览无法继续</p><h2 id="blai-tour-error-title">${escapeHtml(operation)}</h2><p>${escapeHtml(error instanceof Error ? error.message : error)}</p><div class="blai-tour-actions"><button type="button" data-tour-action="close-error">关闭</button></div></section>`;
     annotateTauriMobileSurfaces();
+    positionCenteredTour(layer.querySelector('.blai-tour-card'));
     layer.querySelector('button')?.focus();
     layer.addEventListener('click', (event) => {
         if (event.target.closest('[data-tour-action="close-error"]')) layer.remove();
@@ -94,7 +95,11 @@ export function positionActiveTour() {
     const step = activeTour.steps[activeTour.index];
     if (!layer || !card) return;
     const target = step.previewTarget ? requiredTarget(step) : (!step.centered && !step.preview ? activeMainTourTarget(step) : null);
-    if (!target) return;
+    if (!target) {
+        // 居中步骤（完成页 / preview）不挂目标，但仍必须把卡片夹在视口内。
+        positionCenteredTour(card);
+        return;
+    }
     if (isPhone()) scrollPhoneTourTargetIntoView(target, card);
     const rect = target.getBoundingClientRect();
     const pad = 8;
@@ -187,6 +192,7 @@ export function showWelcome(kind, launcher) {
     const layer = createThemedTourLayer();
     layer.innerHTML = welcomeHtml(kind);
     annotateTauriMobileSurfaces();
+    positionCenteredTour(layer.querySelector('.blai-tour-card'));
     layer.addEventListener('click', onTourClick);
     document.addEventListener('keydown', onTourKeydown, true);
     layer.querySelector('[data-tour-action="start"]')?.focus();

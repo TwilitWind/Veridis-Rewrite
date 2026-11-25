@@ -45,8 +45,8 @@
 #blai-purifier-popup .blai-clean-tag-item {
     min-width: 0;
     min-height: var(--blai-size-48);
-    /* 右侧留白与分组头（12px）一致，保证右侧操作组上下对齐。 */
-    padding: var(--blai-space-7) var(--blai-space-12);
+    /* 右侧留白与分组头同源 token，保证右侧操作组上下对齐。 */
+    padding: var(--blai-space-7) var(--blai-clean-tag-inline-pad);
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -112,7 +112,7 @@
 #blai-purifier-popup .blai-clean-tag-actions {
     display: inline-flex;
     align-items: center;
-    gap: var(--blai-switch-gap);
+    gap: var(--blai-clean-tag-action-gap);
 }
 
 #blai-purifier-popup .blai-clean-tag-action {
@@ -156,7 +156,7 @@
 #blai-purifier-popup .blai-clean-group-controls {
     display: inline-flex;
     align-items: center;
-    gap: var(--blai-space-6);
+    gap: var(--blai-clean-tag-action-gap);
 }
 
 #blai-purifier-popup .blai-clean-group-menu-wrap {

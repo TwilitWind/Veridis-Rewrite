@@ -98,6 +98,49 @@ export function cancelFadeOut(el) {
 }
 
 /**
+ * 整块重渲染列表时的轻量 FLIP：记住旧位置，渲染后把仍在的元素从旧位置滑到新位置，
+ * 新元素从上方 6px 淡入。删除项立即移除，不留下参与布局的幽灵节点。
+ * 只看 transform/opacity，可在 reduced-motion 下整体跳过。
+ */
+export function renderWithFlip(container, html, { selector = '[data-flip-key]', getKey = (el) => el.getAttribute('data-flip-key') } = {}) {
+    const node = container && container.jquery ? container[0] : container;
+    if (!node) return;
+    const before = new Map();
+    node.querySelectorAll(selector).forEach((el) => {
+        const key = getKey(el);
+        if (key) before.set(key, el.getBoundingClientRect());
+    });
+    const scrollTop = node.scrollTop;
+    container.html(html);
+    node.scrollTop = scrollTop;
+    if (prefersReducedMotion() || typeof node.animate !== 'function') return;
+
+    const rootStyle = window.getComputedStyle(document.documentElement);
+    const duration = readDurationToken('--blai-duration-slow', 140);
+    const easing = rootStyle.getPropertyValue('--blai-ease-out').trim() || 'ease-out';
+    node.querySelectorAll(selector).forEach((el) => {
+        const key = getKey(el);
+        const oldRect = key ? before.get(key) : null;
+        const rect = el.getBoundingClientRect();
+        if (!oldRect) {
+            el.animate(
+                [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
+                { duration, easing },
+            );
+            return;
+        }
+        const dx = oldRect.left - rect.left;
+        const dy = oldRect.top - rect.top;
+        if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+            el.animate(
+                [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }],
+                { duration, easing },
+            );
+        }
+    });
+}
+
+/**
  * 让元素重新淡入：移除退场类并强制重排后，浏览器会重放入场动画。
  * 用于 innerHTML 重渲染的内容区（新节点天然带入场动画则无需调用）。
  */

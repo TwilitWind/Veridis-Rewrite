@@ -1,0 +1,280 @@
+/* 深度清理：预览筛选、逐条导航与条目取舍。 */
+
+#blai-deep-clean-workspace .blai-deep-clean-preview {
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    overflow: hidden;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-header {
+    padding: var(--blai-space-12) var(--blai-space-18) var(--blai-space-8);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--blai-space-6);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters button {
+    min-height: var(--blai-size-28);
+    padding: var(--blai-btn-pad-compact);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-5);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--blai-font-10);
+    font-weight: var(--blai-weight-bold);
+    box-shadow: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters button[aria-pressed="true"] {
+    border-color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 12%, var(--bg-surface));
+    color: var(--accent-ink);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters button span {
+    padding: 0 var(--blai-space-4);
+    border-radius: var(--blai-radius-3);
+    background: color-mix(in srgb, var(--text-secondary) 14%, transparent);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-note {
+    margin: var(--blai-space-6) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-main {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+    overflow: hidden;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-list {
+    min-height: 0;
+    padding: var(--blai-space-8);
+    overflow-y: auto;
+    border-right: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row {
+    width: 100%;
+    min-height: 0;
+    padding: var(--blai-space-8);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--blai-space-6);
+    border: var(--blai-border-1) solid transparent;
+    border-radius: var(--blai-radius-4);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font: inherit;
+    text-align: left;
+    box-shadow: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row:hover {
+    border-color: var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row.is-active {
+    border-color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-surface));
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row.is-skipped {
+    opacity: .55;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row-index {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row-copy {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-2);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row-copy strong {
+    font-size: var(--blai-font-9);
+    font-weight: var(--blai-weight-bold);
+    overflow-wrap: anywhere;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-row-copy small {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-list-gap {
+    margin: var(--blai-space-6) 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-font-8);
+    text-align: center;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-detail {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    overflow: hidden;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-head {
+    padding: var(--blai-space-12) var(--blai-space-18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-12);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-identity {
+    min-width: 0;
+    display: grid;
+    gap: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-step {
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+    font-variant-numeric: tabular-nums;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-identity h3 {
+    font-size: var(--blai-font-12);
+    font-weight: var(--blai-weight-bold);
+    overflow-wrap: anywhere;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-badge {
+    width: max-content;
+    padding: var(--blai-space-2) var(--blai-space-6);
+    border-radius: var(--blai-radius-3);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    color: var(--accent-ink);
+    font-size: var(--blai-font-8);
+    font-weight: var(--blai-weight-bold);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-include {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    color: var(--text-main);
+    font-size: var(--blai-font-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-toolbar {
+    padding: var(--blai-space-8) var(--blai-space-18);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--blai-space-8);
+    border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-tabs,
+#blai-deep-clean-workspace .blai-deep-clean-preview-views,
+#blai-deep-clean-workspace .blai-deep-clean-preview-tools {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-tabs button,
+#blai-deep-clean-workspace .blai-deep-clean-preview-views button {
+    min-height: var(--blai-size-24);
+    padding: var(--blai-btn-pad-compact);
+    border: var(--blai-border-1) solid var(--border-color);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--blai-font-9);
+    box-shadow: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-tabs button[aria-pressed="true"],
+#blai-deep-clean-workspace .blai-deep-clean-preview-views button[aria-pressed="true"] {
+    border-color: var(--accent-color);
+    color: var(--accent-ink);
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-surface));
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-document {
+    min-height: 0;
+    padding: var(--blai-space-14) var(--blai-space-18);
+    overflow-y: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-projection {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--text-main);
+    font-size: var(--blai-font-10);
+    line-height: 1.7;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-loading {
+    height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--blai-space-8);
+    color: var(--text-secondary);
+    font-size: var(--blai-font-9);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-actions {
+    padding: var(--blai-space-10) var(--blai-space-18);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--blai-space-8);
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-preview-empty {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--blai-space-12);
+}
+
+@media (max-width: 700px) {
+    #blai-deep-clean-workspace .blai-deep-clean-preview-main {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-list {
+        max-height: 148px;
+        border-right: 0;
+        border-bottom: var(--blai-border-1) solid var(--border-color);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-head {
+        align-items: flex-start;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-actions {
+        flex-wrap: wrap;
+    }
+}

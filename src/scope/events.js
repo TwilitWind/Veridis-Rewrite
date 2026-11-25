@@ -38,12 +38,12 @@ export function bindScopeEvents() {
         const normalizedGroups = normalizeScopeTagGroupList(groups); settings.scopeTagGroups = normalizedGroups; settings.scopeTagCollapsedGroups = normalizeCollapsedGroupList(settings.scopeTagCollapsedGroups, normalizedGroups);
         const knownGroupIds = new Set(normalizedGroups.map((group) => group.id)); const currentScopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed);
         settings.scopeTags = normalizeScopeTagList(currentScopeTags).map((tag) => { const groupId = String(tag.groupId || DEFAULT_SCOPE_TAG_GROUP_ID).trim() || DEFAULT_SCOPE_TAG_GROUP_ID; return knownGroupIds.has(groupId) ? tag : { ...tag, groupId: DEFAULT_SCOPE_TAG_GROUP_ID }; });
-        saveSettingsDebounced(); renderScopeTagsModal(); renderScopeTagGroupOptions($('#blai-scope-tag-group-select').val() || DEFAULT_SCOPE_TAG_GROUP_ID);
+        saveSettingsDebounced(); renderScopeTagsModal({ animate: true }); renderScopeTagGroupOptions($('#blai-scope-tag-group-select').val() || DEFAULT_SCOPE_TAG_GROUP_ID);
     };
     const persistScopeTags = (scopeTags, options = {}) => {
         settings.scopeTagGroups = getScopeTagGroups(); const sourceScopeTags = normalizeScopeTagsToKnownGroups(scopeTags); const representedBuiltinKeys = new Set(sourceScopeTags.map((tag) => tag.builtinKey).filter(Boolean));
         const dismissedBuiltinKeys = normalizeScopeTagBuiltinDismissedList(options.dismissedBuiltinKeys ?? settings.scopeTagBuiltinDismissed).filter((builtinKey) => !representedBuiltinKeys.has(builtinKey));
-        const normalized = mergeScopeTagsWithBuiltins(sourceScopeTags, dismissedBuiltinKeys); settings.scopeTagBuiltinDismissed = dismissedBuiltinKeys; settings.scopeTags = normalizeScopeTagsToKnownGroups(normalized); saveSettingsDebounced(); renderScopeTagsModal(); return normalized;
+        const normalized = mergeScopeTagsWithBuiltins(sourceScopeTags, dismissedBuiltinKeys); settings.scopeTagBuiltinDismissed = dismissedBuiltinKeys; settings.scopeTags = normalizeScopeTagsToKnownGroups(normalized); saveSettingsDebounced(); renderScopeTagsModal({ animate: true }); return normalized;
     };
     const saveScopeTag = () => {
         const parsed = parseScopeTagInput(buildScopeTagInputFromEditor()); if (!parsed.ok) { applyScopeTagValidationError(parsed.error.message); $('#blai-scope-tag-input').trigger('focus'); return false; }

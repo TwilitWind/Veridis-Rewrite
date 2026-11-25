@@ -54,6 +54,17 @@ function clamp(value, minimum, maximum) {
     return Math.min(Math.max(value, minimum), Math.max(minimum, maximum));
 }
 
+function exclusionFor(targetRect, targetGap) {
+    return {
+        left: targetRect.left - targetGap,
+        top: targetRect.top - targetGap,
+        right: targetRect.right + targetGap,
+        bottom: targetRect.bottom + targetGap,
+        width: targetRect.width + targetGap * 2,
+        height: targetRect.height + targetGap * 2,
+    };
+}
+
 function popoverCandidate(side, exclusion, popover, viewport, margin) {
     const horizontal = side === 'right' || side === 'left';
     const primarySpace = side === 'bottom'
@@ -66,68 +77,95 @@ function popoverCandidate(side, exclusion, popover, viewport, margin) {
     const crossSpace = horizontal ? viewport.height - margin * 2 : viewport.width - margin * 2;
     const primarySize = horizontal ? popover.width : popover.height;
     const crossSize = horizontal ? popover.height : popover.width;
-    const left = horizontal
-        ? (side === 'right' ? exclusion.right : exclusion.left - popover.width)
-        : clamp(exclusion.left + (exclusion.width - popover.width) / 2, margin, viewport.width - margin - popover.width);
-    const top = horizontal
-        ? clamp(exclusion.top + (exclusion.height - popover.height) / 2, margin, viewport.height - margin - popover.height)
-        : (side === 'bottom' ? exclusion.bottom : exclusion.top - popover.height);
+    // 先按可用空间定最终尺寸，再用最终尺寸算坐标。旧版用未收缩的宽度算 left，
+    // 手机端目标贴左边缘时 left 会变成负数，提示框整块飞出屏幕。
+    const maxWidth = Math.max(0, Math.floor(horizontal ? primarySpace : viewport.width - margin * 2));
+    const maxHeight = Math.max(0, Math.floor(horizontal ? viewport.height - margin * 2 : primarySpace));
+    const width = Math.min(popover.width, maxWidth);
+    const height = Math.min(popover.height, maxHeight);
+    const rawLeft = horizontal
+        ? (side === 'right' ? exclusion.right : exclusion.left - width)
+        : exclusion.left + (exclusion.width - width) / 2;
+    const rawTop = horizontal
+        ? exclusion.top + (exclusion.height - height) / 2
+        : (side === 'bottom' ? exclusion.bottom : exclusion.top - height);
+    const left = clamp(rawLeft, margin, viewport.width - margin - width);
+    const top = clamp(rawTop, margin, viewport.height - margin - height);
     return {
         side,
         left,
         top,
+        width,
+        height,
+        maxWidth,
+        maxHeight,
         primarySpace,
-        fits: primarySpace >= primarySize && crossSpace >= crossSize,
+        fits: primarySpace >= primarySize
+            && crossSpace >= crossSize
+            && Math.abs(rawLeft - left) < 0.5
+            && Math.abs(rawTop - top) < 0.5,
     };
 }
 
-export function calculateTourPopoverPlacement(targetRect, popoverRect, viewport, { targetGap = 12, viewportMargin = 12 } = {}) {
-    const exclusion = {
-        left: targetRect.left - targetGap,
-        top: targetRect.top - targetGap,
-        right: targetRect.right + targetGap,
-        bottom: targetRect.bottom + targetGap,
-        width: targetRect.width + targetGap * 2,
-        height: targetRect.height + targetGap * 2,
-    };
+export function calculateTourPopoverPlacement(targetRect, popoverRect, viewport, { targetGap = 12, viewportMargin = 12, preferredSide = '' } = {}) {
+    const exclusion = exclusionFor(targetRect, targetGap);
     const popover = { width: popoverRect.width, height: popoverRect.height };
-    const candidates = ['bottom', 'top', 'right', 'left']
-        .map((side) => popoverCandidate(side, exclusion, popover, viewport, viewportMargin));
+    const sides = preferredSide ? [preferredSide] : ['bottom', 'top', 'right', 'left'];
+    const candidates = sides.map((side) => popoverCandidate(side, exclusion, popover, viewport, viewportMargin));
     const placement = candidates.find((candidate) => candidate.fits);
     if (placement) return { ...placement, constrained: false };
-    const fallback = candidates.reduce((best, candidate) => candidate.primarySpace > best.primarySpace ? candidate : best);
+    // 都不放得下时挑「可用面积」最大的方向，避免手机端选到宽度近乎为零的左右侧。
+    const score = (candidate) => Math.min(popover.width, candidate.maxWidth) * Math.min(popover.height, candidate.maxHeight);
+    const fallback = candidates.reduce((best, candidate) => score(candidate) > score(best) ? candidate : best);
+    return { ...fallback, constrained: true };
+}
+
+/** 居中卡（欢迎页、完成页、错误页、preview）不依赖 CSS 的 top:50% + translate(-50%,-50%)：
+ *  手机上这层受弹窗体系样式影响时 top 会被压成 0，卡片整块飞出屏幕上方。这里统一用
+ *  视口中心算最终坐标，并把 transform 显式关掉。 */
+export function calculateCenteredTourPlacement(popoverRect, viewport, { viewportMargin = 12 } = {}) {
+    const maxWidth = Math.max(0, Math.floor(viewport.width - viewportMargin * 2));
+    const maxHeight = Math.max(0, Math.floor(viewport.height - viewportMargin * 2));
+    const width = Math.min(popoverRect.width, maxWidth);
+    const height = Math.min(popoverRect.height, maxHeight);
     return {
-        ...fallback,
-        constrained: true,
-        maxWidth: Math.max(0, (fallback.side === 'right' || fallback.side === 'left') ? fallback.primarySpace : viewport.width - viewportMargin * 2),
-        maxHeight: Math.max(0, (fallback.side === 'bottom' || fallback.side === 'top') ? fallback.primarySpace : viewport.height - viewportMargin * 2),
+        left: Math.round(clamp((viewport.width - width) / 2, viewportMargin, Math.max(viewportMargin, viewport.width - viewportMargin - width))),
+        top: Math.round(clamp((viewport.height - height) / 2, viewportMargin, Math.max(viewportMargin, viewport.height - viewportMargin - height))),
+        maxWidth,
+        maxHeight,
+        width,
+        height,
     };
+}
+
+export function positionCenteredTour(card) {
+    const viewport = { width: window.innerWidth, height: window.innerHeight };
+    const margin = 12;
+    card.style.setProperty('transform', 'none', 'important');
+    card.style.setProperty('--blai-tour-popover-max-width', `${Math.max(0, viewport.width - margin * 2)}px`);
+    card.style.setProperty('--blai-tour-popover-max-height', `${Math.max(0, viewport.height - margin * 2)}px`);
+    const first = calculateCenteredTourPlacement(card.getBoundingClientRect(), viewport, { viewportMargin: margin });
+    card.style.setProperty('--blai-tour-popover-max-width', `${first.maxWidth}px`);
+    card.style.setProperty('--blai-tour-popover-max-height', `${first.maxHeight}px`);
+    const placement = calculateCenteredTourPlacement(card.getBoundingClientRect(), viewport, { viewportMargin: margin });
+    card.style.left = `${placement.left}px`;
+    card.style.top = `${placement.top}px`;
+    return placement;
 }
 
 export function positionTourPopover(card, targetRect) {
     const viewport = { width: window.innerWidth, height: window.innerHeight };
-    card.style.setProperty('--blai-tour-popover-max-width', `${Math.max(0, viewport.width - 24)}px`);
-    card.style.setProperty('--blai-tour-popover-max-height', `${Math.max(0, viewport.height - 24)}px`);
-    let placement = calculateTourPopoverPlacement(targetRect, card.getBoundingClientRect(), viewport);
-    if (placement.constrained) {
-        card.style.setProperty('--blai-tour-popover-max-width', `${placement.maxWidth}px`);
-        card.style.setProperty('--blai-tour-popover-max-height', `${placement.maxHeight}px`);
-        placement = popoverCandidate(
-            placement.side,
-            {
-                left: targetRect.left - 12,
-                top: targetRect.top - 12,
-                right: targetRect.right + 12,
-                bottom: targetRect.bottom + 12,
-                width: targetRect.width + 24,
-                height: targetRect.height + 24,
-            },
-            card.getBoundingClientRect(),
-            viewport,
-            12,
-        );
-    }
-    card.style.left = `${placement.left}px`;
-    card.style.top = `${placement.top}px`;
+    const margin = 12;
+    const options = { targetGap: 12, viewportMargin: margin };
+    card.style.setProperty('--blai-tour-popover-max-width', `${Math.max(0, viewport.width - margin * 2)}px`);
+    card.style.setProperty('--blai-tour-popover-max-height', `${Math.max(0, viewport.height - margin * 2)}px`);
+    const first = calculateTourPopoverPlacement(targetRect, card.getBoundingClientRect(), viewport, options);
+    card.style.setProperty('--blai-tour-popover-max-width', `${first.maxWidth}px`);
+    card.style.setProperty('--blai-tour-popover-max-height', `${first.maxHeight}px`);
+    // 变量生效后尺寸可能已收缩，按同一方向用最终尺寸再算一次坐标，保证四边都留在视口内。
+    const placement = calculateTourPopoverPlacement(targetRect, card.getBoundingClientRect(), viewport, { ...options, preferredSide: first.side });
+    card.style.left = `${Math.round(placement.left)}px`;
+    card.style.top = `${Math.round(placement.top)}px`;
+    return placement;
 }
 

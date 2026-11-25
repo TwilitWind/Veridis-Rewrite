@@ -6,9 +6,25 @@ const affectedTypeKeys = ['Message', 'World Book'];
 const scanChunkSize = 32;
 
 function categoryForItem(item) {
-    if (item?.kind === 'external-world-book-entry' || item?.kind === 'embedded-world-book-entry') return 'World Book';
+    if (isWorldBookItem(item)) return 'World Book';
     if (item?.kind === 'user-message' || item?.kind === 'assistant-swipe') return 'Message';
     return 'Other';
+}
+
+/**
+ * 世界书条目是配置数据，不是聊天消息里的正文/标签混合文本。
+ * cleanse-inside 作用域（“只处理 <content>/<game> 等标签内文本”）只对聊天消息有意义：
+ * 世界书条目没有这类包裹标签，按同一套规则处理会全文跳过，勾了世界书却一条不命中，
+ * 最后还报成功——即用户看到的“假成功”。因此扫描与改写都必须让这类条目走全文。
+ */
+export function isWorldBookItem(item) {
+    return item?.kind === 'embedded-world-book-entry' || item?.kind === 'external-world-book-entry';
+}
+
+/** 世界书条目忽略标签作用域，聊天消息继续按用户选择的模式处理。 */
+export function scopeSettingsForDeepCleanItem(settings, item) {
+    if (!isWorldBookItem(item)) return settings;
+    return { ...settings, scopeTags: [], scopeTagBuiltinDismissed: [], scopeTagMode: 'protect' };
 }
 
 export function createDeepCleanMatcherSettings(input) {
@@ -60,6 +76,7 @@ export async function scanDeepCleanContentItems(input, contentItems, options = {
     const processors = compiledSemantics.programProcessors;
     const affectedByType = Object.fromEntries(affectedTypeKeys.map((key) => [key, 0]));
     const affectedItemIndexes = [];
+    const affectedItemModes = {};
     let programHitCount = 0;
     let aiHitCount = 0;
     let pendingCharacterCount = 0;
@@ -70,13 +87,14 @@ export async function scanDeepCleanContentItems(input, contentItems, options = {
         for (let itemIndex = chunkStart; itemIndex < chunkEnd; itemIndex++) {
             const item = items[itemIndex];
             const source = String(item?.originalText || '');
+            const itemSettings = scopeSettingsForDeepCleanItem(settings, item);
             const programHits = item?.programEligible === true
-                ? countScopedProcessorMatches(source, processors, settings)
+                ? countScopedProcessorMatches(source, processors, itemSettings)
                 : 0;
             const scanAiRules = (input.processingMode === 'program' && item?.programEligible === true)
                 || (input.processingMode === 'program-ai' && item?.aiEligible === true);
             const aiHits = scanAiRules
-                ? collectDeepCleanAiMatches(input, item, compiledSemantics, settings).length
+                ? collectDeepCleanAiMatches(input, item, compiledSemantics, itemSettings).length
                 : 0;
             const affected = programHits > 0 || aiHits > 0;
 
@@ -84,6 +102,10 @@ export async function scanDeepCleanContentItems(input, contentItems, options = {
             aiHitCount += aiHits;
             if (affected) {
                 affectedItemIndexes.push(itemIndex);
+                affectedItemModes[itemIndex] = [
+                    ...(programHits > 0 ? ['program'] : []),
+                    ...(aiHits > 0 ? ['ai'] : []),
+                ];
                 affectedByType[categoryForItem(item)]++;
                 pendingCharacterCount += source.length;
             }
@@ -104,6 +126,7 @@ export async function scanDeepCleanContentItems(input, contentItems, options = {
         pendingCharacterCount,
         affectedByType,
         affectedItemIndexes,
+        affectedItemModes,
         compiledSemantics,
     };
 }

@@ -1,7 +1,7 @@
 /**
  * 负责按需的差异弹窗渲染、操作，以及现有 DOM 绑定。
  */
-import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages, diffLineHeightOptions, diffParagraphGapOptions, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit } from '../../settings/defaults.js';
+import { extensionName, minTrackedDiffMessages, maxTrackedDiffMessages, normalizeDiffTrackedMessageLimit } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { cleanseMessageDataAtIndex } from '../../chat/cleanse.js';
 import { refreshMessageDisplay } from '../../chat/display.js';
@@ -15,7 +15,7 @@ import { omitVariableUpdates } from '../../text/variableUpdates.js';
 import { renderDiffDocumentInBackground } from '../background.js';
 import { fadeOutThen } from '../../ui/motion.js';
 import { markRegexDirty } from '../../rules/state.js';
-import { showToast } from '../../ui/notifications.js';
+import { showRecleanseFeedback } from '../recleanseFeedback.js';
 import { collectAiScopeSegments } from '../../aiRewrite/matching.js';
 import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from '../../chat/messageBranch.js';
 import { getMessageDiffMeta, isMessageDiffReverted, setMessageDiffReverted, writeMessageDiffAiStage, writeMessageDiffProgram } from '../messageMeta.js';
@@ -24,19 +24,18 @@ import { showRelatedRulesForDiffElement } from './diffRelatedRules.js';
 import { computeRevertedText } from '../revertMerge.js';
 import { establishDiffBaselineAtIndex } from '../baseline.js';
 import { syncRelatedRuleRuntime } from '../preferences.js';
+import { syncDiffTypographyState } from '../typography.js';
 import { assignDiffRevertItemIds, collectPickedDiffItems, computePickedRevert } from '../pickRevert.js';
 import { requestManualAiRewriteForMessage } from '../../aiRewrite/index.js';
 import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
 import { buildEmptyRewriteHint } from '../emptyHint.js';
+import { buildBaselineEmptyHtml, buildManualEditHintHtml, buildRevertedEmptyHtml, buildRevertedHistoryLostHtml, DIFF_PICK_HINT, mountDiffRewriteHelp } from '../diffCopy.js';
 
 // 差异弹窗的一次性闭包：状态与工具函数集中在此，绑定层通过返回对象读取。
 export function recleanseDiffMessageAtIndex(index) {
     const { chat, extension_settings } = getAppContext();
-    const msg = Array.isArray(chat) && Number.isInteger(index) && index >= 0 && index < chat.length
-        ? chat[index]
-        : null;
+    const msg = Number.isInteger(index) && Array.isArray(chat) ? chat[index] : null;
     if (!isMessageDiffReverted(msg)) return false;
-
     const meta = getMessageDiffMeta(msg);
     const aiEnabled = extension_settings?.[extensionName]?.aiRewrite?.enabled === true;
 
@@ -53,18 +52,17 @@ export function recleanseDiffMessageAtIndex(index) {
         });
     }
 
-    // AI 改写关闭：只按保留的原文执行一次程序改写，恢复阶段链并解除撤回保护。
-    const sourceMes = typeof meta?.originalMes === 'string'
-        ? meta.originalMes
-        : (typeof msg.mes === 'string' ? msg.mes : '');
+    // AI 改写关闭：以当前正文为输入执行一次程序改写，原文基线仍由 setMessageDiffProgramMes 保留。
+    const sourceMes = typeof msg.mes === 'string' ? msg.mes : '';
     // 手机端曾出现「撤回后重新净化，程序规则却没跑」：处理器缓存仍是旧规则。
     // 显式重新净化强制重建一次，确保这次一定按当前规则执行。
+    const beforeMes = String(msg.mes || '');
     markRegexDirty(true);
     const changed = cleanseMessageDataAtIndex(index, {
         diffSourceMes: sourceMes,
         explicitRecleanse: true,
     });
-    showToast(changed ? '已按当前程序规则重新净化' : '已重新净化：这条原文没有程序规则命中', undefined, changed ? 'success' : 'info');
+    showRecleanseFeedback(String(msg.mes || '') !== beforeMes);
     // 与 AI 提交路径对称：用旧 DOM 快照盖住这次重绘，赢过 Tauri 手机端宿主的窗口化重绘。
     // 数据清理与标脏已在 cleanse 内完成；injectDiffButtons / 存盘由 toggleCurrentDiffRevert 收尾统一处理。
     refreshMessageDisplay(index, { atomic: true, emitRenderedEvent: 'auto' });
@@ -74,6 +72,7 @@ export function recleanseDiffMessageAtIndex(index) {
 
 export function createDiffEventsCore() {
     const { extension_settings, saveSettingsDebounced } = getAppContext();
+    mountDiffRewriteHelp();
 
     let comparisonController = null;
 
@@ -204,25 +203,6 @@ export function createDiffEventsCore() {
         $('#blai-diff-menu-bottom-icon').attr('class', isBottomVisible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye');
         $('#blai-diff-menu-bottom-text').text(isBottomVisible ? '尾部按钮：隐藏' : '尾部按钮：显示');
         $('#blai-diff-menu-bottom-toggle').attr('title', isBottomVisible ? '隐藏消息尾部按钮' : '显示消息尾部按钮');
-    };
-
-
-    const diffGapLabels = ['紧凑', '标准', '宽松'];
-
-    const syncDiffTypographyState = () => {
-        const settings = extension_settings[extensionName];
-        const lineHeight = normalizeDiffLineHeight(settings.diffLineHeight);
-        const gap = normalizeDiffParagraphGap(settings.diffParagraphGap);
-        settings.diffLineHeight = lineHeight;
-        settings.diffParagraphGap = gap;
-
-        const modal = document.getElementById('blai-diff-modal');
-        modal?.style.setProperty('--blai-diff-body-line-height', String(lineHeight));
-        modal?.style.setProperty('--blai-diff-body-paragraph-gap', `${gap}px`);
-
-        $('#blai-diff-line-height-text').text(`正文行距：${lineHeight}`);
-        const gapIndex = Math.max(0, diffParagraphGapOptions.indexOf(gap));
-        $('#blai-diff-paragraph-gap-text').text(`段落间距：${diffGapLabels[gapIndex]}`);
     };
 
 
@@ -393,6 +373,7 @@ export function createDiffEventsCore() {
         const canPick = enabled && !!msg && typeof msg === 'object' && !isMessageDiffReverted(msg);
         $('#blai-diff-modal').toggleClass('blai-diff-pick-mode', canPick);
         $('#blai-diff-pick-bar').prop('hidden', !canPick);
+        $('#blai-diff-pick-hint').text(DIFF_PICK_HINT);
         $('#blai-diff-pick-toggle').attr('title', canPick ? '退出撤回所选' : '勾选改写项后撤回所选');
         $('#blai-diff-pick-icon').attr('class', canPick ? 'fa-solid fa-list-check blai-related-active-icon' : 'fa-solid fa-list-check');
         $('#blai-diff-pick-text').text(canPick ? '退出勾选' : '撤回所选');
@@ -514,24 +495,25 @@ export function createDiffEventsCore() {
         clearNavHighlight();
         diffRuntimeState.diffNavIndex = -1;
         if (isMessageDiffReverted(msg)) {
-            const current = !meta ? '历史对比文本已超出保留范围。' : msg.mes === meta.originalMes ? '当前显示为原始文本。' : '当前文本与保留原文不同。';
-            contentEl.html(`<div class="blai-diff-empty"><i class="fas fa-shield-halved" aria-hidden="true"></i>此消息已撤回并处于免净化保护状态，${current}点击 <i class="fas fa-wand-magic-sparkles blai-diff-inline-icon"></i> 重新净化文本。</div>`);
+            contentEl.html(!meta
+                ? buildRevertedHistoryLostHtml()
+                : buildRevertedEmptyHtml(msg.mes === meta.originalMes ? 'original' : 'different'));
             syncDiffStats(msg);
             syncDiffNavState();
             syncDiffPickModeState(msg);
             return;
         }
         if (!meta) {
-            contentEl.html('<div class="blai-diff-empty"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>当前消息尚未经过净化。若这条正文已经写好，可把它作为原文立即执行一次净化：<button id="blai-diff-baseline-btn" type="button" class="blai-icon-btn blai-diff-baseline-btn">按当前正文建立净化基线</button></div>');
+            contentEl.html(buildBaselineEmptyHtml());
             syncDiffStats(msg);
             syncDiffNavState();
             syncDiffPickModeState(msg);
             return;
         }
-        const pairs = ['ai', 'program'].flatMap(section => {
+        const pairs = ['ai', 'program', 'manual'].flatMap(section => {
             const pair = getDiffComparisonForMessage(index, section);
             if (!pair) return [];
-            return [{ ...pair, section, ...(mode === 'full' ? {} : {
+            return [{ ...pair, section, ...(mode === 'full' || section === 'manual' ? {} : {
                 oldRanges: collectAiScopeSegments(pair.oldText),
                 newRanges: collectAiScopeSegments(pair.newText),
             }) }];
@@ -556,7 +538,7 @@ export function createDiffEventsCore() {
             || getDiffMessageByIndex(index) !== msg || getMessageDiffBranchKey(msg) !== branchKey) return;
         // 手改提示是「手改」来源在弹窗里的可见载体，带上 data-diff-section 供筛选隐藏。
         const notice = omitVariableUpdates(msg.mes) !== omitVariableUpdates(meta.programMes)
-            ? '<div class="blai-diff-empty" data-diff-section="manual"><i class="fa-solid fa-pen" aria-hidden="true"></i>当前消息已被手动编辑；撤回净化会保留你的改动，并把记录阶段里的改写尽量还原为原文（找不到的替换会跳过）。</div>' : '';
+            ? buildManualEditHintHtml() : '';
         const empty = buildEmptyRewriteHint();
         contentEl.html(notice + (mode === 'full'
             ? `<div class="blai-diff-full-text">${rendered.join('') || empty}</div>`

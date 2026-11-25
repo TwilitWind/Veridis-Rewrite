@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * 四项 UI 统一改造的真浏览器回归测试：
+ * 四项 UI 统一改造的 9224 端口浏览器回归测试：
  *   ① 所有省略号菜单统一竖向（插件作用域内无横三点）；
- *   ② 页面 / 弹窗切换是「旧页先淡出、新页后淡入」的顺序过渡，同一时刻只有一个面板参与
- *      布局；每个面板自身在动画期间几何与 transform 恒定（无放大/收缩）；
- *      含快速来回切换的竞态：最终恰好一个 active 面板、无 leaving 残留；
+ *   ② 切页 fade through（点击当帧 active 唯一且已指向新页，旧页带 leaving 淡出、
+ *      新页带 entering 延迟淡入）；弹窗仍走淡出；含快速来回切换的竞态：
+ *      最终恰好一个 active 面板、无 leaving 残留；
  *   ③ toast 四种语义色是酒馆原生值，不随构建漂移；
  *   ④ 弹窗底部按钮内边距桌面/手机各自统一为 8px 12px。
  *
@@ -12,9 +12,9 @@
  * 失败退出码 1。需要 SillyTavern(8000) 与调试浏览器(9224)均已启动。
  *
  * 稳健性约定（针对一次性探针反复踩的坑）：
- * - 开头 reload 一次，保证读到同步后的装机副本，不被上一轮 DOM 状态污染；
+ * - 开头按需刷新，只有装机副本更新才 reload，没改代码重跑直接复用页面；
  * - 所有「等动画结束」用轮询而非固定 sleep，兼容后台标签页定时器节流；
- * - 当前页以 .pages 容器的 data-active-page 为准，不取第一个 .active（淡出期旧面板仍带 active）；
+ * - 当前页以 .pages 容器的 data-active-page 为准；切页当帧旧面板已去掉 active、只留 leaving；
  * - 弹窗 portal 到 body，选择器不限制在 #blai-purifier-popup 内；
  * - toast 令牌挂在 .blai-toast 类上，用临时元素读计算值，不遍历 cssRules（注入样式读不到）；
  * - 含反证：故意破坏关键条件必须让对应断言失败。
@@ -42,12 +42,14 @@ async function pollUntil(send, snapshotExpr, predicate, label, tries = 30, inter
 const TRANSITION_STATE = `(() => ({
     activePages: [...document.querySelectorAll('.page-panel.active')].map(e => e.getAttribute('data-page')),
     leavingPages: [...document.querySelectorAll('.page-panel.blai-is-leaving')].map(e => e.getAttribute('data-page')),
+    enteringPages: [...document.querySelectorAll('.page-panel.blai-is-entering')].map(e => e.getAttribute('data-page')),
     activeAttr: document.getElementById('blai-purifier-popup')?.getAttribute('data-active-page'),
 }))()`;
 
 const { send, ws } = await connect();
 try {
-    // reload 一次：确保加载同步后的装机副本，且 DOM 状态干净
+    // reload 一次：确保加载同步后的装机副本，且 DOM 状态干净；显式回桌面视口，避免上一个脚本留下手机尺寸。
+    await send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
     await reloadAndWait(send, `!!document.querySelector('[data-page-target="ai"]')`, '插件导航');
     // 打开外壳（走真实入口，不强设 display）
     await evaluate(send, `(() => {
@@ -89,75 +91,51 @@ try {
     })()`);
     check('④ 桌面弹窗按钮 padding=8px 12px', padDesk?.padding === '8px 12px' && padDesk?.token === '8px 12px', JSON.stringify(padDesk));
 
-    // 先把当前页稳定切到 overview，避免上一轮状态影响后续动画测试
+    // 先把当前页稳定切到 overview，避免上一轮状态影响后续测试
     await evaluate(send, `document.querySelector('[data-page-target="overview"]')?.click()`);
     await pollUntil(send, TRANSITION_STATE, s => s.leavingPages.length === 0 && s.activeAttr === 'overview', '回到 overview');
 
-    // ===== ②a 顺序切页：旧页先淡出，期间只有它参与布局且几何不变 =====
-    const oldAnim = await evaluate(send, `(() => {
+    // ===== ②a 切页 fade through：点击当帧 active 已切到新页，旧页淡出、新页延迟淡入 =====
+    const pageSwitch = await evaluate(send, `(() => {
         document.querySelector('[data-page-target="ai"]')?.click();
-        const p = document.querySelector('.page-panel.blai-is-leaving');
-        const snap = () => {
-            if (!p) return null;
-            const r = p.getBoundingClientRect();
-            const cs = getComputedStyle(p);
-            return {
-                box: [r.x, r.y, r.width, r.height].map(v => +v.toFixed(1)),
-                transform: cs.transform,
-                anim: cs.animationName,
-                pos: cs.position,
-            };
-        };
-        return {
-            page: p?.getAttribute('data-page'),
-            freshActive: !!document.querySelector('.page-panel[data-page="ai"]')?.classList.contains('active'),
-            a: snap(),
-            state: ${TRANSITION_STATE},
-        };
-    })()`);
-    check('②a 旧面板淡出时只有一页参与布局',
-        oldAnim.page === 'overview' && oldAnim.freshActive === false &&
-        oldAnim.state.activePages.length === 1 && oldAnim.state.activeAttr === 'ai',
-        `leaving=${oldAnim.page} active=${JSON.stringify(oldAnim.state.activePages)} attr=${oldAnim.state.activeAttr}`);
-    check('②a 旧面板播 blai-fade-out 且保持可见',
-        oldAnim.a?.anim === 'blai-fade-out' && oldAnim.a?.pos === 'static',
-        `anim=${oldAnim.a?.anim} pos=${oldAnim.a?.pos}`);
-    check('②a 旧面板淡出不叠 transform/scale（无收缩）',
-        !!oldAnim.a && oldAnim.a.transform === 'none' && oldAnim.a.box.every(v => v > 0),
-        JSON.stringify(oldAnim.a));
-
-    const settled = await pollUntil(send, TRANSITION_STATE,
-        s => s.activeAttr === 'ai' && s.activePages.length === 1 && s.activePages[0] === 'ai' && s.leavingPages.length === 0,
-        '淡出结束后新页 active');
-    check('②a 淡出结束后新页淡入且 leaving 清理干净', settled.leavingPages.length === 0, JSON.stringify(settled));
-
-    const newAnim = await evaluate(send, `(() => {
         const p = document.querySelector('.page-panel[data-page="ai"]');
+        const old = document.querySelector('.page-panel[data-page="overview"]');
         const r = p.getBoundingClientRect();
-        const cs = getComputedStyle(p);
         return {
+            state: ${TRANSITION_STATE},
+            anim: getComputedStyle(p).animationName,
+            oldAnim: getComputedStyle(old).animationName,
+            transform: getComputedStyle(p).transform,
             box: [r.x, r.y, r.width, r.height].map(v => +v.toFixed(1)),
-            transform: cs.transform,
-            anim: cs.animationName,
-            active: p.classList.contains('active'),
         };
     })()`);
-    check('②a 新面板播 blai-page-in', newAnim.active && newAnim.anim === 'blai-page-in', JSON.stringify(newAnim));
-    check('②a 新面板淡出不叠 transform/scale（无放大）',
-        newAnim.transform === 'none' && newAnim.box.every(v => v > 0), JSON.stringify(newAnim));
+    check('②a 切页当帧 active 唯一且指向新页',
+        pageSwitch.state.activePages.length === 1 && pageSwitch.state.activePages[0] === 'ai'
+        && pageSwitch.state.activeAttr === 'ai',
+        JSON.stringify(pageSwitch.state));
+    check('②a 旧页淡出、新页待入场，两个状态不串页',
+        pageSwitch.state.leavingPages.length === 1 && pageSwitch.state.leavingPages[0] === 'overview'
+        && pageSwitch.state.enteringPages.length === 1 && pageSwitch.state.enteringPages[0] === 'ai',
+        JSON.stringify(pageSwitch.state));
+    check('②a 切页走 fade through、不叠 transform',
+        pageSwitch.anim === 'blai-page-enter' && pageSwitch.oldAnim === 'blai-fade-out'
+        && pageSwitch.transform === 'none' && pageSwitch.box.every(v => v > 0),
+        `anim=${pageSwitch.anim}/${pageSwitch.oldAnim} transform=${pageSwitch.transform} box=${JSON.stringify(pageSwitch.box)}`);
+    await pollUntil(send, TRANSITION_STATE, s => s.leavingPages.length === 0, '切页退场结束');
 
     // ===== ②b 弹窗淡出动画（portal 到 body，选择器不限外壳）=====
+    // getComputedStyle 会强制样式重算，animationName 在加类后立即生效。
+    // 不用 requestAnimationFrame：后台标签页会节流 rAF，Promise 可能永不兑现把脚本挂死。
     const modalAnim = await evaluate(send, `(() => {
         const modal = document.querySelector('.blai-modal-shell');
         if (!modal) return { anim: null };
         modal.classList.add('blai-is-leaving');
-        const out = new Promise(res => requestAnimationFrame(() => requestAnimationFrame(() => {
-            res({ anim: getComputedStyle(modal).animationName, dur: getComputedStyle(modal).animationDuration });
-        })));
+        const cs = getComputedStyle(modal);
+        const out = { anim: cs.animationName, dur: cs.animationDuration };
+        modal.classList.remove('blai-is-leaving');
         return out;
     })()`);
     check('②b 弹窗退场播 blai-fade-out', modalAnim.anim === 'blai-fade-out', JSON.stringify(modalAnim));
-    await evaluate(send, `document.querySelector('.blai-modal-shell')?.classList.remove('blai-is-leaving')`);
 
     // ===== ②d 动效节奏：退场更快，且 JS/CSS 共用同一组令牌 =====
     const timing = await evaluate(send, `(() => {
@@ -167,20 +145,13 @@ try {
         document.body.appendChild(probe);
         const menuIn = getComputedStyle(probe).animationDuration;
         probe.remove();
-        const out = document.createElement('div');
-        out.className = 'page-panel blai-is-leaving';
-        const popup = document.getElementById('blai-purifier-popup');
-        popup.appendChild(out);
-        const pageOut = getComputedStyle(out).animationDuration;
-        out.remove();
         const shell = document.querySelector('.blai-modal-shell');
         const card = shell?.querySelector('.blai-modal-card');
         return {
             fast: root.getPropertyValue('--blai-duration-fast').trim(),
             base: root.getPropertyValue('--blai-duration-base').trim(),
             slow: root.getPropertyValue('--blai-duration-slow').trim(),
-            pageIn: getComputedStyle(document.querySelector('.page-panel.active')).animationDuration,
-            pageOut,
+            pageAnim: getComputedStyle(document.querySelector('.page-panel.active')).animationName,
             shellIn: shell ? getComputedStyle(shell).animationDuration : null,
             cardIn: card ? getComputedStyle(card).animationDuration : null,
             menuIn,
@@ -188,47 +159,65 @@ try {
     })()`);
     check('②d 退场比进场短（80/120/140ms）',
         timing.fast === '80ms' && timing.base === '120ms' && timing.slow === '140ms', JSON.stringify(timing));
-    check('②d 切页/菜单/弹窗淡入淡出走统一时长',
-        timing.pageOut === '0.08s' && timing.pageIn === '0.08s' && timing.menuIn === '0.08s'
+    check('②d 切页入场与菜单/弹窗各走统一时长',
+        timing.pageAnim === 'blai-page-enter' && timing.menuIn === '0.08s'
         && (!timing.shellIn || timing.shellIn === '0.12s')
         && (!timing.cardIn || timing.cardIn === '0.14s'), JSON.stringify(timing));
 
     // ===== ②c 快速来回切换的竞态 =====
     for (const page of ['overview', 'ai', 'overview', 'ai', 'overview']) {
         await evaluate(send, `document.querySelector('[data-page-target="${page}"]')?.click()`);
-        await sleep(40); // 小于 130ms 淡出时长，制造「淡出中被重新激活」
+        await sleep(40); // 连续点击，验证不会残留错页或退场类
     }
     const race = await pollUntil(send, TRANSITION_STATE, s => s.leavingPages.length === 0, '竞态后稳定');
     check('②c 快速切换后恰好一个 active 且无残留',
         race.activePages.length === 1 && race.activePages[0] === 'overview' && race.leavingPages.length === 0,
         JSON.stringify(race));
 
-    // ===== ②e 分段控制器：切换后选中项仍有强调色与文字（不靠单一 CSS 来源） =====
-    const segment = await evaluate(send, `(() => {
+    // ===== ②e 分段控制器：切换后选中项仍有强调底色（含手机端粘滞 :hover） =====
+    await evaluate(send, `(() => {
         const modal = document.getElementById('blai-subrule-edit-modal');
-        if (!modal) return null;
-        const previousDisplay = modal.style.display;
         modal.style.setProperty('display', 'flex', 'important');
         const sel = document.getElementById('blai-modal-sub-rewrite-mode');
         sel.value = 'program';
         jQuery(sel).trigger('change');
         document.querySelector('#blai-modal-sub-rewrite-mode-segment [data-value="ai"]')?.click();
+        return true;
+    })()`);
+    // 触摸后 :hover 会粘滞到下一次点击；用 CDP 强制 hover 复现这个手机端条件。
+    // depth:-1 会把整页 DOM 树序列化，酒馆页面大了之后会挂住；querySelector 只需根节点。
+    await send('DOM.enable');
+    const { root } = await send('DOM.getDocument', { depth: 1 });
+    const { nodeId } = await send('DOM.querySelector', {
+        nodeId: root.nodeId,
+        selector: '#blai-modal-sub-rewrite-mode-segment [data-value="ai"]',
+    });
+    if (!nodeId) throw new Error('分段控制器 AI 按钮不存在');
+    await send('CSS.enable');
+    await send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: ['hover'] });
+    const segment = await evaluate(send, `(() => {
+        const modal = document.getElementById('blai-subrule-edit-modal');
+        const previousDisplay = modal.style.display;
+        const sel = document.getElementById('blai-modal-sub-rewrite-mode');
         const ai = document.querySelector('#blai-modal-sub-rewrite-mode-segment [data-value="ai"]');
         const program = document.querySelector('#blai-modal-sub-rewrite-mode-segment [data-value="program"]');
         const snap = {
             select: sel.value,
-            aiBg: ai?.style.getPropertyValue('background-color'),
-            aiColor: ai?.style.getPropertyValue('color'),
-            aiPressed: ai?.getAttribute('aria-pressed'),
-            programBg: program?.style.getPropertyValue('background-color'),
+            hovered: ai.matches(':hover'),
+            aiBg: getComputedStyle(ai).backgroundColor,
+            aiColor: getComputedStyle(ai).color,
+            aiPressed: ai.getAttribute('aria-pressed'),
+            programBg: getComputedStyle(program).backgroundColor,
         };
         modal.style.display = previousDisplay;
         return snap;
     })()`);
-    check('②e 切换后选中项仍有底色与文字',
-        segment?.select === 'ai' && segment.aiPressed === 'true'
-        && String(segment.aiBg).includes('accent-color') && String(segment.aiColor).includes('accent-contrast')
-        && segment.programBg === 'transparent', JSON.stringify(segment));
+    await send('CSS.forcePseudoState', { nodeId, forcedPseudoClasses: [] });
+    const transparent = (v) => v === 'rgba(0, 0, 0, 0)' || v === 'transparent';
+    check('②e 切换后选中项仍有底色与文字（粘滞 hover 下）',
+        segment?.select === 'ai' && segment.hovered === true && segment.aiPressed === 'true'
+        && !transparent(segment.aiBg) && !transparent(segment.aiColor)
+        && transparent(segment.programBg), JSON.stringify(segment));
 
     // ===== ④ 手机端按钮内边距 =====
     await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });

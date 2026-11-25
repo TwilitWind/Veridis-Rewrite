@@ -172,12 +172,7 @@
     padding: var(--blai-feedback-page-pad-y) var(--blai-feedback-page-pad-x) var(--blai-space-32);
     border-radius: var(--blai-radius-14);
     background: var(--bg-surface);
-    animation: blai-fade-in var(--blai-duration-fast) var(--blai-ease-out) both;
-}
-
-/* 标签切换：内容区淡出（motion.js 加 .blai-is-leaving），退场动画结束后重渲染并重放入场。 */
-#blai-feedback-workspace .blai-feedback-workspace-content.blai-is-leaving {
-    animation: blai-fade-out var(--blai-duration-fast) var(--blai-ease-out) both;
+    /* 标签切换直接渲染，不加入场/退场动画；弹窗与菜单的淡入淡出不受影响。 */
 }
 
 /* 运行日志视图：日志框自带滚动条，内容区再出一条最右侧滚动条显得冗余，

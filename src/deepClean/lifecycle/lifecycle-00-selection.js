@@ -177,6 +177,20 @@ function frozenRunInput(selection, settings) {
     });
 }
 
+/** 把预览页的取消项与 AI 预览缓存落实到本次运行；正式处理只走未取消的命中条目。 */
+export function applyDeepCleanPreviewSelection(lifecycle, skippedItemIndexes, aiCache) {
+    if (!lifecycle?.run?.scanResult) return null;
+    const skipped = skippedItemIndexes instanceof Set
+        ? new Set(skippedItemIndexes)
+        : new Set(Array.isArray(skippedItemIndexes) ? skippedItemIndexes : []);
+    lifecycle.skippedItemIndexes = skipped;
+    lifecycle.affectedItemIndexes = lifecycle.run.scanResult.affectedItemIndexes
+        .filter((itemIndex) => !skipped.has(itemIndex));
+    lifecycle.nextAffectedItemCursor = 0;
+    lifecycle.previewAiCache = aiCache instanceof Map ? aiCache : null;
+    return lifecycle;
+}
+
 export function markDeepCleanStopped(lifecycle) {
     lifecycle.stopRequested = true;
     lifecycle.reviewController?.abort();
@@ -230,7 +244,9 @@ export function deriveDeepCleanCompletionSummary(lifecycle) {
     }
 
     const affectedItemIndexes = new Set(run.scanResult.affectedItemIndexes);
-    const retainedOriginalItemCount = [...affectedItemIndexes].filter((itemIndex) => (
+    const skippedItemIndexes = new Set(lifecycle.skippedItemIndexes || []);
+    const selectedAffectedItemIndexes = [...affectedItemIndexes].filter((itemIndex) => !skippedItemIndexes.has(itemIndex));
+    const retainedOriginalItemCount = selectedAffectedItemIndexes.filter((itemIndex) => (
         !appliedItemIndexes.has(itemIndex) && !failedItemIndexes.has(itemIndex)
     )).length;
     const summary = {
@@ -238,6 +254,8 @@ export function deriveDeepCleanCompletionSummary(lifecycle) {
         chatBranchResourceCount: run.input.chats.length,
         scannedItemCount: run.scanResult.scannedItemCount,
         affectedItemCount: run.scanResult.affectedItemCount,
+        selectedItemCount: selectedAffectedItemIndexes.length,
+        skippedItemCount: skippedItemIndexes.size,
         appliedItemCount: appliedItemIndexes.size,
         retainedOriginalItemCount,
         failedItemCount: failedItemIndexes.size,
@@ -289,6 +307,10 @@ export async function freezeDeepCleanRun(options = {}) {
     const lifecycle = {
         run: null,
         nextAffectedItemCursor: 0,
+        affectedItemIndexes: null,
+        skippedItemIndexes: new Set(),
+        previewAiCache: null,
+        previewSession: null,
         currentReviewSession: null,
         lookahead: null,
         stopRequested: false,

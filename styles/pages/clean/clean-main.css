@@ -278,6 +278,9 @@
 }
 
 #blai-purifier-popup .blai-clean-tag-group {
+    /* 分组头与标签行共用同一组右侧几何：内边距决定右边缘，间距决定操作组宽度。 */
+    --blai-clean-tag-inline-pad: var(--blai-space-12);
+    --blai-clean-tag-action-gap: var(--blai-space-8);
     min-width: 0;
     overflow: visible;
     border: var(--blai-border-1) solid var(--border-color);
@@ -288,7 +291,7 @@
 #blai-purifier-popup .blai-clean-tag-group-header {
     min-width: 0;
     min-height: var(--blai-size-42);
-    padding: 0 var(--blai-space-12);
+    padding: 0 var(--blai-clean-tag-inline-pad);
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;

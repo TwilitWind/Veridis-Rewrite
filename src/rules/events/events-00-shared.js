@@ -197,7 +197,7 @@ export function saveCurrentEditingRule(options = {}) {
     const validSubrules = rulesUiState.currentEditingSubrules.filter(sub => sub.targets && sub.targets.length > 0);
 
     if (validSubrules.length === 0) {
-        showToast('规则分组至少需要一条有效的规则。', undefined, 'error');
+        showToast('规则分组至少需要一条填写了查找内容的规则。', undefined, 'error');
         return { ok: false };
     }
 
@@ -207,8 +207,8 @@ export function saveCurrentEditingRule(options = {}) {
     const activationWarningEnabled = isRuleActivationWarningEnabled(previousRule);
 
     const fallbackName = rulesUiState.currentEditingIndex !== -1
-        ? (rules[rulesUiState.currentEditingIndex]?.name || `合集 ${rulesUiState.currentEditingIndex + 1}`)
-        : `合集 ${rules.length + 1}`;
+        ? (rules[rulesUiState.currentEditingIndex]?.name || `规则分组 ${rulesUiState.currentEditingIndex + 1}`)
+        : `规则分组 ${rules.length + 1}`;
     const newRule = normalizeRuleActivationSafety({
         name: nameVal || fallbackName,
         subRules: validSubrules,
@@ -251,20 +251,20 @@ function applyRegexTargetValidationError(error) {
 
 export const subruleModeUIMap = {
     simple: {
-        hint: '适合批量覆盖相近表达，支持 {} 组合和 * 通配。',
-        targetPlaceholder: "简易语法 (每行一条)\n例如：{宛若,如同}{神明,恶魔}?",
-        replacementPlaceholder: "替换后词汇（每行一条，支持随机，可留空）\n留空时，命中后会直接删除",
+        hint: '适合批量替换相近表达，支持 {} 组合和 * 通配。',
+        targetPlaceholder: "简易组合（每行一条）\n例如：{宛若,如同}{神明,恶魔}?",
+        replacementPlaceholder: "替换内容（每行一条；可写多项，随机使用）\n留空时，命中内容会被删除",
     },
     text: {
-        hint: '按普通词组逐项替换，适合稳定短语，长词会优先处理。',
-        targetPlaceholder: "被替换词汇 (逗号/空格分隔)\n例如：嘴角勾起, 并不存在",
-        replacementPlaceholder: "替换后词汇（逗号/空格分隔，可留空）\n留空时，命中后会直接删除",
+        hint: '适合替换固定短语；长词会优先匹配。',
+        targetPlaceholder: "普通文本（用逗号或空格分隔）\n例如：嘴角勾起, 并不存在",
+        replacementPlaceholder: "替换内容（用逗号或空格分隔；可写多项，随机使用）\n留空时，命中内容会被删除",
     },
     regex: {
-        hint: '适合复杂匹配和捕获组替换；每次命中会从替换项里随机选一个。',
-        targetPlaceholder: "正则匹配规则 (每行一条)\n支持裸模式 foo|bar 或 /foo|bar/gmu",
-        replacementPlaceholder: "替换模板（每行一条，支持随机；可用 $1、\\n，可留空）\n点“按行识别”后加入下方替换项",
-        regexEditPlaceholder: "正在编辑替换项；可用 $1、\\n\n点“更新替换项”保存修改",
+        hint: '适合复杂匹配和捕获组替换；每次命中随机使用一个替换项。',
+        targetPlaceholder: "正则表达式（每行一条）\n支持 foo|bar 或 /foo|bar/gmu",
+        replacementPlaceholder: "替换内容（每行一条；支持 $1、\\n，可写多项随机使用）\n点「识别为替换项」后加入下方替换项",
+        regexEditPlaceholder: "正在编辑替换项；支持 $1、\\n\n点「更新替换项」保存修改",
     },
 };
 

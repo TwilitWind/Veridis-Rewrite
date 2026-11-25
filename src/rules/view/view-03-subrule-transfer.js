@@ -1,5 +1,5 @@
 /**
- * 子规则（映射条目）的复制与跨分组 / 跨预设移动。
+ * 单条规则的复制与跨规则分组 / 跨预设移动。
  * 目标分两步选：先选预设，确认后只列出该预设的分组。
  * 分组值编码为 <预设序号>::<分组序号>，写入逻辑保持不变。
  */
@@ -27,7 +27,7 @@ function collectTransferTargets() {
         const rules = isActive ? currentRules : getPresetRules(settings.presets[presetName]);
         rules.forEach((rule, groupIndex) => {
             if (isActive && groupIndex === sourceGroupIndex) return;
-            const groupName = String(rule?.name || '').trim() || `未命名合集 ${groupIndex + 1}`;
+            const groupName = String(rule?.name || '').trim() || `未命名规则分组 ${groupIndex + 1}`;
             targets.push({
                 value: `${presetIndex}::${groupIndex}`,
                 presetName,
@@ -160,6 +160,6 @@ export function runSubruleTransfer() {
     markRulesDataDirty();
     saveSettingsDebounced();
     closeSubruleTransferModal();
-    const groupLabel = String(targetRule.name || '').trim() || `未命名合集 ${groupIndex + 1}`;
+    const groupLabel = String(targetRule.name || '').trim() || `未命名规则分组 ${groupIndex + 1}`;
     showToast(`已移动到「${presetName}」的「${groupLabel}」`, undefined, 'success');
 }

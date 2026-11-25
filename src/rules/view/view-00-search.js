@@ -22,8 +22,8 @@ export function normalizeReplacementList(replacements) {
 
 export function getRulePreviewTagText(mode = 'text') {
     if (mode === 'regex') return '正则';
-    if (mode === 'simple') return '简易';
-    return '普通';
+    if (mode === 'simple') return '组合';
+    return '文本';
 }
 
 export function getRuleSourcePreviewText(sub = {}) {
@@ -133,7 +133,7 @@ export function toggleRuleEditFilterMenu() {
 
 export function getRuleSearchScopeEmptyHint() {
     const scope = rulesUiState.ruleSearchScope || 'all';
-    if (scope === 'preset') return '当前只在预设规则集的分组与映射里查找';
+    if (scope === 'preset') return '当前只在当前规则集的规则分组里查找';
     if (scope === 'group') return '当前只在预设分组的名称里查找';
     return '当前搜索分组名称、查找词与替换词';
 }
@@ -173,7 +173,7 @@ export function focusLatestRuleCard() {
 }
 
 /**
- * 打开规则集转移弹窗。mode 为 'copy' / 'move' 时只留对应动作按钮，
+ * 打开规则分组转移弹窗。mode 为 'copy' / 'move' 时只留对应动作按钮，
  * 批量面板已经把复制与移动拆成两个入口；不传时仍保留原来的双按钮（规则卡菜单）。
  */
 export function openTransferModal(ruleIndexOrIndexes, mode = '') {
@@ -195,7 +195,7 @@ export function openTransferModal(ruleIndexOrIndexes, mode = '') {
     $select.html(targetNames.map((name) => `<option value="${safeHtml(name)}">${safeHtml(name)}</option>`).join(''));
     const isCopy = mode === 'copy';
     const isMove = mode === 'move';
-    $('#blai-transfer-title-text').text(isCopy ? '复制规则集' : isMove ? '移动规则集' : '复制 / 转移规则集');
+    $('#blai-transfer-title-text').text(isCopy ? '复制规则分组' : isMove ? '移动规则分组' : '复制或移动规则分组');
     $('#blai-transfer-copy').toggle(!isMove);
     $('#blai-transfer-move').toggle(!isCopy);
     $('#blai-rule-transfer-modal').css('display', 'flex');
@@ -247,7 +247,7 @@ export function buildRuleSearchResults(keyword, scope = 'all') {
     const results = [];
 
     rules.forEach((rule, ruleIndex) => {
-        const groupTitle = safeHtml(rule.name || `合集 ${ruleIndex + 1}`);
+        const groupTitle = safeHtml(rule.name || `未命名规则分组 ${ruleIndex + 1}`);
         const subRules = rule.subRules || [];
         if (searchGroups && String(rule.name || '').toLowerCase().includes(normalizedKeyword)) {
             results.push({
@@ -329,7 +329,7 @@ export function syncRegexReplacementInputState() {
         `);
     }
     $container.prop('hidden', $items.length === 0 && !isRegexEditorVisible);
-    $('#blai-modal-sub-regex-recognize').text(isEditing ? '更新替换项' : '按行识别');
+    $('#blai-modal-sub-regex-recognize').text(isEditing ? '更新替换项' : '识别为替换项');
     $textarea.attr('placeholder', isEditing ? editPlaceholder : defaultPlaceholder);
 }
 

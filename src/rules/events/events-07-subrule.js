@@ -96,7 +96,7 @@ export function bindRuleSubruleEditorEvents() {
                 renderSubrulesToModal();
             }
         } else if (action === 'delete') {
-            if (!await showConfirmModal('确定要删除该映射规则吗？', { danger: true, okText: '删除' })) return;
+            if (!await showConfirmModal('确定要删除这条规则吗？', { danger: true, okText: '删除' })) return;
             list.splice(index, 1);
             renderSubrulesToModal();
             showToast('已删除该条规则', undefined, 'success');

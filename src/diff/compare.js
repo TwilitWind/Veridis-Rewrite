@@ -125,7 +125,7 @@ function renderDiffOperation(operation, section) {
             `class="blai-diff-change"`,
             `data-blai-diff-type="${operation.type === 'delete' ? 'delete' : 'insert'}"`,
         ];
-        if (['ai', 'program'].includes(section)) attrs.push(`data-blai-diff-section="${section}"`);
+        if (['ai', 'program', 'manual'].includes(section)) attrs.push(`data-blai-diff-section="${section}"`);
         ['oldStart', 'oldEnd', 'newStart', 'newEnd'].forEach((key) => {
             if (Number.isFinite(Number(operation[key]))) attrs.push(`data-blai-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}="${Number(operation[key])}"`);
         });

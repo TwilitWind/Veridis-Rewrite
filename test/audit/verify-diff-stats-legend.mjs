@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 透视弹窗「来源图例 + 右侧可折叠多选筛选行 + 逐条定位」真浏览器回归测试。
+ * 透视弹窗「来源图例 + 右侧可折叠多选筛选行 + 逐条定位」9224 端口浏览器回归测试。
  *
  * 守的用户可见行为：
  * 1. 原文/程序/AI/手改四项是纯颜色图例（span，不可点选筛选），原文不计数字、
@@ -15,287 +15,61 @@
  * 用法：CDP_PORT=9224 node test/audit/verify-diff-stats-legend.mjs
  * 失败时退出码 1，并打印逐项期望/实际；截图落在 shots/ 下。
  */
-import { collectDiffStats } from '../../src/diff/diffStats.js';
 import {
-    connect, evaluate, waitFor, reloadAndWait, capture as captureEvidence,
+    connect, evaluate, waitFor, ensurePageFresh, capture as captureEvidence,
     snapshotAiSettings, normalizeAiSettings, restoreAiSettings,
 } from './_harness.mjs';
+import {
+    OPEN_DIFF_MODAL, seedDiffMessage, snapshotDiffMessage, restoreDiffMessage,
+    snapshotProgramRules, installAuditRewriteRule, restoreProgramRules, programRewriteText, IPHONE_UA,
+} from './_diff-fixture.mjs';
+import { checkManualCount } from './_diff-stats-unit.mjs';
+import { PROBE } from './_diff-stats-probe.mjs';
+import { check, checkStats, checkNoBorders, checkSingleLine, checkNotices } from './_diff-stats-checks.mjs';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const capture = (send, name) => captureEvidence(send, name, { expectOpen: ['#blai-diff-modal-content'] });
 
-const PROBE = `(() => {
-    const modal = document.getElementById('blai-diff-modal');
-    const content = document.getElementById('blai-diff-modal-content');
-    const toolbar = document.getElementById('blai-diff-toolbar');
-    const panel = document.getElementById('blai-diff-filter-panel');
-    const seen = new Set();
-    const visibleIds = new Set();
-    const bySection = { program: 0, ai: 0, other: 0 };
-    let groups = 0;
-    content?.querySelectorAll('[data-blai-revert-item]').forEach((node) => {
-        const id = node.getAttribute('data-blai-revert-item');
-        if (!id || seen.has(id)) return;
-        seen.add(id);
-        groups++;
-        const section = node.getAttribute('data-blai-diff-section');
-        if (section === 'program' || section === 'ai') bySection[section]++;
-        else bySection.other++;
-        if (node.offsetParent !== null) visibleIds.add(id);
-    });
-    const readControl = (node) => {
-        if (!node) return null;
-        const style = getComputedStyle(node);
-        const dot = node.querySelector('i');
-        const dotStyle = dot ? getComputedStyle(dot) : null;
-        const rect = node.getBoundingClientRect();
-        return {
-            label: [...node.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent.trim()).join(''),
-            text: node.textContent.trim(),
-            tag: node.tagName.toLowerCase(),
-            source: node.getAttribute('data-blai-diff-source'),
-            filterSource: node.getAttribute('data-blai-diff-filter-source'),
-            count: node.querySelector('strong')?.textContent ?? null,
-            visible: node.offsetParent !== null,
-            color: style.color,
-            dotColor: dotStyle ? dotStyle.backgroundColor : null,
-            border: [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth],
-            background: style.backgroundColor,
-            active: node.classList.contains('is-active'),
-            pressed: node.getAttribute('aria-pressed'),
-            centerY: rect.top + rect.height / 2,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-        };
-    };
-    const sources = [...document.querySelectorAll('#blai-diff-toolbar .blai-diff-source')].map(readControl);
-    const toggleNode = document.getElementById('blai-diff-filter-toggle');
-    const toggle = readControl(toggleNode);
-    const navNode = document.querySelector('#blai-diff-toolbar .blai-diff-nav');
-    const navRect = navNode?.getBoundingClientRect();
-    const sourcesRect = document.querySelector('.blai-diff-sources')?.getBoundingClientRect();
-    const chips = [...document.querySelectorAll('#blai-diff-filter-panel [data-blai-diff-filter-source]')].map(readControl);
-    const panelStyle = panel ? getComputedStyle(panel) : null;
-    const toolbarStyle = toolbar ? getComputedStyle(toolbar) : null;
-    const navButtons = [...document.querySelectorAll('#blai-diff-toolbar .blai-diff-nav-btn')].map(readControl);
-    const navCenterY = navButtons.length ? (navButtons[0].centerY + navButtons[1].centerY) / 2 : 0;
-    const currentNode = content?.querySelector('.blai-diff-nav-current');
-    const currentStyle = currentNode ? getComputedStyle(currentNode) : null;
-    const notices = [...(content?.querySelectorAll('.blai-diff-empty') || [])].map((node) => {
-        const style = getComputedStyle(node);
-        const icon = node.querySelector(':scope > i');
-        return {
-            text: node.textContent.trim().slice(0, 24),
-            color: style.color,
-            icon: icon?.className || '',
-            iconColor: icon ? getComputedStyle(icon).color : '',
-            section: node.getAttribute('data-diff-section') || '',
-            visible: node.offsetParent !== null,
-        };
-    });
-    const revertTextNode = document.getElementById('blai-diff-revert-text');
-    const titleTextNode = document.querySelector('.blai-diff-title-text');
-    return {
-        modalOpen: !!modal && getComputedStyle(modal).display !== 'none',
-        filterEnabled: modal?.getAttribute('data-diff-filter-enabled') || '',
-        stats: ['blai-diff-stat-program', 'blai-diff-stat-ai', 'blai-diff-stat-manual']
-            .map((id) => document.getElementById(id)?.textContent ?? ''),
-        expectedStats: [String(bySection.program), String(bySection.ai), '0'],
-        nav: document.getElementById('blai-diff-nav-count')?.textContent ?? '',
-        groups,
-        visibleGroups: visibleIds.size,
-        bySection,
-        navCenterY,
-        navButtons,
-        contentColor: content ? getComputedStyle(content).color : '',
-        sources,
-        toggle,
-        toggleIcon: toggleNode?.querySelector('i')?.className || '',
-        toggleExpanded: toggleNode?.getAttribute('aria-expanded') || '',
-        order: {
-            sourcesRight: sourcesRect?.right || 0,
-            navLeft: navRect?.left || 0,
-            navRight: navRect?.right || 0,
-            toggleLeft: toggle?.left || 0,
-        },
-        panel: {
-            exists: !!panel,
-            hidden: panel ? panel.hidden : null,
-            visible: !!panel && panel.offsetParent !== null,
-            justify: panelStyle?.justifyContent || '',
-            border: panelStyle ? [panelStyle.borderTopWidth, panelStyle.borderRightWidth, panelStyle.borderBottomWidth, panelStyle.borderLeftWidth] : [],
-            right: panel ? panel.getBoundingClientRect().right : 0,
-            chips,
-        },
-        toolbar: {
-            height: toolbar ? toolbar.getBoundingClientRect().height : 0,
-            color: toolbarStyle?.color || '',
-            borderBottom: toolbarStyle?.borderBottomWidth || '',
-        },
-        highlight: currentStyle ? {
-            outlineWidth: currentStyle.outlineWidth,
-            outlineOffset: currentStyle.outlineOffset,
-            boxShadow: currentStyle.boxShadow,
-            background: currentStyle.backgroundColor,
-            outlineVar: currentStyle.getPropertyValue('--blai-border-2'),
-            zoom: currentStyle.zoom,
-        } : null,
-        decorationThickness: (() => {
-            const delNode = content?.querySelector('del.blai-diff-change');
-            return delNode ? getComputedStyle(delNode).textDecorationThickness : '';
-        })(),
-        // Chrome 会按设备像素量化 outline-width（DPR≠1 时 2px 可能回读成 1.53846px），
-        // 因此用同页 2px 参考值作比较，确认高亮确实走 2px 而不是被改成 1px/3px。
-        outlineReference: (() => {
-            if (!content) return '';
-            const probe = document.createElement('span');
-            probe.style.cssText = 'outline: 2px solid red; outline-offset: 0';
-            content.appendChild(probe);
-            const width = getComputedStyle(probe).outlineWidth;
-            probe.remove();
-            return width;
-        })(),
-        notices,
-        reverted: (content?.textContent || '').includes('已撤回'),
-        comparing: (content?.textContent || '').includes('正在比较文本'),
-        revert: {
-            text: revertTextNode?.textContent ?? '',
-            visible: !!revertTextNode && getComputedStyle(revertTextNode).display !== 'none' && revertTextNode.offsetParent !== null,
-            buttonWidth: toggleNode && document.getElementById('blai-diff-revert-toggle')
-                ? document.getElementById('blai-diff-revert-toggle').getBoundingClientRect().width : 0,
-        },
-        title: {
-            text: titleTextNode?.textContent ?? '',
-            clipped: !!titleTextNode && titleTextNode.scrollWidth > titleTextNode.clientWidth + 1,
-        },
-    };
-})()`;
-
-// 本脚本历史签名是 check(failures, condition, message)，且只在失败时列明细。
-function check(failures, condition, message) {
-    if (!condition) failures.push(message);
-}
-
-function checkStats(failures, label, snapshot) {
-    // 手改数由 diffStats 单测单独守口径；浏览器里只要求与手改提示的有无一致。
-    check(failures, snapshot.stats[0] === snapshot.expectedStats[0] && snapshot.stats[1] === snapshot.expectedStats[1],
-        `${label}：程序/AI 计数应为 ${snapshot.expectedStats.slice(0, 2).join('/')}，实际 ${snapshot.stats.slice(0, 2).join('/')}`);
-    const hasManualNotice = snapshot.notices.some((notice) => notice.section === 'manual');
-    check(failures, (Number(snapshot.stats[2]) > 0) === hasManualNotice,
-        `${label}：手改计数 ${snapshot.stats[2]} 与手改提示存在与否（${hasManualNotice}）不一致`);
-    check(failures, snapshot.bySection.other === 0,
-        `${label}：出现未归类的改写项 ${snapshot.bySection.other} 个`);
-}
-
-function checkNoBorders(failures, label, controls) {
-    controls.filter(Boolean).forEach((control) => {
-        check(failures, control.border.every((width) => width === '0px'),
-            `${label}「${control.label || control.filterSource || control.source}」仍有边框：${control.border.join('/')}`);
-    });
-}
-
-function checkSingleLine(failures, label, snapshot, maxHeight) {
-    check(failures, snapshot.toolbar.height > 0 && snapshot.toolbar.height <= maxHeight,
-        `${label}：工具行高度 ${snapshot.toolbar.height}px，应不超过 ${maxHeight}px`);
-    const centers = [
-        ...snapshot.sources.map((item) => item.centerY),
-        snapshot.navCenterY,
-        snapshot.toggle?.centerY || 0,
-    ].filter((value) => value > 0);
-    check(failures, Math.max(...centers) - Math.min(...centers) <= 8,
-        `${label}：来源、定位与筛选不在同一行，中线 ${centers.map(v => v.toFixed(1)).join('/')}`);
-    check(failures, snapshot.order.navLeft >= snapshot.order.sourcesRight - 1,
-        `${label}：定位应排在来源图例右侧，实际 ${snapshot.order.navLeft} < ${snapshot.order.sourcesRight}`);
-    check(failures, snapshot.order.toggleLeft >= snapshot.order.navRight - 1,
-        `${label}：筛选开关应排在定位右侧，实际 ${snapshot.order.toggleLeft} < ${snapshot.order.navRight}`);
-}
-
-function checkNotices(failures, label, snapshot) {
-    snapshot.notices.forEach((notice) => {
-        check(failures, notice.color === snapshot.toolbar.color,
-            `${label}「${notice.text}」不是浅字：${notice.color}，应为 ${snapshot.toolbar.color}`);
-        check(failures, !!notice.icon, `${label}「${notice.text}」开头没有图标`);
-        check(failures, !!notice.iconColor && notice.iconColor !== 'rgba(0, 0, 0, 0)',
-            `${label}「${notice.text}」行首图标未着色`);
-    });
-}
-
-function unitCheckManualCount(failures) {
-    const emptyEl = { querySelectorAll: () => [] };
-    const makeMsg = (mes, programMes, reverted = false) => ({
-        mes,
-        __blai_diff_branch_meta: {
-            main: { originalMes: programMes, aiMes: null, programMes, reverted },
-        },
-    });
-    const cases = [
-        ['无手改', makeMsg('ABCDEFGH', 'ABCDEFGH'), 0],
-        ['一处连续手改', makeMsg('AXCDEFGH', 'ABCDEFGH'), 1],
-        ['两处分离手改', makeMsg('AXCDEYGH', 'ABCDEFGH'), 2],
-        ['撤回态不计手改', makeMsg('AXCDEYGH', 'ABCDEFGH', true), 0],
-    ];
-    for (const [name, msg, expected] of cases) {
-        const actual = collectDiffStats(msg, emptyEl).manual;
-        check(failures, actual === expected, `手改计数单测「${name}」应为 ${expected}，实际 ${actual}`);
-    }
-}
+// 临时规则 + 内存种子：真实聊天可能没有启用任何预设，必须自带一条可重现的规则。
+// program 由真实引擎算出，撤回后「重新净化」会得到同一个结果，差异才能重建成。
+const SEED = {
+    original: '<content>极其嗤笑</content>',
+    target: '极其嗤笑',
+    replacement: '极其大笑',
+};
 
 async function main() {
     const failures = [];
-    unitCheckManualCount(failures);
+    checkManualCount(failures);
 
     const { ws, send } = await connect();
     let aiBaseline = null;
+    let rulesSnapshot = null;
+    let msgSnapshot = null;
     let report = null;
     try {
-        // 本脚本用「重新净化」复位差异项，必须固定为程序改写；真实设置另有快照，结束恢复。
+        // 消息虽然自己在内存里种子，但「重新净化」要读前序脚本没改过的宿主状态；
+        // 全量连跑时 typography/regex-caret 会留下弹窗与设置痕迹，所以这里必须干净重载。
+        await ensurePageFresh(send, `!!document.getElementById('blai-diff-modal') && !!document.querySelector('.blai-diff-btn-bottom')`, '页面就绪', 120, { cleanState: true });
         aiBaseline = await snapshotAiSettings(send);
         await normalizeAiSettings(send);
-        await sleep(800);
-        await send('Page.addScriptToEvaluateOnNewDocument', {
-            source: `window.__verifyStatsErrors = [];
-                addEventListener('error', e => window.__verifyStatsErrors.push(String(e.message)));
-                addEventListener('unhandledrejection', e => window.__verifyStatsErrors.push(String(e.reason)));`,
-        });
+        rulesSnapshot = await snapshotProgramRules(send);
+        if (!await installAuditRewriteRule(send, SEED)) throw new Error('临时规则安装失败');
+        const program = await programRewriteText(send, SEED.original);
+        if (!program || program === SEED.original) throw new Error(`临时规则没有命中：${JSON.stringify(program)}`);
         await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
-    await reloadAndWait(send, `(() => {
-        const b = document.querySelector('.blai-diff-btn-bottom');
-        const modal = document.getElementById('blai-diff-modal');
-        return !!b && !!modal && b.offsetParent !== null;
-    })()`, '页面就绪且存在透视入口与弹窗节点', 120);
-
-    // 先确保弹窗真的打开、事件已绑定；上一轮可能把消息留在撤回态，需先重新净化。
-    await waitFor(send, `(() => {
-        const modal = document.getElementById('blai-diff-modal');
-        if (modal && getComputedStyle(modal).display === 'none') document.querySelector('.blai-diff-btn-bottom')?.click();
-        const s = ${PROBE};
-        return s.modalOpen && !s.comparing;
-    })()`, '透视弹窗打开并完成渲染', 120);
-    const preflight = await evaluate(send, PROBE);
-    if (preflight.reverted) {
-        // 重载后弹窗可能被异步关闭；前置必须按真实状态重试，不能假设节点仍在。
+        await evaluate(send, `(() => { document.getElementById('blai-diff-modal-close')?.click(); return true; })()`);
+        msgSnapshot = await snapshotDiffMessage(send);
+        if (!msgSnapshot) throw new Error('没有可用于内存种子的助手消息');
+        const seeded = await seedDiffMessage(send, { original: SEED.original, program });
+        if (!seeded.ok) throw new Error(`种子失败：${seeded.error}`);
+        // commitCurrentMessageText 会触发消息列表异步重渲染；等它稳定后再开弹窗。
+        await sleep(1500);
+        await waitFor(send, OPEN_DIFF_MODAL, '透视弹窗打开', 60, 300);
         await waitFor(send, `(() => {
-            const modal = document.getElementById('blai-diff-modal');
-            if (modal && getComputedStyle(modal).display === 'none') {
-                document.querySelector('.blai-diff-btn-bottom')?.click();
-                return false;
-            }
             const s = ${PROBE};
-            if (s.reverted && !s.comparing) {
-                document.getElementById('blai-diff-revert-toggle')?.click();
-                return false;
-            }
-            return !s.reverted && !s.comparing && s.groups > 0;
-        })()`, '预置重新净化', 80);
-    }
-
-    await waitFor(send, `(() => {
-        const modal = document.getElementById('blai-diff-modal');
-        if (modal && getComputedStyle(modal).display === 'none') document.querySelector('.blai-diff-btn-bottom')?.click();
-        const s = ${PROBE};
-        return s.modalOpen && !s.comparing && s.groups > 0;
-    })()`, '透视弹窗渲染出改写项', 120);
+            return s.modalOpen && !s.comparing && s.groups > 0;
+        })()`, '透视弹窗渲染出改写项', 120);
 
     const initial = await evaluate(send, PROBE);
     checkStats(failures, '初始', initial);
@@ -324,7 +98,7 @@ async function main() {
     check(failures, initial.toggleIcon.includes('fa-filter'), `筛选开关缺少图标：${initial.toggleIcon}`);
     check(failures, initial.filterEnabled === 'false' && initial.toggle?.active === false, '筛选开关初始应为关闭');
     check(failures, initial.panel.exists && initial.panel.hidden === true, '筛选行初始应收起');
-    check(failures, initial.toolbar.borderBottom === '0px', `工具行下方不应有分隔线，实际 ${initial.toolbar.borderBottom}`);
+    // 顶栏/工具行分隔线与左右对齐由 verify-diff-typography 守，这里只守计数、筛选与定位。
     checkNotices(failures, '初始', initial);
     const manualNotice = initial.notices.find((notice) => notice.section === 'manual');
     if (manualNotice) check(failures, manualNotice.visible, '手改提示不应被默认隐藏');
@@ -342,8 +116,10 @@ async function main() {
         '筛选开关展开后未高亮或未标记展开');
     check(failures, enabled.panel.visible === true, '点筛选后没有展开新的一行');
     check(failures, ['flex-end', 'flow-end'].includes(enabled.panel.justify), `筛选行应右对齐，实际 ${enabled.panel.justify}`);
-    check(failures, enabled.panel.border.every((width) => width === '0px'), `筛选行不应有边框：${enabled.panel.border.join('/')}`);
-    check(failures, enabled.toolbar.borderBottom === '0px', '筛选展开后工具行下方出现分隔线');
+    check(failures, [0, 1, 3].every((i) => enabled.panel.border[i] === '0px')
+        && Math.abs(parseFloat(enabled.panel.borderBottom) - enabled.ref1px) < 0.02,
+        `筛选展开后线应只在面板下方：${enabled.panel.border.join('/')} / 参考 ${enabled.ref1px}px`);
+    check(failures, enabled.toolbar.borderBottom === '0px', '筛选展开后工具行下方不应再有分隔线');
     check(failures, enabled.panel.chips.length === 3, `筛选项应为程序/AI/手改三项，实际 ${enabled.panel.chips.length}`);
     check(failures, enabled.panel.chips.map((chip) => chip.label).join('/') === '程序/AI/手改',
         `筛选项应为程序/AI/手改，实际 ${enabled.panel.chips.map((chip) => chip.label).join('/')}`);
@@ -401,6 +177,8 @@ async function main() {
     await evaluate(send, `(() => { document.getElementById('blai-diff-filter-toggle')?.click(); return true; })()`);
     const collapsed = await evaluate(send, PROBE);
     check(failures, collapsed.filterEnabled === 'false' && collapsed.panel.hidden === true, '再点筛选应折叠筛选行');
+    check(failures, Math.abs(parseFloat(collapsed.toolbar.borderBottom) - collapsed.ref1px) < 0.02,
+        `筛选折叠后分隔线应回到工具行下方，实际 ${collapsed.toolbar.borderBottom}`);
     check(failures, collapsed.panel.chips.every((chip) => chip.active === false), '折叠筛选行后选中态未清空');
     check(failures, collapsed.visibleGroups === collapsed.groups, '折叠筛选行后应恢复显示全部');
 
@@ -432,7 +210,11 @@ async function main() {
     const desktopShot = await capture(send, 'verify-diff-stats-legend-desktop.png');
 
     // 手机断点：四字文案完整可见、标题不被截断，工具行仍单行。
-    await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
+    // 用真机 UA + mobile:true；只缩到 390 不算手机，会漏掉宿主按 UA 分支的布局。
+    await send('Network.setUserAgentOverride', {
+        userAgent: IPHONE_UA, acceptLanguage: 'zh-CN,zh;q=0.9', platform: 'iPhone',
+    });
+    await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
     await sleep(500);
     const mobile = await evaluate(send, PROBE);
     checkStats(failures, '手机视口', mobile);
@@ -442,7 +224,7 @@ async function main() {
     check(failures, mobile.revert.visible && mobile.revert.text === '撤回净化',
         `手机端应完整显示「撤回净化」，实际 visible=${mobile.revert.visible} text=${mobile.revert.text}`);
     check(failures, mobile.revert.buttonWidth >= 80, `手机端撤回净化按钮宽度不足，实际 ${mobile.revert.buttonWidth}px`);
-    check(failures, !mobile.title.clipped, `手机端标题被截断：${mobile.title.text}`);
+    check(failures, mobile.title.text === '净化对比' && !mobile.title.clipped, `手机端标题被截断：${mobile.title.text}`);
     checkNotices(failures, '手机视口', mobile);
 
     // 手机端撤回态同样保留四字。
@@ -454,11 +236,12 @@ async function main() {
     check(failures, !mobileReverted.title.clipped, '手机端撤回态标题被截断');
     const mobileShot = await capture(send, 'verify-diff-stats-legend-mobile.png');
 
-    const errors = await evaluate(send, `(window.__verifyStatsErrors || []).slice()`);
+    const errors = await evaluate(send, `(window.__stProbeErrors || []).slice()`);
     check(failures, errors.length === 0, `页面脚本错误：${JSON.stringify(errors)}`);
 
     await evaluate(send, `(() => { document.getElementById('blai-diff-modal-close')?.click(); return true; })()`);
     await send('Emulation.clearDeviceMetricsOverride');
+    await send('Network.setUserAgentOverride', { userAgent: '' }).catch(() => {});
     report = {
         labels: initial.sources.map((item) => item.label),
         counts: initial.stats,
@@ -477,13 +260,17 @@ async function main() {
         failures,
     };
     } finally {
+        if (rulesSnapshot !== null) await restoreProgramRules(send, rulesSnapshot).catch(() => {});
         if (aiBaseline) {
             await restoreAiSettings(send, aiBaseline);
             const actualAi = await snapshotAiSettings(send);
             check(failures, JSON.stringify(actualAi) === JSON.stringify(aiBaseline),
                 `审计后 AI 设置对象已恢复：${JSON.stringify(actualAi)} / ${JSON.stringify(aiBaseline)}`);
-            if (report) report.failures = failures;
         }
+        if (msgSnapshot) {
+            await restoreDiffMessage(send, msgSnapshot).catch(() => {});
+        }
+        if (report) report.failures = failures;
         await send('Emulation.clearDeviceMetricsOverride').catch(() => {});
         ws.close();
     }

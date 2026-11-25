@@ -19,7 +19,6 @@ import {
     showFeedbackStatus,
     updateFeedbackAreaSummary,
 } from './view.js';
-import { fadeOutThen, restartFadeIn } from '../ui/motion.js';
 import {
     applyDebugDisplayOrder,
     clearAiRewriteDebugEvents,
@@ -122,22 +121,14 @@ function showWorkspaceView(view) {
     invalidateFeedbackPreview();
     clearRenderedFeedbackPreview({ preserveSubmissionStatus: true });
 
-    const workspace = document.getElementById('blai-feedback-workspace');
-    const content = document.getElementById('blai-feedback-workspace-content');
+    // 标签切换直接渲染，不做淡出/淡入：与切页一致，点击后内容立刻到位。
     const render = () => {
         if (view === 'runtime-log') renderRuntimeLog();
         else if (view === 'ai-context') renderAiContext();
         else if (view === 'diagnostics') renderDeepCleanDiagnostics(getDeepCleanDiagnosticSlots());
         else renderFeedbackForm(getDeepCleanDiagnosticSlots());
-        if (content) restartFadeIn(content);
     };
-
-    if (workspace && content && workspace.dataset.feedbackView && workspace.dataset.feedbackView !== view) {
-        // 标签切换：内容区淡出后再渲染；按钮态立即同步，点击手感不延迟。
-        fadeOutThen(content, render);
-    } else {
-        render();
-    }
+    render();
     openFeedbackWorkspace(view);
 }
 

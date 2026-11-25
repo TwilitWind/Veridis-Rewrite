@@ -137,7 +137,7 @@ function describeMode(hit) {
 export function renderHitCandidate(hit, found, ruleIndexHint, subRuleIndexHint) {
     const target = escapeHtml(hit.matchedText || '（空查找词）');
     const replacement = escapeHtml(hit.replacement || '删除');
-    const heading = hit.ruleName || '未命名合集';
+    const heading = hit.ruleName || '未命名规则分组';
     const remark = hit.remark ? ` · ${escapeHtml(hit.remark)}` : '';
     const attrs = found && Number.isInteger(ruleIndexHint) && Number.isInteger(subRuleIndexHint)
         ? `data-rule-index="${ruleIndexHint}" data-subrule-index="${subRuleIndexHint}"`

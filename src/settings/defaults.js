@@ -7,6 +7,9 @@ export const defaultTrackedDiffMessages = 3;
 export const maxTrackedDiffMessages = 20;
 export const diffLineHeightOptions = [1.5, 1.8];
 export const diffParagraphGapOptions = [4, 8, 12];
+/* 字号存档位而非 px：桌面与手机各自映射到语义字号刻度，主题改字号时不会失真。 */
+export const diffFontSizeOptions = ['small', 'medium', 'large'];
+export const diffFontSizeLabels = { small: '小', medium: '中', large: '大' };
 export const aiRewritePromptProtocolVersion = 8;
 
 export function normalizeDiffLineHeight(value) {
@@ -16,6 +19,10 @@ export function normalizeDiffLineHeight(value) {
 export function normalizeDiffParagraphGap(value) {
     const gap = Number(value);
     return diffParagraphGapOptions.includes(gap) ? gap : 8;
+}
+
+export function normalizeDiffFontSize(value) {
+    return diffFontSizeOptions.includes(value) ? value : 'medium';
 }
 
 export const previousDefaultAiRewritePrompt = `身份确认: 你是文本改写助手。你需要严格按照以下的要求修改指定的文本。
@@ -350,6 +357,7 @@ export const defaultSettings = {
     diffRelatedRuleEnabled: false,
     diffLineHeight: 1.5,
     diffParagraphGap: 8,
+    diffFontSize: 'medium',
     diffButtonInExtraMenu: false,
     showBottomDiffButton: true,
     diffTrackedMessageLimit: defaultTrackedDiffMessages,

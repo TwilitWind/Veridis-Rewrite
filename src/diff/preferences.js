@@ -5,7 +5,7 @@
  * 重开弹窗仍保持上次选择，不用每次重新设置。
  * 业务代码只认 cycleDiffPreference(key) 一个入口，新增菜单项只需加一条规格。
  */
-import { extensionName, diffLineHeightOptions, diffParagraphGapOptions, normalizeDiffLineHeight, normalizeDiffParagraphGap } from '../settings/defaults.js';
+import { extensionName, diffLineHeightOptions, diffParagraphGapOptions, diffFontSizeOptions, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffFontSize } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { diffRuntimeState } from './state.js';
 
@@ -25,6 +25,11 @@ const SPECS = {
         values: diffParagraphGapOptions,
         read: (s) => normalizeDiffParagraphGap(s.diffParagraphGap),
         write: (s, v) => { s.diffParagraphGap = v; },
+    },
+    diffFontSize: {
+        values: diffFontSizeOptions,
+        read: (s) => normalizeDiffFontSize(s.diffFontSize),
+        write: (s, v) => { s.diffFontSize = v; },
     },
     diffButtonInExtraMenu: {
         values: [false, true],

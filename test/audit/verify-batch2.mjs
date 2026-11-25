@@ -9,8 +9,8 @@
  * 用法：CDP_PORT=9224 node test/audit/verify-batch2.mjs
  */
 import {
-    connect, evaluate, waitFor, reloadAndWait, check, capture,
-    snapshotState, restoreState, assertManagedFilesSynced, check as harnessCheck,
+    connect, evaluate, waitFor, ensurePageFresh, check, capture,
+    snapshotState, restoreState, assertManagedFilesSynced,
     snapshotAiSettings, normalizeAiSettings, restoreAiSettings,
 } from './_harness.mjs';
 
@@ -37,7 +37,7 @@ async function main() {
     await send('DOM.enable');
     await send('CSS.enable');
     await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
-    await reloadAndWait(send, `!!document.getElementById('blai-purifier-popup') && typeof jQuery !== 'undefined'`, '页面重载就绪', 120);
+    await ensurePageFresh(send, `!!document.getElementById('blai-purifier-popup') && typeof jQuery !== 'undefined'`, '页面就绪', 120);
 
     // 先快照真实设置再压到确定性基线；只看表单会把上一次污染误当成原状态。
     const aiBaseline = await snapshotAiSettings(send);
@@ -235,17 +235,17 @@ async function main() {
             await sleep(200);
             restored = await snapshotState(send, AI_STATE_SELECTORS);
         }
-        harnessCheck(failures, '审计后 AI 表单已恢复', JSON.stringify(restored) === JSON.stringify(aiSnapshot), `${JSON.stringify(restored)} / ${JSON.stringify(aiSnapshot)}`);
+        check(failures, '审计后 AI 表单已恢复', JSON.stringify(restored) === JSON.stringify(aiSnapshot), `${JSON.stringify(restored)} / ${JSON.stringify(aiSnapshot)}`);
         await restoreAiSettings(send, aiBaseline);
         const actualAi = await snapshotAiSettings(send);
-        harnessCheck(failures, '审计后 AI 设置对象已恢复', JSON.stringify(actualAi) === JSON.stringify(aiBaseline), `${JSON.stringify(actualAi)} / ${JSON.stringify(aiBaseline)}`);
+        check(failures, '审计后 AI 设置对象已恢复', JSON.stringify(actualAi) === JSON.stringify(aiBaseline), `${JSON.stringify(actualAi)} / ${JSON.stringify(aiBaseline)}`);
         await evaluate(send, `(() => {
             if (window.__auditHadTavernHelper) window.TavernHelper = window.__auditOldTavernHelper;
             else delete window.TavernHelper;
             return true;
         })()`);
         const globalsRestored = await evaluate(send, `Object.prototype.hasOwnProperty.call(window, 'TavernHelper') === !!window.__auditHadTavernHelper`);
-        harnessCheck(failures, '审计后 TavernHelper 已恢复', globalsRestored === true);
+        check(failures, '审计后 TavernHelper 已恢复', globalsRestored === true);
         await sleep(200);
         await send('Emulation.clearDeviceMetricsOverride');
     }

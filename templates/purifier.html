@@ -74,7 +74,7 @@
                             <div class="blai-home-topbar-row blai-home-topbar-row-secondary">
                                 <div class="blai-home-topbar-title">
                                     <strong>规则分组</strong>
-                                    <span id="blai-home-group-hint">按规则组展示当前规则集</span>
+                                    <span id="blai-home-group-hint">按规则分组展示当前规则集</span>
                                 </div>
                                 <div class="blai-home-toolbar-actions" aria-label="规则集工具栏">
                                     <button id="blai-open-new-rule-btn" type="button" class="blai-home-toolbar-button blai-home-toolbar-button-primary"><i class="fas fa-plus" aria-hidden="true"></i><span>添加</span></button>
@@ -312,7 +312,7 @@
                                             <div class="blai-clean-setting-row">
                                                 <div>
                                                     <strong>保护人设描述</strong>
-                                                    <p>保护 persona_description，深度净化时也不会改写。</p>
+                                                    <p>保护 persona_description，深度清理时也不会改写。</p>
                                                 </div>
                                                 <button type="button" class="blai-clean-switch blai-persona-description-protect-toggle" aria-pressed="false" aria-label="保护人设描述" title="点击保护用户设定描述">
                                                     <span class="blai-clean-switch-track" aria-hidden="true"></span>
@@ -334,10 +334,10 @@
 
                                     <section class="blai-clean-danger-zone" aria-labelledby="blai-clean-danger-title">
                                         <header class="blai-clean-danger-header">
-                                            <h2 id="blai-clean-danger-title">深度净化</h2>
+                                            <h2 id="blai-clean-danger-title">深度清理</h2>
                                         </header>
                                         <div class="blai-clean-danger-content">
-                                            <h3>启动深度净化</h3>
+                                            <h3>启动深度清理</h3>
                                             <p>先预览改写，再决定是否写入。</p>
                                             <div class="blai-clean-warning" role="note">
                                                 <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
@@ -345,7 +345,7 @@
                                             </div>
                                             <button id="blai-deep-clean-btn" type="button" class="blai-clean-danger-button">
                                                 <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
-                                                <span>启动深度净化</span>
+                                                <span>启动深度清理</span>
                                             </button>
                                         </div>
                                     </section>
@@ -597,7 +597,7 @@
         <section id="blai-deep-clean-workspace" class="blai-deep-clean-workspace blai-modal-shell" data-theme="auto" aria-hidden="true" aria-labelledby="blai-deep-clean-title">
             <header class="blai-deep-clean-header">
                 <div class="blai-deep-clean-heading">
-                    <h2 id="blai-deep-clean-title">深度净化</h2>
+                    <h2 id="blai-deep-clean-title">深度清理</h2>
                     <p id="blai-deep-clean-description" hidden></p>
                 </div>
                 <div id="blai-deep-clean-header-actions" class="blai-deep-clean-header-actions"></div>
@@ -614,11 +614,11 @@
             <div class="blai-modal-card blai-edit-modal-card">
                 <div class="blai-edit-modal-head">
                     <h3 id="blai-edit-modal-title" class="blai-edit-modal-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-pen"></i> 编辑规则集
+                        <i class="fas fa-pen"></i> 编辑规则分组
                     </h3>
                     <div class="blai-edit-head-actions">
                         <div class="blai-edit-filter-wrap">
-                            <button id="blai-edit-filter" class="blai-edit-filter-trigger" type="button" aria-haspopup="true" aria-expanded="false" title="按改写方式筛选映射规则">
+                            <button id="blai-edit-filter" class="blai-edit-filter-trigger" type="button" aria-haspopup="true" aria-expanded="false" title="按处理方式筛选规则">
                                 <i class="fas fa-filter blai-edit-filter-icon" aria-hidden="true"></i>
                                 <span class="blai-edit-filter-label">全部</span>
                                 <i class="fas fa-chevron-down blai-edit-filter-arrow" aria-hidden="true"></i>
@@ -629,7 +629,7 @@
                                 <button type="button" class="blai-edit-filter-item" data-filter="program">程序改写</button>
                             </div>
                         </div>
-                        <button id="blai-edit-cancel-x" class="blai-icon-btn blai-modal-close-x" type="button" title="关闭" aria-label="关闭编辑规则集">
+                        <button id="blai-edit-cancel-x" class="blai-icon-btn blai-modal-close-x" type="button" title="关闭" aria-label="关闭编辑规则分组">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -639,13 +639,13 @@
                         <label class="blai-field-label">规则分组名称</label>
                         <input type="text" id="blai-edit-name" class="blai-input" placeholder="例如：程度副词与认知失能净化">
                     </div>
-                    <label class="blai-field-label" style="margin-bottom:6px; flex-shrink:0;">映射规则列表</label>
+                    <label class="blai-field-label" style="margin-bottom:6px; flex-shrink:0;">规则列表</label>
                     <div id="blai-edit-subrules-container"></div>
                 </div>
 
                 <div class="blai-modal-actions">
                     <button id="blai-add-subrule-btn" class="blai-secondary-btn">新增规则</button>
-                    <button id="blai-edit-save" class="blai-primary-btn">保存分组</button>
+                    <button id="blai-edit-save" class="blai-primary-btn">保存规则分组</button>
                 </div>
             </div>
         </div>
@@ -741,7 +741,7 @@
 
         <div id="blai-rule-transfer-modal" style="display:none;">
             <div class="blai-transfer-content">
-                <h3 class="blai-edit-modal-title blai-transfer-title"><i class="fas fa-copy"></i> <span id="blai-transfer-title-text">复制 / 转移规则集</span></h3>
+                <h3 class="blai-edit-modal-title blai-transfer-title"><i class="fas fa-copy"></i> <span id="blai-transfer-title-text">复制或移动规则分组</span></h3>
                 <select id="blai-transfer-target" class="blai-input blai-transfer-target"></select>
                 <div class="blai-transfer-actions">
                     <button id="blai-transfer-copy" class="blai-transfer-btn blai-transfer-copy">复制到此</button>
@@ -856,7 +856,9 @@
         <div id="blai-diff-modal" style="display:none;">
             <div class="blai-diff-modal-card">
                 <div class="blai-diff-modal-header">
-                    <h3 class="blai-diff-modal-title"><i class="fa-solid fa-eye"></i><span class="blai-diff-title-text">净化前文透视</span></h3>
+                    <h3 class="blai-diff-modal-title"><i class="fa-solid fa-eye"></i><span class="blai-diff-title-text">净化对比</span></h3>
+                    <button id="blai-diff-rewrite-info" type="button" class="blai-icon-btn blai-diff-header-btn" data-blai-info-trigger="blai-diff-rewrite-info-panel" aria-label="查看改写说明" aria-controls="blai-diff-rewrite-info-panel" aria-expanded="false" title="查看改写说明"><i class="fas fa-circle-question" aria-hidden="true"></i></button>
+                    <span id="blai-diff-rewrite-info-panel" class="blai-info-popover" role="tooltip" hidden></span>
                     <div class="blai-diff-header-actions">
                         <div class="blai-diff-header-primary">
                         <button id="blai-diff-pick-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="勾选改写项后逐条撤回">
@@ -892,6 +894,11 @@
                                     <i id="blai-diff-related-mode-icon" class="fa-solid fa-crosshairs"></i>
                                     <span id="blai-diff-related-mode-text">规则定位：关闭</span>
                                 </button>
+                                <div class="blai-diff-menu-typography-divider" aria-hidden="true"></div>
+                                <button id="blai-diff-font-size-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffFontSize" title="切换正文字号（片段与全文通用）">
+                                    <i class="fa-solid fa-font" aria-hidden="true"></i>
+                                    <span id="blai-diff-font-size-text">正文字号：中</span>
+                                </button>
                                 <button id="blai-diff-line-height-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffLineHeight" title="切换正文行距（片段与全文通用）">
                                     <i class="fa-solid fa-text-height"></i>
                                     <span id="blai-diff-line-height-text">正文行距：1.5</span>
@@ -917,9 +924,9 @@
                 <div id="blai-diff-toolbar" class="blai-diff-toolbar" aria-label="改写来源、逐条定位与筛选">
                     <div class="blai-diff-sources" role="group" aria-label="改写来源颜色与数量">
                         <span class="blai-diff-source blai-diff-source-original" title="原文"><i></i>原文</span>
-                        <span class="blai-diff-source" data-blai-diff-source="program" title="程序改写"><i></i>程序 <strong id="blai-diff-stat-program">0</strong></span>
-                        <span class="blai-diff-source" data-blai-diff-source="ai" title="AI 改写"><i></i>AI <strong id="blai-diff-stat-ai">0</strong></span>
-                        <span class="blai-diff-source blai-diff-source-manual" title="插件改写后的手动改动"><i></i>手改 <strong id="blai-diff-stat-manual">0</strong></span>
+                        <span class="blai-diff-source" data-blai-diff-source="program" title="程序改写"><i></i>程序 <span class="blai-diff-stat" id="blai-diff-stat-program">0</span></span>
+                        <span class="blai-diff-source" data-blai-diff-source="ai" title="AI 改写"><i></i>AI <span class="blai-diff-stat" id="blai-diff-stat-ai">0</span></span>
+                        <span class="blai-diff-source blai-diff-source-manual" title="插件改写后的手动改动"><i></i>手改 <span class="blai-diff-stat" id="blai-diff-stat-manual">0</span></span>
                     </div>
                     <div class="blai-diff-nav" role="group" aria-label="逐条定位改写项">
                         <button type="button" id="blai-diff-nav-prev" class="blai-diff-nav-btn" title="上一个改写项" aria-label="上一个改写项"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
@@ -969,25 +976,25 @@
                         </div>
                         <div id="blai-modal-sub-mode-hint" class="blai-subrule-mode-hint" aria-live="polite"></div>
                     </div>
-                    <label id="blai-regex-highlight-switch" class="blai-ai-switch blai-regex-highlight-switch" title="开启后在查找内容输入框里高亮语法符号（正则 / 简易通配符；普通文本无语法符号）">
+                    <label id="blai-regex-highlight-switch" class="blai-ai-switch blai-regex-highlight-switch" title="在「查找内容」中高亮语法符号；普通文本模式没有语法符号。">
                         <input type="checkbox" id="blai-regex-highlight-toggle">
                         <span class="blai-ai-switch-track" aria-hidden="true"></span>
-                        <span>代码高亮</span>
+                        <span>语法高亮</span>
                     </label>
-                    <button id="blai-modal-sub-cancel" type="button" class="blai-icon-btn blai-subrule-close-btn blai-modal-close-x" title="关闭" aria-label="关闭"><i class="fas fa-times"></i></button>
+                    <button id="blai-modal-sub-cancel" type="button" class="blai-icon-btn blai-subrule-close-btn blai-modal-close-x" title="关闭规则" aria-label="关闭规则"><i class="fas fa-times"></i></button>
                 </div>
 
                 <div class="blai-subrule-modal-body">
                     <div class="blai-subrule-field" style="margin-bottom: 12px;">
-                        <label class="blai-field-label" style="margin-bottom: 6px;">备注说明 (可选)</label>
-                        <input type="text" id="blai-modal-sub-remark" class="blai-input" placeholder="例如：处理特定角色的口头禅" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;">
+                        <label class="blai-field-label" style="margin-bottom: 6px;">备注（可选）</label>
+                        <input type="text" id="blai-modal-sub-remark" class="blai-input" placeholder="例如：弱化某角色的口头禅" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;">
                     </div>
 
                     <div class="blai-subrule-field" style="margin-bottom: 12px;">
                         <span id="blai-modal-sub-rewrite-mode-label" class="blai-field-label" style="margin-bottom: 6px;">处理方式</span>
                         <!-- 保留 select 作数据锚点：业务代码仍用 .val() / change 读写，视觉由下方分段按钮承担。 -->
                         <select id="blai-modal-sub-rewrite-mode" class="blai-input blai-visually-hidden" aria-hidden="true" tabindex="-1">
-                            <option value="program">程序替换</option>
+                            <option value="program">程序改写</option>
                             <option value="ai">AI 改写</option>
                         </select>
                         <div id="blai-modal-sub-rewrite-mode-segment" class="blai-subrule-rewrite-segment" role="group" aria-labelledby="blai-modal-sub-rewrite-mode-label">
@@ -997,8 +1004,8 @@
                     </div>
 
                     <div id="blai-modal-sub-ai-prompt-field" class="blai-subrule-field" style="margin-bottom: 12px;" hidden>
-                        <label class="blai-field-label" style="margin-bottom: 6px;">单条改写要求 (可选)</label>
-                        <textarea id="blai-modal-sub-ai-prompt" class="blai-textarea" rows="4" placeholder="只写这条规则命中时的特殊处理。可分情况说明：命中 A 组时只弱化不删除；命中 B 组时保留语气词；留空则只使用 AI 设置里的全局提示词。" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>
+                        <label class="blai-field-label" style="margin-bottom: 6px;">改写要求（可选）</label>
+                        <textarea id="blai-modal-sub-ai-prompt" class="blai-textarea" rows="4" placeholder="只写这条规则的特殊要求。例如：只弱化语气，不删除原文；留空则使用全局提示词。" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>
                         <div id="blai-modal-sub-ai-prompt-hint" class="blai-subrule-mode-hint" aria-live="polite"></div>
                     </div>
 
@@ -1006,7 +1013,7 @@
                         <label class="blai-field-label" style="margin-bottom: 6px;">查找内容</label>
                         <div id="blai-regex-flags-hint" class="blai-regex-flags-hint" hidden>
                             <span class="blai-regex-flags-chip">gmu</span>
-                            <span>默认内置 gmu 标志组合，需要其它标志时写成 /pattern/flags。</span>
+                            <span>默认使用 gmu；如需其他标志，请写成 /pattern/flags。</span>
                         </div>
                         <div id="blai-modal-sub-target-error" class="blai-field-error" aria-live="polite"></div>
                         <div class="blai-regex-input-wrap">
@@ -1017,13 +1024,13 @@
                             <div id="blai-regex-test-head" class="blai-regex-test-head">
                                 <button id="blai-regex-test-toggle" type="button" class="blai-subrule-mini-btn blai-regex-test-toggle" aria-expanded="false">
                                     <i class="fas fa-vial"></i>
-                                    <span>匹配测试区</span>
+                                    <span>匹配测试</span>
                                 </button>
                                 <span id="blai-regex-test-stat" class="blai-regex-test-stat" hidden></span>
                             </div>
                             <div id="blai-regex-test-panel" class="blai-regex-test-panel" hidden>
                                 <div id="blai-regex-test-input-wrap" class="blai-regex-test-input-wrap">
-                                    <textarea id="blai-regex-test-text" class="blai-textarea blai-regex-test-input" rows="4" placeholder="在这里粘贴一段样本文本，匹配内容会直接在这里高亮。"></textarea>
+                                    <textarea id="blai-regex-test-text" class="blai-textarea blai-regex-test-input" rows="4" placeholder="粘贴样本文本，命中内容会高亮显示。"></textarea>
                                     <div id="blai-regex-test-highlight" class="blai-regex-test-highlight" aria-hidden="true" hidden></div>
                                 </div>
                             </div>
@@ -1034,7 +1041,7 @@
                         <div class="blai-subrule-replacement-head">
                             <label id="blai-modal-sub-rep-label" class="blai-field-label" style="margin-bottom: 0;">替换为</label>
                             <div id="blai-modal-sub-regex-actions" class="blai-regex-replacement-actions" hidden>
-                                <button id="blai-modal-sub-regex-recognize" type="button" class="blai-subrule-mini-btn">按行识别</button>
+                                <button id="blai-modal-sub-regex-recognize" type="button" class="blai-subrule-mini-btn">识别为替换项</button>
                             </div>
                         </div>
                         <textarea id="blai-modal-sub-rep" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>

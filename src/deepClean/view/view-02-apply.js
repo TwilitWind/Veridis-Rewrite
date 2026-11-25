@@ -11,7 +11,7 @@ export function renderDeepCleanReview(session, lookaheadProgress = null) {
     if (total === 0) {
         setDeepCleanWorkspaceHeader('审核 0 / 0', '本批没有需要审核的文本变更。', stopAction);
         $('#blai-deep-clean-content').html(`
-            <section class="blai-deep-clean-review-shell" aria-label="深度净化审核">
+            <section class="blai-deep-clean-review-shell" aria-label="深度清理审核">
                 <div class="blai-deep-clean-review-main">
                     <section class="blai-deep-clean-review-area"><p class="blai-deep-clean-empty">所有最终候选均与冻结原文相同。</p></section>
                     <aside id="blai-deep-clean-lookahead" class="blai-deep-clean-batch-summary" aria-live="polite">${deepCleanLookaheadHtml(lookaheadProgress)}</aside>
@@ -35,7 +35,7 @@ export function renderDeepCleanReview(session, lookaheadProgress = null) {
         : 'review';
     setDeepCleanWorkspaceHeader(`审核 ${position + 1} / ${total}`, '', stopAction);
     $('#blai-deep-clean-content').html(`
-        <section class="blai-deep-clean-review-shell" aria-label="深度净化审核">
+        <section class="blai-deep-clean-review-shell" aria-label="深度清理审核">
             <div class="blai-deep-clean-review-main">
                 <section class="blai-deep-clean-review-area">
                     <header class="blai-deep-clean-review-head">
@@ -88,7 +88,7 @@ export function renderDeepCleanApplyProgress(progress = {}) {
     const batch = session?.processedRun?.reviewBatch || {};
     setDeepCleanWorkspaceHeader('正在正式应用', '进度按已完成的真实持久化单元计算。');
     $('#blai-deep-clean-content').html(`
-        <div class="blai-deep-clean-processing" aria-label="深度净化正式应用进度">
+        <div class="blai-deep-clean-processing" aria-label="深度清理正式应用进度">
             <main class="blai-deep-clean-processing-main">
                 <div class="blai-deep-clean-processing-intro"><h3>正式应用</h3><p>${deepCleanSafeHtml(detail)}</p></div>
                 <ol class="blai-deep-clean-pipeline"><li class="is-active"><span class="blai-deep-clean-pipeline-marker"></span><div><strong>正在持久化审核决定</strong><span>${completed} / ${total}</span>${total > 0 ? `<progress class="is-determinate" value="${completed}" max="${total}" aria-label="正式应用进度"></progress>` : ''}</div></li></ol>
@@ -119,7 +119,7 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
     const scopeBlocked = groupChat || !scopeCharacter;
     const scopeName = scopeCharacter?.displayLabel || '当前没有打开角色卡';
 
-    setDeepCleanWorkspaceHeader('深度净化', '');
+    setDeepCleanWorkspaceHeader('深度清理', '');
     // 勾选复选框会走这里整块重渲染；先记住滚动位置，重建后还原，避免一勾选就被强制拉回顶部。
     const previousScrollTop = $('#blai-deep-clean-content .blai-deep-clean-selection-scroll').get(0)?.scrollTop || 0;
     $('#blai-deep-clean-content').html(`
@@ -132,15 +132,15 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
                             <div class="blai-deep-clean-scope-card ${scopeBlocked ? 'is-blocked' : ''}">
                                 <span class="blai-deep-clean-scope-label">当前角色卡：</span>
                                 <span class="blai-deep-clean-scope-name" title="${deepCleanSafeHtml(scopeName)}">${deepCleanSafeHtml(scopeName)}</span>
-                                ${scopeBlocked ? `<span class="blai-deep-clean-scope-detail">${groupChat ? '当前处于群聊，深度净化不处理群聊。' : '请先在酒馆里打开一张角色卡并进入聊天。'}</span>` : ''}
+                                ${scopeBlocked ? `<span class="blai-deep-clean-scope-detail">${groupChat ? '当前处于群聊，深度清理不处理群聊。' : '请先在酒馆里打开一张角色卡并进入聊天。'}</span>` : ''}
                             </div>
                             <div class="blai-deep-clean-options">
-                                <label class="blai-deep-clean-option"><span>规则预设</span><select class="blai-deep-clean-select" data-deep-clean-option="presetName" aria-label="深度净化规则预设">${presetNames.length
+                                <label class="blai-deep-clean-option"><span>规则预设</span><select class="blai-deep-clean-select" data-deep-clean-option="presetName" aria-label="深度清理规则预设">${presetNames.length
         ? presetNames.map((name) => `<option value="${deepCleanSafeHtml(name)}" ${name === selection.presetName ? 'selected' : ''}>${deepCleanSafeHtml(name)}</option>`).join('')
         : '<option value="">-- 当前规则 (未绑定存档) --</option>'}</select></label>
                                 <fieldset class="blai-deep-clean-option">
                                     <legend>处理模式</legend>
-                                    <div class="blai-deep-clean-mode-options" aria-label="深度净化处理模式">
+                                    <div class="blai-deep-clean-mode-options" aria-label="深度清理处理模式">
                                         <label class="blai-deep-clean-mode-option">
                                             <input type="radio" name="blai-deep-clean-processing-mode" data-deep-clean-option="processingMode" value="program" ${programModeSelected ? 'checked' : ''}>
                                             <span class="blai-deep-clean-mode-copy"><strong>程序改写</strong></span>
@@ -192,7 +192,7 @@ export function renderDeepCleanInitialSelection(selection, presets = {}) {
             </div>
             <footer class="blai-deep-clean-selection-actions">
                 <button id="blai-deep-clean-close" class="blai-deep-clean-secondary-action" type="button">取消并关闭</button>
-                <button id="blai-deep-clean-scan" class="blai-deep-clean-primary-action" type="button" ${scopeBlocked || totalSelected === 0 ? 'disabled' : ''}>开始深度净化</button>
+                <button id="blai-deep-clean-scan" class="blai-deep-clean-primary-action" type="button" ${scopeBlocked || totalSelected === 0 ? 'disabled' : ''}>开始深度清理</button>
             </footer>
         </div>
     `);

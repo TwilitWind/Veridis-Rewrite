@@ -1,36 +1,35 @@
-/* 全局淡入：只做「出现」，退场沿用各处的 fadeOut / hide。
-   动画挂在会从 display:none 变成可见的元素上——浏览器在元素重新参与渲染时播放一次，
-   不依赖 JS 加类，所以切页、开关弹窗、展开菜单都不会漏。 */
+/* 转场令牌集中在 tokens/03-scale.css：退场 80ms、入场 120/140ms、菜单项错峰 12ms。
+   只动 opacity/transform；横向 push/pop 一律不用——本插件的浮层是右上叉号 dismiss，
+   不是带返回箭头的层级栈。 */
 
 @keyframes blai-fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-/* 切页与弹卡只做纯淡入，不叠 transform / scale：portal 菜单由 popover.js 精确定位，
-   锚点若因入场动画先位移再归位，菜单会在二次定位时往上跳；页面本身也不能缩放。 */
-@keyframes blai-page-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* 退场：只淡到 0，不叠 transform。JS 在切换前给旧面板/弹窗加 .blai-is-leaving，
+/* 退场：只淡到 0，不叠 transform。JS 关闭前给弹窗加 .blai-is-leaving，
    动画结束后再真正 display:none；纯透明度不会扰动 portal 菜单的定位。 */
 @keyframes blai-fade-out {
     from { opacity: 1; }
     to { opacity: 0; }
 }
 
-#blai-purifier-popup .page-panel.active {
-    animation: blai-page-in var(--blai-duration-fast) var(--blai-ease-out) both;
+/* 切页 fade through：旧页先淡出，新页在旧页退场时长之后淡入，不出现两页半透明叠帧。 */
+@keyframes blai-page-enter {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* 正在退场的面板：仍保持 active 的布局，只把透明度淡到 0。
-   切页改为顺序过渡（旧页淡完再显示新页），同一时刻只有一个面板参与布局；
-   不做交叉淡入淡出，也不叠 position/transform/scale，避免不同布局同帧叠加看成缩放。 */
-#blai-purifier-popup .page-panel.blai-is-leaving {
-    pointer-events: none;
-    animation: blai-fade-out var(--blai-duration-fast) var(--blai-ease-out) both;
+/* 弹卡入场：淡入 + 极轻 scale。transform 只落在卡片上，不碰承载 left/top 的浮层与 portal 菜单。 */
+@keyframes blai-modal-card-in {
+    from { opacity: 0; transform: scale(.96); }
+    to { opacity: 1; transform: none; }
+}
+
+/* 菜单项从锚点一侧依次长出：定位元素本身只淡入，位移只加在它的子元素上。 */
+@keyframes blai-menu-item-in {
+    from { opacity: 0; transform: translateY(var(--blai-menu-enter-y, -4px)); }
+    to { opacity: 1; transform: none; }
 }
 
 .blai-modal-shell {
@@ -43,29 +42,34 @@
     pointer-events: none;
 }
 
-/* 弹卡比遮罩晚一点出现，两层错开才顺；只做淡入、不位移，避免菜单锚点跟着动。 */
+/* 弹卡比遮罩晚一拍入场；嵌套弹窗复用同一套语义，不另做滑动。 */
 .blai-modal-shell .blai-modal-card {
-    animation: blai-fade-in var(--blai-duration-slow) var(--blai-ease-out) both;
+    animation: blai-modal-card-in var(--blai-duration-slow) var(--blai-ease-out) var(--blai-modal-card-delay) both;
 }
 
-/* portal 菜单由 popover.js 用 left/top 精确定位；入场动画只做淡入，
-   不能再叠 transform（scale/translate），否则弹出瞬间视觉上会往右上角偏一下。 */
-:is(.blai-home-card-menu, .blai-subrule-menu, .blai-rule-search-menu, .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu, .blai-edit-filter-menu) {
+/* portal 菜单由 popover.js 用 left/top 精确定位：容器只淡入，
+   方向感交给子元素错峰，避免 transform 让菜单整体弹偏。 */
+:is(.blai-home-card-menu, .blai-subrule-menu, .blai-rule-search-menu, .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu, .blai-edit-filter-menu, .blai-preset-menu) {
     animation: blai-fade-in var(--blai-duration-fast) var(--blai-ease-out) both;
 }
 
-@media (max-width: 600px) {
-    #blai-purifier-popup .page-panel.active {
-        animation-name: blai-page-in;
-        animation-duration: var(--blai-duration-fast);
-    }
+.blai-portal-menu[data-menu-direction="down"] > * {
+    --blai-menu-enter-y: -4px;
+    animation: blai-menu-item-in var(--blai-duration-base) var(--blai-ease-out) both;
+    animation-delay: calc(var(--blai-menu-item-index, 0) * var(--blai-duration-step));
+}
+
+.blai-portal-menu[data-menu-direction="up"] > * {
+    --blai-menu-enter-y: 4px;
+    animation: blai-menu-item-in var(--blai-duration-base) var(--blai-ease-out) both;
+    animation-delay: calc((var(--blai-menu-item-count, 1) - 1 - var(--blai-menu-item-index, 0)) * var(--blai-duration-step));
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #blai-purifier-popup .page-panel.active,
     .blai-modal-shell,
     .blai-modal-shell .blai-modal-card,
-    :is(.blai-home-card-menu, .blai-subrule-menu, .blai-rule-search-menu, .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu, .blai-edit-filter-menu) {
+    :is(.blai-home-card-menu, .blai-subrule-menu, .blai-rule-search-menu, .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu, .blai-edit-filter-menu, .blai-preset-menu),
+    .blai-portal-menu[data-menu-direction] > * {
         animation: none;
     }
 }

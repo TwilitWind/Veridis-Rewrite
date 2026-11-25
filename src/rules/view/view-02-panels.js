@@ -12,7 +12,7 @@ export function renderSubrulesToModal() {
     if (!container.length) return;
     syncRuleEditFilterUi();
     if (rulesUiState.currentEditingSubrules.length === 0) {
-        container.html('<div class="blai-subrule-empty">当前合集没有映射规则，请点击下方按钮添加。</div>');
+        container.html('<div class="blai-subrule-empty">这个分组还没有规则。点击「新增规则」开始添加。</div>');
         return;
     }
 
@@ -23,8 +23,8 @@ export function renderSubrulesToModal() {
 
     if (visibleSubrules.length === 0) {
         const emptyHint = activeFilter === 'ai'
-            ? '当前合集里没有 AI 改写的映射规则。'
-            : '当前合集里没有程序改写的映射规则。';
+            ? '这个分组没有 AI 改写的规则。'
+            : '这个分组没有程序改写的规则。';
         container.html(`<div class="blai-subrule-empty">${emptyHint}</div>`);
         return;
     }
@@ -37,7 +37,7 @@ export function renderSubrulesToModal() {
         const moveUpDisabled = i === 0 ? 'disabled' : '';
         const moveDownDisabled = i === rulesUiState.currentEditingSubrules.length - 1 ? 'disabled' : '';
 
-        const badgeText = mode === 'regex' ? '正则' : mode === 'simple' ? '简易' : '普通';
+        const badgeText = mode === 'regex' ? '正则' : mode === 'simple' ? '组合' : '文本';
         const badgeHTML = `<span class="blai-mapping-badge">${badgeText}</span>`;
 
         const tPreview = getRuleSourcePreviewText(sub);
@@ -59,7 +59,7 @@ export function renderSubrulesToModal() {
             <div class="blai-subrule-card ${subEnabled ? '' : 'blai-is-disabled'}" style="flex-shrink: 0; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; box-shadow: 0 4px 10px color-mix(in srgb, var(--bg-base) 12%, transparent);">
                 <div class="blai-subrule-header">
                     <div class="blai-subrule-badges">
-                        <label class="blai-checkbox-label blai-subrule-enable-label" title="${subEnabled ? '停用此条规则' : '启用此条规则'}">
+                        <label class="blai-checkbox-label blai-subrule-enable-label" title="${subEnabled ? '停用这条规则' : '启用这条规则'}">
                             <input type="checkbox" class="blai-subrule-toggle" data-index="${i}" ${checkedAttr}>
                             <span class="blai-custom-checkbox"></span>
                         </label>
@@ -67,15 +67,15 @@ export function renderSubrulesToModal() {
                         ${rewriteBadge}
                     </div>
                     <div class="blai-subrule-actions">
-                        <button class="blai-edit-subrule-btn blai-subrule-action-btn" type="button" data-index="${i}" title="编辑此条规则" aria-label="编辑此条规则"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="blai-edit-subrule-btn blai-subrule-action-btn" type="button" data-index="${i}" title="编辑规则" aria-label="编辑规则"><i class="fas fa-pen" aria-hidden="true"></i></button>
                         <div class="blai-subrule-menu-wrap">
                             <button class="blai-subrule-menu-toggle blai-subrule-action-btn" type="button" data-index="${i}" title="更多操作" aria-label="更多操作" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
                             <div class="blai-subrule-menu" data-index="${i}" hidden>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="up" data-index="${i}" ${moveUpDisabled}><i class="fas fa-arrow-up" aria-hidden="true"></i>上移</button>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="down" data-index="${i}" ${moveDownDisabled}><i class="fas fa-arrow-down" aria-hidden="true"></i>下移</button>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="copy" data-index="${i}"><i class="fas fa-clone" aria-hidden="true"></i>复制</button>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="transfer" data-index="${i}"><i class="fas fa-arrows-turn-right" aria-hidden="true"></i>移动</button>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="remark" data-index="${i}"><i class="fas fa-comment-dots" aria-hidden="true"></i>备注</button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="transfer" data-index="${i}"><i class="fas fa-arrows-turn-right" aria-hidden="true"></i>移至其他规则分组</button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="remark" data-index="${i}"><i class="fas fa-comment-dots" aria-hidden="true"></i>编辑备注</button>
                                 <button type="button" class="blai-subrule-menu-item blai-subrule-menu-item--danger" data-subrule-action="delete" data-index="${i}"><i class="fas fa-trash" aria-hidden="true"></i>删除</button>
                             </div>
                         </div>
@@ -157,12 +157,12 @@ export function openEditModal(index = -1, options = {}) {
     const modal = $('#blai-rule-edit-modal');
 
     if (index === -1) {
-        $('#blai-edit-modal-title').html('<i class="fas fa-folder-plus"></i> 新增规则合集');
+        $('#blai-edit-modal-title').html('<i class="fas fa-folder-plus"></i> 新增规则分组');
         $('#blai-edit-name').val('');
         rulesUiState.currentEditingSubrules = [{ targets: [], replacements: [], mode: 'simple', enabled: true, isEditing: false }];
     } else {
         const rule = settings.rules[index];
-        $('#blai-edit-modal-title').html('<i class="fas fa-pen"></i> 编辑规则合集');
+        $('#blai-edit-modal-title').html('<i class="fas fa-pen"></i> 编辑规则分组');
         $('#blai-edit-name').val(rule.name || '');
         rulesUiState.currentEditingSubrules = JSON.parse(JSON.stringify(rule.subRules || []));
         rulesUiState.currentEditingSubrules.forEach((sub) => {

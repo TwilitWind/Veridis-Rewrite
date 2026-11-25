@@ -4,7 +4,7 @@
 import * as extensionsModule from "../../../../../extensions.js";
 import { saveSettingsDebounced } from "../../../../../../script.js";
 
-import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsPromptMigrationConfirm, normalizeAiSamplingSettings, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
+import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsPromptMigrationConfirm, normalizeAiSamplingSettings, normalizeDiffFontSize, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { logger } from '../log.js';
 import { cleanupInvalidPresetBindings } from '../presets/bindings.js';
@@ -154,6 +154,7 @@ export function maybeCopyLegacySettings() {
         'diffRelatedRuleEnabled',
         'diffLineHeight',
         'diffParagraphGap',
+        'diffFontSize',
         'diffButtonInExtraMenu',
         'showBottomDiffButton',
         'diffTrackedMessageLimit',
@@ -194,6 +195,7 @@ export function ensureSettingsShape() {
     if (settings.diffRelatedRuleEnabled === undefined) settings.diffRelatedRuleEnabled = false;
     settings.diffLineHeight = normalizeDiffLineHeight(settings.diffLineHeight);
     settings.diffParagraphGap = normalizeDiffParagraphGap(settings.diffParagraphGap);
+    settings.diffFontSize = normalizeDiffFontSize(settings.diffFontSize);
     if (settings.diffButtonInExtraMenu === undefined) settings.diffButtonInExtraMenu = false;
     if (settings.showBottomDiffButton === undefined) settings.showBottomDiffButton = true;
     settings.diffTrackedMessageLimit = normalizeDiffTrackedMessageLimit(settings.diffTrackedMessageLimit);
@@ -220,7 +222,7 @@ export { needsPromptMigrationConfirm, resolveCustomGlobalPromptMigration };
 
 function normalizeRuleShape(rule, index = 0) {
     if (!rule || typeof rule !== 'object') return;
-    if (!rule.name) rule.name = `合集 ${index + 1}`;
+    if (!rule.name) rule.name = `规则分组 ${index + 1}`;
     const normalizedRule = normalizeRuleActivationSafety(rule);
     if (normalizedRule.activationWarning) rule.activationWarning = normalizedRule.activationWarning;
     else delete rule.activationWarning;

@@ -37,11 +37,11 @@ node build-check.mjs   # 构建闸门，与上一命令独立，必须单独跑
 改样式后可跑以下入口，按需要选择：
 
 ```bash
-node test/audit.mjs              # static + layout + align
-node test/audit.mjs static       # 零依赖：字号分布/极值/裸值/双端 @media
-node test/audit.mjs layout       # CDP：裁切/重叠/遮挡
-node test/audit.mjs align        # CDP：控件与同行文本垂直居中
-node test/dialog-font-audit.mjs  # 弹窗调用点枚举 + 正文/按钮/输入框字号比例
+node test/audit/audit.mjs              # static + layout + align
+node test/audit/audit.mjs static       # 零依赖：字号分布/极值/裸值/双端 @media
+node test/audit/audit.mjs layout       # CDP：裁切/重叠/遮挡
+node test/audit/audit.mjs align        # CDP：控件与同行文本垂直居中
+node test/audit/dialog-font-audit.mjs  # 弹窗调用点枚举 + 正文/按钮/输入框字号比例
 ```
 
 运行时审计要先起独立的调试浏览器实例，用单独的调试端口与 profile，避开日常浏览器；启动参数按本机环境填写，工作区 `docs/testing/testing.md` §2 有可用配置。审计脚本只读：只临时切视口/开弹窗，退出还原。双端几何、配色、状态用 CDP 求值，截图只确认整窗观感。
@@ -60,7 +60,7 @@ node test/sync.mjs <源> <装机目录> --prune --apply     # 执行删除
 
 ## 提交前
 
-`.git/hooks/pre-commit` 调用 `test/pre-commit-size.js`，检查 `src/` 下 `.js` / `.mjs` / `.css`：超过 25KB 警告、达到 30KB 拦截。钩子不入库，换机器重装。拆分方向：脚本按功能/事件/视图分模块，CSS 按分区拆成 `NN-*.css` 再按序合并；禁止压缩空白或改扩展名绕过。
+`.git/hooks/pre-commit` 调用 `test/pre-commit-size.js`，检查本次暂存的 `.js` / `.mjs` / `.css`（无暂存时退回 `src/`）：超过 25KB 警告、达到 30KB 拦截；`vendor/` / `reference/` / 构建产物 / 截图不计入。钩子不入库，换机器重装。拆分方向：脚本按功能/事件/视图分模块，CSS 按分区拆成 `NN-*.css` 再按序合并；禁止压缩空白或改扩展名绕过。
 
 ## 发布
 

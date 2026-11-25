@@ -33,7 +33,7 @@ function normalizeImportedRuleList(rules) {
     return (Array.isArray(rules) ? rules : []).map((rule, idx) => {
         const next = normalizeRuleActivationSafety(deepClone(rule || {}), { resetRiskyEnabled: true });
         stripAiConnectionFields(next);
-        if (!next.name) next.name = next.targets?.[0] || `未命名合集 ${idx + 1}`;
+        if (!next.name) next.name = next.targets?.[0] || `未命名规则分组 ${idx + 1}`;
         if (next.targets) {
             next.subRules = [{
                 targets: next.targets,

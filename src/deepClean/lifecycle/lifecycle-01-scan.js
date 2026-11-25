@@ -35,6 +35,8 @@ export async function runDeepCleanScan(options = {}) {
             contentItems: frozenRun.contentItems,
             scanResult,
         });
+        lifecycle.affectedItemIndexes = [...scanResult.affectedItemIndexes];
+        lifecycle.skippedItemIndexes = new Set();
         deepCleanRuntimeState.deepCleanPhase = 'scan-result';
         logger.info(`[Deep Clean] scan complete items=${scanResult.scannedItemCount} affected=${scanResult.affectedItemCount}`);
         return lifecycle.run;
@@ -49,7 +51,9 @@ export async function runDeepCleanScan(options = {}) {
 }
 
 export function takeNextDeepCleanBatch(lifecycle) {
-    const affectedItemIndexes = lifecycle.run.scanResult.affectedItemIndexes;
+    const affectedItemIndexes = Array.isArray(lifecycle.affectedItemIndexes)
+        ? lifecycle.affectedItemIndexes
+        : lifecycle.run.scanResult.affectedItemIndexes;
     const characterLimit = lifecycle.run.input.processingMode === 'program'
         && lifecycle.run.input.programApplyPolicy === 'direct'
         ? programDirectBatchCharacterLimit
@@ -104,6 +108,7 @@ export async function processDeepCleanBatch(lifecycle, batch, onProgress) {
         const aiResult = await executeDeepCleanAiRequests(processedRun, {
             shouldStop: () => lifecycle.stopRequested,
             onProgress: (progress) => reportBatchProgress(onProgress, batch, 'ai-processing', progress),
+            previewCache: lifecycle.previewAiCache,
         });
         if (aiResult.stopped || lifecycle.stopRequested) return null;
         processedRun = { ...processedRun, ...aiResult };
@@ -136,7 +141,11 @@ export function startDeepCleanLookahead(lifecycle, onProgress) {
     if (lifecycle.stopRequested
         || !lifecycle.currentReviewSession
         || lifecycle.lookahead
-        || lifecycle.nextAffectedItemCursor >= lifecycle.run.scanResult.affectedItemIndexes.length) {
+        || lifecycle.nextAffectedItemCursor >= (
+            Array.isArray(lifecycle.affectedItemIndexes)
+                ? lifecycle.affectedItemIndexes
+                : lifecycle.run.scanResult.affectedItemIndexes
+        ).length) {
         return null;
     }
     const lookahead = {

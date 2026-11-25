@@ -5,8 +5,8 @@
 import { markPresetsUiDirty } from '../presets/state.js';
 import { markRulesUiDirty } from '../rules/state.js';
 import { logger } from '../log.js';
+import { fadeOutThen } from './motion.js';
 import { startNativeSelectEnhancer } from './nativeSelectMenu.js';
-import { cancelFadeOut, fadeOutThen, restartFadeIn } from './motion.js';
 
 function applyTauriMobileSurface(selector, surface) {
     $(selector).attr('data-tt-mobile-surface', surface);
@@ -66,6 +66,10 @@ const responsivePageMetadata = {
     },
 };
 
+// 切页是 fade through：旧页先淡出，新页等旧页退干净再淡入。
+// 只保留一个待办切换；快速连点时旧任务作废，最终只留下最后一次的目标页。
+let pendingPageSwap = null;
+
 export function showResponsivePage(pageId = 'overview') {
     const normalizedPage = responsivePageMetadata[pageId] ? pageId : 'overview';
     const { title, description } = responsivePageMetadata[normalizedPage];
@@ -74,27 +78,14 @@ export function showResponsivePage(pageId = 'overview') {
 
     const $panels = $popup.find('.page-panel');
     const $target = $panels.filter((_, node) => String(node.dataset.page || '') === normalizedPage);
+    const previous = $panels.filter('.active').not($target).get(0) || null;
 
-    // 先作废所有未完成的淡出：快速来回切页时只允许最后一次点击决定最终页面，
-    // 旧定时器不能再把刚确定的页面撤掉。cancelFadeOut 会同时清掉 .blai-is-leaving。
-    $panels.each((_, node) => cancelFadeOut(node));
-
-    const $current = $panels.filter('.active').not($target);
-    if ($current.length) {
-        // 顺序过渡：旧页先单独淡出；淡完才隐藏旧页、显示新页并淡入。
-        // 不做交叉淡入淡出——两页布局不同，同帧叠在同格会被看成放大再收回。
-        $panels.not($current).removeClass('active');
-        fadeOutThen($current, () => {
-            $current.removeClass('active');
-            $target.addClass('active');
-            restartFadeIn($target);
-        });
-    } else {
-        // 目标页已经是当前页（或首次显示）：直接清掉残留的旧 active，保证同时只有一页。
-        $panels.not($target).removeClass('active');
-        $target.addClass('active');
-        if (!$target.hasClass('blai-is-leaving')) restartFadeIn($target);
+    if (pendingPageSwap) {
+        pendingPageSwap.cancel();
+        pendingPageSwap = null;
     }
+    $panels.removeClass('blai-is-leaving blai-is-entering active');
+    $target.addClass('active');
     $popup.find('.rail-btn, .nav-item').each(function() {
         $(this).toggleClass('active', String($(this).attr('data-page-target') || '') === normalizedPage);
     });
@@ -103,6 +94,17 @@ export function showResponsivePage(pageId = 'overview') {
     $popup.attr('data-active-page', normalizedPage);
     $popup.find('[data-title], #blai-responsive-title').text(title);
     $popup.find('#blai-responsive-description').text(description);
+
+    if (!previous || previous === $target.get(0)) return;
+    $target.addClass('blai-is-entering');
+    let cancel = () => {};
+    const swap = { cancel: () => cancel() };
+    pendingPageSwap = swap;
+    cancel = fadeOutThen(previous, () => {
+        if (pendingPageSwap === swap) pendingPageSwap = null;
+        // .active 已在点击当帧切走，退场结束只清掉淡出类即可让旧页退出布局。
+        previous.classList.remove('blai-is-leaving');
+    });
 }
 
 export async function setupUI(renderTemplate, templateDirectory) {
@@ -135,8 +137,8 @@ export async function setupUI(renderTemplate, templateDirectory) {
 
     if (!$('#blai-wand-btn').length) {
         $('#data_bank_wand_container').append(`
-            <div id="blai-wand-btn" title="词汇映射管理">
-                <i class="fa-solid fa-language fa-fw"></i><span>词汇映射</span>
+            <div id="blai-wand-btn" class="list-group-item flex-container flexGap5" title="词汇映射管理">
+                <div class="fa-fw fa-solid fa-language extensionsMenuExtensionButton"></div><span>词汇映射</span>
             </div>`);
     }
     ensureExtensionPanelEntry();

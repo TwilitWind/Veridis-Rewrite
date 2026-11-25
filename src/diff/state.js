@@ -47,7 +47,11 @@ export function getDiffComparisonForMessage(index, section) {
     if (section === 'ai') {
         return meta.aiMes === null ? null : { oldText: meta.originalMes, newText: meta.aiMes };
     }
-    return section === 'program'
-        ? { oldText: meta.aiMes ?? meta.originalMes, newText: meta.programMes }
+    if (section === 'program') {
+        return { oldText: meta.aiMes ?? meta.originalMes, newText: meta.programMes };
+    }
+    // 手改只展示「插件结果 → 当前正文」的差异，不参与撤回。
+    return section === 'manual'
+        ? { oldText: meta.programMes, newText: String(msg?.mes ?? '') }
         : null;
 }

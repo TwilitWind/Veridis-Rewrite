@@ -20,7 +20,8 @@ export function bindPresetSelectMenu(switchPreset) {
             $('#blai-preset-select-trigger').attr('aria-expanded', 'false');
             return;
         }
-        menu.style.width = `${Math.round(trigger.getBoundingClientRect().width)}px`;
+        // 宽度交给 CSS 按最长选项自适应；写死触发器宽度会把长预设名折成多行。
+        menu.style.removeProperty('width');
         menu.removeAttribute('hidden');
         $('#blai-preset-select-trigger').attr('aria-expanded', 'true');
         openMenuPopover(trigger, menu);

@@ -214,7 +214,7 @@ export function renderTags() {
     const { extension_settings } = getAppContext();
     const rules = extension_settings[extensionName]?.rules || [];
     const html = rules.map((r, i) => {
-        const name = safeHtml(r.name) || `未命名合集 ${i + 1}`;
+        const name = safeHtml(r.name) || `未命名规则分组 ${i + 1}`;
         const subRules = r.subRules || [];
         const maxPreview = 3;
 
@@ -247,11 +247,11 @@ export function renderTags() {
         }).join('');
 
         const moreHtml = subRules.length > maxPreview
-            ? `<div class="blai-home-more-text">... 以及其他 ${subRules.length - maxPreview} 组映射</div>`
+            ? `<div class="blai-home-more-text">… 以及其他 ${subRules.length - maxPreview} 条规则</div>`
             : '';
         const bodyHtml = subRules.length > 0
             ? `<div class="blai-home-card-body">${subRulesHtml}${moreHtml}</div>`
-            : '<div class="blai-home-card-empty">此合集暂无规则</div>';
+            : '<div class="blai-home-card-empty">这个分组还没有规则</div>';
 
         const isEnabled = r.enabled !== false;
         const riskIndicatorHtml = isRuleActivationWarningEnabled(r)
@@ -268,12 +268,12 @@ export function renderTags() {
             <article class="blai-home-card ${!isEnabled ? 'blai-is-disabled' : ''}" data-index="${i}">
                 <header class="blai-home-card-header">
                     <div class="blai-home-card-heading">
-                        <label class="blai-batch-checkbox-label blai-home-selection-control" title="选择此规则合集">
+                        <label class="blai-batch-checkbox-label blai-home-selection-control" title="选择此规则分组">
                             <input type="checkbox" class="batch-item-checkbox" data-index="${i}">
                             <span class="blai-home-selection-indicator" aria-hidden="true"></span>
                             <span class="blai-visually-hidden">选择 ${name}</span>
                         </label>
-                        <label class="blai-home-enabled-control" title="启用或停用此规则组">
+                        <label class="blai-home-enabled-control" title="启用或停用此规则分组">
                             <input type="checkbox" class="blai-rule-toggle" data-index="${i}" ${checkedAttr}>
                             <span class="blai-home-enabled-indicator" aria-hidden="true"></span>
                             <span class="blai-home-card-title">${name}</span>
@@ -282,7 +282,7 @@ export function renderTags() {
                     </div>
                     <div class="blai-home-card-actions">
                         ${riskIndicatorHtml}
-                        <button class="blai-rule-edit blai-home-card-pencil" type="button" data-index="${i}" title="编辑此规则集合" aria-label="编辑此规则集合"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                        <button class="blai-rule-edit blai-home-card-pencil" type="button" data-index="${i}" title="编辑规则分组" aria-label="编辑规则分组"><i class="fas fa-pen" aria-hidden="true"></i></button>
                         <div class="blai-home-card-menu-wrap">
                             <button class="blai-home-card-menu-toggle" type="button" data-index="${i}" title="更多操作" aria-label="更多操作" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
                             <div class="blai-home-card-menu" hidden>
@@ -299,7 +299,7 @@ export function renderTags() {
             </article>`;
     }).join('');
 
-    container.html(html || '<div class="blai-home-empty-state"><i class="fas fa-folder-open" aria-hidden="true"></i><strong>当前没有规则合集</strong><span>点击“添加”创建第一个合集</span></div>');
+    container.html(html || '<div class="blai-home-empty-state"><i class="fas fa-folder-open" aria-hidden="true"></i><strong>当前没有规则分组</strong><span>点击「添加」创建第一个规则分组</span></div>');
     const aiRuleCount = rules.reduce((count, rule) => count + (Array.isArray(rule?.subRules)
         ? rule.subRules.filter((sub) => sub?.rewriteMode === 'ai').length
         : 0), 0);

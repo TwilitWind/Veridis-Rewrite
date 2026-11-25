@@ -80,7 +80,7 @@ export function openDeepCleanInitialSelection(options = {}) {
     $('#blai-deep-clean-backdrop').addClass('blai-is-open').attr('aria-hidden', 'false');
     $('#blai-deep-clean-workspace').addClass('blai-is-open').attr('aria-hidden', 'false');
     if (options.preserveContent === true) return;
-    setDeepCleanWorkspaceHeader('深度净化', '');
+    setDeepCleanWorkspaceHeader('深度清理', '');
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-state blai-deep-clean-loading-state" aria-label="正在读取可选资源">
             <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
@@ -95,9 +95,9 @@ export function closeDeepCleanInitialSelection() {
 }
 
 export function showInitialSelectionError(error) {
-    setDeepCleanWorkspaceHeader('深度净化无法完成', '请查看错误信息后结束当前工作区。');
+    setDeepCleanWorkspaceHeader('深度清理无法完成', '请查看错误信息后结束当前工作区。');
     $('#blai-deep-clean-content').html(`
-        <section class="blai-deep-clean-state blai-deep-clean-error-state" aria-label="深度净化错误">
+        <section class="blai-deep-clean-state blai-deep-clean-error-state" aria-label="深度清理错误">
             <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
             <p class="blai-deep-clean-error">${deepCleanSafeHtml(error?.message || error)}</p>
             <button id="blai-deep-clean-close" type="button">关闭工作区</button>
@@ -185,12 +185,12 @@ export function renderDeepCleanScanProgress(progress = {}) {
         state: index < activeIndex ? 'complete' : (index === activeIndex ? 'active' : 'pending'),
     }));
     const frozenItems = deepCleanRuntimeState.deepCleanSelection?.run?.contentItems || [];
-    setDeepCleanWorkspaceHeader('深度净化进行中', '扫描冻结资源；不会写入正式数据。');
+    setDeepCleanWorkspaceHeader('深度清理进行中', '扫描冻结资源；不会写入正式数据。');
     $('#blai-deep-clean-content').html(`
-        <div class="blai-deep-clean-processing" aria-label="深度净化扫描进度">
+        <div class="blai-deep-clean-processing" aria-label="深度清理扫描进度">
             <main class="blai-deep-clean-processing-main">
                 <div class="blai-deep-clean-processing-intro">
-                    <h3>深度净化进行中</h3>
+                    <h3>深度清理进行中</h3>
                     <p>正在读取并分析本次选择的真实内容项。</p>
                 </div>
                 <ol class="blai-deep-clean-pipeline">
@@ -240,7 +240,7 @@ export function renderDeepCleanScanResult(scanResult = {}) {
         directProgramApply ? '确认后按批处理并直接写入。' : '确认后逐批生成审核。',
     );
     $('#blai-deep-clean-content').html(`
-        <section class="blai-deep-clean-result" aria-label="深度净化扫描结果">
+        <section class="blai-deep-clean-result" aria-label="深度清理扫描结果">
             <header><h3>扫描完成</h3><p>已冻结内容并按当前规则预扫，尚未改写或写入。</p></header>
             <div class="blai-deep-clean-scan-metrics">
                 ${metrics.map(([label, value]) => `<div><span>${deepCleanSafeHtml(label)}</span><strong>${Number(value) || 0}</strong></div>`).join('')}
@@ -252,7 +252,8 @@ export function renderDeepCleanScanResult(scanResult = {}) {
             </section>
             <div class="blai-deep-clean-actions">
                 <button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止</button>
-                <button id="blai-deep-clean-process-program" class="blai-deep-clean-primary-action" type="button">${directProgramApply ? '直接处理' : '开始处理'}</button>
+                <button id="blai-deep-clean-preview" class="blai-deep-clean-secondary-action" type="button">预览并筛选</button>
+                <button id="blai-deep-clean-process-program" class="blai-deep-clean-primary-action" type="button">${directProgramApply ? '直接写入' : '开始清理'}</button>
             </div>
         </section>
     `);

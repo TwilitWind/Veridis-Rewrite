@@ -151,7 +151,7 @@ export function showConfirmModal(message, options = {}) {
 
 // 未保存改动提醒：三选一，返回 'save' | 'discard' | 'cancel'（继续编辑）。
 // 走与统一对话框相同的 blai-plugin-dialog 外观和 z-index，保证压在编辑弹窗之上。
-export function showUnsavedChangesModal(message = '当前分组有未保存的改动，是否保存？') {
+export function showUnsavedChangesModal(message = '规则分组有未保存的改动。') {
     return new Promise((resolve) => {
         const theme = String($('#blai-purifier-popup').attr('data-theme') || 'auto');
         const $modal = $('<div class="blai-modal-shell blai-plugin-dialog" role="presentation"></div>')
@@ -163,7 +163,7 @@ export function showUnsavedChangesModal(message = '当前分组有未保存的�
         // 这类样式类反推——「放弃改动」此前只挂了 secondary 类，被误判成 cancel（继续编辑），
         // 导致点了放弃却不关闭分组弹窗。样式与结果解耦后，改样式不会再改变行为。
         $('<button type="button" class="blai-secondary-btn" data-choice="cancel"></button>').text('继续编辑').appendTo($actions);
-        $('<button type="button" class="blai-secondary-btn" data-choice="discard"></button>').text('放弃改动').appendTo($actions);
+        $('<button type="button" class="blai-secondary-btn" data-choice="discard"></button>').text('不保存并关闭').appendTo($actions);
         $('<button type="button" class="blai-primary-btn" data-choice="save"></button>').text('保存并关闭').appendTo($actions);
 
         let settled = false;

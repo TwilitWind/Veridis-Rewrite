@@ -83,12 +83,15 @@
     color: var(--status-danger);
 }
 
-/* 自绘规则集下拉菜单：与卡片菜单同一套弹层风格（白底/圆角/边框/阴影），宽度铺满触发器。 */
+/* 自绘规则集下拉菜单：与卡片菜单同一套弹层风格（白底/圆角/边框/阴影）。
+   宽度按最长选项自适应，最多占满视口减去两侧留白；手机上长预设名不再折成多行。 */
 #blai-purifier-popup .blai-preset-menu,
 .blai-preset-menu {
     z-index: var(--blai-z-menu);
     gap: var(--blai-dropdown-gap);
     padding: var(--blai-dropdown-pad);
+    width: max-content;
+    max-width: calc(100vw - var(--blai-space-16));
     border: var(--blai-border-1) solid var(--blai-dropdown-border);
     border-radius: var(--blai-dropdown-radius);
     background: var(--blai-dropdown-bg);
@@ -118,6 +121,9 @@
     font-size: var(--blai-dropdown-item-font);
     font-weight: var(--blai-dropdown-item-weight);
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     cursor: pointer;
     box-sizing: border-box;
 }

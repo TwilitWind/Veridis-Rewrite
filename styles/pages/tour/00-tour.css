@@ -33,6 +33,10 @@
     z-index: var(--blai-z-inner);
     overflow: auto;
     box-sizing: border-box;
+    /* JS 按可用空间写这两个变量；这里再夹一层视口上限，防止旧的居中变换或软键盘
+       把提示框顶出屏幕。定位坐标也由 JS 在最终尺寸下重新夹紧。 */
+    max-width: min(var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))), calc(100vw - var(--blai-size-24)));
+    max-height: min(var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24))), calc(var(--blai-viewport-h) - var(--blai-size-24)));
     padding: var(--blai-space-18);
     border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 28%, var(--border-color) 72%);
     border-radius: var(--blai-radius-lg);
@@ -121,14 +125,14 @@
 #blai-tour-layer .blai-tour-review-apply b { display: inline-flex; align-items: center; min-height: var(--blai-size-26); padding: 0 var(--blai-space-8); border: var(--blai-border-1) solid var(--accent-color); border-radius: var(--blai-radius-6); background: var(--accent-color); color: var(--accent-contrast); font-size: var(--blai-font-10); white-space: nowrap; }
 
 @media (min-width: 601px) {
-    #blai-tour-layer .blai-tour-card { position: fixed; width: min(390px, calc(100vw - var(--blai-size-32))); max-width: var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))); max-height: min(680px, var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24)))); }
+    #blai-tour-layer .blai-tour-card { position: fixed; width: min(390px, calc(100vw - var(--blai-size-32))); max-width: min(var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))), calc(100vw - var(--blai-size-24))); max-height: min(680px, var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24))), calc(var(--blai-viewport-h) - var(--blai-size-24))); }
     #blai-tour-layer .blai-tour-centered { top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(620px, calc(100vw - var(--blai-size-32))); }}
 
 @media (max-width: 600px) {
     #blai-tour-layer .blai-tour-card {
         width: min(var(--blai-size-420), var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))));
-        max-width: var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24)));
-        max-height: var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24)));
+        max-width: min(var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))), calc(100vw - var(--blai-size-24)));
+        max-height: min(var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24))), calc(var(--blai-viewport-h) - var(--blai-size-24)));
     }
     #blai-tour-layer .blai-tour-card { position: fixed; }
     #blai-tour-layer .blai-tour-centered { top: 50%; left: 50%; transform: translate(-50%, -50%); }

@@ -69,6 +69,11 @@
     color: var(--text-secondary);
 }
 
+.blai-info-popover > span strong {
+    color: var(--text-main);
+    font-weight: var(--blai-weight-bold);
+}
+
 .blai-info-popover .blai-info-popover-warning {
     color: var(--blai-text-danger-soft);
 }

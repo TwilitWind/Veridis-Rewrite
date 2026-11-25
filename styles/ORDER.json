@@ -33,6 +33,7 @@
   "pages/clean/clean-deep-modes.css",
   "pages/clean/clean-deep-processing.css",
   "pages/clean/clean-deep-results.css",
+  "pages/clean/clean-deep-preview.css",
   "pages/clean/clean-deep-responsive.css",
   "pages/tools/00-tools.css",
   "pages/tools/01-tools.css",

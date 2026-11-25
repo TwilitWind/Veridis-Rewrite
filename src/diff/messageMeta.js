@@ -51,6 +51,13 @@ export function writeMessageDiffProgram(msg, branchKey, originalMes, programMes)
     return writeBranchMeta(msg, branchKey, { originalMes, aiMes: null, programMes, reverted: false });
 }
 
+/** 显式重新净化只刷新程序结果，保留已保存的原文基线与其他阶段文本。 */
+export function setMessageDiffProgramMes(msg, programMes, branchKey = getMessageDiffBranchKey(msg)) {
+    const entry = getMessageDiffMeta(msg, branchKey);
+    if (!entry) return false;
+    return writeBranchMeta(msg, branchKey, { ...entry, programMes: String(programMes ?? ''), reverted: false });
+}
+
 export function writeMessageDiffAiStage(msg, branchKey, originalMes, aiMes, programMes) {
     return writeBranchMeta(msg, branchKey, { originalMes, aiMes, programMes, reverted: false });
 }

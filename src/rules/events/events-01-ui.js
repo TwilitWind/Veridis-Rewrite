@@ -23,7 +23,7 @@ export function applySubruleModeUI(rawMode) {
             .data('regex-default-placeholder', config.replacementPlaceholder)
             .data('regex-edit-placeholder', config.regexEditPlaceholder || config.replacementPlaceholder);
         const activeEditIndex = Number($('#blai-modal-sub-rep').data('regex-edit-index'));
-        $('#blai-modal-sub-regex-recognize').text(activeEditIndex >= 0 ? '更新替换项' : '按行识别');
+        $('#blai-modal-sub-regex-recognize').text(activeEditIndex >= 0 ? '更新替换项' : '识别为替换项');
         $('#blai-modal-sub-rep').attr('placeholder', activeEditIndex >= 0
             ? (config.regexEditPlaceholder || config.replacementPlaceholder)
             : config.replacementPlaceholder);
@@ -40,21 +40,22 @@ export function applySubruleModeUI(rawMode) {
 export function applySubruleRewriteModeUI() {
     const rewriteMode = $('#blai-modal-sub-rewrite-mode').val() === 'ai' ? 'ai' : 'program';
     const isAiMode = rewriteMode === 'ai';
-    $('#blai-modal-sub-rep-label').text(isAiMode ? '流式临时替换 / API 参考候选' : '替换为');
+    $('#blai-modal-sub-rep-label')
+        .text(isAiMode ? 'AI 参考替换（可选）' : '替换为')
+        .attr('title', isAiMode ? '用于流式预览，并作为 API 改写时的参考候选。' : '');
     $('#blai-modal-sub-ai-prompt-field').prop('hidden', !isAiMode);
     $('#blai-modal-sub-ai-prompt').prop('disabled', !isAiMode);
-    $('#blai-modal-sub-ai-prompt-hint').text('只填写这条规则命中时的特殊处理；通用风格仍由全局提示词控制。');
+    $('#blai-modal-sub-ai-prompt-hint').text('只写这条规则的特殊要求；整体风格仍由全局提示词决定。');
 
     // 分段按钮只做视觉态；真实值仍在隐藏 select 上，业务读写路径保持不变。
+    // 选中底色由 .is-active 一处定义；手机端粘滞 :hover 不抹选中态的例外在 99-mobile.css。
     const segment = document.getElementById('blai-modal-sub-rewrite-mode-segment');
+    // 指示块位置由单一数据源（隐藏 select）推导，视图只读这个变量做局部滑动。
+    segment?.style.setProperty('--blai-segment-index', isAiMode ? '1' : '0');
     segment?.querySelectorAll('.blai-subrule-rewrite-option').forEach((button) => {
         const active = button.getAttribute('data-value') === rewriteMode;
         button.classList.toggle('is-active', active);
         button.setAttribute('aria-pressed', active ? 'true' : 'false');
-        // 内联一次：手机端主题里若有更高优先级规则，样式表里的 .is-active 会被压掉，
-        // 表现为「选了 AI 改写，蓝底白字却一起消失」。内联色值跟着主题令牌走，不写死颜色。
-        button.style.setProperty('background-color', active ? 'var(--accent-color)' : 'transparent');
-        button.style.setProperty('color', active ? 'var(--accent-contrast)' : 'var(--text-secondary)');
     });
 }
 

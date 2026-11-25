@@ -86,7 +86,7 @@ export function bindRuleCardEvents() {
             const copies = indexes.map((idx) => rules[idx]).filter(Boolean).map((rule) => deepClone(rule));
             if (copies.length === 0) return;
             copies.forEach((rule) => {
-                if (rule && typeof rule === 'object') rule.name = `${String(rule.name || '未命名合集')} 副本`;
+                if (rule && typeof rule === 'object') rule.name = `${String(rule.name || '未命名规则分组')} 副本`;
                 rules.push(rule);
             });
             markRulesDataDirty();

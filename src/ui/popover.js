@@ -35,34 +35,61 @@ function copyThemeVars(anchor, menu) {
     });
 }
 
-function positionManually(anchor, menu) {
-    const anchorRect = anchor.getBoundingClientRect();
-    // 先还原上一次的内联限高，量出菜单的自然高度；CSS 的 --blai-dropdown-max-height
-    // 仍是基础上限，这里只按锚点可用空间再收紧一层。
-    menu.style.removeProperty('max-height');
-    const menuWidth = menu.offsetWidth;
-    const naturalHeight = menu.offsetHeight;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const spaceBelow = viewportHeight - anchorRect.bottom - MENU_GAP - VIEWPORT_PADDING;
-    const spaceAbove = anchorRect.top - MENU_GAP - VIEWPORT_PADDING;
+/**
+ * 纯计算：按锚点上下可用空间决定浮层方向与限高。
+ * 不读 DOM，便于在没有浏览器的环境里直接回归。
+ */
+export function computeMenuPlacement({
+    anchorRect,
+    viewportWidth,
+    viewportHeight,
+    naturalWidth,
+    naturalHeight,
+    menuGap = MENU_GAP,
+    viewportPadding = VIEWPORT_PADDING,
+}) {
+    const spaceBelow = viewportHeight - anchorRect.bottom - menuGap - viewportPadding;
+    const spaceAbove = anchorRect.top - menuGap - viewportPadding;
+    // 下方放得下就不翻；下方放不下时选更宽裕的一侧。
     const flipUp = spaceBelow < naturalHeight && spaceAbove > spaceBelow;
     const available = Math.max(0, Math.floor(flipUp ? spaceAbove : spaceBelow));
-    // 可用空间不足时收紧高度并让菜单自身滚动；空间足够则撤掉内联限高，交回 CSS token。
-    if (naturalHeight > available) {
-        menu.style.setProperty('max-height', `${available}px`, 'important');
-    }
-    const menuHeight = Math.min(naturalHeight, available);
+    const height = Math.min(naturalHeight, available);
     const left = Math.min(
-        Math.max(VIEWPORT_PADDING, anchorRect.right - menuWidth),
-        Math.max(VIEWPORT_PADDING, viewportWidth - menuWidth - VIEWPORT_PADDING),
+        Math.max(viewportPadding, anchorRect.right - naturalWidth),
+        Math.max(viewportPadding, viewportWidth - naturalWidth - viewportPadding),
     );
     const top = flipUp
-        ? Math.max(VIEWPORT_PADDING, anchorRect.top - MENU_GAP - menuHeight)
-        : Math.min(anchorRect.bottom + MENU_GAP, Math.max(VIEWPORT_PADDING, viewportHeight - menuHeight - VIEWPORT_PADDING));
+        ? Math.max(viewportPadding, anchorRect.top - menuGap - height)
+        : Math.min(anchorRect.bottom + menuGap, Math.max(viewportPadding, viewportHeight - height - viewportPadding));
+    return { left, top, height, maxHeight: height, flipUp, available, spaceAbove, spaceBelow };
+}
+
+function positionManually(anchor, menu) {
+    const anchorRect = anchor.getBoundingClientRect();
+    // 临时解除 CSS 上限再量：--blai-dropdown-max-height 会把自然高度截断，
+    // 不解开的话下方即使有大片空间，也只会按被截断的高度摆放。
+    menu.style.setProperty('max-height', 'none', 'important');
+    const menuWidth = menu.offsetWidth;
+    const naturalHeight = menu.offsetHeight;
+    menu.style.removeProperty('max-height');
+    const placement = computeMenuPlacement({
+        anchorRect,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        naturalWidth: menuWidth,
+        naturalHeight,
+    });
+    // 内联锁定实际高度：空间够就展开全部内容，不够才让菜单自身滚动。
+    menu.style.setProperty('max-height', `${placement.maxHeight}px`, 'important');
+    // 方向感交给菜单项错峰（离锚点最近的一项先出现），定位元素本身不叠 transform。
+    menu.dataset.menuDirection = placement.flipUp ? 'up' : 'down';
+    Array.from(menu.children).forEach((child, index) => {
+        child.style.setProperty('--blai-menu-item-index', String(index));
+        child.style.setProperty('--blai-menu-item-count', String(menu.children.length));
+    });
     menu.style.setProperty('position', 'fixed', 'important');
-    menu.style.setProperty('left', `${Math.round(left)}px`, 'important');
-    menu.style.setProperty('top', `${Math.round(top)}px`, 'important');
+    menu.style.setProperty('left', `${Math.round(placement.left)}px`, 'important');
+    menu.style.setProperty('top', `${Math.round(placement.top)}px`, 'important');
     menu.style.setProperty('right', 'auto', 'important');
     menu.style.setProperty('bottom', 'auto', 'important');
 }
@@ -115,8 +142,8 @@ export function openMenuPopover(anchor, menu) {
     menu.style.setProperty('z-index', resolvePortalZIndex(), 'important');
     document.body.appendChild(menu);
     const instance = applyPosition(anchor, menu);
-    // 只定位一次：弹窗/切页入场动画已改为纯淡入，锚点不再位移，
-    // 无需二次重定位。原先 animationend + 200ms 的补偿会在锚点归位后重算，
+    // 只定位一次：弹窗/切页入场动画不动 translate，菜单自身的入场只加在子元素上，
+    // 锚点不再位移，无需二次重定位。原先 animationend + 200ms 的补偿会在锚点归位后重算，
     // 导致菜单「弹出后又往上跳」，与用户期望的稳定位置冲突。
     const entry = { anchor, menu, instance };
     openMenus.add(entry);

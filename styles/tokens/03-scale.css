@@ -94,9 +94,11 @@
   --blai-weight-icon: 900;
 
   /* 动效节奏：短、快、不回弹；参考 Material Motion 的非对称节奏——退场比进场更短。 */
-  --blai-duration-fast: 80ms;  /* 淡出、菜单、切页、toast */
-  --blai-duration-base: 120ms; /* 弹窗遮罩与通用淡入 */
-  --blai-duration-slow: 140ms; /* 弹卡与有位移的过渡 */
+  --blai-duration-fast: 80ms;  /* 淡出、菜单、切页、toast 退场 */
+  --blai-duration-base: 120ms; /* 弹窗遮罩、切页新页淡入 */
+  --blai-duration-slow: 140ms; /* 弹卡、toast 与有位移的过渡 */
+  --blai-duration-step: 12ms;  /* 菜单项错峰，按可用方向依次长出 */
+  --blai-modal-card-delay: 20ms; /* 弹卡比遮罩晚一拍，形成层次但不拖沓 */
   --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
 
   /* 层级阶梯：全部浮层只从这里取值，不要在页面文件里写裸 z-index。
@@ -296,6 +298,10 @@
   --blai-modal-btn-pad: var(--blai-btn-pad);
   /* 开关与同排文字/图标之间的横向间距：全站只有一个值，避免各行疏密不一。 */
   --blai-switch-gap: var(--blai-space-8);
+  /* 净化透视弹窗：顶栏与工具行视作一组，左右内边距共用同一来源；
+     分隔线颜色也在此收口，筛选展开时由工具行下移到筛选面板下方。 */
+  --blai-diff-inline-pad: var(--blai-space-12);
+  --blai-diff-divider: var(--border-color);
 }
 
 /* 手机端 5 档字号：整档比桌面大 1px，浅字也不再压到 11px。 */
@@ -310,5 +316,13 @@
   --blai-fs-control-icon: 18px;
   /* 弹窗底部按钮：手机端单独一档，与桌面分离；当前同为 8px 12px。 */
   --blai-modal-btn-pad: var(--blai-btn-pad);
+}
+
+/* 语义令牌定义在 #blai-diff-modal 自身上，手机端覆盖也必须落在同一元素；
+   只写 :root 会被元素自身的声明盖住，量起来仍是桌面值。 */
+@media (max-width: 600px) {
+#blai-diff-modal {
+  --blai-diff-inline-pad: var(--blai-space-8);
+}
 }
 }

@@ -9,7 +9,7 @@ import { refreshDiffViewer } from '../diff/state.js';
 import { ensureMessageDiffButton, injectDiffButtons } from '../diff/view.js';
 import { getMessageDomNode } from '../dom/message.js';
 import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from './messageBranch.js';
-import { getMessageDiffMeta, isMessageDiffReverted, migrateChatDiffMetadata, writeMessageDiffProgram } from '../diff/messageMeta.js';
+import { getMessageDiffMeta, isMessageDiffReverted, migrateChatDiffMetadata, setMessageDiffProgramMes, writeMessageDiffProgram } from '../diff/messageMeta.js';
 import { maintainDiffRetention } from '../diff/retention.js';
 import { markHostChatDirtyFromIndex } from '../integrations/tauriTavern.js';
 import { applyScopedReplacements, buildProcessors } from '../rules/engine.js';
@@ -130,7 +130,17 @@ export function cleanseMessageDataAtIndex(index, options = {}) {
         syncCurrentSwipeExtra(msg);
     }
 
-    const { metadataChanged } = syncMessageDiffMetadata(msg, sourceMes, msg.mes);
+    // 显式重新净化默认只更新 programMes，保留最初的原文基线。
+    // 如果当前正文已被手动编辑，就用手改后的当前正文建立本次对比基线，
+    // 否则透视弹窗无法展示这次真正发生的文本变化。
+    const explicit = options.explicitRecleanse === true;
+    const previousMeta = explicit ? getMessageDiffMeta(msg) : null;
+    const manualEditBaseline = explicit && previousMeta && currentMes !== previousMeta.originalMes;
+    const metadataChanged = manualEditBaseline
+        ? writeMessageDiffProgram(msg, getMessageDiffBranchKey(msg), currentMes, msg.mes)
+        : explicit
+            ? (setMessageDiffProgramMes(msg, msg.mes) || syncMessageDiffMetadata(msg, sourceMes, msg.mes).metadataChanged)
+            : syncMessageDiffMetadata(msg, sourceMes, msg.mes).metadataChanged;
     const traceChanged = recordRuleHitTrace(msg, sourceMes);
     maintainDiffRetention();
     if (metadataChanged || traceChanged) changed = true;

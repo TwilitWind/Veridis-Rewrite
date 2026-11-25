@@ -10,12 +10,14 @@ import {
     requestDeepCleanStop,
     setDeepCleanFinalSelection,
     setDeepCleanLocalOption,
+    applyDeepCleanPreviewSelection,
     runDeepCleanProgramProcessing,
     runDeepCleanScan,
     runDeepCleanApply,
     startDeepCleanRun,
 } from './lifecycle.js';
 import {
+    cancelDeepCleanReviewComparisons,
     selectDeepCleanReviewBlock,
     setDeepCleanReviewBlockText,
     setDeepCleanReviewEqualText,
@@ -35,8 +37,17 @@ import {
     renderDeepCleanApplyProgress,
     renderDeepCleanComplete,
     renderDeepCleanStopped,
+    renderDeepCleanPreview,
     showInitialSelectionError,
 } from './view.js';
+import {
+    createDeepCleanPreviewSession,
+    ensureDeepCleanPreviewEntry,
+    setDeepCleanPreviewFilter,
+    setDeepCleanPreviewIncluded,
+    stepDeepCleanPreview,
+    cancelDeepCleanPreviewRequest,
+} from './preview.js';
 
 export function bindDeepCleanEvents() {
 const showReviewError = (error) => {
@@ -77,7 +88,11 @@ $(document).off('click', '#blai-deep-clean-btn').on('click', '#blai-deep-clean-b
         await withReadyReview(session => renderDeepCleanReview(session, getDeepCleanLookaheadProgress()));
         return;
     }
-    if (activePhase) return;
+    if (activePhase) {
+        const previewSession = deepCleanRuntimeState.deepCleanSelection?.previewSession;
+        if (previewSession) renderDeepCleanPreview(previewSession);
+        return;
+    }
     // 每次进入初始选择都重新读取资源清单：绑定的世界书/知识书可能在外部变动过，不能复用旧快照。
     try {
         renderDeepCleanSelection(await startDeepCleanRun());
@@ -104,7 +119,7 @@ $(document).off('click', '#blai-deep-clean-scan').on('click', '#blai-deep-clean-
     }
 });
 
-$(document).off('click', '#blai-deep-clean-process-program').on('click', '#blai-deep-clean-process-program', async () => {
+const startDeepCleanProcessing = async () => {
     try {
         const result = await runDeepCleanProgramProcessing({
             onProgress: renderDeepCleanBatchProgress,
@@ -117,6 +132,145 @@ $(document).off('click', '#blai-deep-clean-process-program').on('click', '#blai-
         logger.error('[Deep Clean] Batch processing failed', error);
         showInitialSelectionError(error);
     }
+};
+
+$(document).off('click', '#blai-deep-clean-process-program').on('click', '#blai-deep-clean-process-program', () => {
+    startDeepCleanProcessing();
+});
+
+const currentPreviewSession = () => deepCleanRuntimeState.deepCleanSelection?.previewSession || null;
+
+const loadPreviewEntry = (preview, { retry = false } = {}) => {
+    if (!preview || preview.currentItemIndex === null) return;
+    const key = `${preview.mode}:${preview.currentItemIndex}`;
+    if (!retry && preview.diffCache.has(key)) {
+        preview.loadingKey = null;
+        renderDeepCleanPreview(preview);
+        return;
+    }
+    cancelDeepCleanPreviewRequest(preview);
+    const controller = new AbortController();
+    preview.abortController = controller;
+    preview.loadingKey = key;
+    const token = ++preview.renderToken;
+    renderDeepCleanPreview(preview);
+    ensureDeepCleanPreviewEntry(preview, preview.currentItemIndex, preview.mode, {
+        signal: controller.signal,
+        retry,
+    }).then(() => {
+        if (token !== preview.renderToken) return;
+        preview.loadingKey = null;
+        preview.abortController = null;
+        renderDeepCleanPreview(preview);
+    }).catch((error) => {
+        if (token !== preview.renderToken) return;
+        preview.loadingKey = null;
+        preview.abortController = null;
+        renderDeepCleanPreview(preview);
+        logger.error('[Deep Clean] preview failed', error);
+    });
+};
+
+const commitPreviewAndRun = (preview, runAll) => {
+    if (!preview) return;
+    const lifecycle = deepCleanRuntimeState.deepCleanSelection;
+    if (!lifecycle) return;
+    if (runAll) {
+        preview.skipped.clear();
+        preview.included = new Set(preview.itemIndexes);
+    }
+    if (preview.included.size === 0) return;
+    applyDeepCleanPreviewSelection(lifecycle, preview.skipped, preview.aiCache);
+    lifecycle.previewSession = null;
+    startDeepCleanProcessing();
+};
+
+$(document).off('click', '#blai-deep-clean-preview').on('click', '#blai-deep-clean-preview', () => {
+    const lifecycle = deepCleanRuntimeState.deepCleanSelection;
+    if (!lifecycle?.run?.scanResult) return;
+    cancelDeepCleanReviewComparisons(lifecycle.currentReviewSession);
+    const preview = createDeepCleanPreviewSession(lifecycle);
+    if (!preview) return;
+    preview.view = 'diff';
+    lifecycle.previewSession = preview;
+    loadPreviewEntry(preview);
+});
+
+$(document).off('click', '[data-deep-clean-preview-filter]').on('click', '[data-deep-clean-preview-filter]', function() {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    setDeepCleanPreviewFilter(preview, String($(this).attr('data-deep-clean-preview-filter') || 'all'));
+    loadPreviewEntry(preview);
+});
+
+$(document).off('click', '[data-deep-clean-preview-item]').on('click', '[data-deep-clean-preview-item]', function() {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    preview.currentItemIndex = Number($(this).attr('data-deep-clean-preview-item'));
+    loadPreviewEntry(preview);
+});
+
+$(document).off('click', '[data-deep-clean-preview-nav]').on('click', '[data-deep-clean-preview-nav]', function() {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    stepDeepCleanPreview(preview, String($(this).attr('data-deep-clean-preview-nav')) === 'previous' ? -1 : 1);
+    loadPreviewEntry(preview);
+});
+
+$(document).off('click', '[data-deep-clean-preview-mode]').on('click', '[data-deep-clean-preview-mode]', function() {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    const mode = String($(this).attr('data-deep-clean-preview-mode') || 'program');
+    if (preview.mode === mode) return;
+    preview.mode = mode;
+    loadPreviewEntry(preview);
+});
+
+$(document).off('click', '[data-deep-clean-preview-view]').on('click', '[data-deep-clean-preview-view]', function() {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    preview.view = String($(this).attr('data-deep-clean-preview-view') || 'diff');
+    renderDeepCleanPreview(preview);
+});
+
+$(document).off('change', '[data-deep-clean-preview-include]').on('change', '[data-deep-clean-preview-include]', function() {
+    const preview = currentPreviewSession();
+    if (!preview || preview.currentItemIndex === null) return;
+    setDeepCleanPreviewIncluded(preview, preview.currentItemIndex, this.checked === true);
+    const row = document.querySelector(`[data-deep-clean-preview-item="${preview.currentItemIndex}"]`);
+    if (row) {
+        row.classList.toggle('is-skipped', !this.checked);
+        const icon = row.querySelector('i');
+        if (icon) {
+            icon.classList.toggle('fa-circle-check', this.checked);
+            icon.classList.toggle('fa-circle-minus', !this.checked);
+        }
+    }
+    $('[data-deep-clean-preview-run]').text(`执行所选（${preview.included.size}）`).prop('disabled', preview.included.size === 0);
+    $('[data-deep-clean-preview-filter="skipped"] span').text(String(preview.skipped.size));
+});
+
+$(document).off('click', '[data-deep-clean-preview-generate-ai]').on('click', '[data-deep-clean-preview-generate-ai]', () => {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    preview.mode = 'ai';
+    loadPreviewEntry(preview, { retry: true });
+});
+
+$(document).off('click', '[data-deep-clean-preview-back]').on('click', '[data-deep-clean-preview-back]', () => {
+    const preview = currentPreviewSession();
+    if (!preview) return;
+    cancelDeepCleanPreviewRequest(preview);
+    deepCleanRuntimeState.deepCleanSelection.previewSession = null;
+    renderDeepCleanScanResult(preview.run.scanResult);
+});
+
+$(document).off('click', '[data-deep-clean-preview-run]').on('click', '[data-deep-clean-preview-run]', () => {
+    commitPreviewAndRun(currentPreviewSession(), false);
+});
+
+$(document).off('click', '[data-deep-clean-preview-run-all]').on('click', '[data-deep-clean-preview-run-all]', () => {
+    commitPreviewAndRun(currentPreviewSession(), true);
 });
 
 const focusDeepCleanReviewBlock = (blockIndex, branch) => {

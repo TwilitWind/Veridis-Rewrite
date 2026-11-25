@@ -10,6 +10,8 @@ import { parseExpectContent, contentProbeExpression, contentFailureMessage } fro
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const SHOTS = path.join(ROOT, 'shots');
 export const PORT = process.env.CDP_PORT ?? '9224';
+// 手机视口三处共用；与 st-mobile.mjs 的 UA 口径一致。
+export const IPHONE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 const APP_CONTEXT_URL = '/scripts/extensions/third-party/Veridis-Rewrite/src/host/appContext.js';
 const AI_SETTING_FIELDS = ['enabled', 'baseUrl', 'apiKey', 'model', 'modelOptions', 'manualModels'];
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -59,6 +61,15 @@ export async function evaluate(send, expression) {
     return result.result?.value;
 }
 
+// saveSettingsDebounced() 是防抖的；审计要立刻重载时必须直接 await 保存接口。
+export function forceSaveSettings(send) {
+    return evaluate(send, `(async () => {
+        const st = await import('/script.js');
+        await st.saveSettings();
+        return true;
+    })()`);
+}
+
 export async function waitFor(send, expression, label, tries = 50, interval = 200) {
     for (let i = 0; i < tries; i++) {
         if (await evaluate(send, expression)) return;
@@ -71,7 +82,37 @@ export async function waitFor(send, expression, label, tries = 50, interval = 20
 export async function reloadAndWait(send, expression, label, tries = 120) {
     await evaluate(send, `(() => { window.__harnessReloadToken = true; return true; })()`);
     await send('Page.reload', { ignoreCache: true });
-    await waitFor(send, `!window.__harnessReloadToken && document.readyState === 'complete' && (${expression})`, label, tries, 300);
+    // reload 刚发出时旧执行上下文可能立刻被销毁；这类导航异常要重试，
+    // 其他求值错误仍然是真错误，不能直接吞掉。
+    const ready = `!window.__harnessReloadToken && document.readyState === 'complete' && (${expression})`;
+    for (let i = 0; i < tries; i += 1) {
+        try {
+            if (await evaluate(send, ready)) return;
+        } catch (error) {
+            const message = String(error?.message || error);
+            if (!/navigated or closed|Execution context was destroyed|Cannot find context/i.test(message)) throw error;
+        }
+        await sleep(300);
+    }
+    throw new Error(`等待超时：${label}`);
+}
+
+// 按需刷新：只有装机副本里有文件比页面加载时刻更新才 reload，否则复用当前页。
+// 目的：没改东西只是重跑验证/截图时不要反复刷新酒馆页面。要强制刷新用 FORCE_RELOAD=1。
+// 注意：它只判断「代码是否更新」，不判断「消息数据是否被别的脚本改脏」。会改写聊天数据的
+// 脚本（如 stats-legend 需要改写项）必须显式传 { cleanState: true } 走无条件刷新，
+// 否则复用上一个脚本留下的脏消息会得到假失败。
+export async function ensurePageFresh(send, expression, label, tries = 120, { cleanState = false } = {}) {
+    if (!cleanState && process.env.FORCE_RELOAD !== '1') {
+        const newest = latestManagedMtime();
+        const pageOrigin = await evaluate(send, `performance.timeOrigin`).catch(() => 0);
+        if (pageOrigin > newest + 1000) {
+            await waitFor(send, expression, `${label}（复用页面）`, tries, 300);
+            return 'reused';
+        }
+    }
+    await reloadAndWait(send, expression, label, tries);
+    return 'reloaded';
 }
 
 export function check(failures, name, ok, detail = '') {
@@ -196,26 +237,47 @@ export async function capture(send, name, { expectOpen = [], expectContent = nul
     return path.relative(ROOT, target).replace(/\\/g, '/');
 }
 
-// 与 sync.mjs 相同的受管文件口径；避免“验证的是旧装机副本”。
-export function assertManagedFilesSynced({
-    src = ROOT,
-    dst = process.env.BLAI_DST ?? 'D:/Games/SillyTavern/SillyTavern/data/default-user/extensions/Veridis-Rewrite',
-} = {}) {
-    const exts = new Set(['.js', '.css', '.json', '.md', '.html']);
-    const skipDirs = new Set(['.git', 'node_modules', 'dev', 'test', 'tmp', '_tmp', '_archive', 'shots', 'css-backup']);
-    const skipName = /^(?:build-.*\.mjs|package(?:-lock)?\.json|AGENTS\.md|MODULES\.md|CHANGELOG\.md|todo\.md)$/i;
-    const skipFile = /\.(png|jpe?g|gif|webp|zip|bak|orig|tmp|log)$/i;
+const DEFAULT_DST = 'D:/Games/SillyTavern/SillyTavern/data/default-user/extensions/Veridis-Rewrite';
+const MANAGED_EXTS = new Set(['.js', '.css', '.json', '.md', '.html']);
+const MANAGED_SKIP_DIRS = new Set(['.git', 'node_modules', 'dev', 'test', 'tmp', '_tmp', '_archive', 'shots', 'css-backup']);
+const MANAGED_SKIP_NAME = /^(?:build-.*\.mjs|package(?:-lock)?\.json|AGENTS\.md|MODULES\.md|CHANGELOG\.md|todo\.md)$/i;
+const MANAGED_SKIP_FILE = /\.(png|jpe?g|gif|webp|zip|bak|orig|tmp|log)$/i;
+
+// 与 sync.mjs 相同的受管文件口径；一处定义，sync 判定与刷新判定共用。
+function managedFiles(src = ROOT) {
     const files = [];
     const walk = (rel) => {
         for (const entry of fs.readdirSync(path.join(src, rel), { withFileTypes: true })) {
-            if (skipDirs.has(entry.name)) continue;
+            if (MANAGED_SKIP_DIRS.has(entry.name)) continue;
             const child = path.join(rel, entry.name);
             if (entry.isDirectory()) { walk(child); continue; }
-            if (skipFile.test(entry.name) || skipName.test(entry.name) || !exts.has(path.extname(entry.name))) continue;
+            if (MANAGED_SKIP_FILE.test(entry.name) || MANAGED_SKIP_NAME.test(entry.name) || !MANAGED_EXTS.has(path.extname(entry.name))) continue;
             files.push(child.replace(/\\/g, '/'));
         }
     };
     walk('');
+    return files;
+}
+
+// 装机副本里受管文件的最新修改时刻；页面加载时刻晚于它说明页面已是最新，无需刷新。
+export function latestManagedMtime({
+    src = ROOT,
+    dst = process.env.BLAI_DST ?? DEFAULT_DST,
+} = {}) {
+    let newest = 0;
+    for (const rel of managedFiles(src)) {
+        const target = path.join(dst, rel);
+        if (fs.existsSync(target)) newest = Math.max(newest, fs.statSync(target).mtimeMs);
+    }
+    return newest;
+}
+
+// 与 sync.mjs 相同的受管文件口径；避免“验证的是旧装机副本”。
+export function assertManagedFilesSynced({
+    src = ROOT,
+    dst = process.env.BLAI_DST ?? DEFAULT_DST,
+} = {}) {
+    const files = managedFiles(src);
     const hash = (p) => crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
     const diff = [];
     const missing = [];
