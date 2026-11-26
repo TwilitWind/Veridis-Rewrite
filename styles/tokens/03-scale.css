@@ -66,6 +66,9 @@
      避免「标题已看清、右侧开关和叉号却像缩了一号」。 */
   --blai-fs-control: 13px;
   --blai-fs-control-icon: 16px;
+  /* 深度清理预览正文：连续长文按正文档读，双端同档 13px。
+     不跟随手机 --blai-fs-body 的 +1px 放大，否则手机端比桌面大。 */
+  --blai-fs-deep-preview-body: 13px;
 
   /* 旧数字 token → 5 档别名（映射见 docs/font-convergence-plan.md）。 */
   --blai-font-8: var(--blai-fs-note);
@@ -86,18 +89,22 @@
   --blai-font-24: var(--blai-fs-hero);
   --blai-font-26: var(--blai-fs-hero);
 
-  /* 字重：全插件正文只用两类——正常 400 与加粗 600，不再有其他字重。 */
+  /* 字重：正文正常 400、按钮等控件中等 500、小标题加粗 600。 */
   --blai-weight-normal: 400;
+  --blai-weight-medium: 500;
   --blai-weight-bold: 600;
   /* Font Awesome 字形专用：'Font Awesome 6 Free' 的 Solid 字形必须 900 才渲染。
      这不是正文排版字重，只用于图标伪元素，正文一律走上面两类。 */
   --blai-weight-icon: 900;
 
   /* 动效节奏：短、快、不回弹；参考 Material Motion 的非对称节奏——退场比进场更短。 */
-  --blai-duration-fast: 80ms;  /* 淡出、菜单、切页、toast 退场 */
-  --blai-duration-base: 120ms; /* 弹窗遮罩、切页新页淡入 */
-  --blai-duration-slow: 140ms; /* 弹卡、toast 与有位移的过渡 */
-  --blai-duration-step: 12ms;  /* 菜单项错峰，按可用方向依次长出 */
+ --blai-duration-fast: 80ms;  /* 淡出、菜单、toast 退场 */
+ --blai-duration-base: 120ms; /* 弹窗遮罩淡入、有位移的过渡 */
+ --blai-duration-slow: 140ms; /* 弹卡、toast 与有位移的过渡 */
+ --blai-duration-step: 12ms;  /* 菜单项错峰，按可用方向依次长出 */
+ /* 切页用独立短时长：全屏页面淡入淡出的等待最容易被感知，缩短后仍保留 fade through。 */
+ --blai-duration-page-out: 40ms;
+ --blai-duration-page-in: 80ms;
   --blai-modal-card-delay: 20ms; /* 弹卡比遮罩晚一拍，形成层次但不拖沓 */
   --blai-ease-out: cubic-bezier(.22, .61, .36, 1); /* 平滑减速，不过冲回弹 */
 
@@ -129,6 +136,11 @@
   --blai-switch-track-width: var(--blai-size-32);
   --blai-switch-track-height: var(--blai-size-18);
   --blai-switch-knob-size: var(--blai-size-14);
+  /* 自绘复选框：统一尺寸/圆角/对勾字号，全部插件内 checkbox 走这组值。 */
+  --blai-checkbox-size: var(--blai-size-15);
+  --blai-checkbox-radius: var(--blai-radius-4);
+  --blai-checkbox-border-width: var(--blai-border-1-5);
+  --blai-checkbox-check-size: var(--blai-font-9);
 
   /* 圆角；--blai-radius-full 只用于本就为圆形的元素（色点、开关轨道、进度条、滚动条、圆形图标）。 */
   /* 语义档位：大组件（Modal 等承载内容的卡片）用 lg，输入类小控件（Button/Input）用 sm，全端同一档。 */

@@ -51,7 +51,7 @@ function escapeHtml(value) {
 function diagnosticAttachment(label, name, available = true, description = '') {
     return `
         <label class="blai-feedback-check${available ? '' : ' is-unavailable'}">
-            <input type="checkbox" name="${name}"${available ? '' : ' disabled'}>
+            <input class="blai-check-native" type="checkbox" name="${name}"${available ? '' : ' disabled'}>
             <span class="blai-feedback-check-copy">
                 <span class="blai-feedback-check-title">${escapeHtml(label)}</span>
                 ${description ? `<small class="blai-feedback-check-description">${escapeHtml(description)}</small>` : ''}
@@ -103,7 +103,7 @@ export function renderFeedbackForm(slots = {}) {
                     <p>可选择多个相关区域；例如深度净化中的结果或审查问题，可以同时选择「深度净化」和「净化结果 / 审查」。</p>
                     <div class="blai-feedback-area-select" data-blai-area-select>
                         <button type="button" class="blai-feedback-area-trigger" aria-haspopup="true" aria-expanded="false">
-                            <span class="blai-feedback-area-summary">选择涉及区域</span>
+                            <span class="blai-feedback-area-summary">选择区域</span>
                             <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                         </button>
                         <div class="blai-feedback-area-options" hidden>
@@ -155,7 +155,7 @@ export function renderFeedbackForm(slots = {}) {
                 </p>
                 <div class="blai-feedback-form-actions">
                     <div id="blai-feedback-status" class="blai-feedback-status" aria-live="polite"></div>
-                    <button id="blai-feedback-preview-generate" class="blai-feedback-primary" type="button">生成提交预览</button>
+                    <button id="blai-feedback-preview-generate" class="blai-feedback-primary" type="button" aria-label="生成提交预览" title="生成提交预览">生成预览</button>
                 </div>
             </div>
 
@@ -169,10 +169,10 @@ export function renderFeedbackForm(slots = {}) {
                 <pre id="blai-feedback-preview-json" tabindex="0"></pre>
                 <div id="blai-feedback-preview-files"></div>
                 <label class="blai-feedback-confirm">
-                    <input id="blai-feedback-confirm" type="checkbox">
+                    <input id="blai-feedback-confirm" class="blai-check-native" type="checkbox">
                     <span>我已检查并确认提交以上完整内容。</span>
                 </label>
-                <button id="blai-feedback-submit" class="blai-feedback-primary" type="button" disabled>提交匿名反馈</button>
+                <button id="blai-feedback-submit" class="blai-feedback-primary" type="button" aria-label="提交匿名反馈" title="提交匿名反馈" disabled>提交反馈</button>
                 <div id="blai-feedback-submit-status" class="blai-feedback-submit-status" aria-live="polite"></div>
             </section>
         </form>
@@ -267,7 +267,7 @@ function diagnosticSlot(slot, title, record) {
         <section class="blai-feedback-diagnostic-record" data-diagnostic-slot="${slot}">
             <div class="blai-feedback-diagnostic-heading">
                 <h3>${escapeHtml(title)}</h3>
-                <button type="button" data-feedback-expand-diagnostic="${slot}" aria-expanded="false">展开安全 JSON</button>
+                <button type="button" data-feedback-expand-diagnostic="${slot}" aria-expanded="false" aria-label="展开安全 JSON" title="展开安全 JSON">展开</button>
             </div>
             <dl>
                 ${diagnosticSummaryRows(record).map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}

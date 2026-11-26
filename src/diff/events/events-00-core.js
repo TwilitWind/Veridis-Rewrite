@@ -174,7 +174,7 @@ export function createDiffEventsCore() {
         const enabled = diffRuntimeState.diffRelatedRuleMode === true;
         $('#blai-diff-modal').toggleClass('blai-diff-related-mode', enabled);
         $('#blai-diff-related-mode-icon').attr('class', enabled ? 'fa-solid fa-crosshairs blai-related-active-icon' : 'fa-solid fa-crosshairs');
-        $('#blai-diff-related-mode-text').text(enabled ? '规则定位：开启' : '规则定位：关闭');
+        $('#blai-diff-related-mode-text').text(enabled ? '定位开' : '定位关');
         $('#blai-diff-related-mode-toggle').attr('title', enabled ? '关闭规则定位' : '点击改写项查看命中的规则');
         if (!enabled) closeDiffRelatedModal();
     };
@@ -193,7 +193,7 @@ export function createDiffEventsCore() {
     const syncDiffPositionMenuState = (settings) => {
         const shouldExposeTopButton = settings.diffButtonInExtraMenu === true;
         $('#blai-diff-menu-pos-icon').attr('class', shouldExposeTopButton ? 'fa-solid fa-thumbtack' : 'fa-solid fa-ellipsis-vertical');
-        $('#blai-diff-menu-pos-text').text(shouldExposeTopButton ? '顶部按钮：外显' : '顶部按钮：收纳');
+        $('#blai-diff-menu-pos-text').text(shouldExposeTopButton ? '顶部显' : '顶部收');
         $('#blai-diff-menu-pos-toggle').attr('title', shouldExposeTopButton ? '将顶部按钮恢复为外显' : '将顶部按钮收纳进菜单');
     };
 
@@ -201,7 +201,7 @@ export function createDiffEventsCore() {
     const syncDiffBottomMenuState = (settings) => {
         const isBottomVisible = settings.showBottomDiffButton !== false;
         $('#blai-diff-menu-bottom-icon').attr('class', isBottomVisible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye');
-        $('#blai-diff-menu-bottom-text').text(isBottomVisible ? '尾部按钮：隐藏' : '尾部按钮：显示');
+        $('#blai-diff-menu-bottom-text').text(isBottomVisible ? '尾部隐' : '尾部显');
         $('#blai-diff-menu-bottom-toggle').attr('title', isBottomVisible ? '隐藏消息尾部按钮' : '显示消息尾部按钮');
     };
 

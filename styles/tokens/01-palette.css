@@ -48,6 +48,12 @@
     --blai-scrollbar-thumb: rgba(0, 0, 0, 0.26);
     --blai-scrollbar-thumb-hover: rgba(0, 0, 0, 0.42);
     --blai-scrollbar-track: transparent;
+    /* 自绘复选框：描边随正文色走，勾选态用强调色底 + 对比色对勾；不跟随酒馆原生控件。 */
+    --blai-checkbox-border: color-mix(in srgb, var(--text-main) 34%, var(--border-color));
+    --blai-checkbox-bg: var(--bg-surface);
+    --blai-checkbox-checked-bg: var(--accent-color);
+    --blai-checkbox-checked-border: var(--accent-color);
+    --blai-checkbox-ink: var(--accent-contrast);
     /* 危险实心块（删除类按钮）上的文字色 */
     --danger-contrast: #FFFFFF;
 

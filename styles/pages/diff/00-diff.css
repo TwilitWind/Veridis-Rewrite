@@ -166,8 +166,8 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    width: var(--blai-size-28);
-    height: var(--blai-size-28);
+    width: var(--blai-diff-head-control, var(--blai-size-28));
+    height: var(--blai-diff-head-control, var(--blai-size-28));
     margin-left: 0;
     padding: 0;
     border: 0;

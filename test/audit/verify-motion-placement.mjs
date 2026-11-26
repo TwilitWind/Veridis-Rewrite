@@ -110,9 +110,9 @@ check('菜单方向只作用于子元素',
 check('toast 从顶部边缘滑入并反向退出',
     /translate\(-50%, calc\(-1 \* var\(--blai-space-16\)\)\)/.test(toastCss)
     && /translate\(-50%, 0\)/.test(toastCss));
-check('分段控件只有指示块滑动，不改整页',
-    /--blai-segment-index/.test(segmentCss) && /--blai-segment-index/.test(segmentJs)
-    && /translateX\(calc\(var\(--blai-segment-index/.test(segmentCss));
+check('分段控件不画下方指示条，选中态只靠按钮底色',
+    !/blai-subrule-rewrite-segment::after/.test(segmentCss)
+    && !/translateX\(calc\(var\(--blai-segment-index/.test(segmentCss));
 check('导览提示框有视口上限兜底',
     /max-width: min\(var\(--blai-tour-popover-max-width/.test(tourCss)
     && /max-height: min\(var\(--blai-tour-popover-max-height/.test(tourCss));

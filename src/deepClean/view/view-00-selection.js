@@ -70,10 +70,21 @@ export function renderDeepCleanResourcePanel({ kind, title, items, selectionKeys
         </section>
     `;
 }
+/** 工作区右上角统一叉号：纯图标按钮，文字只留在无障碍名称里。 */
+export function deepCleanHeaderCloseAction() {
+    return '<button id="blai-deep-clean-close" class="blai-deep-clean-header-icon" type="button" aria-label="关闭" title="关闭"><i class="fas fa-xmark" aria-hidden="true"></i></button>';
+}
+
+export function deepCleanHeaderStopAction() {
+    return '<button id="blai-deep-clean-stop" class="blai-deep-clean-header-icon" type="button" aria-label="停止" title="停止"><i class="fas fa-xmark" aria-hidden="true"></i></button>';
+}
+
 export function setDeepCleanWorkspaceHeader(title, description, actionHtml = '') {
     $('#blai-deep-clean-title').text(title).prop('hidden', !title);
     $('#blai-deep-clean-description').text(description).prop('hidden', !description);
     $('#blai-deep-clean-header-actions').html(actionHtml);
+    // 停止态等无标题页面不留一条 58px 的空白顶栏，避免正文被顶到角落。
+    $('#blai-deep-clean-workspace > .blai-deep-clean-header').prop('hidden', !title && !description && !actionHtml);
 }
 
 export function openDeepCleanInitialSelection(options = {}) {
@@ -85,6 +96,8 @@ export function openDeepCleanInitialSelection(options = {}) {
         <section class="blai-deep-clean-state blai-deep-clean-loading-state" aria-label="正在读取可选资源">
             <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
             <h3>正在读取可选资源</h3>
+            <p>如果长时间没有响应，可以先关闭后重试。</p>
+            <button id="blai-deep-clean-close" type="button">关闭</button>
         </section>
     `);
 }
@@ -92,6 +105,12 @@ export function openDeepCleanInitialSelection(options = {}) {
 export function closeDeepCleanInitialSelection() {
     $('#blai-deep-clean-backdrop').removeClass('blai-is-open').attr('aria-hidden', 'true');
     $('#blai-deep-clean-workspace').removeClass('blai-is-open').attr('aria-hidden', 'true');
+    // 关闭后再次进入必须重新读取资源；旧的冻结快照/预览缓存会让下一屏停在陈旧状态。
+    const phase = deepCleanRuntimeState.deepCleanPhase;
+    if (phase === 'initial-selection' || phase === 'scan-result' || phase === 'stopped' || phase === 'complete' || phase === null) {
+        deepCleanRuntimeState.deepCleanPhase = null;
+        deepCleanRuntimeState.deepCleanSelection = null;
+    }
 }
 
 export function showInitialSelectionError(error) {
@@ -100,7 +119,7 @@ export function showInitialSelectionError(error) {
         <section class="blai-deep-clean-state blai-deep-clean-error-state" aria-label="深度清理错误">
             <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
             <p class="blai-deep-clean-error">${deepCleanSafeHtml(error?.message || error)}</p>
-            <button id="blai-deep-clean-close" type="button">关闭工作区</button>
+            <button id="blai-deep-clean-close" type="button">关闭</button>
         </section>
     `);
 }
@@ -126,8 +145,9 @@ function deepCleanFrozenContentItems() {
 export function deepCleanReviewIdentity(item = {}) {
     const locator = item.locator || {};
     const hiddenSuffix = item.isHidden === true ? ' · 已隐藏' : '';
-    if (item.kind === 'user-message') return `聊天 · ${locator.chatId || '分支'} · 消息 ${Number(locator.messageIndex) + 1} · 用户${hiddenSuffix}`;
-    if (item.kind === 'assistant-swipe') return `聊天 · ${locator.chatId || '分支'} · 消息 ${Number(locator.messageIndex) + 1}${Number.isInteger(locator.swipeIndex) ? ` · Swipe ${locator.swipeIndex + 1}` : ''}${hiddenSuffix}`;
+    const messageNumber = Number.isInteger(locator.messageIndex) ? ` · 消息 ${locator.messageIndex + 1}` : '';
+    if (item.kind === 'user-message') return `聊天${messageNumber} · 用户${hiddenSuffix}`;
+    if (item.kind === 'assistant-swipe') return `聊天${messageNumber}${Number.isInteger(locator.swipeIndex) ? ` · Swipe ${locator.swipeIndex + 1}` : ''}${hiddenSuffix}`;
     if (item.kind === 'embedded-world-book-entry') {
         const ownerName = String(item.ownerDisplayName || locator.characterKey || '').trim();
         const entryName = String(item.displayName || '').trim() || '世界书条目';
@@ -238,6 +258,7 @@ export function renderDeepCleanScanResult(scanResult = {}) {
     setDeepCleanWorkspaceHeader(
         '扫描结果',
         directProgramApply ? '确认后按批处理并直接写入。' : '确认后逐批生成审核。',
+        deepCleanHeaderCloseAction(),
     );
     $('#blai-deep-clean-content').html(`
         <section class="blai-deep-clean-result" aria-label="深度清理扫描结果">
@@ -246,13 +267,14 @@ export function renderDeepCleanScanResult(scanResult = {}) {
                 ${metrics.map(([label, value]) => `<div><span>${deepCleanSafeHtml(label)}</span><strong>${Number(value) || 0}</strong></div>`).join('')}
             </div>
             <p class="blai-deep-clean-scan-note">内容项指聊天消息与世界书条目，不是书籍或脚本数量。命中次数按规则计，同一内容项可多次命中；待处理字符只统计命中项的原文长度。</p>
+            ${Number(scanResult.deduplicatedEmbeddedCount) > 0 ? `<p class="blai-deep-clean-scan-note blai-deep-clean-scan-dedupe">已跳过 ${Number(scanResult.deduplicatedEmbeddedCount)} 条角色卡内嵌世界书副本：绑定世界书已勾选时，只扫描并改写绑定世界书，不重复匹配内嵌副本；执行后会把绑定世界书的正文覆盖回同名内嵌条目。</p>` : ''}
             <section class="blai-deep-clean-scan-categories" aria-labelledby="blai-deep-clean-scan-categories-title">
                 <h3 id="blai-deep-clean-scan-categories-title">命中内容项分布</h3>
                 ${categories.map(([key, label]) => `<div><span>${deepCleanSafeHtml(label)}</span><strong>${Number(affectedByType[key]) || 0}</strong></div>`).join('')}
             </section>
             <div class="blai-deep-clean-actions">
-                <button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止</button>
-                <button id="blai-deep-clean-preview" class="blai-deep-clean-secondary-action" type="button">预览并筛选</button>
+                <button id="blai-deep-clean-back-to-selection" class="blai-deep-clean-secondary-action" type="button" aria-label="上一步" title="上一步">上一步</button>
+                <button id="blai-deep-clean-preview" class="blai-deep-clean-secondary-action" type="button" aria-label="预览并筛选" title="预览并筛选">预览</button>
                 <button id="blai-deep-clean-process-program" class="blai-deep-clean-primary-action" type="button">${directProgramApply ? '直接写入' : '开始清理'}</button>
             </div>
         </section>

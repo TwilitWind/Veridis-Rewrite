@@ -1,0 +1,261 @@
+/* 深度清理视觉收口：统一为单列文档流，靠层级与细分隔线分区，不再靠大卡片和居中块堆视觉噪音。
+   放在响应式之后加载，只做收口，不改变任何交互与功能。 */
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-loading, .blai-deep-clean-error, .blai-deep-clean-empty) {
+    text-align: left;
+}
+
+/* ---- 初始选择：两张大卡改成一条有标题的连续列表 ---- */
+#blai-deep-clean-workspace .blai-deep-clean-selection-scroll {
+    padding: var(--blai-space-12) var(--blai-space-14);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-two-column {
+    gap: var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-settings, .blai-deep-clean-resources) {
+    gap: 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-section,
+#blai-deep-clean-workspace .blai-deep-clean-resources {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resources {
+    padding-top: var(--blai-space-10);
+    border-top: var(--blai-border-1) solid var(--blai-border-soft);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-section h3, .blai-deep-clean-resource-header h3) {
+    margin-bottom: var(--blai-space-6);
+    font-size: var(--blai-font-12);
+    line-height: 1.3;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scope-card {
+    margin-bottom: var(--blai-space-8);
+}
+
+/* 没有角色卡时用次级文字说明即可，不该用大红字抢注意力。 */
+#blai-deep-clean-workspace .blai-deep-clean-scope-card.is-blocked .blai-deep-clean-scope-detail {
+    color: var(--text-secondary);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-options {
+    gap: var(--blai-space-4) var(--blai-space-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-mode-option {
+    min-height: var(--blai-size-28);
+    padding: var(--blai-space-2) var(--blai-space-4);
+    gap: var(--blai-space-6);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-option.blai-deep-clean-hidden-toggle {
+    gap: var(--blai-space-6);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-header {
+    padding-bottom: var(--blai-space-6);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-panel {
+    padding: 0;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-panel + .blai-deep-clean-resource-panel {
+    margin-top: var(--blai-space-8);
+    padding-top: var(--blai-space-8);
+    border-top: var(--blai-border-1) solid var(--blai-border-soft);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-toolbar {
+    padding-bottom: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-resource-list {
+    max-height: var(--blai-size-200);
+    margin-top: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-empty {
+    padding: var(--blai-space-4) 0;
+    font-size: var(--blai-font-10);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-selection-actions {
+    min-height: var(--blai-size-48);
+    padding: var(--blai-space-8) var(--blai-space-14);
+    justify-content: flex-end;
+    gap: var(--blai-space-8);
+}
+
+/* 头栏隐藏时保留为零高度网格项：display:none 会让正文掉进 auto 行，
+   整块缩到内容高度，停止态就无法在工作区里垂直居中。 */
+#blai-deep-clean-workspace .blai-deep-clean-header[hidden] {
+    display: block;
+    visibility: hidden;
+    min-height: 0;
+    height: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+}
+
+/* 手机视图模拟器只收窄插件容器、不改视口，媒体查询不会触发；改用容器查询兜底。 */
+#blai-deep-clean-workspace {
+    container-type: inline-size;
+}
+
+@container (max-width: 700px) {
+    #blai-deep-clean-workspace .blai-deep-clean-result,
+    #blai-deep-clean-workspace .blai-deep-clean-preview-header {
+        padding: var(--blai-space-8) var(--blai-space-10);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-document {
+        padding: var(--blai-space-6) var(--blai-space-10);
+    }
+}
+
+/* ---- 扫描结果：标题降档，统计三列留白，分布用同款轻卡片 ---- */
+#blai-deep-clean-workspace .blai-deep-clean-result {
+    padding: var(--blai-space-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result > header {
+    margin-bottom: var(--blai-space-12);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result > header h3 {
+    font-size: var(--blai-font-14);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result > header p {
+    margin-top: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-metrics > div {
+    padding: var(--blai-space-8) var(--blai-space-10);
+    border-color: var(--blai-border-soft);
+}
+
+/* 通用 p{margin:0} 的选择器带元素名、优先级更高，这里必须同级同构才能生效。 */
+#blai-deep-clean-workspace .blai-deep-clean-content p.blai-deep-clean-scan-note {
+    margin-top: var(--blai-space-12);
+    line-height: 1.6;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories {
+    margin-top: var(--blai-space-14);
+    gap: var(--blai-space-8);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories h3 {
+    margin-bottom: var(--blai-space-2);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-scan-categories > div {
+    width: auto;
+    flex: 0 0 auto;
+    padding: var(--blai-space-6) var(--blai-space-10);
+    border: var(--blai-border-1) solid var(--blai-border-soft);
+    border-radius: var(--blai-radius-sm);
+}
+
+@container (max-width: 700px) {
+    #blai-deep-clean-workspace .blai-deep-clean-scan-metrics > div {
+        padding: var(--blai-space-6) var(--blai-space-8);
+    }
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-result .blai-deep-clean-actions {
+    margin-top: var(--blai-space-16);
+    gap: var(--blai-space-10);
+}
+
+/* ---- 预览顶栏：标题与角色卡名合并，不再另占描述行 ---- */
+#blai-deep-clean-workspace:has(> .blai-deep-clean-content > .blai-deep-clean-preview) > .blai-deep-clean-header {
+    min-height: var(--blai-size-36);
+    padding: var(--blai-space-2) var(--blai-space-12);
+}
+
+#blai-deep-clean-workspace:has(> .blai-deep-clean-content > .blai-deep-clean-preview) .blai-deep-clean-header h2 {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--blai-font-12);
+}
+
+/* ---- 预览正文：条目名与徽标贴着正文，不做额外固定栏 ---- */
+#blai-deep-clean-workspace .blai-deep-clean-preview-document {
+    line-height: 1.7;
+}
+
+/* 扫描结果与预览底栏统一靠右单行；字号与内边距只走对话框控件令牌。 */
+#blai-deep-clean-workspace :is(.blai-deep-clean-result .blai-deep-clean-actions, .blai-deep-clean-preview-actions) {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-result .blai-deep-clean-actions, .blai-deep-clean-preview-actions) button {
+    min-height: var(--blai-size-32);
+    padding: var(--blai-modal-btn-pad);
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-medium);
+    white-space: nowrap;
+}
+
+/* ---- 状态页：去掉大图标与孤零零的小按钮，收成一条简短说明 ---- */
+#blai-deep-clean-workspace .blai-deep-clean-state {
+    padding: var(--blai-space-14);
+    gap: var(--blai-space-6);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state > i {
+    font-size: var(--blai-font-16);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state h3 {
+    font-size: var(--blai-font-14);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state button {
+    min-height: var(--blai-size-32);
+}
+
+/* 内容区是普通块，子元素的 height:100% 不解析；停止态先让父级 flex 撑满，再垂直居中。 */
+#blai-deep-clean-workspace:has(> .blai-deep-clean-content > .blai-deep-clean-stopped-state) > .blai-deep-clean-content {
+    display: flex;
+}
+
+/* 停止态只有一句说明和一个动作：整块居中，留白收拢，不再空成一片。 */
+#blai-deep-clean-workspace .blai-deep-clean-stopped-state {
+    flex: 1 1 auto;
+    padding: var(--blai-space-24);
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+    gap: var(--blai-space-12);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-stopped-state p {
+    max-width: 30em;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-stopped-state > button {
+    margin-top: var(--blai-space-8);
+}
+
+@media (max-width: 600px) {
+    #blai-deep-clean-workspace .blai-deep-clean-stopped-state {
+        padding: var(--blai-space-16);
+    }
+}

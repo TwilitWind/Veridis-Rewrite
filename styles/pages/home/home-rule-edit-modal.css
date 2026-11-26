@@ -109,22 +109,6 @@
     background: var(--bg-surface);
 }
 
-/* 选中指示块只做局部横移（不是整页 push），让「从哪一项移到哪一项」看得见。
-   按钮本身仍保留强调底色，触屏粘滞 :hover 的判断不变。 */
-#blai-subrule-edit-modal .blai-subrule-rewrite-segment::after {
-    content: '';
-    position: absolute;
-    bottom: 1px;
-    left: var(--blai-space-4);
-    width: calc((100% - var(--blai-space-12)) / 2);
-    height: var(--blai-border-2);
-    border-radius: var(--blai-border-2);
-    background: var(--accent-ink);
-    pointer-events: none;
-    transform: translateX(calc(var(--blai-segment-index, 0) * (100% + var(--blai-space-4))));
-    transition: transform var(--blai-duration-slow) var(--blai-ease-out);
-}
-
 #blai-subrule-edit-modal .blai-subrule-rewrite-option {
     display: inline-flex;
     align-items: center;
@@ -411,7 +395,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #blai-subrule-edit-modal .blai-subrule-rewrite-segment::after,
     #blai-subrule-edit-modal .blai-subrule-rewrite-option {
         transition: none;
     }

@@ -74,11 +74,11 @@ async function main() {
                 groupTitle: document.getElementById('blai-edit-modal-title').textContent.trim(),
                 groupText, subText, homeText,
                 saveLabel: document.getElementById('blai-edit-save').textContent.trim(),
-                recognizeLabel: document.getElementById('blai-modal-sub-regex-recognize').textContent.trim(),
-            };
-        })()`);
+            recognizeLabel: document.getElementById('blai-modal-sub-regex-recognize').textContent.trim(),
+        };
+    })()`);
         check('规则分组弹窗标题与按钮已统一',
-            ruleCopy.groupTitle.includes('新增规则分组') && ruleCopy.saveLabel === '保存规则分组',
+            ruleCopy.groupTitle.includes('新增规则分组') && ruleCopy.saveLabel === '保存分组',
             `${ruleCopy.groupTitle} / ${ruleCopy.saveLabel}`);
         check('规则相关界面不再出现合集/子规则/映射规则',
             !/合集|子规则|映射规则/.test(ruleCopy.groupText + ruleCopy.subText + ruleCopy.homeText),
@@ -87,7 +87,7 @@ async function main() {
             ruleCopy.subText.includes('备注（可选）')
             && ruleCopy.subText.includes('语法高亮')
             && ruleCopy.subText.includes('改写要求（可选）')
-            && ruleCopy.recognizeLabel === '识别为替换项',
+            && ruleCopy.recognizeLabel === '识别替换',
             ruleCopy.recognizeLabel);
 
         await evaluate(send, `(async () => {
@@ -101,26 +101,48 @@ async function main() {
         const seeded = await evaluate(send, SEED_PREVIEW);
         check('预览样例已写入冻结运行', seeded === 2, `affected=${seeded}`);
         await evaluate(send, `(() => { document.getElementById('blai-deep-clean-preview')?.click(); return true; })()`);
-        await waitFor(send, `!!document.querySelector('.blai-deep-clean-preview-row')`, '预览列表未出现', 30, 300);
+        await waitFor(send, `!!document.querySelector('[data-deep-clean-preview-list-toggle]')`, '预览列表开关未出现', 30, 300);
         await waitFor(send, `!!document.querySelector('.blai-deep-clean-preview .blai-diff-full-text')`, '程序差异预览未出现', 30, 300);
+        const collapsed = await evaluate(send, `!document.querySelector('.blai-deep-clean-preview-list')`);
+        check('条目列表默认收起', collapsed, String(collapsed));
+        await evaluate(send, `(() => { document.querySelector('[data-deep-clean-preview-list-toggle]')?.click(); return true; })()`);
+        await waitFor(send, `!!document.querySelector('.blai-deep-clean-preview-row')`, '预览列表未展开', 30, 300);
         const previewUi = await evaluate(send, `(() => {
             const root = document.querySelector('.blai-deep-clean-preview');
+            const list = root.querySelector('.blai-deep-clean-preview-list');
             return {
                 filters: Array.from(root.querySelectorAll('[data-deep-clean-preview-filter]')).map(b => b.textContent.trim()),
                 rows: root.querySelectorAll('[data-deep-clean-preview-item]').length,
                 step: root.querySelector('.blai-deep-clean-preview-step')?.textContent || '',
-                mode: root.querySelector('[data-deep-clean-preview-mode="program"]')?.getAttribute('aria-pressed'),
+                includeLabel: root.querySelector('.blai-deep-clean-preview-include')?.textContent.trim() || '',
+                redundantControls: root.querySelectorAll('[data-deep-clean-preview-mode], [data-deep-clean-preview-view]').length,
+                entryTitle: root.querySelector('.blai-deep-clean-preview-entry-bar h3')?.textContent.trim() || '',
                 diff: !!root.querySelector('.blai-diff-full-text'),
                 runLabel: root.querySelector('[data-deep-clean-preview-run]')?.textContent || '',
+                header: document.getElementById('blai-deep-clean-title')?.textContent || '',
+                rowTexts: Array.from(root.querySelectorAll('.blai-deep-clean-preview-row-name')).map(e => e.textContent.trim()),
+                listOverflowX: list ? getComputedStyle(list).overflowX : '',
+                listOverflowY: list ? getComputedStyle(list).overflowY : '',
+                listWidth: list ? list.getBoundingClientRect().width : 0,
             };
         })()`);
-        check('预览页提供四种筛选', previewUi.filters.length === 4, previewUi.filters.join(' / '));
-        check('程序预览逐条渲染差异', previewUi.rows === 2 && previewUi.step.includes('1 / 2') && previewUi.diff,
+        check('预览页提供五种筛选', previewUi.filters.length === 5
+            && previewUi.filters.every((text, index) => text.startsWith(['全部', '程序', 'AI', '勾选', '排除'][index])),
+        previewUi.filters.join(' / '));
+        check('角色卡名只在头部出现、条目不带前缀', previewUi.header.includes('demo')
+            && previewUi.rowTexts.every(text => !text.includes('demo')), `${previewUi.header} / ${previewUi.rowTexts.join('|')}`);
+        check('条目列表只纵向滚动、不横向滑动', previewUi.listOverflowX === 'hidden'
+            && previewUi.listOverflowY === 'auto' && previewUi.listWidth > 0,
+        `${previewUi.listOverflowX}/${previewUi.listOverflowY}/${previewUi.listWidth}`);
+        check('程序预览逐条渲染差异', previewUi.rows === 2 && previewUi.step.includes('1/2') && previewUi.diff,
             JSON.stringify(previewUi));
-        check('默认进入程序改写预览', previewUi.mode === 'true' && previewUi.runLabel.includes('2'), previewUi.runLabel);
+        check('纳入改写文案与冗余控件已清理', previewUi.includeLabel === '纳入改写' && previewUi.redundantControls === 0,
+            `${previewUi.includeLabel} / redundant=${previewUi.redundantControls}`);
+        check('内容区标题带条目前缀', previewUi.entryTitle.startsWith('条目·'), previewUi.entryTitle);
 
         await evaluate(send, `(() => {
             document.querySelector('[data-deep-clean-preview-filter="program"]')?.click();
+            document.querySelector('[data-deep-clean-preview-list-toggle]')?.click();
             return true;
         })()`);
         const programFilter = await evaluate(send, `document.querySelectorAll('[data-deep-clean-preview-item]').length`);
@@ -131,7 +153,9 @@ async function main() {
             rows[1]?.click();
             return true;
         })()`);
-        await waitFor(send, `document.querySelector('.blai-deep-clean-preview-step')?.textContent.includes('2 / 2')`,
+        const afterPick = await evaluate(send, `!document.querySelector('.blai-deep-clean-preview-list')`);
+        check('点条目即选中并收起列表', afterPick, String(afterPick));
+        await waitFor(send, `document.querySelector('.blai-deep-clean-preview-step')?.textContent.includes('2/2')`,
             '步骤导航未切到第二项', 20, 200);
         await evaluate(send, `(() => {
             const input = document.querySelector('[data-deep-clean-preview-include]');
@@ -140,15 +164,19 @@ async function main() {
         })()`);
         const afterSkip = await evaluate(send, `(() => ({
             run: document.querySelector('[data-deep-clean-preview-run]')?.textContent || '',
-            skipped: document.querySelector('[data-deep-clean-preview-filter="skipped"] span')?.textContent || '',
+            skipped: document.querySelector('[data-deep-clean-preview-filter="excluded"] span')?.textContent || '',
             step: document.querySelector('.blai-deep-clean-preview-step')?.textContent || '',
         }))()`);
-        check('步骤导航与取消条目即时更新', afterSkip.step.includes('2 / 2') && afterSkip.skipped === '1' && afterSkip.run.includes('1'),
+        check('步骤导航与取消条目即时更新', afterSkip.step.includes('2/2') && afterSkip.skipped === '1' && afterSkip.run.includes('1'),
             JSON.stringify(afterSkip));
 
-        await evaluate(send, `(() => { document.querySelector('[data-deep-clean-preview-filter="skipped"]')?.click(); return true; })()`);
+        await evaluate(send, `(() => {
+            document.querySelector('[data-deep-clean-preview-filter="excluded"]')?.click();
+            document.querySelector('[data-deep-clean-preview-list-toggle]')?.click();
+            return true;
+        })()`);
         const skippedRows = await evaluate(send, `document.querySelectorAll('[data-deep-clean-preview-item]').length`);
-        check('已取消筛选只显示跳过的条目', skippedRows === 1, `rows=${skippedRows}`);
+        check('排除筛选只显示排除的条目', skippedRows === 1, `rows=${skippedRows}`);
 
         const shot = await capture(send, 'verify-copy-preview.png', {
             expectOpen: ['.blai-deep-clean-preview'],
@@ -191,15 +219,31 @@ async function main() {
             '手机深度清理工作区未打开', 30, 300);
         await evaluate(send, SEED_PREVIEW);
         await evaluate(send, `(() => { document.getElementById('blai-deep-clean-preview')?.click(); return true; })()`);
-        await waitFor(send, `!!document.querySelector('.blai-deep-clean-preview-row')`, '手机预览列表未出现', 30, 300);
+        await waitFor(send, `!!document.querySelector('[data-deep-clean-preview-list-toggle]')`, '手机预览列表开关未出现', 30, 300);
+        await evaluate(send, `(() => { document.querySelector('[data-deep-clean-preview-list-toggle]')?.click(); return true; })()`);
+        await waitFor(send, `!!document.querySelector('.blai-deep-clean-preview-row')`, '手机预览列表未展开', 30, 300);
         const mobile = await evaluate(send, `(() => {
             const row = document.querySelector('.blai-deep-clean-preview-row');
             const list = document.querySelector('.blai-deep-clean-preview-list');
+            const preview = document.querySelector('.blai-deep-clean-preview');
             const r = row.getBoundingClientRect();
-            return { left: r.left, right: r.right, width: innerWidth, listHeight: list.getBoundingClientRect().height };
+            const lr = list.getBoundingClientRect();
+            return {
+                left: r.left, right: r.right, width: innerWidth,
+                listLeft: lr.left, listRight: lr.right, listHeight: lr.height,
+                previewHeight: preview.getBoundingClientRect().height,
+                overflowX: getComputedStyle(list).overflowX,
+            };
         })()`);
-        check('手机端预览条目不越界', mobile.left >= 0 && mobile.right <= mobile.width && mobile.listHeight <= 160,
-            JSON.stringify(mobile));
+        // 展开后列表/正文上下四六分：列表约占内容区 40%，不再用旧的 260px 硬上限。
+        // 窄屏 grid 分配会有亚像素舍入（实测 390.26 / 390），留 1px 容差；
+        // 列表自身 overflow-x:hidden，不会出现真实横向滚动。
+        check('手机端预览列表纵向、四六分且不越界',
+            mobile.left >= -1 && mobile.right <= mobile.width + 1
+            && mobile.listLeft >= -1 && mobile.listRight <= mobile.width + 1
+            && mobile.listHeight > 0 && mobile.listHeight <= mobile.previewHeight * 0.45
+            && mobile.overflowX === 'hidden',
+        JSON.stringify(mobile));
         console.log('无浏览器报错');
     } finally {
         ws.close();

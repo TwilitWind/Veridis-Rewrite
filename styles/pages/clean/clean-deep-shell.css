@@ -110,6 +110,7 @@
     font-size: var(--blai-font-15);
     font-weight: var(--blai-weight-bold);
     line-height: 1.25;
+    white-space: nowrap;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-header #blai-deep-clean-description {
@@ -138,6 +139,27 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-header-stop:hover {
+    color: var(--text-main);
+}
+
+/* 右上角统一叉号：纯图标按钮，和导航箭头用同一套图标字号与方形触点。 */
+#blai-deep-clean-workspace .blai-deep-clean-header-icon {
+    width: var(--blai-size-32);
+    min-height: var(--blai-size-32);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--blai-radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: var(--blai-fs-control-icon);
+    box-shadow: none;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-header-icon:hover {
     color: var(--text-main);
 }
 

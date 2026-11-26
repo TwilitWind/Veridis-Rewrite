@@ -137,7 +137,7 @@ try {
             r.weights.ins === '400' && r.weights.del === '400' && r.weights.stat === '400', JSON.stringify(r.weights));
         check(failures, `${sc.name}: 字号档位与文案同步`,
             ['small', 'medium', 'large'].includes(r.fontSize.value)
-            && r.fontSize.label === `正文字号：${{ small: '小', medium: '中', large: '大' }[r.fontSize.value]}`,
+            && r.fontSize.label === `字号${{ small: '小', medium: '中', large: '大' }[r.fontSize.value]}`,
             JSON.stringify(r.fontSize));
 
         if (!sc.mobile) {
@@ -165,11 +165,11 @@ try {
             await sleep(150);
             await forceSaveSettings(send);
             const before = await evaluate(send, `({ v: document.getElementById('blai-diff-modal')?.dataset.diffFontSize || '', label: document.getElementById('blai-diff-font-size-text')?.textContent || '' })`);
-            check(failures, '桌面: 字号写回设置对象', before.v === 'large' && before.label === '正文字号：大', JSON.stringify(before));
+            check(failures, '桌面: 字号写回设置对象', before.v === 'large' && before.label === '字号大', JSON.stringify(before));
             await reloadAndWait(send, `!!document.getElementById('blai-diff-font-size-text')`, '重载检查持久化', 120);
             await waitFor(send, `(() => { const l = document.getElementById('load-spinner'); return !l || l.offsetParent === null; })()`, '重载后加载结束', 120, 300);
             const after = await evaluate(send, `({ v: document.getElementById('blai-diff-modal')?.dataset.diffFontSize || '', label: document.getElementById('blai-diff-font-size-text')?.textContent || '' })`);
-            check(failures, '桌面: 重载后字号仍保持', after.v === 'large' && after.label === '正文字号：大', JSON.stringify(after));
+            check(failures, '桌面: 重载后字号仍保持', after.v === 'large' && after.label === '字号大', JSON.stringify(after));
             const backSteps = (order.indexOf(fontSizeInitial) - order.indexOf('large') + 3) % 3;
             for (let i = 0; i < backSteps; i++) {
                 await evaluate(send, `(() => { document.getElementById('blai-diff-font-size-toggle')?.click(); return true; })()`);

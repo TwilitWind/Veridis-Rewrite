@@ -274,10 +274,10 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-result {
-    width: min(var(--blai-size-980), 100%);
+    width: 100%;
     height: 100%;
-    margin: 0 auto;
-    padding: clamp(var(--blai-space-20), 4vw, var(--blai-space-40));
+    margin: 0;
+    padding: clamp(var(--blai-space-12), 3vw, var(--blai-space-24));
     overflow-y: auto;
 }
 
@@ -296,11 +296,11 @@
     font-size: var(--blai-font-11);
 }
 
-/* 五项指标固定三列 → 3+2 两行，不再五列挤成细条，也不出现 4+1 的孤零零末项。 */
+/* 扫描统计三列并排：标签在上、数值在下，靠留白分组，不用逐条分隔线。 */
 #blai-deep-clean-workspace .blai-deep-clean-scan-metrics {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--blai-space-10) var(--blai-space-14);
+    gap: var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scan-note {
@@ -310,16 +310,18 @@
     line-height: 1.5;
 }
 
-/* 分类只有两项，改成紧贴内容的 chip，不再占满五列后右侧空三大格。 */
+/* 分类只有两项，标题独占一行、两项紧贴内容同一行写完，不铺满整行。 */
 #blai-deep-clean-workspace .blai-deep-clean-scan-categories {
-    margin-top: var(--blai-space-18);
+    margin-top: var(--blai-space-12);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--blai-space-8);
+    align-items: center;
+    gap: var(--blai-space-6);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scan-categories h3 {
     flex: 0 0 100%;
+    margin: 0;
     font-size: var(--blai-fs-note);
     font-weight: var(--blai-weight-bold);
     color: var(--text-secondary);
@@ -327,13 +329,23 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-scan-metrics > div {
     min-width: 0;
-    padding: var(--blai-space-8) 0;
-    display: grid;
-    gap: var(--blai-space-6);
+    min-height: var(--blai-size-56);
+    padding: var(--blai-space-8) var(--blai-space-10);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--blai-space-4);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-sm);
+    background: var(--bg-surface);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-scan-categories > div {
     min-width: 0;
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
     padding: var(--blai-space-6) var(--blai-space-10);
     display: inline-flex;
     align-items: baseline;
@@ -349,7 +361,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-scan-metrics strong {
     color: var(--text-main);
-    font-size: var(--blai-fs-hero);
+    font-size: var(--blai-fs-sub);
     font-variant-numeric: tabular-nums;
 }
 
@@ -366,15 +378,28 @@
     gap: var(--blai-space-9);
 }
 
+/* 扫描结果底栏靠右单行；状态页保留居中成组。 */
+#blai-deep-clean-workspace .blai-deep-clean-result .blai-deep-clean-actions {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-state .blai-deep-clean-actions {
+    justify-content: center;
+}
+
+/* 状态页（含取消清理）不再居中：整块贴顶、内容左对齐，按从上往下阅读。 */
 #blai-deep-clean-workspace .blai-deep-clean-state {
-    width: min(var(--blai-size-540), calc(100% - var(--blai-size-40)));
+    width: 100%;
     height: 100%;
-    margin: 0 auto;
+    margin: 0;
+    padding: clamp(var(--blai-space-12), 3vw, var(--blai-space-24));
+    overflow-y: auto;
     display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: var(--blai-space-11);
-    text-align: center;
+    place-content: start start;
+    justify-items: start;
+    gap: var(--blai-space-8);
+    text-align: left;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-state > i {
@@ -394,8 +419,10 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-complete-state {
-    width: min(var(--blai-size-720), calc(100% - var(--blai-size-40)));
-    padding: var(--blai-space-30) var(--blai-space-24);
+    width: 100%;
+    margin: 0;
+    padding: var(--blai-space-16) var(--blai-space-18);
+    place-content: start start;
     overflow-y: auto;
 }
 

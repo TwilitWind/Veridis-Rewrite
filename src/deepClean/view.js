@@ -2,6 +2,6 @@
 
 // 聚合出口：实现已按依赖拓扑拆分到同目录的分块文件，对外接口保持不变。
 export { openDeepCleanInitialSelection, closeDeepCleanInitialSelection, showInitialSelectionError, renderDeepCleanScanProgress, renderDeepCleanScanResult } from './view/view-00-selection.js';
-export { renderDeepCleanBatchProgress, renderDeepCleanLookaheadProgress, renderDeepCleanStopped, renderDeepCleanComplete } from './view/view-01-progress.js';
+export { renderDeepCleanBatchProgress, renderDeepCleanLookaheadProgress, renderDeepCleanComplete } from './view/view-01-progress.js';
 export { renderDeepCleanReview, renderDeepCleanApplyProgress, renderDeepCleanInitialSelection } from './view/view-02-apply.js';
 export { renderDeepCleanPreview } from './view/view-03-preview.js';

@@ -458,8 +458,8 @@
 
 #blai-rule-edit-modal .blai-modal-actions > button,
 #blai-subrule-edit-modal .blai-subrule-footer > button {
-    height: auto !important;
-    min-height: var(--blai-size-36) !important;
+    height: var(--blai-size-32) !important;
+    min-height: var(--blai-size-32) !important;
     padding: var(--blai-modal-btn-pad) !important;
 }
 

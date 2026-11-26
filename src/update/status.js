@@ -219,7 +219,13 @@ async function updateAndReload() {
         globalThis.location.reload();
     } catch (error) {
         logger.error('[Veridis Update] Extension update failed.', error);
-        $('#blai-tools-version-error').text(error instanceof Error ? error.message : String(error)).prop('hidden', false);
+        const message = error instanceof Error ? error.message : String(error);
+        // 本地开发副本与装机副本共用目录，源码同步会让该 Git 工作区变脏；
+        // SillyTavern 切分支会直接 500。此时不要把裸 HTTP 错误甩给用户。
+        const friendlyMessage = /HTTP 500|checkout|local changes/i.test(message)
+            ? '当前副本有未提交的改动，无法在线切换分支更新。请保留本地改动，不要使用「更新并刷新」。'
+            : message;
+        $('#blai-tools-version-error').text(friendlyMessage).prop('hidden', false);
         $button.prop('disabled', false).text('更新并刷新');
         updateInFlight = false;
     }

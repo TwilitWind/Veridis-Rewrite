@@ -1,97 +1,176 @@
-/* 深度清理：预览筛选、逐条导航与条目取舍。 */
+/* 深度清理：预览筛选、纵向条目导航与当前条目差异。桌面与窄容器共用同一套单列布局。 */
 
 #blai-deep-clean-workspace .blai-deep-clean-preview {
     height: 100%;
     min-height: 0;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     overflow: hidden;
 }
 
+/* 条目列表展开后上下四六分：列表占内容区 40%，正文占 60%，各自独立滚动。
+   列表不再挤进顶栏占高，正文区始终有剩余高度，不会出现列表很长却空白不显示。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open {
+    grid-template-rows: auto minmax(0, 2fr) minmax(0, 3fr) auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-header {
+    grid-row: 1;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-list {
+    grid-row: 2;
+    max-height: none;
+    margin-top: 0;
+    border-top: 0;
+    border-bottom: var(--blai-border-1) solid var(--blai-border-soft);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-detail {
+    grid-row: 3;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-actions {
+    grid-row: 4;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-preview-header {
-    padding: var(--blai-space-12) var(--blai-space-18) var(--blai-space-8);
+    padding: var(--blai-space-3) var(--blai-space-12);
     border-bottom: var(--blai-border-1) solid var(--border-color);
+}
+
+/* 顶栏严格两行：筛选行 + 条目标题行。两行左右边缘都对齐同一内边距。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar,
+#blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    min-width: 0;
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
+    margin-top: var(--blai-space-2);
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing,
+#blai-deep-clean-workspace .blai-deep-clean-preview-entry-trailing {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-2);
+    flex: 0 0 auto;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-filters {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--blai-space-6);
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--blai-space-2) var(--blai-space-6);
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters::-webkit-scrollbar {
+    display: none;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters button {
+/* 筛选、导航、视图都用轻量文字控件：选中只留底部强调线，不堆边框和底色。 */
+#blai-deep-clean-workspace :is(.blai-deep-clean-preview-filters, .blai-deep-clean-preview-bar, .blai-deep-clean-preview-tabs, .blai-deep-clean-preview-views) button {
     min-height: var(--blai-size-28);
-    padding: var(--blai-btn-pad-compact);
-    display: inline-flex;
-    align-items: center;
-    gap: var(--blai-space-6);
-    border: var(--blai-border-1) solid var(--border-color);
-    border-radius: var(--blai-radius-5);
-    background: var(--bg-surface);
+    padding: var(--blai-space-2) var(--blai-space-6);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: var(--blai-font-10);
-    font-weight: var(--blai-weight-bold);
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-medium);
     box-shadow: none;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters button[aria-pressed="true"] {
-    border-color: var(--accent-color);
-    background: color-mix(in srgb, var(--accent-color) 12%, var(--bg-surface));
+/* 选中态只靠颜色，不再叠一条指示线去压顶栏分隔线。 */
+#blai-deep-clean-workspace :is(.blai-deep-clean-preview-filters, .blai-deep-clean-preview-tabs, .blai-deep-clean-preview-views) button[aria-pressed="true"] {
     color: var(--accent-ink);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-filters button span {
-    padding: 0 var(--blai-space-4);
-    border-radius: var(--blai-radius-3);
-    background: color-mix(in srgb, var(--text-secondary) 14%, transparent);
+    margin-left: var(--blai-space-6);
+    color: inherit;
+    font-size: .9em;
     font-variant-numeric: tabular-nums;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-note {
-    margin: var(--blai-space-6) 0 0;
+#blai-deep-clean-workspace .blai-deep-clean-preview-step {
     color: var(--text-secondary);
-    font-size: var(--blai-font-9);
+    font-size: var(--blai-fs-note);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-main {
-    min-height: 0;
-    display: grid;
-    grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
-    overflow: hidden;
+#blai-deep-clean-workspace .blai-deep-clean-preview-include {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+    color: var(--text-main);
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-medium);
 }
 
+/* 上一条 / 下一条只留字体图标：按钮盒保持方形，屏幕阅读器用 aria-label。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar [data-deep-clean-preview-nav] {
+    width: var(--blai-size-28);
+    padding: 0;
+    justify-content: center;
+    font-size: var(--blai-fs-control-icon);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-list-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+}
+
+#blai-deep-clean-workspace :is(.blai-deep-clean-preview-tabs, .blai-deep-clean-preview-views) {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--blai-space-2);
+}
+
+/* 条目列表默认收起；展开后只占内容区一部分高度，永远纵向滚动。 */
 #blai-deep-clean-workspace .blai-deep-clean-preview-list {
+    min-width: 0;
     min-height: 0;
-    padding: var(--blai-space-8);
+    max-height: min(40%, 260px);
+    margin-top: var(--blai-space-6);
+    overflow-x: hidden;
     overflow-y: auto;
-    border-right: var(--blai-border-1) solid var(--border-color);
+    border-top: var(--blai-border-1) solid var(--blai-border-soft);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-row {
     width: 100%;
-    min-height: 0;
-    padding: var(--blai-space-8);
+    min-height: var(--blai-size-28);
+    padding: var(--blai-space-3) var(--blai-space-6);
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: var(--blai-space-24) minmax(0, 1fr) var(--blai-space-12);
     align-items: center;
     gap: var(--blai-space-6);
-    border: var(--blai-border-1) solid transparent;
-    border-radius: var(--blai-radius-4);
-    background: var(--bg-surface);
+    border: 0;
+    border-bottom: var(--blai-border-1) solid var(--blai-border-soft);
+    background: transparent;
     color: var(--text-main);
     font: inherit;
+    font-size: var(--blai-font-9);
     text-align: left;
     box-shadow: none;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-row:hover {
-    border-color: var(--border-color);
+    background: color-mix(in srgb, var(--accent-color) 5%, transparent);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-row.is-active {
-    border-color: var(--accent-color);
-    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-surface));
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+    box-shadow: inset var(--blai-border-2) 0 0 var(--accent-color);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-row.is-skipped {
@@ -100,152 +179,201 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-row-index {
     color: var(--text-secondary);
-    font-size: var(--blai-font-9);
     font-variant-numeric: tabular-nums;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-row-copy {
+#blai-deep-clean-workspace .blai-deep-clean-preview-row-name {
     min-width: 0;
-    display: grid;
-    gap: var(--blai-space-2);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-row-copy strong {
-    font-size: var(--blai-font-9);
-    font-weight: var(--blai-weight-bold);
-    overflow-wrap: anywhere;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-row-copy small {
-    color: var(--text-secondary);
-    font-size: var(--blai-font-8);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-list-gap {
-    margin: var(--blai-space-6) 0;
-    color: var(--text-secondary);
-    font-size: var(--blai-font-8);
-    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-detail {
     min-width: 0;
     min-height: 0;
-    display: grid;
-    grid-template-rows: auto auto minmax(0, 1fr);
     overflow: hidden;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-head {
-    padding: var(--blai-space-12) var(--blai-space-18);
+#blai-deep-clean-workspace .blai-deep-clean-preview-document {
+    height: 100%;
+    min-height: 0;
+    padding: var(--blai-space-8) var(--blai-space-12);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-entry {
+    margin-bottom: var(--blai-space-6);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--blai-space-12);
-    border-bottom: var(--blai-border-1) solid var(--border-color);
+    flex-wrap: wrap;
+    gap: var(--blai-space-6);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-identity {
+#blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar h3 {
+    margin: 0;
     min-width: 0;
-    display: grid;
-    gap: var(--blai-space-4);
+    flex: 0 1 auto;
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-step {
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-2);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-nav button {
+    width: var(--blai-size-24);
+    min-height: var(--blai-size-24);
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--blai-radius-sm);
+    background: transparent;
     color: var(--text-secondary);
-    font-size: var(--blai-font-9);
-    font-variant-numeric: tabular-nums;
+    font-size: var(--blai-fs-control-icon);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-identity h3 {
-    font-size: var(--blai-font-12);
-    font-weight: var(--blai-weight-bold);
-    overflow-wrap: anywhere;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-badge {
-    width: max-content;
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-counter {
     padding: var(--blai-space-2) var(--blai-space-6);
     border-radius: var(--blai-radius-3);
     background: color-mix(in srgb, var(--accent-color) 12%, transparent);
     color: var(--accent-ink);
-    font-size: var(--blai-font-8);
-    font-weight: var(--blai-weight-bold);
+    font-size: var(--blai-fs-note);
+    font-variant-numeric: tabular-nums;
+}
+/* 当前条目有撤销改写项时，计数徽章补一枚来源色点，不新增控件、不抬高顶栏。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-counter.has-reverted {
+    color: var(--blai-diff-source-manual-color);
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-reverted-dot {
+    margin-left: var(--blai-space-3);
+    font-size: var(--blai-fs-note);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview-include {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--blai-space-6);
-    color: var(--text-main);
-    font-size: var(--blai-font-9);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-toolbar {
-    padding: var(--blai-space-8) var(--blai-space-18);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--blai-space-8);
-    border-bottom: var(--blai-border-1) solid var(--border-color);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-tabs,
-#blai-deep-clean-workspace .blai-deep-clean-preview-views,
-#blai-deep-clean-workspace .blai-deep-clean-preview-tools {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: var(--blai-space-4);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-tabs button,
-#blai-deep-clean-workspace .blai-deep-clean-preview-views button {
-    min-height: var(--blai-size-24);
-    padding: var(--blai-btn-pad-compact);
-    border: var(--blai-border-1) solid var(--border-color);
-    background: var(--bg-surface);
-    color: var(--text-secondary);
-    font: inherit;
-    font-size: var(--blai-font-9);
-    box-shadow: none;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-tabs button[aria-pressed="true"],
-#blai-deep-clean-workspace .blai-deep-clean-preview-views button[aria-pressed="true"] {
-    border-color: var(--accent-color);
+#blai-deep-clean-workspace .blai-deep-clean-preview-badge {
+    padding: var(--blai-space-1) var(--blai-space-4);
+    border-radius: var(--blai-radius-3);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
     color: var(--accent-ink);
-    background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-surface));
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-document {
-    min-height: 0;
-    padding: var(--blai-space-14) var(--blai-space-18);
-    overflow-y: auto;
+    font-size: var(--blai-fs-note);
+    font-weight: var(--blai-weight-normal);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-projection {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     color: var(--text-main);
-    font-size: var(--blai-font-10);
+    font-size: var(--blai-fs-deep-preview-body);
     line-height: 1.7;
 }
 
+/* 预览差异与「透视净化」共用同一组阶段色：删除线、来源色底纹、正文常规字重。 */
+/* 预览正文是连续长文：改写项与原文沿正文流式排列，不套用透视弹窗 .blai-diff-full-text 的
+   flex column（那是按段落分块的），否则每个 del/ins 会被拉成独占一行。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-diff.blai-diff-full-text {
+    display: block;
+    padding: var(--blai-space-8) var(--blai-space-10);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: var(--blai-fs-deep-preview-body);
+    line-height: 1.7;
+}
+
+/* 改写项：左侧复选框默认勾选；撤销后只显示原文、加来源色点，不铺底。
+   复选框按首行文字中线对齐：vertical-align:middle 的基线对齐点比字形中线低约
+   0.125em，用 em 级微调抵消，随字号缩放，多行也不漂。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-change {
+    display: inline;
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-check {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    height: 1em;
+    transform: translateY(-0.125em);
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-change-body {
+    display: inline;
+}
+/* 复选框几何与配色走全局 --blai-checkbox-* token 与 .blai-check-native，不在这里写字面量。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-change.is-reverted .blai-deep-clean-preview-change-body {
+    opacity: .75;
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-change.is-reverted::before {
+    content: '';
+    display: inline-block;
+    width: var(--blai-size-6);
+    height: var(--blai-size-6);
+    border-radius: var(--blai-radius-full);
+    background: var(--blai-diff-source-manual-color);
+    transform: translateY(-2px);
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-equal {
+    color: var(--text-main);
+}
+
+/* 底栏左下角「已撤销」入口：点击打开独立弹窗，不再用正文浮层。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-actions-spacer {
+    flex: 1 1 auto;
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-reverted-open {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-8);
+    border: var(--blai-border-1) solid var(--blai-border-soft);
+    border-radius: var(--blai-radius-sm);
+    background: transparent;
+    color: var(--blai-diff-source-manual-color);
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-medium);
+    cursor: pointer;
+}
+#blai-deep-clean-workspace .blai-deep-clean-preview-reverted-open:hover {
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-diff :is(del, ins) {
+    color: var(--blai-diff-stage-color, var(--text-main));
+    font-weight: var(--blai-weight-normal);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-diff del {
+    background: transparent;
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-diff ins {
+    background: var(--blai-diff-stage-background, transparent);
+    border-radius: var(--blai-radius-4);
+    text-decoration: none;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-preview-loading {
-    height: 100%;
+    min-height: var(--blai-size-80);
     display: grid;
     place-content: center;
     justify-items: center;
-    gap: var(--blai-space-8);
+    gap: var(--blai-space-6);
     color: var(--text-secondary);
     font-size: var(--blai-font-9);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-actions {
-    padding: var(--blai-space-10) var(--blai-space-18);
+    padding: var(--blai-space-12) var(--blai-space-16);
     display: flex;
+    flex-wrap: nowrap;
     justify-content: flex-end;
     gap: var(--blai-space-8);
     border-top: var(--blai-border-1) solid var(--border-color);
@@ -253,28 +381,138 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-preview-empty {
     display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: var(--blai-space-12);
+    place-content: start start;
+    justify-items: start;
+    gap: var(--blai-space-8);
+    padding: var(--blai-space-18);
 }
 
-@media (max-width: 700px) {
-    #blai-deep-clean-workspace .blai-deep-clean-preview-main {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto minmax(0, 1fr);
+@container (max-width: 700px) {
+    #blai-deep-clean-workspace .blai-deep-clean-preview-header {
+        padding: var(--blai-space-4) var(--blai-space-8);
     }
 
-    #blai-deep-clean-workspace .blai-deep-clean-preview-list {
-        max-height: 148px;
-        border-right: 0;
-        border-bottom: var(--blai-border-1) solid var(--border-color);
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar,
+    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
+        gap: var(--blai-space-2);
     }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-head {
-        align-items: flex-start;
+    #blai-deep-clean-workspace .blai-deep-clean-preview-document {
+        padding: var(--blai-space-6) var(--blai-space-8);
     }
 
     #blai-deep-clean-workspace .blai-deep-clean-preview-actions {
-        flex-wrap: wrap;
+        padding: var(--blai-space-10) var(--blai-space-12);
+        gap: var(--blai-space-4);
     }
+}
+
+/* 「已撤销改写」独立弹窗：挂在 body 上，不依赖工作区作用域。
+   列表区吃掉剩余高度并自行滚动，条目多也不会挤在正文浮层里放不下。 */
+.blai-deep-clean-reverted-modal .blai-deep-clean-reverted-card {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--blai-size-560) !important;
+}
+.blai-deep-clean-reverted-head h3 {
+    margin: 0;
+}
+.blai-deep-clean-reverted-head p {
+    margin: var(--blai-space-4) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--blai-fs-note);
+}
+.blai-deep-clean-reverted-list {
+    min-height: 0;
+    margin-top: var(--blai-space-12);
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-8);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--blai-scrollbar-thumb) var(--blai-scrollbar-track);
+}
+.blai-deep-clean-reverted-row {
+    min-width: 0;
+    padding: var(--blai-space-8) var(--blai-space-10);
+    border: var(--blai-border-1) solid var(--blai-border-soft);
+    border-radius: var(--blai-radius-sm);
+}
+.blai-deep-clean-reverted-row-head {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+}
+.blai-deep-clean-reverted-index {
+    flex: 0 0 auto;
+    width: var(--blai-size-20);
+    height: var(--blai-size-20);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--blai-radius-full);
+    background: color-mix(in srgb, var(--blai-diff-source-manual-color) 16%, transparent);
+    color: var(--blai-diff-source-manual-color);
+    font-size: var(--blai-fs-note);
+    font-variant-numeric: tabular-nums;
+}
+.blai-deep-clean-reverted-source {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--accent-ink);
+    font-size: var(--blai-fs-control);
+}
+.blai-deep-clean-reverted-locate {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-2);
+    min-height: var(--blai-size-28);
+    padding: 0 var(--blai-space-6);
+    border: 0;
+    border-radius: var(--blai-radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--blai-fs-note);
+    cursor: pointer;
+}
+.blai-deep-clean-reverted-locate:hover {
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+    color: var(--accent-ink);
+}
+.blai-deep-clean-reverted-texts {
+    margin-top: var(--blai-space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--blai-space-4);
+}
+.blai-deep-clean-reverted-text {
+    display: flex;
+    align-items: baseline;
+    gap: var(--blai-space-6);
+    font-size: var(--blai-fs-deep-preview-body);
+    line-height: 1.6;
+}
+.blai-deep-clean-reverted-label {
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    font-size: var(--blai-fs-note);
+}
+.blai-deep-clean-reverted-value {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+.blai-deep-clean-reverted-value.is-new {
+    color: var(--blai-diff-source-ai-color);
+    text-decoration: line-through;
+}
+.blai-deep-clean-reverted-value.is-old {
+    color: var(--text-main);
 }

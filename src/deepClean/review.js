@@ -171,14 +171,21 @@ export async function createDeepCleanReviewSession(processedRun, itemIndexes = n
         oldText: getContentItem(processedRun, itemIndex).originalText,
         newText: resolveFinalProposedText(processedRun, itemIndex),
     })), { signal });
+    // 预览页撤销的改写项：对应块切回原文，正式写入时 resolveDeepCleanReviewedText 自然保留原文。
+    const reverted = processedRun?.revertedBlocks instanceof Map ? processedRun.revertedBlocks : null;
     return {
         processedRun,
         reviewItemIndexes,
         reviewItems: reviewItemIndexes.map((itemIndex, position) => {
-            return {
-                itemIndex,
-                blocks: buildDeepCleanReviewBlocks(comparisons[position]),
-            };
+            const blocks = buildDeepCleanReviewBlocks(comparisons[position]);
+            const revertedIndexes = reverted?.get(itemIndex);
+            if (revertedIndexes) {
+                // 键是 blocks 数组下标（与预览页复选框、撤销面板同一口径）。
+                blocks.forEach((block, index) => {
+                    if (block.type === 'diff' && revertedIndexes.has(index)) block.active = 'old';
+                });
+            }
+            return { itemIndex, blocks };
         }),
         currentItemIndex: reviewItemIndexes[0] ?? null,
         viewMode: 'review',

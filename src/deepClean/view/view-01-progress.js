@@ -96,18 +96,6 @@ export function renderDeepCleanLookaheadProgress(progress = null) {
     if (target.length) target.html(deepCleanLookaheadHtml(progress));
 }
 
-export function renderDeepCleanStopped() {
-    setDeepCleanWorkspaceHeader('', '');
-    $('#blai-deep-clean-content').html(`
-        <section class="blai-deep-clean-state blai-deep-clean-stopped-state" aria-label="深度清理已停止">
-            <i class="fas fa-stop-circle" aria-hidden="true"></i>
-            <h3>深度清理 · 已停止</h3>
-            <p>未正式应用的当前审核批次与预处理结果已丢弃；之前成功应用的结果保持不变。</p>
-            <button id="blai-deep-clean-close" type="button">关闭</button>
-        </section>
-    `);
-}
-
 export function renderDeepCleanComplete(summary = {}) {
     const renderMetrics = (metrics, className = '') => `
         <dl class="blai-deep-clean-completion-metrics ${className}">
@@ -226,7 +214,8 @@ export function renderDeepCleanReviewDocument(entry) {
         }
         const selected = operation.active === operation.branch;
         if (operation.isEmpty) {
-            const label = operation.branch === 'old' ? '空原文' : '空净化后文本';
+            const label = operation.branch === 'old' ? '空原文' : '空净化后';
+            const fullLabel = operation.branch === 'old' ? '空原文' : '空净化后文本';
             return `<button
                 class="blai-deep-clean-review-empty-branch is-${operation.branch} ${selected ? 'is-active' : 'is-inactive'}"
                 type="button"
@@ -234,7 +223,8 @@ export function renderDeepCleanReviewDocument(entry) {
                 data-deep-clean-review-block-branch="${operation.branch}"
                 data-deep-clean-review-block-index="${operation.blockIndex}"
                 aria-pressed="${selected}"
-                aria-label="${label}${selected ? '，已选择' : '，点击选择'}"
+                aria-label="${fullLabel}${selected ? '，已选择' : '，点击选择'}"
+                title="${fullLabel}"
             >${label}</button>`;
         }
         const isManualOverride = selected && operation.branch === 'old';

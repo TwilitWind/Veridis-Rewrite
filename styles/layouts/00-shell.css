@@ -625,11 +625,11 @@
 #blai-purifier-popup .page-panel.blai-is-leaving {
     display: grid;
     pointer-events: none;
-    animation: blai-fade-out var(--blai-duration-fast) var(--blai-ease-out) both;
+    animation: blai-fade-out var(--blai-duration-page-out) var(--blai-ease-out) both;
 }
 
 #blai-purifier-popup .page-panel.blai-is-entering {
-    animation: blai-page-enter var(--blai-duration-base) var(--blai-ease-out) var(--blai-duration-fast) both;
+    animation: blai-page-enter var(--blai-duration-page-in) var(--blai-ease-out) var(--blai-duration-page-out) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

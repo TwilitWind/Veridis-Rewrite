@@ -63,6 +63,11 @@ CDP_PORT=9224 NO_NAV=1 \
 | `audit/verify-deep-clean-worldbook.mjs` | 纯 Node：cleanse-inside 下世界书条目仍命中并改写、程序/AI 两链路一致、聊天消息仍受标签约束；含旧行为 0 命中反证，不需浏览器 |
 | `audit/verify-deep-clean-preview.mjs` | 纯 Node：扫描按条目记录命中来源、预览筛选、取消项不进入正式处理并计入「已跳过」、AI 预览缓存仍按「AI 后程序」执行；含 AI 失败反证，不需浏览器 |
 | `audit/verify-copy-preview.mjs` | 9224 端口浏览器回归：规则分组/规则文案、完成页分状态、深度清理预览筛选/逐条导航/取消条目/执行所选计数；桌面 + 手机，截图 `shots/verify-copy-preview.png` |
+| `audit/verify-deep-clean-reentry.mjs` | 9224 端口手机回归：深度清理首次/二次进入都显示选择界面、加载态有关闭按钮、悬停不加深按钮底色、更新失败给中文说明而非裸 HTTP 500 |
+| `audit/verify-deep-clean-back.mjs` | 浏览器回归：真实 `startDeepCleanRun`/`freezeDeepCleanRun` 产出必须带资源清单；预览→返回→再预览/上一步全链路可用、无脚本报错 |
+| `audit/verify-deep-clean-revert.mjs` | 纯 Node：改写项撤销按条目/块索引记账、来源列表带聊天消息信息、撤销块的写入结果保留原文 |
+| `audit/verify-deep-clean-ui-revert.mjs` | 浏览器回归：预览顶栏严格两行且右缘对齐、扫描分布同排 chip、改写项复选框默认全勾选、撤销面板左下角带来源、手机端仍紧凑不溢出 |
+| `audit/verify-deep-clean-diff-flow.mjs` | 浏览器回归：改写 del/ins 随文连续不独占一行、复选框自绘且尺寸走 token、body 浮层滚动条灰色、导航撤销态色点、上一步无箭头、清理按钮文案 |
 | `audit/verify-regex-caret.mjs` | 查找框语法高亮不叠字；显式渲染高亮层后量光标偏差，注入 bold 做反证，截图 `shots/verify-regex-caret.png` |
 | `audit/verify-diff-typography.mjs` | 净化对比排版：顶栏/工具行成组、提示块分区、正文不粗体、字号三档循环与重载保持；双视口，种子消息与设置结束恢复 |
 | `audit/verify-followup.mjs` | 大弹窗直属 body、主题对比色、导览锚点（桌面/手机双视口）、扫描说明；测试前会清掉残留弹窗态，避免命中检测被打到别的弹窗 |

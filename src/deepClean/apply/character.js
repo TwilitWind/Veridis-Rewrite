@@ -71,6 +71,67 @@ function syncCharacterLiveMirror(live, changes, verified) {
     }
 }
 
+/**
+ * 绑定世界书写入后，把同名内嵌条目同步成外部世界书的最新内容。
+ * 只覆盖原本就存在的同名条目，不新增或删除角色卡条目，避免误伤用户数据。
+ */
+export async function syncEmbeddedWorldBookEntries(fetchImpl, context, worldBookKey, externalEntries) {
+    const contextSnapshot = context || getSillyTavernContextSnapshot();
+    const boundCharacters = (Array.isArray(contextSnapshot?.characters) ? contextSnapshot.characters : [])
+        .filter((character) => isRecord(character) && isRecord(character.data)
+            && character.data.extensions?.world === worldBookKey
+            && typeof character.avatar === 'string' && character.avatar);
+    if (boundCharacters.length === 0) return 0;
+
+    const externalByComment = new Map();
+    for (const entry of Object.values(isRecord(externalEntries) ? externalEntries : {})) {
+        if (isRecord(entry) && typeof entry.comment === 'string' && typeof entry.content === 'string') {
+            externalByComment.set(entry.comment, entry.content);
+        }
+    }
+    if (externalByComment.size === 0) return 0;
+
+    let synced = 0;
+    for (const live of boundCharacters) {
+        const characterKey = live.avatar;
+        const character = await readCharacter(fetchImpl, contextSnapshot, characterKey);
+        const entries = character.data.character_book?.entries;
+        if (!Array.isArray(entries)) continue;
+        let dirty = false;
+        for (const entry of entries) {
+            if (!isRecord(entry) || !externalByComment.has(entry.comment)) continue;
+            const next = externalByComment.get(entry.comment);
+            if (entry.content !== next) {
+                entry.content = next;
+                dirty = true;
+            }
+        }
+        if (!dirty) continue;
+        await postResponse(
+            fetchImpl,
+            contextSnapshot,
+            '/api/characters/merge-attributes',
+            { avatar: characterKey, data: { character_book: { entries } } },
+            `Deep Clean bound World Book sync failed for ${characterKey}`,
+        );
+        const verified = await readCharacter(fetchImpl, contextSnapshot, characterKey);
+        const verifiedEntries = verified.data.character_book?.entries;
+        if (!Array.isArray(verifiedEntries)) {
+            throw new Error(`Deep Clean bound World Book sync verification failed for ${characterKey}`);
+        }
+        for (let index = 0; index < entries.length; index += 1) {
+            if (verifiedEntries[index]?.content !== entries[index].content) {
+                throw new Error(`Deep Clean bound World Book sync verification failed for ${characterKey}/${index}`);
+            }
+        }
+        if (isRecord(live.data.character_book)) {
+            live.data.character_book.entries = cloneJson(verifiedEntries);
+        }
+        synced += 1;
+    }
+    return synced;
+}
+
 export async function applyCharacterUnit(fetchImpl, context, characterKey, changes) {
     const liveCharacter = findCharacterLiveMirror(characterKey);
     const character = await readCharacter(fetchImpl, context, characterKey);

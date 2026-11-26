@@ -1,5 +1,9 @@
 # 本项目协作规则
 
+## 待办
+
+- 用户需求按原文顺序写入插件根目录 `todo.md`，一行一条，不合并。**完成一条删一条**，并按日期移入 `_archive/YYYY-MM-DD.md`；讨论、中断、方案否决时不得清空未完成条目，必须原样留到下一轮。
+
 ## 交差前
 
 改了用户看得见的行为（界面、交互）时，源码改动不算证据。汇报格式：
@@ -25,6 +29,10 @@
 | 深度净化世界书条目在 cleanse-inside 下不被跳过 | `node test/audit/verify-deep-clean-worldbook.mjs`（纯 Node，程序/AI 双链路 + 旧行为反证） |
 | 深度清理预览可按来源筛选、取消条目不写入、AI 预览复用不重复请求 | `node test/audit/verify-deep-clean-preview.mjs`（纯 Node） |
 | 规则文案统一为「规则分组 / 规则」、完成页不假成功、预览双端不越界 | `CDP_PORT=9224 node test/audit/verify-copy-preview.mjs`（桌面 + 手机） |
+| 深度清理可重复进入、加载态可关闭、手机端悬停不加深底色、更新失败给中文说明 | `CDP_PORT=9224 node test/audit/verify-deep-clean-reentry.mjs`（手机） |
+| 预览返回后上一步/预览仍可用、冻结运行不丢资源清单 | `CDP_PORT=9224 node test/audit/verify-deep-clean-back.mjs`（浏览器，真实生命周期 + 在途渲染反证） |
+| 改写项撤销与来源面板、预览两行顶栏右缘对齐、扫描分布同排 chip | `node test/audit/verify-deep-clean-revert.mjs` + `CDP_PORT=9224 node test/audit/verify-deep-clean-ui-revert.mjs`（桌面 + 手机） |
+| 改写随文连续排版、复选框 token 自绘、浮层滚动条灰色、清理按钮文案 | `CDP_PORT=9224 node test/audit/verify-deep-clean-diff-flow.mjs`（桌面，含反证） |
 | 禁止调用未 import 的导出 | `node test/check-imports.mjs` / `node build-check.mjs` 静态闸门 |
 | 正则查找框高亮不叠字 | `CDP_PORT=9224 node test/audit/verify-regex-caret.mjs`（量光标 x−字符右缘） |
 | 三弹窗直属 body、主题对比色、扫描说明、双端导览锚点 | `CDP_PORT=9224 node test/audit/verify-followup.mjs` |
@@ -32,7 +40,7 @@
 | 手机五档字号、AI 双开关同排且紧跟文字、首页规则卡外边距、底栏上下内边距 | `CDP_PORT=9224 node test/audit/verify-ai-mobile.mjs`（先开主界面再切 AI，量几何 + 截图） |
 | 转场接线与导览提示框不飞出手机视口 | `node test/audit/verify-motion-placement.mjs`（纯计算 + 静态接线，含旧算法反证） |
 | 交差前按改动选跑验证并附截图 | 必跑 `node build-css.mjs` + `node build-check.mjs`（`check-imports` 已内含）；只跑命中的 `verify-*` 并附对应截图；全量仅在改验证框架 / 发版前跑，清单以 `test/SKILL.md` 为准 |
-| 魔法棒菜单「词汇映射」与酒馆原生条目缩进一致（含窄菜单换行） | `CDP_PORT=9224 node test/audit/verify-wand-menu.mjs`（桌面 + 手机 + 103px 窄菜单） |
+| 魔法棒菜单「词汇映射」与上下原生条目缩进一致（含窄菜单换行、原生 gap 动态变 5px） | `CDP_PORT=9224 node test/audit/verify-wand-menu.mjs`（桌面 + 手机 + 103px 窄菜单 + gap=5px，三行文字 x 全比） |
 | 手机端粘滞 `:hover` 不抹掉按钮选中态；切页 fade through（当帧唯一 active、旧页淡出后新页淡入） | `CDP_PORT=9224 node test/audit/verify-ui-unify.mjs`（CDP 强制 hover 读计算色 + 切页当帧 active / leaving / entering 三态断言） |
 | 截图不能是“面板打开但 0 行数据”的空壳 | `st-shot` / `st-mobile` 必给 `EXPECT_CONTENT='<行选择器>:1'`；数据为空时先 `SEED_JS=@test/fixtures/seed-home.js`，harness 用 `capture(..., { expectContent })` |
 

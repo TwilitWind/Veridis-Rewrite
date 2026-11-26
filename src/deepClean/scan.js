@@ -120,6 +120,7 @@ export async function scanDeepCleanContentItems(input, contentItems, options = {
 
     return {
         scannedItemCount: items.length,
+        deduplicatedEmbeddedCount: Number(items.deduplicatedEmbeddedCount) || 0,
         affectedItemCount: affectedItemIndexes.length,
         programHitCount,
         aiHitCount,

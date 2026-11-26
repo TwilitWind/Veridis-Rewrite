@@ -2,6 +2,7 @@
 
 import { getAppContext } from '../../host/appContext.js';
 import { isRecord, postJson } from './io.js';
+import { syncEmbeddedWorldBookEntries } from './character.js';
 
 export async function applyWorldBookUnit(fetchImpl, context, worldBookKey, changes) {
     const setWorldInfoCache = getAppContext().setWorldInfoCache;
@@ -32,4 +33,5 @@ export async function applyWorldBookUnit(fetchImpl, context, worldBookKey, chang
     );
     if (saved?.ok !== true) throw new Error(`Deep Clean World Book save was not confirmed: ${worldBookKey}`);
     setWorldInfoCache(worldBookKey, worldBook);
+    await syncEmbeddedWorldBookEntries(fetchImpl, context, worldBookKey, worldBook.entries);
 }

@@ -120,6 +120,15 @@
         box-shadow: none !important;
     }
 
+    /* 手机模拟器/触屏会把点击 imitation 成 hover，并一直粘到下一次点击。
+       除了按钮，标签、菜单项、卡片也会中招；这里统一关掉悬停造成的底色/阴影，
+       但保留 .is-active / [aria-pressed] / .active 的真实选中态，以及主按钮的填充色。 */
+    :is(#blai-purifier-popup, .blai-modal-shell)
+        :is(button, a, label, [role="button"]):not(.is-active):not(.active):not(.blai-active):not([aria-pressed="true"]):not([class*="primary-action"]):not([class*="primary-btn"]):hover:not(:active) {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+
     :is(#blai-purifier-popup, .blai-modal-shell) .blai-proxy-field:hover {
         border-color: var(--border-color) !important;
         background-color: var(--blai-input-bg) !important;

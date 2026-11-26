@@ -276,20 +276,20 @@
     background: var(--bg-surface);
 }
 
+/* 审核导航与预览导航一致：只留上下箭头字体图标，文字改由 aria-label 提供。 */
 #blai-deep-clean-workspace .blai-deep-clean-review-navigation button {
-    width: max-content;
+    width: var(--blai-size-32);
     min-height: var(--blai-size-32);
-    padding: 0 var(--blai-space-8);
+    padding: 0;
     display: inline-flex;
     align-items: center;
-    gap: var(--blai-space-7);
+    justify-content: center;
     border: 0;
     border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
-    font-size: var(--blai-font-10);
-    font-weight: var(--blai-weight-bold);
+    font-size: var(--blai-fs-control-icon);
     box-shadow: none;
 }
 

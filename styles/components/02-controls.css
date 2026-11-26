@@ -470,7 +470,7 @@
     padding: var(--blai-btn-pad);
     border-radius: var(--blai-radius-sm);
     cursor: pointer;
-    font-weight: var(--blai-weight-bold);
+    font-weight: var(--blai-weight-medium);
 }
 
 .blai-secondary-btn:hover {
@@ -634,8 +634,8 @@
 
 .blai-secondary-btn, .blai-primary-btn {
     height: auto;
-    min-height: var(--blai-size-40);
-    max-height: var(--blai-size-48);
+    min-height: var(--blai-size-32);
+    max-height: var(--blai-size-32);
 }}
 
 /* 主题下拉：点顶栏主题图标弹出，选项复用统一下拉令牌（popover.js 挂到 body，
@@ -733,9 +733,10 @@
     height: var(--blai-switch-knob-size);
     flex: 0 0 auto;
     margin-inline-start: var(--blai-switch-offset);
+    border: 0;
     border-radius: var(--blai-radius-full);
     background: var(--blai-switch-knob);
-    box-shadow: 0 1px 2px color-mix(in srgb, var(--bg-base) 28%, transparent);
+    box-shadow: none;
     content: '';
     transition: margin-inline-start var(--blai-duration-fast) var(--blai-ease-out), background-color var(--blai-duration-fast) var(--blai-ease-out);
 }

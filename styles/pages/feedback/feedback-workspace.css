@@ -86,7 +86,7 @@
     min-width: 0;
     flex: 1 1 auto;
     padding: 0;
-    /* 分隔线只保留顶栏一条；nav 不再画第二条，选中指示条压在顶栏那条线上。 */
+    /* 分隔线只保留顶栏一条；标签选中只用文字色，不再叠第二条线。 */
     border-bottom: 0;
     display: flex;
     align-items: flex-end;
@@ -136,13 +136,10 @@
     padding-right: 0;
 }
 
-/* 指示条画在文字 span 上，长度与标题等长；按钮左右 padding 不再把线拉长。
-   指示条完整显示在文字下方，不用负 margin 压到分隔线上：tab 字重是 bold，
-   指示条再被压掉一半会显得单薄、与粗体失衡；完整 2px 才能撑住。 */
+/* 选中态只用强调色，不再叠指示条：顶栏已有结构分隔线，两套信号会打架。 */
 #blai-feedback-workspace .blai-feedback-workspace-nav button > span {
     display: inline-block;
     padding-bottom: var(--blai-space-8);
-    border-bottom: var(--blai-border-2) solid transparent;
     /* 上面 .blai-feedback-workspace-header span 把 header 内所有 span 染成强调色，
        会误伤这四个标签；这里显式继承按钮色，未选中保持浅色、选中才由按钮规则变强调色。 */
     font-size: inherit;
@@ -156,10 +153,7 @@
 #blai-feedback-workspace .blai-feedback-workspace-nav button.is-active {
     background: transparent;
     color: var(--accent-ink);
-}
-
-#blai-feedback-workspace .blai-feedback-workspace-nav button.is-active > span {
-    border-bottom-color: var(--accent-color);
+    font-weight: var(--blai-weight-medium);
 }
 
 /* 正文是一张白色圆角卡，与外层灰白底形成分区。 */
@@ -478,10 +472,10 @@
 
 /* 勾选框用 Font Awesome 方形 + 对勾，跨主题一致；选中态跟随整行反白。 */
 .blai-feedback-area-check {
-    flex: 0 0 var(--blai-size-12);
-    width: var(--blai-size-12);
+    flex: 0 0 var(--blai-checkbox-size);
+    width: var(--blai-checkbox-size);
     color: var(--text-secondary);
-    font-size: var(--blai-font-13);
+    font-size: var(--blai-checkbox-check-size);
 }
 
 .blai-feedback-area-option:hover .blai-feedback-area-check,

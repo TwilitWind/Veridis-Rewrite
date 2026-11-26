@@ -22,6 +22,13 @@
 #blai-diff-modal[data-diff-font-size="small"] { --blai-diff-body-font-size: var(--blai-diff-font-small); }
 #blai-diff-modal[data-diff-font-size="large"] { --blai-diff-body-font-size: var(--blai-diff-font-large); }
 
+/* 两行顶栏共用的控件几何：第一行图标、第二行导航与筛选统一尺寸与右缘，
+   只在这里定义一次；桌面/手机各自换一个 token 值即可整体收紧。 */
+#blai-diff-modal {
+    --blai-diff-head-control: var(--blai-size-32);
+    --blai-diff-head-gap: var(--blai-space-4);
+}
+
 /* 顶栏两行：标题独占一行；第二行四个功能按钮贴左，⋯ 与 × 贴右。 */
 #blai-diff-modal .blai-diff-modal-header {
     justify-content: flex-start;
@@ -91,15 +98,39 @@
     justify-content: flex-end;
 }
 
+/* 顶栏所有控件同一高度、同一中线；文字按钮与图标按钮只差内容，不差外框尺寸。 */
+#blai-diff-modal :is(.blai-diff-header-btn, .blai-diff-menu-toggle, .blai-diff-modal-close) {
+    height: var(--blai-diff-head-control);
+    min-height: var(--blai-diff-head-control);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
 #blai-diff-modal .blai-diff-header-btn {
-    min-height: var(--blai-size-34);
-    padding: var(--blai-space-6) var(--blai-space-8);
+    padding: 0 var(--blai-space-8);
     font-size: var(--blai-fs-body);
 }
 
-#blai-diff-modal .blai-diff-modal-close {
-    width: var(--blai-size-34);
-    height: var(--blai-size-34);
+#blai-diff-modal :is(.blai-diff-menu-toggle, .blai-diff-modal-close) {
+    width: var(--blai-diff-head-control);
+    padding: 0;
+}
+
+/* 第二行右侧导航/筛选与第一行的 ⋮/× 共用同一列：统一尺寸，并把最后一个控件
+   的右边缘锁到卡片内边距，避免两行一个宽一个窄。 */
+#blai-diff-modal .blai-diff-toolbar :is(.blai-diff-nav-btn, .blai-diff-filter-toggle) {
+    width: var(--blai-diff-head-control);
+    height: var(--blai-diff-head-control);
+    min-height: var(--blai-diff-head-control);
+    padding: 0;
+}
+
+#blai-diff-modal .blai-diff-nav,
+#blai-diff-modal .blai-diff-toolbar > .blai-diff-filter-toggle {
+    flex: 0 0 auto;
+    margin-left: 0;
 }
 
 /* 窄屏顶栏：标题居左，⋯ 与 × 贴右；四个主操作镜像项在菜单里，
@@ -174,7 +205,7 @@
 /* 手机端工具行贴顶、内边距收紧；来源区可横滑，筛选与定位保留触摸区。 */
 #blai-diff-modal .blai-diff-toolbar {
     gap: var(--blai-space-2);
-    padding: var(--blai-space-4) var(--blai-diff-inline-pad);
+    padding: var(--blai-space-2) var(--blai-diff-inline-pad);
     flex-shrink: 0;
 }
 
@@ -189,10 +220,11 @@
     font-size: var(--blai-font-11);
 }
 
-/* 筛选只留图标：保持紧凑方形，不被带文字的 padding 覆盖撑大。 */
+/* 筛选只留图标：继续跟随两行共用的控件 token，不被带文字的 padding 撑大。 */
 #blai-diff-modal .blai-diff-filter-toggle {
-    width: var(--blai-size-32);
-    height: var(--blai-size-32);
+    width: var(--blai-diff-head-control);
+    height: var(--blai-diff-head-control);
+    min-height: var(--blai-diff-head-control);
     padding: 0;
     font-size: var(--blai-font-12);
 }
@@ -241,6 +273,16 @@
 }
 
 @media screen and (max-width: 600px) {
+/* 手机端两行控件一起收紧：保持同一 token、同一右缘，只是整体更小。 */
+#blai-diff-modal {
+    --blai-diff-head-control: var(--blai-size-28);
+    --blai-diff-head-gap: var(--blai-space-2);
+}
+#blai-diff-modal .blai-diff-header-primary,
+#blai-diff-modal .blai-diff-header-actions,
+#blai-diff-modal .blai-diff-toolbar {
+    gap: var(--blai-diff-head-gap);
+}
 /* 手机端把「撤回所选」「撤回」放出来，不再全部收进 ⋮。 */
 #blai-diff-modal .blai-diff-header-primary {
     display: flex;
@@ -250,15 +292,15 @@
     width: auto;
     min-width: 0;
     min-height: var(--blai-size-44);
-    padding: 0 var(--blai-space-6);
+    padding: 0 var(--blai-space-4);
     font-size: var(--blai-fs-body);
 }
 /* 手机端 ⋮ 与关闭同样给到 44px 触摸区，与文字按钮一行齐平。 */
 #blai-diff-modal :is(.blai-diff-menu-toggle, .blai-diff-modal-close) {
-    width: var(--blai-size-44);
-    min-width: var(--blai-size-44);
-    height: var(--blai-size-44);
-    min-height: var(--blai-size-44);
+    width: var(--blai-diff-head-control);
+    min-width: var(--blai-diff-head-control);
+    height: var(--blai-diff-head-control);
+    min-height: var(--blai-diff-head-control);
 }
 /* 手机端两个主操作都保留完整四字文案；收窄按钮内边距、隐去标题图标给文字让位。 */
 #blai-diff-modal #blai-diff-pick-text,
@@ -268,8 +310,14 @@
 #blai-diff-modal .blai-diff-modal-title > i {
     display: none;
 }
-#blai-diff-modal .blai-diff-header-actions {
-    gap: var(--blai-space-2);
+/* 手机端顶栏收紧：标题、主操作与 ⋮/关闭共用同一组间距，行高也对齐工具行。 */
+#blai-diff-modal .blai-diff-modal-header {
+    padding-top: var(--blai-space-3);
+    padding-bottom: var(--blai-space-2);
+}
+
+#blai-diff-modal :is(.blai-diff-header-actions, .blai-diff-header-primary, .blai-diff-header-trailing) {
+    gap: var(--blai-space-3);
 }
 /* 手机端顶栏只留「撤回所选/撤回」，全文模式收进 ⋮：顶栏隐藏、菜单保留镜像，避免两处重复。
    菜单镜像项的显隐由 openDiffActionsMenu 按顶栏实际可见性处理，不在此用祖先选择器。 */

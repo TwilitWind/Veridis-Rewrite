@@ -126,9 +126,9 @@ export async function setupUI(renderTemplate, templateDirectory) {
                     <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down interactable"></div>
                 </div>
                 <div class="inline-drawer-content">
-                    <button id="blai-wand-btn-panel" type="button" class="menu_button blai-extension-open-btn">
+                    <button id="blai-wand-btn-panel" type="button" class="menu_button blai-extension-open-btn" aria-label="打开 AI 词汇映射" title="打开 AI 词汇映射">
                         <i class="fa-solid fa-language fa-fw"></i>
-                        <span>打开 AI 词汇映射</span>
+                        <span>词汇映射</span>
                     </button>
                 </div>
             </div>

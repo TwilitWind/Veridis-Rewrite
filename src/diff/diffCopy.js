@@ -25,7 +25,7 @@ export function buildBaselineEmptyHtml() {
     return '<div class="blai-diff-empty">'
         + '<i class="fa-solid fa-circle-info" aria-hidden="true"></i>'
         + '这条消息还没有改写记录。确定正文写好后，可以把它记为原文并立即改写：'
-        + '<button id="blai-diff-baseline-btn" type="button" class="blai-icon-btn blai-diff-baseline-btn">按当前正文建立净化基线</button>'
+        + '<button id="blai-diff-baseline-btn" type="button" class="blai-icon-btn blai-diff-baseline-btn" aria-label="按当前正文建立净化基线" title="按当前正文建立净化基线">建立基线</button>'
         + '</div>';
 }
 

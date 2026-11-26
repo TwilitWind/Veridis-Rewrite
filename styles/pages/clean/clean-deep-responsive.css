@@ -83,8 +83,16 @@
     border-radius: 0;
 }
 
+/* 手机端标题与说明改为上下两行：标题独占一行不换行，说明退到浅字小字。 */
 #blai-deep-clean-workspace .blai-deep-clean-heading {
-    gap: var(--blai-space-8);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--blai-space-2);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-header #blai-deep-clean-description {
+    font-size: var(--blai-font-9);
+    line-height: 1.25;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-selection-scroll {
@@ -151,7 +159,7 @@
     font-size: var(--blai-font-18);
 }
 
-/* 指标跟随桌面 3 列（3+2），手机端 2+2+1 会出现孤行末项；只收紧列间距。 */
+/* 指标桌面与窄容器都保持 3 列并排，只收紧列间距与内边距，不退回逐条分隔线。 */
 #blai-deep-clean-workspace .blai-deep-clean-scan-metrics {
     gap: var(--blai-space-10) var(--blai-space-8);
 }
@@ -161,9 +169,9 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-complete-state {
-    width: min(calc(100% - var(--blai-size-24)), var(--blai-size-720));
-    padding: var(--blai-space-22) var(--blai-space-12);
-    place-content: start center;
+    width: 100%;
+    padding: var(--blai-space-12) var(--blai-space-14);
+    place-content: start start;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-completion-metrics, #blai-deep-clean-workspace .blai-deep-clean-completion-metrics.is-ai {
@@ -191,7 +199,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-review-navigation button {
-    font-size: var(--blai-font-9);
+    font-size: var(--blai-fs-control-icon);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-review-apply {

@@ -72,6 +72,83 @@
     }
 }
 
+/* portal 到 body 的自绘菜单脱离了主面板作用域，单独接回同一组灰色滚动条 token，
+   避免落到酒馆原生的紫色竖条。选择器用真实 class（不是 :where）以压过酒馆全局伪元素规则。 */
+@supports (-moz-appearance: none) {
+    .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu {
+        scrollbar-width: thin;
+        scrollbar-color: var(--blai-scrollbar-thumb) var(--blai-scrollbar-track);
+    }
+}
+.blai-portal-menu::-webkit-scrollbar,
+.blai-feedback-area-options::-webkit-scrollbar,
+.blai-native-select-menu::-webkit-scrollbar {
+    width: var(--blai-scrollbar-size, 8px);
+    height: var(--blai-scrollbar-size, 8px);
+}
+.blai-portal-menu::-webkit-scrollbar-thumb,
+.blai-feedback-area-options::-webkit-scrollbar-thumb,
+.blai-native-select-menu::-webkit-scrollbar-thumb {
+    border-radius: var(--blai-radius-full);
+    background: var(--blai-scrollbar-thumb);
+}
+.blai-portal-menu::-webkit-scrollbar-thumb:hover,
+.blai-feedback-area-options::-webkit-scrollbar-thumb:hover,
+.blai-native-select-menu::-webkit-scrollbar-thumb:hover {
+    background: var(--blai-scrollbar-thumb-hover);
+}
+.blai-portal-menu::-webkit-scrollbar-track,
+.blai-feedback-area-options::-webkit-scrollbar-track,
+.blai-native-select-menu::-webkit-scrollbar-track {
+    background: var(--blai-scrollbar-track);
+}
+
+/* 全局自绘复选框：插件内所有可见 checkbox 共用这组 token 几何与配色，
+   appearance:none 去掉酒馆原生外观；作为数据锚点被 display:none 的 input 不受影响。
+   选择器带 [type=checkbox]：酒馆全局 input[type=checkbox] 特异性 0,1,1 会压过纯类选择器，
+   这里用 0,2,1 确保 token 尺寸真正生效（实测纯类时 15px token 被压成 0.9em）。 */
+input[type="checkbox"].blai-check-native {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex: 0 0 auto;
+    width: var(--blai-checkbox-size);
+    height: var(--blai-checkbox-size);
+    margin: 0;
+    border: var(--blai-checkbox-border-width) solid var(--blai-checkbox-border);
+    border-radius: var(--blai-checkbox-radius);
+    background-color: var(--blai-checkbox-bg);
+    outline: none;
+    box-shadow: none;
+    cursor: pointer;
+}
+/* 关掉酒馆原生 ::before 对勾（inset box-shadow + clip-path 画的），
+   否则它和下面 ::after 的 FA 对勾叠成两个勾。 */
+input[type="checkbox"].blai-check-native::before {
+    content: none;
+}
+input[type="checkbox"].blai-check-native:checked {
+    border-color: var(--blai-checkbox-checked-border);
+    background-color: var(--blai-checkbox-checked-bg);
+}
+input[type="checkbox"].blai-check-native:checked::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: var(--blai-weight-icon);
+    font-size: var(--blai-checkbox-check-size);
+    line-height: 1;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--blai-checkbox-ink);
+}
+input[type="checkbox"].blai-check-native:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
 #blai-purifier-popup .page-panel::-webkit-scrollbar, #blai-edit-subrules-container::-webkit-scrollbar {
     display: none;
 }

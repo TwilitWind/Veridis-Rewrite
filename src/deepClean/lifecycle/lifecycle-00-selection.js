@@ -92,6 +92,17 @@ export function getDeepCleanInitialSelection() {
         : null;
 }
 
+/** 从扫描结果返回资源选择：保留已勾选项与本地设置，只丢弃冻结的扫描/预览会话。 */
+export function returnToDeepCleanSelection() {
+    const selection = deepCleanRuntimeState.deepCleanSelection;
+    if (!selection) return null;
+    deepCleanRuntimeState.deepCleanPhase = 'initial-selection';
+    selection.run = null;
+    selection.previewSession = null;
+    selection.currentReviewSession = null;
+    return selection;
+}
+
 export function setDeepCleanFinalSelection(kind, keys) {
     const selection = getDeepCleanInitialSelection();
     const propertyByKind = {
@@ -178,11 +189,14 @@ function frozenRunInput(selection, settings) {
 }
 
 /** 把预览页的取消项与 AI 预览缓存落实到本次运行；正式处理只走未取消的命中条目。 */
-export function applyDeepCleanPreviewSelection(lifecycle, skippedItemIndexes, aiCache) {
+export function applyDeepCleanPreviewSelection(lifecycle, skippedItemIndexes, aiCache, revertedBlocks = null) {
     if (!lifecycle?.run?.scanResult) return null;
     const skipped = skippedItemIndexes instanceof Set
         ? new Set(skippedItemIndexes)
         : new Set(Array.isArray(skippedItemIndexes) ? skippedItemIndexes : []);
+    lifecycle.run.revertedBlocks = revertedBlocks instanceof Map
+        ? new Map([...revertedBlocks].map(([key, value]) => [key, new Set(value)]))
+        : new Map();
     lifecycle.skippedItemIndexes = skipped;
     lifecycle.affectedItemIndexes = lifecycle.run.scanResult.affectedItemIndexes
         .filter((itemIndex) => !skipped.has(itemIndex));
@@ -304,7 +318,12 @@ export function finalizeDeepCleanFailure(lifecycle, terminalStage, failureCode, 
 export async function freezeDeepCleanRun(options = {}) {
     const selection = getDeepCleanInitialSelection();
     if (!selection) return null;
+    // 冻结运行必须继承初始选择的全部字段（inventory / chatKeys / presetName 等）。
+    // 否则「上一步」拿到的只是一个裸 lifecycle，renderDeepCleanInitialSelection 读
+    // inventory.current 会抛错，页面停在扫描结果而状态已回到 initial-selection，
+    // 上一步与预览就都点不动了。
     const lifecycle = {
+        ...selection,
         run: null,
         nextAffectedItemCursor: 0,
         affectedItemIndexes: null,

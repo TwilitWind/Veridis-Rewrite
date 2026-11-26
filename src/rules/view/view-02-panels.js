@@ -74,7 +74,7 @@ export function renderSubrulesToModal() {
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="up" data-index="${i}" ${moveUpDisabled}><i class="fas fa-arrow-up" aria-hidden="true"></i>上移</button>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="down" data-index="${i}" ${moveDownDisabled}><i class="fas fa-arrow-down" aria-hidden="true"></i>下移</button>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="copy" data-index="${i}"><i class="fas fa-clone" aria-hidden="true"></i>复制</button>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="transfer" data-index="${i}"><i class="fas fa-arrows-turn-right" aria-hidden="true"></i>移至其他规则分组</button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="transfer" data-index="${i}"><i class="fas fa-arrows-turn-right" aria-hidden="true"></i><span aria-hidden="true">移至分组</span><span class="blai-visually-hidden">移至其他规则分组</span></button>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="remark" data-index="${i}"><i class="fas fa-comment-dots" aria-hidden="true"></i>编辑备注</button>
                                 <button type="button" class="blai-subrule-menu-item blai-subrule-menu-item--danger" data-subrule-action="delete" data-index="${i}"><i class="fas fa-trash" aria-hidden="true"></i>删除</button>
                             </div>

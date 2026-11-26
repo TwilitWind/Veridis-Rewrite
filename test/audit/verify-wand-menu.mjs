@@ -18,25 +18,43 @@ const MEASURE = `(async () => {
     const menu = document.getElementById('extensionsMenu');
     const btn = document.getElementById('extensionsMenuButton');
     const native = document.getElementById('manageAttachments');
+    const attach = document.getElementById('attachFile');
     const plugin = document.getElementById('blai-wand-btn');
-    if (!menu || !btn || !native || !plugin) return { missing: true, menu: !!menu, btn: !!btn, native: !!native, plugin: !!plugin };
+    if (!menu || !btn || !native || !attach || !plugin) return { missing: true, menu: !!menu, btn: !!btn, native: !!native, attach: !!attach, plugin: !!plugin };
     if (getComputedStyle(menu).display === 'none') btn.click();
     await new Promise(r => setTimeout(r, 600));
     const read = (el) => {
         const b = el.querySelector('span').getBoundingClientRect();
         return { x: +b.x.toFixed(2), y: +b.y.toFixed(2) };
     };
-    const natural = { native: read(native), plugin: read(plugin) };
+    const snap = async () => {
+        // 窄菜单测量或样式注入可能让菜单折叠；每次采样前确保可见，避免读到全 0 的假对齐。
+        if (getComputedStyle(menu).display === 'none') {
+            btn.click();
+            await new Promise(r => setTimeout(r, 400));
+        }
+        if (getComputedStyle(menu).display === 'none') return { hidden: true };
+        return { native: read(native), attach: read(attach), plugin: read(plugin) };
+    };
+    const natural = await snap();
     menu.style.width = '103px';
     await new Promise(r => setTimeout(r, 200));
-    const narrow = { native: read(native), plugin: read(plugin) };
+    const narrow = await snap();
     menu.style.width = '';
+    // 真机上酒馆会把原生 gap 从 10px 动态改成 5px；插件必须跟随而不能写死列距。
+    const probe = document.createElement('style');
+    probe.textContent = '.flexGap5 { gap: 5px !important; }';
+    document.head.appendChild(probe);
+    await new Promise(r => setTimeout(r, 200));
+    const gap5 = await snap();
+    probe.remove();
     return {
-        natural, narrow,
+        natural, narrow, gap5,
         cls: String(plugin.className),
         iconCls: String(plugin.querySelector('.extensionsMenuExtensionButton')?.className || ''),
         wrap: getComputedStyle(plugin).flexWrap,
         whiteSpace: getComputedStyle(plugin.querySelector('span')).whiteSpace,
+        pluginGap: getComputedStyle(plugin).columnGap,
     };
 })()`;
 
@@ -67,10 +85,13 @@ try {
         check(failures, `${sc.name}: 复用原生条目类`, r.cls.includes('list-group-item') && r.cls.includes('flex-container') && r.cls.includes('flexGap5'), r.cls);
         check(failures, `${sc.name}: 复用原生图标类`, r.iconCls.includes('extensionsMenuExtensionButton'), r.iconCls);
         check(failures, `${sc.name}: 允许窄菜单换行`, r.wrap === 'wrap' && r.whiteSpace === 'normal', `wrap=${r.wrap}, white-space=${r.whiteSpace}`);
-        check(failures, `${sc.name}: 常规宽度文字对齐`, Math.abs(r.natural.native.x - r.natural.plugin.x) < 0.5,
-            `原生 x=${r.natural.native.x}, 插件 x=${r.natural.plugin.x}`);
-        check(failures, `${sc.name}: 窄菜单文字对齐`, Math.abs(r.narrow.native.x - r.narrow.plugin.x) < 0.5,
-            `原生 x=${r.narrow.native.x}, 插件 x=${r.narrow.plugin.x}`);
+        const aligned = (snap, label) => check(failures, `${sc.name}: ${label}三行文字对齐`,
+            !snap.hidden && snap.native.x > 0 &&
+            Math.abs(snap.native.x - snap.plugin.x) < 0.5 && Math.abs(snap.attach.x - snap.plugin.x) < 0.5,
+            `数据库 x=${snap.native.x}, 附件 x=${snap.attach.x}, 词汇映射 x=${snap.plugin.x}`);
+        aligned(r.natural, '常规宽度');
+        aligned(r.narrow, '窄菜单');
+        aligned(r.gap5, '原生 gap=5px');
     }
 } finally {
     try { await send('Emulation.clearDeviceMetricsOverride'); } catch {}
@@ -82,4 +103,4 @@ if (failures.length) {
     console.error(`失败 ${failures.length} 项：\n- ${failures.join('\n- ')}`);
     process.exit(1);
 }
-console.log('魔法棒菜单缩进回归：10/10 通过');
+console.log('魔法棒菜单缩进回归：12/12 通过');

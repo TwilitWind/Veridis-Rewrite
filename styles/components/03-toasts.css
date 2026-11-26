@@ -231,12 +231,18 @@
     padding-top: 0 !important;
 }
 
+/* 所有弹窗底栏按钮同一套尺寸与字重：32px 高、--blai-fs-control 字号、Medium 500，不靠加粗区分主次。 */
 .blai-modal-shell .blai-primary-btn, .blai-modal-shell .blai-secondary-btn, .blai-modal-shell .blai-modal-actions button, .blai-modal-shell .blai-subrule-footer button {
-    min-height: var(--blai-size-36) !important;
+    min-height: var(--blai-size-32) !important;
     padding: var(--blai-modal-btn-pad) !important;
     border-radius: var(--blai-radius-sm) !important;
-    font-size: var(--blai-font-12) !important;
-    font-weight: var(--blai-weight-bold) !important;
+    font-size: var(--blai-fs-control) !important;
+    font-weight: var(--blai-weight-medium) !important;
+}
+
+.blai-modal-shell :is(.blai-modal-actions, .blai-subrule-footer) button {
+    height: var(--blai-size-32);
+    max-height: var(--blai-size-32);
 }
 
 #blai-risk-confirm-modal > .blai-risk-confirm-card, #blai-risk-info-modal > .blai-risk-info-card {

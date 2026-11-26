@@ -2,43 +2,11 @@
 
 /* 勾选框自己画：酒馆主题给 input[type=checkbox] 加了 outline/overflow:hidden，
    方框边框画在盒子外面会被右侧栏的滚动容器裁掉左边一条。这里关掉 outline 并自带边框。 */
+/* 复选框几何与配色统一走全局 --blai-checkbox-* token 与 .blai-check-native（见 base/00-reset.css）。
+   这里只保留反馈页自己的位置微调，不再复制尺寸/颜色字面量。 */
 #blai-feedback-workspace .blai-feedback-check input,
 #blai-feedback-workspace .blai-feedback-confirm input {
-    appearance: none;
-    -webkit-appearance: none;
-    position: relative;
-    flex: 0 0 auto;
-    width: var(--blai-size-15);
-    height: var(--blai-size-15);
     margin: var(--blai-space-1) 0 0;
-    border: var(--blai-border-1-5) solid color-mix(in srgb, var(--text-main) 34%, var(--border-color));
-    border-radius: var(--blai-radius-4);
-    background-color: var(--bg-surface);
-    outline: none;
-    box-shadow: none;
-    cursor: pointer;
-    accent-color: var(--accent-color);
-}
-
-#blai-feedback-workspace .blai-feedback-check input:checked,
-#blai-feedback-workspace .blai-feedback-confirm input:checked {
-    border-color: var(--accent-color);
-    background-color: var(--accent-color) !important;
-}
-
-#blai-feedback-workspace .blai-feedback-check input:checked::after,
-#blai-feedback-workspace .blai-feedback-confirm input:checked::after {
-    content: '\f00c';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: var(--blai-weight-icon);
-    font-size: var(--blai-font-9);
-    line-height: 1;
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent-contrast);
 }
 
 #blai-feedback-workspace .blai-feedback-check input:disabled {

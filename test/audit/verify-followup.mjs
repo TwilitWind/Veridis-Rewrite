@@ -251,9 +251,9 @@ async function main() {
                     check('扫描指标不再叫「扫描项目」', scan.labels.includes('已扫描内容项') && !scan.labels.includes('扫描项目'),
                         scan.labels.join('/'));
                     check('处理按钮文案已缩短', ['直接写入', '开始清理'].includes(scan.btn), scan.btn);
-                    check('分类改用 flex、不再五列', scan.catDisplay === 'flex' && scan.metricDisplay === 'grid',
-                        `${scan.catDisplay}/${scan.metricDisplay}`);
-                    check('五项指标排成 3+2 两行', scan.metricColumns === 3, `${scan.metricColumns} 列`);
+                    // 当前规范：指标三列并排轻卡片，分布项为同排紧凑 chip（flex），不再是旧的单列布局。
+                    check('指标三列并排、分布项同排 chip', scan.metricDisplay === 'grid' && scan.metricColumns === 3 && scan.catDisplay === 'flex',
+                        `${scan.catDisplay}/${scan.metricDisplay}/${scan.metricColumns} 列`);
                     check('指标标签字号不低于 11px', scan.labelSize >= 11, `${scan.labelSize}px`);
                     const shot = await capture(send, 'verify-scan-result.png', {
                         expectOpen: ['.blai-deep-clean-result'],

@@ -242,6 +242,42 @@ async function readWorldBookItems(items, worldBookKeys, context, options = {}) {
     return true;
 }
 
+/** 角色卡绑定的外部世界书键；绑定关系来自酒馆角色卡 extensions.world。 */
+function boundWorldBookKeyForCharacter(context, characterKey) {
+    const characters = Array.isArray(context?.characters) ? context.characters : [];
+    const character = characters.find((item) => item?.avatar === characterKey);
+    const key = character?.data?.extensions?.world;
+    return typeof key === 'string' && key ? key : '';
+}
+
+/**
+ * 角色卡内嵌世界书与绑定的外部世界书常是同一份内容的两处副本。
+ * 绑定世界书被选中时，内嵌整份都不参与扫描与写入，避免重复命中；
+ * 执行后由 apply/character.js 把绑定世界书的结果覆盖回同名内嵌条目。
+ * 未选中绑定世界书时仍按原样扫描内嵌副本，不改变既有行为。
+ */
+function dedupeBoundEmbeddedEntries(items, input, context) {
+    const selected = Array.isArray(input?.worldBookKeys) ? new Set(input.worldBookKeys) : new Set();
+    if (selected.size === 0) return 0;
+    const kept = [];
+    let skipped = 0;
+    for (const item of items) {
+        const boundKey = item?.kind === 'embedded-world-book-entry'
+            ? boundWorldBookKeyForCharacter(context, item.locator?.characterKey)
+            : '';
+        if (boundKey && selected.has(boundKey)) {
+            skipped += 1;
+            continue;
+        }
+        kept.push(item);
+    }
+    if (skipped > 0) {
+        items.length = 0;
+        items.push(...kept);
+    }
+    return skipped;
+}
+
 export async function readDeepCleanContentItems(frozenInput, options = {}) {
     const context = options.context;
     const fetchImpl = options.fetchImpl;
@@ -284,5 +320,6 @@ export async function readDeepCleanContentItems(frozenInput, options = {}) {
             reportProgress();
         },
     });
+    items.deduplicatedEmbeddedCount = dedupeBoundEmbeddedEntries(items, frozenInput, context);
     return items;
 }

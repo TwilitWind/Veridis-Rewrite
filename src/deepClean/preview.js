@@ -3,7 +3,7 @@
 import { processDeepCleanProgramCandidates } from './programProcessing.js';
 import { planDeepCleanAiRequests } from './aiPlanning.js';
 import { executeDeepCleanAiRequests, resolveFinalProposedText } from './aiProcessing.js';
-import { createDeepCleanReviewSession } from './review.js';
+import { createDeepCleanReviewSession, resolveReviewRunsText } from './review.js';
 
 export function createDeepCleanPreviewSession(lifecycle) {
     const run = lifecycle?.run;
@@ -24,7 +24,83 @@ export function createDeepCleanPreviewSession(lifecycle) {
         abortController: null,
         loadingKey: null,
         renderToken: 0,
+        listOpen: false,
+        revealActiveRow: false,
+        listScrollTop: 0,
+        documentScrollTop: 0,
+        changeIndex: 0,
+        // 改写项级撤销：itemIndex -> Set<blockIndex>；被撤销的块保留原文写入。
+        revertedBlocks: new Map(),
+        revertedPanelOpen: false,
     };
+}
+
+export function getRevertedBlockSet(preview, itemIndex, { create = false } = {}) {
+    if (!preview || !Number.isInteger(itemIndex)) return null;
+    let set = preview.revertedBlocks?.get(itemIndex);
+    if (!set && create) {
+        set = new Set();
+        preview.revertedBlocks.set(itemIndex, set);
+    }
+    return set || null;
+}
+
+/** 切换某个改写项的撤销状态；返回是否处于撤销态。 */
+export function toggleDeepCleanPreviewBlock(preview, itemIndex, blockIndex) {
+    if (!Number.isInteger(blockIndex)) return false;
+    const set = getRevertedBlockSet(preview, itemIndex, { create: true });
+    if (!set) return false;
+    if (set.has(blockIndex)) set.delete(blockIndex);
+    else set.add(blockIndex);
+    if (set.size === 0) preview.revertedBlocks.delete(itemIndex);
+    return set.has(blockIndex);
+}
+
+export function revertedBlockCount(preview) {
+    if (!preview?.revertedBlocks) return 0;
+    let total = 0;
+    for (const set of preview.revertedBlocks.values()) total += set.size;
+    return total;
+}
+
+/** 列出全部撤销项，带上来源，供左下角面板展示。 */
+export function listRevertedBlocks(preview) {
+    if (!preview?.revertedBlocks) return [];
+    const result = [];
+    for (const [itemIndex, set] of preview.revertedBlocks.entries()) {
+        if (!set || set.size === 0) continue;
+        const item = preview.run?.contentItems?.[itemIndex];
+        const entry = preview.diffCache.get(`${preview.mode}:${itemIndex}`);
+        const blocks = entry?.session?.reviewItems?.[0]?.blocks || [];
+        for (const blockIndex of set) {
+            const block = blocks[blockIndex];
+            if (!block || block.type !== 'diff') continue;
+            result.push({
+                itemIndex,
+                blockIndex,
+                source: sourceLabelForItem(item),
+                preview: resolveReviewRunsText(block.newRuns),
+                original: resolveReviewRunsText(block.oldRuns),
+            });
+        }
+    }
+    return result;
+}
+
+function sourceLabelForItem(item) {
+    const locator = item?.locator || {};
+    if (item?.kind === 'user-message') {
+        return `聊天消息 ${Number.isInteger(locator.messageIndex) ? locator.messageIndex + 1 : '?'} · 用户`;
+    }
+    if (item?.kind === 'assistant-swipe') {
+        const swipe = Number.isInteger(locator.swipeIndex) ? ` · Swipe ${locator.swipeIndex + 1}` : '';
+        return `聊天消息 ${Number.isInteger(locator.messageIndex) ? locator.messageIndex + 1 : '?'}${swipe}`;
+    }
+    if (item?.kind === 'embedded-world-book-entry' || item?.kind === 'external-world-book-entry') {
+        const world = item.kind === 'embedded-world-book-entry' ? '内嵌世界书' : '世界书';
+        return `${world} · ${item.displayName || locator.worldBookKey || '条目'}`;
+    }
+    return item?.displayName || '内容项';
 }
 
 export function getPreviewItemModes(run, itemIndex) {
@@ -55,14 +131,17 @@ export function filterDeepCleanPreviewItems(preview) {
     if (preview.filter === 'ai') {
         return preview.itemIndexes.filter((itemIndex) => isAiPreviewRelevant(preview.run, itemIndex));
     }
-    if (preview.filter === 'skipped') {
+    if (preview.filter === 'included') {
+        return preview.itemIndexes.filter((itemIndex) => preview.included.has(itemIndex));
+    }
+    if (preview.filter === 'excluded' || preview.filter === 'skipped') {
         return preview.itemIndexes.filter((itemIndex) => preview.skipped.has(itemIndex));
     }
     return [...preview.itemIndexes];
 }
 
 export function setDeepCleanPreviewFilter(preview, filter) {
-    if (!preview || !['all', 'program', 'ai', 'skipped'].includes(filter)) return preview;
+    if (!preview || !['all', 'program', 'ai', 'included', 'excluded', 'skipped'].includes(filter)) return preview;
     preview.filter = filter;
     const items = filterDeepCleanPreviewItems(preview);
     if (!items.includes(preview.currentItemIndex)) preview.currentItemIndex = items[0] ?? null;
@@ -185,7 +264,11 @@ export async function ensureDeepCleanPreviewEntry(preview, itemIndex, mode, { si
 }
 
 export function cancelDeepCleanPreviewRequest(preview) {
-    if (!preview?.abortController) return;
+    if (!preview) return;
+    // 作废所有在途的 then/catch：只 abort 请求还不够，已 resolve 的 Promise 仍会
+    // 用旧 token 重绘预览，把刚返回的扫描结果/处理进度盖掉，按钮看起来就"点不动"。
+    preview.renderToken = Number(preview.renderToken || 0) + 1;
+    if (!preview.abortController) return;
     preview.abortController.abort();
     preview.abortController = null;
 }
