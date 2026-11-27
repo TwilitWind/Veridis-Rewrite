@@ -8,7 +8,8 @@
     cursor: pointer;
 }
 
-/* 入口图标锁定 20px 槽位：字形宽度不一时，文字仍与相邻条目同列。 */
+/* 入口图标：语言字形是实心方块，视觉占宽大于上下两项的线性图标。
+   保留 20px 槽位不动文字列，仅缩小字形本身，使右侧留白与相邻条目一致。 */
 #blai-wand-btn .extensionsMenuExtensionButton {
     display: flex;
     align-items: center;
@@ -18,7 +19,7 @@
     max-width: var(--blai-size-20);
     height: var(--blai-size-20);
     flex: 0 0 var(--blai-size-20);
-    overflow: hidden;
+    font-size: 0.8em;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {
