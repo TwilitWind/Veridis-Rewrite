@@ -40,8 +40,7 @@ input[type="checkbox"].blai-check-native:disabled{cursor: not-allowed;opacity: .
 .blai-highlight-flash{animation: blaiHighlightFlash 0.8s ease-in-out 2;will-change: filter}
 .blai-visually-hidden{position: absolute;width: var(--blai-size-1);height: var(--blai-size-1);padding: 0;margin: var(--blai-space-neg-1);overflow: hidden;clip: rect(0,0,0,0);white-space: nowrap;border: 0}
 #blai-purifier-popup,#blai-purifier-popup *{text-shadow: none}
-#blai-wand-btn{cursor: pointer}
-#blai-wand-btn .extensionsMenuExtensionButton{display: flex;align-items: center;justify-content: center;width: var(--blai-size-20);min-width: var(--blai-size-20);max-width: var(--blai-size-20);height: var(--blai-size-20);flex: 0 0 var(--blai-size-20);font-size: 0.8em}
+#blai-wand-btn{cursor: pointer;margin-left: -5px}
 .blai-extension-settings-entry .inline-drawer-content{padding: var(--blai-space-8) 0 var(--blai-space-12)}
 .blai-extension-open-btn{width: min(var(--blai-size-260),100%);min-height: var(--blai-size-38);display: inline-flex;align-items: center;justify-content: center;gap: var(--blai-space-8);border-radius: var(--blai-radius-sm);font-size: var(--blai-font-14);font-weight: var(--blai-weight-bold);white-space: nowrap}
 #qr--bar>.qr--buttons{width: auto !important}

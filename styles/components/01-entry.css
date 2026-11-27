@@ -6,20 +6,8 @@
 
 #blai-wand-btn {
     cursor: pointer;
-}
-
-/* 入口图标：语言字形是实心方块，视觉占宽大于上下两项的线性图标。
-   保留 20px 槽位不动文字列，仅缩小字形本身，使右侧留白与相邻条目一致。 */
-#blai-wand-btn .extensionsMenuExtensionButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--blai-size-20);
-    min-width: var(--blai-size-20);
-    max-width: var(--blai-size-20);
-    height: var(--blai-size-20);
-    flex: 0 0 var(--blai-size-20);
-    font-size: 0.8em;
+    /* 整行左移，让图标与文字的相对缩进与上下原生条目一致。 */
+    margin-left: -5px;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {
