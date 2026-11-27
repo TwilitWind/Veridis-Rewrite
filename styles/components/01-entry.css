@@ -6,8 +6,6 @@
 
 #blai-wand-btn {
     cursor: pointer;
-    /* 整行左移，让图标与文字的相对缩进与上下原生条目一致。 */
-    margin-left: -5px;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {
