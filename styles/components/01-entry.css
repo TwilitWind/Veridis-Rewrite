@@ -4,26 +4,21 @@
     text-shadow: none;
 }
 
-/* 魔法棒菜单条目：DOM 已完整复用酒馆原生的
-   .list-group-item.flex-container.flexGap5 + div.extensionsMenuExtensionButton，
-   与原生 attachments/manage-button.html 同构。布局（flex / baseline / gap /
-   换行）全部交给原生类计算，这里只留 cursor —— 一旦写 display/align/gap/
-   nowrap 就会和原生声明打架，让「词汇映射」文字缩进与上下条目不一致。 */
 #blai-wand-btn {
     cursor: pointer;
 }
 
-/* 窄屏下菜单图标字形宽度不一，固定图标槽位，让文字与相邻条目保持同一列。 */
-@media (max-width: 600px) {
-    #blai-wand-btn .extensionsMenuExtensionButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: var(--blai-size-20);
-        min-width: var(--blai-size-20);
-        height: var(--blai-size-20);
-        flex-shrink: 0;
-    }
+/* 入口图标锁定 20px 槽位：字形宽度不一时，文字仍与相邻条目同列。 */
+#blai-wand-btn .extensionsMenuExtensionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--blai-size-20);
+    min-width: var(--blai-size-20);
+    max-width: var(--blai-size-20);
+    height: var(--blai-size-20);
+    flex: 0 0 var(--blai-size-20);
+    overflow: hidden;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {
