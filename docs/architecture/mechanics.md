@@ -24,9 +24,9 @@
 
 只允许两类资源：当前角色卡的世界书、当前角色卡的聊天记录；`contentItems.js` 里 `includeCharacterText` 与 `includeShujuku` 显式传 `false`。`is_system === true` **不是**跳过条件——`/hide` 隐藏的楼层正是这种消息，要参与处理并标 `isHidden` 供复核界面显示「已隐藏」；`apply/chat.js` 与 `contentItems.js` 两处判断必须同步。运行设置的「规则预设」取自 `settings.presets`，经 `frozenRunInput` 冻结到本次运行，结束不写回全局当前预设。
 
-**世界书不受标签作用域约束**：`cleanse-inside`（只处理 `<content>`/`<game>` 内文本）只对聊天消息有意义；世界书条目是配置数据、没有这类包裹标签，`scan.js` 的 `scopeSettingsForDeepCleanItem` 会把它的 `scopeTags` 清空并切回 `protect`。扫描（`scan.js`）、程序改写（`programProcessing.js` 的 `getProgramScopeSettings` 与 AI 改写项）三处都要调用该辅助函数，漏一处就会出现「勾选世界书却 0 命中、完成页照样报成功」的假成功。回归 `node test/audit/verify-deep-clean-worldbook.mjs`（纯 Node，含旧行为反证）。
+**世界书不受标签作用域约束**：`cleanse-inside`（只处理 `<content>`/`<game>` 内文本）只对聊天消息有意义；世界书条目是配置数据、没有这类包裹标签，`scan.js` 的 `scopeSettingsForDeepCleanItem` 会把它的 `scopeTags` 清空并切回 `protect`。扫描（`scan.js`）、程序改写（`programProcessing.js` 的 `getProgramScopeSettings` 与 AI 改写项）三处都要调用该辅助函数，漏一处就会出现「勾选世界书却 0 命中、完成页照样报成功」的假成功。标签边界只由 `aiRewrite/planning.js` 的 `collectScopeRanges` 扫描，规则引擎与 AI 匹配器都消费它的结果；未闭合标签统一按「从起始标签到文末都受保护」处理。
 
-**预览是扫描后的可选层**：`scan.js` 在扫描时顺手记录 `affectedItemModes`，`preview.js` 据此提供「全部 / 程序改写 / AI 改写 / 已取消」筛选与逐条导航。程序预览用同一套规则引擎计算；AI 预览按需请求并缓存 `aiCandidate`，`executeDeepCleanAiRequests` 用 `previewCache` 跳过已生成条目的重复请求，正式执行仍是「AI 写回后再跑程序改写」。取消项只写进 `lifecycle.skippedItemIndexes`，`takeNextDeepCleanBatch` 直接跳过，完成页计入「已跳过」而不是伪装成成功写入。预览列表只渲染当前窗口条目，切换条目会取消上一个预览请求。回归 `node test/audit/verify-deep-clean-preview.mjs`（纯 Node）与 `CDP_PORT=9224 node test/audit/verify-copy-preview.mjs`（桌面 + 手机）。
+**预览是扫描后的可选层**：`scan.js` 在扫描时顺手记录 `affectedItemModes`，`preview.js` 据此提供「全部 / 程序改写 / AI 改写 / 已取消」筛选与逐条导航。程序预览用同一套规则引擎计算；AI 预览按需请求并缓存 `aiCandidate`，`executeDeepCleanAiRequests` 用 `previewCache` 跳过已生成条目的重复请求，正式执行仍是「AI 写回后再跑程序改写」。取消项只写进 `lifecycle.skippedItemIndexes`，`takeNextDeepCleanBatch` 直接跳过，完成页计入「已跳过」而不是伪装成成功写入。预览列表只渲染当前窗口条目，切换条目会取消上一个预览请求。
 
 ### 差异记录与分支
 
@@ -53,7 +53,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **切页是 fade through，弹窗走退场后切换**：`showResponsivePage` 在点击当帧把 `.active` 唯一地切到目标页（导览与业务代码读到的永远是目标页），旧页保留布局加 `.blai-is-leaving` 淡出 80ms，新页加 `.blai-is-entering` 等旧页退完再淡入 120ms。待办切换只存在 `pendingPageSwap` 一处，快速连点作废旧任务，最终只留最后一次目标。弹窗与反馈页标签的退场后切换由 `src/ui/motion.js` 的 `fadeOutThen` 提供。切页/弹窗只改 `opacity`，弹卡入场允许在卡片自身叠轻 scale；portal 菜单的定位元素不叠 `transform`。时长取自 `03-scale.css` 的动效令牌，JS 兜底定时器与 jQuery 淡入淡出也读同一组值，不在调用点写死。横向 push/pop 禁用，理由见 `DESIGN.md`。
 
-**挂载位置**：所有大弹窗都必须是 `templates/purifier.html` 里 `#blai-purifier-popup` 闭合标签之后的顶层节点（运行时 `$('body').append(templateHtml)`，即成为 body 直属）。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点。
+**挂载位置**：所有大弹窗都必须是 `#blai-purifier-popup` 之后的 body 直属兄弟。模板按顶层节点拆成 `templates/purifier-shell.html`（外壳 + 反馈页）、`purifier-page-overview/ai/clean/tools.html`（四个页面面板）、`purifier-modals.html`、`purifier-diff.html`、`purifier-forms.html`，由 `src/ui/shell.js` 并发渲染后先注入脱离文档的外壳，再按「外壳 → 其余片段」顺序一次性 append 到 body。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点；新增模板片段时同步补 `templateIds` 数组，宿主渲染失败会返回 `undefined`，拼装处必须显式报错而不是静默缺块。
 
 **层级阶梯**：所有 z-index 只在 `tokens/03-scale.css` 的 `--blai-z-*` 里定义，页面文件一律 `var(...)`，不写裸数字。从低到高：`--blai-z-inner`（组件内部高亮）/ `--blai-z-page`（页面浮层）/ `--blai-z-tour`（导览）/ `--blai-z-panel`（主面板）/ `--blai-z-loading`（加载遮罩）/ `--blai-z-shell`（大弹窗基底）/ `--blai-z-modal`（弹窗内再弹出的对话框，如备注、删除、重命名、风险确认）/ `--blai-z-modal-raised`（最终层）/ `--blai-z-menu`（下拉/省略号菜单）/ `--blai-z-toast`（toast，最高）。新增浮层先在这张表里选一档，不要另造数字。
 
@@ -67,7 +67,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **`[hidden]` 失效**：`.blai-subrule-field{display:flex!important}` 会压掉默认 `[hidden]{display:none}`，靠 `prop('hidden', …)` 切换的块都要补 `.X[hidden]{display:none!important}`（`styles/pages/home/home-overview.css` 有先例）。
 
-**`!important` 治理**：默认禁止，准入仅三类——对抗宿主/主题的强声明、`[hidden]` 强开关、内联定位。量化基线见 `test/audit/important-audit.mjs`（计数只许降），视觉防回归见 `style-snapshot.mjs`（双视口×双主题×五页面的计算样式 digest）。减量只能删「实测移除后计算样式零变化」的声明：用 CSSOM 临时去掉 `!important` 量真实计算值，或改完跑快照比对，任一处变化就回退。已知必须保留的类别：魔法棒 `display/align-items/gap`（宿主输入栏强声明）、按钮禁用态 `opacity/filter`、全屏弹窗覆盖、输入框字号与边框色、菜单内联定位。`.blai-icon-btn` 的尺寸/阴影、输入框 `min-height/字色/阴影` 这类自有控件无对抗，已安全移除。
+**`!important` 治理**：默认禁止，准入仅三类——对抗宿主/主题的强声明、`[hidden]` 强开关、内联定位。量化基线见 `styles/quality-baseline.json`（计数只许降）。减量只能删「实测移除后计算样式零变化」的声明：用 CSSOM 临时去掉 `!important` 量真实计算值并比对，任一处变化就回退。已知必须保留的类别：魔法棒 `display/align-items/gap`（宿主输入栏强声明）、按钮禁用态 `opacity/filter`、全屏弹窗覆盖、输入框字号与边框色、菜单内联定位。`.blai-icon-btn` 的尺寸/阴影、输入框 `min-height/字色/阴影` 这类自有控件无对抗，已安全移除。
 
 **下拉菜单**一律走 `ui/popover.js` 挂 body，CSS `position:fixed` + 高 z-index，避免被父级 `overflow` 裁切；空间不足向上弹。所有下拉菜单（11 类 `-menu` 类）的首末/独行圆角统一在 `styles/components/07-menu-fill.css`：一份 `:is()` 清单配 `&:first-child/last-child/only-child` 原生嵌套，新增菜单类只补这一处清单（其余文件里的同类选择器只管各自配色/动画/定位，不重复圆角规则）。
 
@@ -83,7 +83,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 `<select>` 的 `option` 不继承 CSS 变量，必须在 `styles/tokens/02-themes.css` 按 `[data-theme]` 分段显式写死底色字色并带 `!important`（酒馆 `public/style.css` 有 `select option{background-color:var(--white50a)}`）。
 
-**模板里的隐藏真按钮**：`templates/purifier.html` 底部 `.blai-hidden-real-controls` 藏着 `#blai-preset-rename/new/delete/import/export` 与 `#blai-default-toggle` 六个 id 锚点，靠 `styles/layouts/00-shell.css` 的 `display:none !important` 隐藏；删掉那条规则会露出灰按钮。
+**模板里的隐藏真按钮**：`templates/purifier-shell.html` 底部 `.blai-hidden-real-controls` 藏着 `#blai-preset-rename/new/delete/import/export` 与 `#blai-default-toggle` 六个 id 锚点，靠 `styles/layouts/00-shell.css` 的 `display:none !important` 隐藏；删掉那条规则会露出灰按钮。
 
 ### 设置命名空间
 

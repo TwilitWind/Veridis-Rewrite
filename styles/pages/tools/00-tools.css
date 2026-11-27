@@ -20,7 +20,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--blai-space-8);
-    font-size: var(--blai-font-18);
+    font-size: var(--blai-fs-title);
     line-height: 1.3;
     color: var(--text-main);
 }

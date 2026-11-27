@@ -1,0 +1,140 @@
+                    <section class="page-panel" data-page="tools">
+                        <div class="blai-tools-page">
+                            <div class="blai-tools-columns">
+                                <main class="blai-tools-primary-column">
+                                    <section class="blai-tools-section" aria-labelledby="blai-tools-binding-title">
+                                        <header class="blai-tools-section-header blai-tools-binding-header">
+                                            <div>
+                                                <h2 id="blai-tools-binding-title">预设绑定解析</h2>
+                                                <div class="blai-tools-header-description">
+                                                    <p>配置当前预设的生效层级。</p>
+                                                </div>
+                                            </div>
+                                            <button id="blai-tools-binding-history-open" class="blai-tools-header-action" type="button"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i>绑定记录</button>
+                                        </header>
+
+                                        <div class="blai-tools-binding-list" aria-label="预设绑定层级">
+                                            <div class="blai-tools-binding-item">
+                                                <div class="blai-tools-binding-row">
+                                                    <button type="button" class="blai-tools-binding-main-action blai-proxy-field" data-blai-click-proxy="#blai-default-toggle">
+                                                        <span class="blai-tools-binding-copy">
+                                                            <span class="blai-tools-binding-title"><span class="blai-tools-binding-icon" aria-hidden="true"><i class="fas fa-globe"></i></span><strong>全局预设</strong></span>
+                                                            <span class="blai-tools-binding-value"><span class="blai-tools-binding-description">作为未命中角色或补全绑定时的默认预设。</span><span class="blai-tools-binding-current-value">当前设置：<strong id="blai-tools-global-preset">无</strong></span></span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="blai-tools-binding-item">
+                                                <div class="blai-tools-binding-row">
+                                                    <button type="button" class="blai-tools-binding-main-action blai-proxy-field" data-blai-click-proxy="#blai-bind-current-character" data-blai-toggle-binding="character" aria-label="当前角色卡" title="当前角色卡">
+                                                        <span class="blai-tools-binding-copy">
+                                                            <span class="blai-tools-binding-title"><span class="blai-tools-binding-icon" aria-hidden="true"><i class="fas fa-user"></i></span><strong>角色卡</strong></span>
+                                                            <span class="blai-tools-binding-value"><span class="blai-tools-binding-context-value">当前角色卡：<strong id="blai-tools-character-context">无</strong></span><span class="blai-tools-binding-current-value">当前绑定：<strong id="blai-tools-character-binding">未绑定</strong></span></span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="blai-tools-binding-item">
+                                                <div class="blai-tools-binding-row">
+                                                    <button type="button" class="blai-tools-binding-main-action blai-proxy-field" data-blai-click-proxy="#blai-bind-current-chat-preset" data-blai-toggle-binding="chatPreset" aria-label="对话补全预设" title="对话补全预设">
+                                                        <span class="blai-tools-binding-copy">
+                                                            <span class="blai-tools-binding-title"><span class="blai-tools-binding-icon" aria-hidden="true"><i class="fas fa-comments"></i></span><strong>补全预设</strong></span>
+                                                            <span class="blai-tools-binding-value"><span class="blai-tools-binding-context-value">当前补全预设：<strong id="blai-tools-chat-context">无</strong></span><span class="blai-tools-binding-current-value">当前绑定：<strong id="blai-tools-chat-binding">未绑定</strong></span></span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section id="blai-tools-version-section" class="blai-tools-section blai-tools-version-section" aria-labelledby="blai-tools-version-title">
+                                        <header class="blai-tools-section-header">
+                                            <h2 id="blai-tools-version-title">版本信息</h2>
+                                        </header>
+                                        <div id="blai-tools-version-content" class="blai-tools-version-content" aria-live="polite">
+                                            <p class="blai-tools-version-status">正在检查版本信息…</p>
+                                        </div>
+                                    </section>
+
+                                </main>
+
+                                <aside class="blai-tools-secondary-column">
+                                    <section class="blai-tools-section" aria-labelledby="blai-tools-extras-title">
+                                        <header class="blai-tools-section-header">
+                                            <h2 id="blai-tools-extras-title">附加功能</h2>
+                                            <p>界面呈现、第三方联动与简繁转换，开启后会立即生效。</p>
+                                        </header>
+                                        <div class="blai-tools-settings blai-tools-extras">
+                                            <div class="blai-tools-slider-setting blai-tools-number-setting">
+                                                <span class="blai-tools-slider-header">
+                                                    <span class="blai-tools-setting-copy">
+                                                        <span class="blai-tools-setting-title-line">
+                                                            <label for="blai-diff-limit-input"><strong>净化结果楼层数</strong></label>
+                                                            <button id="blai-diff-limit-info" type="button" class="blai-info-trigger" data-blai-info-trigger="blai-diff-limit-info-panel" aria-label="查看净化结果楼层数说明" aria-controls="blai-diff-limit-info-panel" aria-expanded="false" title="查看净化结果楼层数说明"><i class="fas fa-circle-question" aria-hidden="true"></i></button>
+                                                            <span id="blai-diff-limit-info-panel" class="blai-info-popover" role="tooltip" hidden>
+                                                                <strong class="blai-info-popover-title">记录范围</strong>
+                                                                <span id="blai-diff-limit-info-scope">只统计最近 3 条非用户消息，通常是 AI 回复。</span>
+                                                                <span>这个值同时控制透视按钮的显示范围。</span>
+                                                                <span class="blai-info-popover-warning">调小会立即清理超出范围的记录；调大不会恢复已清理的记录。</span>
+                                                                <span>记录保存在聊天消息中，刷新后仍能看到。</span>
+                                                            </span>
+                                                        </span>
+                                                        <span>控制可查看净化结果的最近消息数</span>
+                                                    </span>
+                                                    <span class="blai-tools-number-field">
+                                                        <input type="number" id="blai-diff-limit-input" min="1" max="20" step="1" inputmode="numeric" aria-label="净化结果楼层数" aria-describedby="blai-diff-limit-info-panel">
+                                                        <span class="blai-tools-number-unit" aria-hidden="true">条</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+
+                                            <div class="blai-tools-setting-row">
+                                                <div class="blai-tools-setting-copy">
+                                                    <strong>AI改写快捷键</strong>
+                                                    <p>在输入框区域显示手动 AI 改写按钮，对当前聊天中最新一条助手消息执行手动 AI 改写。</p>
+                                                </div>
+                                                <button id="blai-composer-button-toggle" type="button" class="blai-tools-switch" aria-pressed="false" aria-label="AI改写快捷键">
+                                                    <span class="blai-tools-switch-track" aria-hidden="true"></span>
+                                                    <span class="blai-tools-switch-state">关闭</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="blai-tools-setting-row">
+                                                <div class="blai-tools-setting-copy">
+                                                    <strong>数据库自动净化</strong>
+                                                    <p>在数据库同步应用当前的净化规则，仅在使用数据库时启用。</p>
+                                                </div>
+                                                <button id="blai-shujuku-auto-rewrite-toggle" type="button" class="blai-tools-switch" aria-pressed="false" aria-label="开启数据库自动净化" title="开启数据库自动净化">
+                                                    <span class="blai-tools-switch-track" aria-hidden="true"></span>
+                                                    <span class="blai-tools-switch-state">关闭</span>
+                                                </button>
+                                            </div>
+
+                                            <div class="blai-tools-extra-block blai-tools-opencc-block">
+                                                <div class="blai-tools-opencc-header">
+                                                    <div class="blai-tools-setting-copy">
+                                                        <strong>简繁转换</strong>
+                                                        <p>让预设规则在匹配文本时自动兼容简繁体。</p>
+                                                    </div>
+                                                    <button id="blai-zh-dict-install-open" class="blai-tools-primary-button" type="button" aria-label="下载兼容包" title="下载兼容包">下载</button>
+                                                    <button id="blai-zh-compat-toggle" class="blai-tools-switch" type="button" aria-pressed="false" aria-label="开启简繁转换" title="开启简繁转换" hidden>
+                                                        <span class="blai-tools-switch-track" aria-hidden="true"></span>
+                                                        <span class="blai-tools-switch-state">关闭</span>
+                                                    </button>
+                                                </div>
+                                                <div class="blai-tools-opencc-content">
+                                                    <p>装上 OpenCC 词典包后，简繁规则可互相匹配正文；兼容包需单独下载，之后缓存在本地。</p>
+                                                    <div id="blai-zh-dict-state" class="blai-zh-dict-state" data-state="missing" role="status">
+                                                        <span class="blai-zh-dict-state-icon" aria-hidden="true"><i class="fas fa-circle-info"></i></span>
+                                                        <span class="blai-zh-dict-state-text" id="blai-zh-dict-state-text">尚未安装简繁兼容包。</span>
+                                                        <button id="blai-zh-dict-retry" class="blai-tools-secondary-button" type="button" hidden>重新下载</button>
+                                                    </div>
+                                                    <p id="blai-zh-dict-install-status" role="status" hidden></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </aside>
+                            </div>
+                        </div>
+                    </section>

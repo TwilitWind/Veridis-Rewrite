@@ -1,0 +1,149 @@
+                    <section class="page-panel" data-page="ai">
+                        <div id="blai-ai-settings" class="blai-ai-settings">
+                            <div class="blai-ai-columns">
+                                <main class="blai-ai-primary-column">
+                                    <section id="blai-ai-connection-section" class="blai-ai-section" aria-labelledby="blai-ai-connection-title">
+                                        <header class="blai-ai-section-header blai-ai-connection-header">
+                                            <div>
+                                                <div class="blai-ai-connection-title-row">
+                                                    <h2 id="blai-ai-connection-title">API 连接</h2>
+                                                    <button type="button" id="blai-ai-connection-info" class="blai-info-trigger" data-blai-info-trigger="blai-ai-info-panel" aria-label="查看执行顺序说明" aria-controls="blai-ai-info-panel" aria-expanded="false" title="查看执行顺序说明"><i class="fas fa-circle-question" aria-hidden="true"></i></button>
+                                                    <span id="blai-ai-info-panel" class="blai-info-popover" role="tooltip" hidden>
+                                                        <strong class="blai-info-popover-title">执行顺序</strong>
+                                                        <span>开启「启用 AI 改写」后，先从上到下执行 AI 改写，再执行程序改写。</span>
+                                                        <span>关闭后只执行程序改写，AI 改写不参与。</span>
+                                                        <span>规则在列表中的上下顺序就是执行顺序。</span>
+                                                    </span>
+                                                </div>
+                                                <p>连接到兼容的模型后端。</p>
+                                            </div>
+                                            <div class="blai-ai-rewrite-switches" role="group" aria-label="AI 改写开关">
+                                                <label class="blai-ai-switch">
+                                                    <input type="checkbox" id="blai-ai-enabled">
+                                                    <span>启用 AI 改写</span>
+                                                    <span class="blai-ai-switch-track" aria-hidden="true"></span>
+                                                </label>
+                                                <label class="blai-ai-switch">
+                                                    <input type="checkbox" id="blai-ai-auto-trigger-enabled">
+                                                    <span>自动触发 AI 改写</span>
+                                                    <span class="blai-ai-switch-track" aria-hidden="true"></span>
+                                                </label>
+                                            </div>
+                                        </header>
+                                        <div class="blai-ai-connection-grid">
+                                            <label class="blai-ai-control blai-ai-api-preset-field">
+                                                <span class="blai-ai-control-label">API 预设</span>
+                                                <span class="blai-ai-compound-control">
+                                                    <select id="blai-ai-api-preset" class="blai-select-box" aria-label="API 预设"></select>
+                                                    <span class="blai-ai-preset-actions-wrap">
+                                                        <span class="blai-ai-api-preset-actions" hidden>
+                                                            <button type="button" id="blai-ai-api-preset-new" class="blai-ai-icon-button" title="将当前 API 配置另存为新预设" aria-label="将当前 API 配置另存为新预设"><i class="fas fa-plus" aria-hidden="true"></i></button>
+                                                            <button type="button" id="blai-ai-api-preset-save" class="blai-ai-icon-button" title="保存当前 API 配置" aria-label="保存当前 API 配置"><i class="fas fa-save" aria-hidden="true"></i></button>
+                                                            <button type="button" id="blai-ai-api-preset-edit" class="blai-ai-icon-button" title="重命名当前 API 预设" aria-label="重命名当前 API 预设"><i class="fas fa-pen" aria-hidden="true"></i></button>
+                                                            <button type="button" id="blai-ai-api-preset-delete" class="blai-ai-icon-button" title="删除当前 API 预设" aria-label="删除当前 API 预设"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                                                        </span>
+                                                        <button type="button" id="blai-ai-preset-actions-toggle" class="blai-ai-icon-button blai-ai-preset-actions-toggle" title="API 预设操作" aria-label="API 预设操作" aria-haspopup="menu" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                                        <div id="blai-ai-preset-actions-menu" class="blai-preset-menu blai-ai-preset-actions-menu" role="menu" aria-label="API 预设操作" hidden>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-save"><i class="fas fa-save" aria-hidden="true"></i><span>保存</span></button>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>新建</span></button>
+                                                            <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-edit"><i class="fas fa-pen" aria-hidden="true"></i><span>重命名</span></button>
+                                                            <button type="button" class="blai-preset-menu-item blai-preset-action-danger" role="menuitem" data-blai-ai-preset-action="#blai-ai-api-preset-delete"><i class="fas fa-trash" aria-hidden="true"></i><span>删除</span></button>
+                                                        </div>
+                                                    </span>
+                                                </span>
+                                            </label>
+                                            <label class="blai-ai-control">
+                                                <span class="blai-ai-control-label">Base URL</span>
+                                                <input type="text" id="blai-ai-base-url" class="blai-input" placeholder="https://api.openai.com/v1">
+                                            </label>
+                                            <label class="blai-ai-control blai-api-key-field">
+                                                <span class="blai-ai-control-label">API Key</span>
+                                                <span class="blai-ai-key-control">
+                                                    <input type="password" id="blai-ai-api-key" class="blai-input" autocomplete="off">
+                                                    <span class="blai-ai-key-actions">
+                                                        <button type="button" id="blai-ai-api-key-reveal" class="blai-ai-embedded-button" title="显示 / 隐藏 API Key" aria-label="显示 / 隐藏 API Key"><i class="fas fa-eye" aria-hidden="true"></i></button>
+                                                        <button type="button" id="blai-ai-api-key-clear" class="blai-ai-embedded-button" title="清空 API Key" aria-label="清空 API Key"><i class="fas fa-eraser" aria-hidden="true"></i></button>
+                                                    </span>
+                                                </span>
+                                            </label>
+                                            <label class="blai-ai-control blai-ai-model-field">
+                                                <span class="blai-ai-control-heading">
+                                                    <span class="blai-ai-control-label">模型</span>
+                                                    <small id="blai-ai-connection-status" class="blai-ai-connection-status" data-state="idle">未拉取</small>
+                                                </span>
+                                                <span class="blai-ai-compound-control blai-ai-model-row">
+                                                    <select id="blai-ai-model" class="blai-select-box blai-ai-model-select" aria-label="模型"></select>
+                                                    <button type="button" id="blai-ai-model-actions-toggle" class="blai-ai-icon-button blai-ai-model-actions-toggle" aria-haspopup="menu" aria-expanded="false" title="模型操作" aria-label="模型操作"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                                    <div id="blai-ai-model-actions-menu" class="blai-preset-menu blai-ai-model-actions-menu" role="menu" hidden>
+                                                        <button type="button" id="blai-ai-model-manual-add" class="blai-preset-menu-item" role="menuitem" aria-label="手动填写模型 ID" title="手动填写模型 ID"><i class="fas fa-pen" aria-hidden="true"></i><span>手动填写</span></button>
+                                                        <button type="button" id="blai-ai-model-manage" class="blai-preset-menu-item" role="menuitem" aria-label="管理手动模型" title="管理手动模型"><i class="fas fa-list-check" aria-hidden="true"></i><span>管理模型</span></button>
+                                                        <button type="button" id="blai-ai-model-fetch" class="blai-preset-menu-item" role="menuitem" aria-label="刷新模型列表" title="刷新模型列表"><i class="fas fa-rotate" aria-hidden="true"></i><span>刷新模型</span></button>
+                                                    </div>
+                                                </span>
+                                            </label>
+                                            <button id="blai-ai-generation-open" type="button" class="blai-ai-generation-open" aria-haspopup="dialog" aria-controls="blai-ai-generation-modal" aria-expanded="false" aria-label="高级生成参数" title="高级生成参数">
+                                                <span><i class="fas fa-sliders" aria-hidden="true"></i>生成参数</span>
+                                                <small>默认参数可直接使用，熟悉采样设置后再调整。</small>
+                                            </button>
+                                            <button id="blai-ai-additional-open" type="button" class="blai-ai-additional-open" aria-haspopup="dialog" aria-controls="blai-ai-additional-modal" aria-expanded="false" aria-label="附加参数" title="附加参数">
+                                                <span><i class="fas fa-code" aria-hidden="true"></i>附加参数 <small id="blai-ai-additional-state" class="blai-ai-additional-state" data-filled="false">未填写</small></span>
+                                                <small>按原生 API 设置填写包含/排除主体参数与请求标头（YAML）。</small>
+                                            </button>
+                                        </div>
+                                        <p id="blai-ai-http-warning" class="blai-ai-warning" hidden>非本地 HTTP 地址不安全，建议使用 HTTPS 或本地代理。</p>
+                                        <div id="blai-ai-generation-host" class="blai-ai-generation-host">
+                                            <section id="blai-ai-generation-section" class="blai-ai-section" aria-labelledby="blai-ai-generation-title">
+                                            <header class="blai-ai-section-header">
+                                                <div>
+                                                    <div class="blai-ai-generation-title-row">
+                                                        <h2 id="blai-ai-generation-title">生成参数</h2>
+                                                        <button type="button" id="blai-ai-generation-info" class="blai-info-trigger" data-blai-info-trigger="blai-ai-generation-info-panel" aria-label="查看生成参数说明" aria-controls="blai-ai-generation-info-panel" aria-expanded="false" title="查看生成参数说明"><i class="fas fa-circle-question" aria-hidden="true"></i></button>
+                                                    </div>
+                                                    <p>调节模型输出的多样性与控制限制。</p>
+                                                </div>
+                                            </header>
+                                            <span id="blai-ai-generation-info-panel" class="blai-info-popover" role="tooltip" hidden>
+                                                <strong class="blai-info-popover-title">参数说明</strong>
+                                                <span><strong>每次改写条数</strong>指同一条消息内一次请求处理的改写目标数，可按需要设置。例如设为 20 且命中 100 个目标时，会分成 5 次请求，全部完成后统一写回；实际批次数按你设置的值和命中数计算。</span>
+                                                <span><strong>上下文上限</strong>是单次请求发给模型的原文字符数，不是历史消息条数。</span>
+                                                <span><strong>最大输出 Token</strong>为 0 时使用接口默认值；过小可能截断 JSON 导致失败。</span>
+                                                <span><strong>失败重试</strong>只重试未完成的批；<strong>请求超时</strong>是单次请求的等待秒数。</span>
+                                                <span class="blai-info-popover-warning">分批失败时，已成功的批会写回，失败批保留原文，并提示未完成批数。</span>
+                                            </span>
+                                            <div class="blai-ai-parameter-grid">
+                                                <label class="blai-ai-control blai-temperature-field">
+                                                    <span class="blai-ai-control-label">温度</span>
+                                                    <input type="number" id="blai-ai-temperature" class="blai-input" min="0" max="2" step="0.05">
+                                                </label>
+                                                <label class="blai-ai-control" title="控制候选 token 的累计概率范围，越低越保守"><span class="blai-ai-control-label">Top P</span><input type="number" id="blai-ai-top-p" class="blai-input" min="0" max="1" step="0.01"></label>
+                                                <label class="blai-ai-control" title="只保留概率最高的前 K 个 token；0 表示不额外限制"><span class="blai-ai-control-label">Top K</span><input type="number" id="blai-ai-top-k" class="blai-input" min="0" max="500" step="1"></label>
+                                                <label class="blai-ai-control" title="发送给接口的最大输出 token；0 表示使用接口默认值"><span class="blai-ai-control-label">最大输出 Token</span><input type="number" id="blai-ai-max-tokens" class="blai-input" min="0" max="65536" step="1"></label>
+                                                <label class="blai-ai-control" title="降低模型重复已经出现过的词；标准范围为 -2 到 2"><span class="blai-ai-control-label">频率惩罚</span><input type="number" id="blai-ai-frequency-penalty" class="blai-input" min="-2" max="2" step="0.01"></label>
+                                                <label class="blai-ai-control" title="降低模型谈论已经出现过的主题；标准范围为 -2 到 2"><span class="blai-ai-control-label">存在惩罚</span><input type="number" id="blai-ai-presence-penalty" class="blai-input" min="-2" max="2" step="0.01"></label>
+                                                <label class="blai-ai-control" title="部分兼容接口支持；1 表示不额外启用"><span class="blai-ai-control-label">重复惩罚</span><input type="number" id="blai-ai-repetition-penalty" class="blai-input" min="1" max="2" step="0.01"></label>
+                                                <label class="blai-ai-control" title="把同一条消息内命中的改写目标按此数量分批"><span class="blai-ai-control-label">每次改写条数</span><input type="number" id="blai-ai-max-items" class="blai-input" min="1" step="1"></label>
+                                                <label class="blai-ai-control" title="单次请求发送给模型的原文字符数，不是历史消息条数"><span class="blai-ai-control-label">上下文上限</span><input type="number" id="blai-ai-max-context" class="blai-input" min="1000" max="60000" step="500"></label>
+                                                <label class="blai-ai-control" title="超时或网络错误时，只重试未完成的批"><span class="blai-ai-control-label">失败重试次数</span><input type="number" id="blai-ai-max-retries" class="blai-input" min="0" max="5" step="1"></label>
+                                                <label class="blai-ai-control" title="单次请求的等待秒数"><span class="blai-ai-control-label">请求超时</span><input type="number" id="blai-ai-timeout" class="blai-input" min="1" max="120" step="1"></label>
+                                            </div>
+                                            </section>
+                                        </div>
+                                    </section>
+
+                                </main>
+
+                                <aside class="blai-ai-secondary-column">
+                                    <section class="blai-ai-section" aria-labelledby="blai-ai-prompt-title">
+                                        <header class="blai-ai-section-header">
+                                            <div>
+                                                <h2 id="blai-ai-prompt-title">全局提示词</h2>
+                                                <p>应用于所有 AI 改写规则的全局提示，将与特定规则的提示词合并。</p>
+                                            </div>
+                                            <button id="blai-ai-prompt-expand" type="button" class="blai-ai-icon-button" title="展开编辑全局提示词" aria-label="展开编辑全局提示词"><i class="fas fa-expand" aria-hidden="true"></i></button>
+                                        </header>
+                                        <textarea id="blai-ai-prompt" class="blai-textarea blai-ai-prompt-input" rows="10" aria-label="全局提示词"></textarea>
+                                    </section>
+                                </aside>
+                            </div>
+                        </div>
+                    </section>

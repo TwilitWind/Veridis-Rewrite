@@ -7,7 +7,7 @@ import { compileRegexTarget, validateRegexTargetInput } from '.././regex.js';
 import { findBracketPairAt, renderRegexHighlightHtml, renderSimpleHighlightHtml } from '.././regexHighlight.js';
 import { buildSimpleTargetPattern, buildTargetLiteralPattern } from '../engine/engine-00-patterns.js';
 import { parseInputToWords } from '.././model.js';
-import { showToast } from '../../ui/notifications.js';
+import { showConfirmModal, showToast } from '../../ui/notifications.js';
 import { clearRuleSearchEditFlow, pushRuleSearchHistory, focusLatestRuleCard, openEditModal, openSingleRuleModal, renderRuleSearchModal, renderTags } from '.././view.js';
 
 const ruleObjectIdMap = new WeakMap();
@@ -84,6 +84,18 @@ export function handleDeleteRule(index, rules) {
         return deleteSelectedRules(rules, getSelectedIndexesFromState(rules));
     }
     return deleteSingleRule(rules, index);
+}
+
+/** 删除规则分组的唯一编排：确认文案、批量计数、写回与 toast 都在这里，卡片菜单与列表按钮共用。 */
+export async function deleteRulesWithConfirm(index, rules) {
+    if (!await showConfirmModal('确定要删除这个规则分组吗？删除后无法恢复。', { danger: true, okText: '删除' })) return false;
+    const deletingCount = shouldBatchTransferRule(index, rules) ? getSelectedIndexesFromState(rules).length : 1;
+    if (!handleDeleteRule(index, rules)) return false;
+    markRulesDataDirty();
+    getAppContext().saveSettingsDebounced();
+    renderTagsPreserveBatchSelection();
+    showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个规则` : '已删除规则', undefined, 'success');
+    return true;
 }
 
 export function renderTagsPreserveBatchSelection() {

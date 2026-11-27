@@ -85,8 +85,7 @@
     /* 输入框底色已统一走 --blai-input-bg（= --bg-surface），不再覆盖酒馆的 --field-bg。 */
     --status-danger: #D95757;
     --status-success: #70BF56;
-    /* 夜间四来源圆点整体提亮，避免在深卡片上糊成一团。 */
-    --blai-diff-original: #AFB2BA;
+    /* 夜间来源圆点整体提亮，避免在深卡片上糊成一团。 */
     --blai-diff-program: #8AA2CE;
     --blai-diff-ai: #C6A2FF;
     --blai-diff-manual: #E0A458;
@@ -134,7 +133,6 @@
     --border-color: #E3DDD0;
     --status-danger: #B94A42;
     --status-success: #5E8060;
-    --blai-diff-original: #7A7468;
     --blai-diff-program: #A85832;
     --blai-diff-ai: #8A6A9E;
     --blai-diff-manual: #8D7A3F;
@@ -172,7 +170,6 @@
     --border-color: #454C57;
     --status-danger: #BF616A;
     --status-success: #7FBF86;
-    --blai-diff-original: #A8B0BB;
     --blai-diff-program: #A3BE8C;
     --blai-diff-ai: #B48EAD;
     --blai-diff-manual: #D08770;
@@ -287,7 +284,8 @@
     .blai-home-card-menu, .blai-subrule-menu, .blai-preset-menu,
     .blai-rule-search-menu, .blai-edit-filter-menu,
     .blai-clean-tag-menu, .blai-clean-group-menu, .blai-diff-actions-menu,
-    .blai-theme-menu, .blai-portal-menu
+    .blai-theme-menu, .blai-portal-menu,
+    .blai-feedback-area-options, .blai-native-select-menu
 ) {
     --blai-dropdown-bg: var(--bg-surface);
     --blai-dropdown-ink: var(--text-main);
@@ -296,9 +294,9 @@
     --blai-dropdown-active-ink: #FFFFFF;
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    /* 菜单四方向留白：容器四周 6px、行间 2px，每行自带小圆角。
-       对齐成熟组件做法——高亮块不贴菜单边，避免色块顶破圆角、滚动条粘连文字。 */
-    --blai-dropdown-pad: var(--blai-space-6);
+    /* 菜单四方向留白：上下左 6px、右侧再加 --blai-scrollbar-gutter，行间 2px，每行自带小圆角。
+       高亮块不贴菜单边；右侧留白让滚动条不粘连文字（portal 菜单此前右侧没留，拇指会贴住选项）。 */
+    --blai-dropdown-pad: var(--blai-space-6) calc(var(--blai-space-6) + var(--blai-scrollbar-gutter)) var(--blai-space-6) var(--blai-space-6);
     --blai-dropdown-gap: var(--blai-space-2);
     --blai-dropdown-shadow: var(--blai-shadow-sm);
     --blai-dropdown-item-radius: var(--blai-radius-sm);

@@ -5,11 +5,10 @@ import { applyCharacterPresetBinding } from '../presets/application.js';
 import {
     performGlobalChatMaintenance,
     performIncrementalCleanse,
-    getMessageIndexFromEvent,
 } from '../chat/cleanse.js';
 import { diffRuntimeState, refreshDiffViewer, resetDiffRuntimeState } from '../diff/state.js';
 import { isAssistantMessage } from '../diff/tracking.js';
-import { setCurrentSwipeText } from '../chat/messageBranch.js';
+import { getMessageIndexFromEvent, setCurrentSwipeText } from '../chat/messageBranch.js';
 import { clearMessageDiffMeta, deleteMessageDiffSwipe, isMessageDiffReverted } from '../diff/messageMeta.js';
 import { queueIncrementalChatSave } from '../chat/persistence.js';
 import { markHostChatDirtyFromIndex } from '../integrations/tauriTavern.js';
@@ -271,7 +270,7 @@ export function bindHostLifecycleEvents() {
         refreshDiffViewer(index);
     });
     if (event_types.MESSAGE_SWIPE_DELETED) eventSource.on(event_types.MESSAGE_SWIPE_DELETED, (payload) => {
-        const messageId = Number.isInteger(payload?.messageId) && payload.messageId >= 0 ? payload.messageId : -1;
+        const messageId = getMessageIndexFromEvent(payload);
         const deletedSwipeIndex = Number.isInteger(payload?.swipeId) && payload.swipeId >= 0 ? payload.swipeId : -1;
         const { chat } = getAppContext();
         const msg = Number.isInteger(messageId) && messageId >= 0 && Array.isArray(chat) ? chat[messageId] : null;

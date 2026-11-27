@@ -1,4 +1,4 @@
-import { aiRewritePromptProtocolVersion, defaultAiRewriteSettings, migrateKnownAiRewritePrompt, normalizeAiSamplingSettings } from '../settings/defaults.js';
+import { aiRewritePromptProtocolVersion, defaultAiRewriteSettings, migrateKnownAiRewritePrompt, normalizeAiNumericSetting, normalizeAiSamplingSettings } from '../settings/defaults.js';
 
 // 预设序列化与 AI 设置快照语义。
 
@@ -6,29 +6,14 @@ export function deepClone(value) {
     return JSON.parse(JSON.stringify(value));
 }
 
-function clampNumberSetting(value, min, max, fallback) {
-    const parsed = Number(value);
-    if (!Number.isFinite(parsed)) return fallback;
-    return Math.min(Math.max(parsed, min), max);
-}
-
-function clampIntegerSetting(value, min, max, fallback) {
-    return Math.round(clampNumberSetting(value, min, max, fallback));
-}
-
-function normalizePositiveIntegerSetting(value, fallback) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? Math.max(Math.round(parsed), 1) : fallback;
-}
-
 export function normalizePresetAiRewriteSettings(value) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
     return {
         ...normalizeAiSamplingSettings(value),
-        timeoutMs: clampIntegerSetting(value.timeoutMs, 1000, 120000, defaultAiRewriteSettings.timeoutMs),
-        maxRetries: clampIntegerSetting(value.maxRetries, 0, 5, defaultAiRewriteSettings.maxRetries),
-        maxItemsPerRequest: normalizePositiveIntegerSetting(value.maxItemsPerRequest, defaultAiRewriteSettings.maxItemsPerRequest),
-        maxContextChars: clampIntegerSetting(value.maxContextChars, 1000, 60000, defaultAiRewriteSettings.maxContextChars),
+        timeoutMs: normalizeAiNumericSetting('timeoutMs', value.timeoutMs),
+        maxRetries: normalizeAiNumericSetting('maxRetries', value.maxRetries),
+        maxItemsPerRequest: normalizeAiNumericSetting('maxItemsPerRequest', value.maxItemsPerRequest),
+        maxContextChars: normalizeAiNumericSetting('maxContextChars', value.maxContextChars),
         promptTemplate: migrateKnownAiRewritePrompt(value.promptTemplate) || defaultAiRewriteSettings.promptTemplate,
         promptProtocolVersion: aiRewritePromptProtocolVersion,
     };

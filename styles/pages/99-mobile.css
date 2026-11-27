@@ -169,13 +169,6 @@
         box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
     }
 
-    /* 定位改写项：高亮整段（与步骤导航计数徽标同色），不碰复选框。 */
-    #blai-deep-clean-workspace .blai-deep-clean-preview-change.is-located {
-        background: color-mix(in srgb, var(--accent-color) 10%, transparent);
-        box-shadow: inset var(--blai-border-2) 0 0 var(--accent-color);
-        border-radius: var(--blai-radius-sm);
-    }
-
     /* 下拉菜单只做一次短淡入：去掉逐项错峰与位移，触摸端不再有「慢半拍」错觉。 */
     .blai-portal-menu[data-menu-direction] > * {
         animation-name: blai-fade-in;

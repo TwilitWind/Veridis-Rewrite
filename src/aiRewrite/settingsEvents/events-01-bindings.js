@@ -1,7 +1,7 @@
 /**
  * 负责 AI 提供方/设置以及 AI 通信监控的 UI 绑定。
  */
-import { defaultAiRewriteSettings, normalizeAiSamplingSettings } from '../../settings/defaults.js';
+import { AI_SAMPLING_KEYS, defaultAiRewriteSettings, normalizeAiNumericSetting, normalizeAiSamplingSettings } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { showConfirmModal, showPromptModal, showToast } from '../../ui/notifications.js';
 import { openMenuPopover, closeMenuPopover } from '../../ui/popover.js';
@@ -290,11 +290,10 @@ export function bindAiSettingHandlers(core) {
             'blai-ai-max-context': 'maxContextChars',
         };
         const key = keyMap[id];
-        const samplingKeys = new Set(['temperature', 'topP', 'topK', 'frequencyPenalty', 'presencePenalty', 'repetitionPenalty', 'maxTokens']);
-        const normalizedValue = samplingKeys.has(key)
+        const normalizedValue = AI_SAMPLING_KEYS.includes(key)
             ? normalizeAiSamplingSettings({ [key]: value })[key]
             : id === 'blai-ai-timeout'
-            ? Math.min(Math.max(Math.round(value || 0), 1), 120) * 1000
+            ? normalizeAiNumericSetting('timeoutMs', Number(value) * 1000)
             : value;
         updateAiRewriteSetting(key, normalizedValue, { markRulesDirty: false });
     });

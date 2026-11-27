@@ -1,7 +1,7 @@
 /** view 的分块：apply。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
 import { getDeepCleanReviewEntry } from '../review.js';
 import { deepCleanRuntimeState } from '../state.js';
-import { deepCleanSafeHtml, setDeepCleanWorkspaceHeader, deepCleanHeaderCloseAction, deepCleanHeaderStopAction, deepCleanReviewIdentity, deepCleanBatchSummaryHtml, renderDeepCleanResourcePanel, showInitialSelectionError } from './view-00-selection.js';
+import { deepCleanSafeHtml, setDeepCleanWorkspaceHeader, deepCleanHeaderCloseAction, deepCleanHeaderStopAction, deepCleanReviewIdentity, deepCleanBatchSummaryHtml, renderDeepCleanResourcePanel, renderDeepCleanStopButton, showInitialSelectionError } from './view-00-selection.js';
 import { deepCleanLookaheadHtml, deepCleanProtectionLabel, renderDeepCleanReviewViewSwitcher, renderDeepCleanReviewView } from './view-01-progress.js';
 
 export function renderDeepCleanReview(session, lookaheadProgress = null) {
@@ -92,7 +92,7 @@ export function renderDeepCleanApplyProgress(progress = {}) {
             <main class="blai-deep-clean-processing-main">
                 <div class="blai-deep-clean-processing-intro"><h3>正式应用</h3><p>${deepCleanSafeHtml(detail)}</p></div>
                 <ol class="blai-deep-clean-pipeline"><li class="is-active"><span class="blai-deep-clean-pipeline-marker"></span><div><strong>正在持久化审核决定</strong><span>${completed} / ${total}</span>${total > 0 ? `<progress class="is-determinate" value="${completed}" max="${total}" aria-label="正式应用进度"></progress>` : ''}</div></li></ol>
-                <button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止处理</button>
+                ${renderDeepCleanStopButton()}
             </main>
             ${deepCleanBatchSummaryHtml({ title: '当前批', itemIndexes: batch.itemIndexes, sourceCharacterCount: batch.sourceCharacterCount, status: '正在应用审核决定', emptyText: '没有可显示的内容项。' })}
         </div>

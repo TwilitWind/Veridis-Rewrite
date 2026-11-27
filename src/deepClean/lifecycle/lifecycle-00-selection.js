@@ -9,6 +9,7 @@ import { cancelDeepCleanReviewComparisons } from '../review.js';
 import { createDeepCleanSafeDiagnostic, recordDeepCleanFailure } from '../diagnostics.js';
 import { getSillyTavernContextSnapshot } from '../../host/context.js';
 import { readDeepCleanContentItems } from '../contentItems.js';
+import { normalizeScopeTagMode } from '../../scope/model.js';
 
 export const reviewBatchCharacterLimit = 90_000;
 export const programDirectBatchCharacterLimit = 100_000;
@@ -179,7 +180,7 @@ function frozenRunInput(selection, settings) {
         processingSemantics: {
             scopeTags: structuredClone(settings.scopeTags || []),
             scopeTagBuiltinDismissed: structuredClone(settings.scopeTagBuiltinDismissed || []),
-            scopeTagMode: settings.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect',
+            scopeTagMode: normalizeScopeTagMode(settings.scopeTagMode),
             zhVariantCompatEnabled: settings.zhVariantCompatEnabled === true,
             zhVariantCompatOptions: structuredClone(getZhVariantCompatOptions(settings)),
             zhVariantDictionaryReady: isZhDictionaryRuntimeReady(),

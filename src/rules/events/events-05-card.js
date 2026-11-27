@@ -1,11 +1,11 @@
 /** 规则事件：card。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
-import { getSelectedIndexesFromState, getBatchOperationContext, shouldBatchTransferRule, handleDeleteRule, renderTagsPreserveBatchSelection, batchMoveRules } from './events-00-shared.js';
+import { getSelectedIndexesFromState, getBatchOperationContext, shouldBatchTransferRule, deleteRulesWithConfirm, renderTagsPreserveBatchSelection, batchMoveRules } from './events-00-shared.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { markRulesDataDirty } from '.././state.js';
 import { getRuleActivationWarning, isRuleActivationWarningEnabled } from '.././model.js';
 import { deepClone } from '../../presets/model.js';
-import { showConfirmModal, showRiskInfoModal, showToast } from '../../ui/notifications.js';
+import { showRiskInfoModal, showToast } from '../../ui/notifications.js';
 import { closeMenuPopover, openMenuPopover } from '../../ui/popover.js';
 import { openEditModal, openTransferModal } from '.././view.js';
 
@@ -103,14 +103,7 @@ export function bindRuleCardEvents() {
         }
 
         if (action === 'delete') {
-            if (!await showConfirmModal('确定要删除这个规则分组吗？删除后无法恢复。', { danger: true, okText: '删除' })) return;
-            const deletingCount = shouldBatchTransferRule(index, rules) ? getSelectedIndexesFromState(rules).length : 1;
-            if (handleDeleteRule(index, rules)) {
-                markRulesDataDirty();
-                saveSettingsDebounced();
-                renderTagsPreserveBatchSelection();
-                showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个规则` : '已删除规则', undefined, 'success');
-            }
+            await deleteRulesWithConfirm(index, rules);
         }
     });
 

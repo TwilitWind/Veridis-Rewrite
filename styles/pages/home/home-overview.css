@@ -86,7 +86,7 @@
 
 .blai-edit-modal-title {
     margin: 0 0 var(--blai-space-10) 0;
-    font-size: var(--blai-font-16);
+    font-size: var(--blai-fs-title);
     font-weight: var(--blai-weight-bold);
     color: var(--text-main);
     flex-shrink: 0;

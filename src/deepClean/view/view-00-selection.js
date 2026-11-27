@@ -75,6 +75,11 @@ export function deepCleanHeaderCloseAction() {
     return '<button id="blai-deep-clean-close" class="blai-deep-clean-header-icon" type="button" aria-label="关闭" title="关闭"><i class="fas fa-xmark" aria-hidden="true"></i></button>';
 }
 
+/** 三个处理阶段共用的「停止处理」按钮。 */
+export function renderDeepCleanStopButton() {
+    return '<button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止处理</button>';
+}
+
 export function deepCleanHeaderStopAction() {
     return '<button id="blai-deep-clean-stop" class="blai-deep-clean-header-icon" type="button" aria-label="停止" title="停止"><i class="fas fa-xmark" aria-hidden="true"></i></button>';
 }
@@ -227,7 +232,7 @@ export function renderDeepCleanScanProgress(progress = {}) {
                         </li>
                     `).join('')}
                 </ol>
-                <button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止处理</button>
+                ${renderDeepCleanStopButton()}
             </main>
             ${deepCleanBatchSummaryHtml({
         title: '扫描摘要',

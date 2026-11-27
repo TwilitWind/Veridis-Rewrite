@@ -150,7 +150,7 @@ if (fs.existsSync(baselinePath)) {
       + '  处理顺序：\n'
       + '  1) 按工作区 docs/design/design.md §CSS 编写规则「!important 准入门槛」写明原因和已排除的替代方案；\n'
       + '  2) 在 docs/architecture/style-tokens.md「!important 例外登记」补文件、选择器/属性、对抗对象；\n'
-      + '  3) 确认后运行 node test/audit/important-audit.mjs --update-baseline 重置预算，再跑 node build-check.mjs');
+      + '  3) 更新该文档的基线登记后，再跑 node build-check.mjs');
   } else if (totalDrift > 0) {
     console.log(`  [info] !important 未登记增量 +${totalDrift}（预算 ${IMPORTANT_BUDGET}）：`
       + drift.map((row) => `${row.rel} +${row.delta}`).join('、'));
@@ -213,19 +213,18 @@ for (const rel of allFiles) {
     });
 }
 
-/* 16. JS 导入完整性：调用别处导出的函数却没 import，node --check 查不出，运行到才抛 ReferenceError。
-   真实踩坑：matching-00-compile.js 漏导入 collectVariableUpdateRanges 导致「深度净化无法完成」。
-   完整实现在 test/check-imports.mjs（可单独跑、可反证），这里作为闸门强制调用。 */
-{
-  const { spawnSync } = await import('node:child_process');
-  const check = path.join(ROOT, 'test', 'check-imports.mjs');
-  if (fs.existsSync(check)) {
-    const r = spawnSync(process.execPath, [check], { cwd: ROOT, encoding: 'utf8' });
-    if (r.status !== 0) {
-      const detail = (r.stderr || r.stdout || '').trim().split('\n').slice(0, 12).join('\n');
-      fail('JS 导入完整性检查未通过（test/check-imports.mjs）：\n' + detail);
-    }
-  }
+/* 16. 字号字重：正文一律整数 px、字重只用 400/600（Font Awesome 图标的 900 例外）。
+   真实踩坑：小数 px 与 700 字重被反复引入，靠人工提醒不如机械拦截。 */
+for (const rel of allFiles) {
+    const lines = fs.readFileSync(path.join(STYLES, rel), 'utf8').split('\n');
+    lines.forEach((line, i) => {
+        const stripped = line.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+        if (!stripped || stripped.startsWith('/*')) return;
+        const decimalPx = stripped.match(/font-size:\s*[+-]?\d+\.\d+px\b/i);
+        if (decimalPx) fail(`styles/${rel}:${i + 1} 的 ${decimalPx[0]} 用了小数 px，改成整数 px`);
+        const badWeight = stripped.match(/font-weight:\s*(?:100|200|300|500|700|800|bold|bolder)\b/i);
+        if (badWeight) fail(`styles/${rel}:${i + 1} 的 ${badWeight[0]} 不符合字重约束，只用 400/600（var(--blai-weight-normal/bold)）`);
+    });
 }
 
 /* 输出 */

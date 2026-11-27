@@ -3,7 +3,7 @@ import { deepCleanRuntimeState } from '../state.js';
 import { renderFullTextDiffBlocks } from '../../diff/compare.js';
 import { resolveReviewRunsText, resolveDeepCleanReviewedText } from '../review.js';
 import { resolveFinalProposedText } from '../aiProcessing.js';
-import { deepCleanBatchStageLabels, deepCleanBatchSummaryBodyHtml, deepCleanSafeHtml, setDeepCleanWorkspaceHeader, deepCleanMeasuredProgress, deepCleanBatchSummaryHtml } from './view-00-selection.js';
+import { deepCleanBatchStageLabels, deepCleanBatchSummaryBodyHtml, deepCleanSafeHtml, setDeepCleanWorkspaceHeader, deepCleanMeasuredProgress, deepCleanBatchSummaryHtml, renderDeepCleanStopButton } from './view-00-selection.js';
 
 function deepCleanBatchProgressText(progress = {}) {
     return `${Number(progress.sourceCharacterCount || 0).toLocaleString('zh-CN')} 字符 · ${Number(progress.itemCount) || 0} 个内容项`;
@@ -78,7 +78,7 @@ export function renderDeepCleanBatchProgress(progress = {}) {
                         `;
     }).join('')}
                 </ol>
-                <button id="blai-deep-clean-stop" class="blai-deep-clean-secondary-action" type="button">停止处理</button>
+                ${renderDeepCleanStopButton()}
             </main>
             ${deepCleanBatchSummaryHtml({
         title: '批次摘要',

@@ -1,0 +1,102 @@
+        <div id="blai-diff-related-modal" class="blai-modal-shell">
+            <div class="blai-modal-card blai-diff-related-card">
+                <div class="blai-diff-related-modal-header">
+                    <h3 class="blai-edit-modal-title blai-diff-related-title"><i class="fa-solid fa-crosshairs"></i> 规则定位</h3>
+                    <button id="blai-diff-related-close" type="button" class="blai-icon-btn" title="关闭"><i class="fas fa-times"></i></button>
+                </div>
+                <div id="blai-diff-related-body" class="blai-diff-related-body"></div>
+            </div>
+        </div>
+
+
+        <div id="blai-subrule-edit-modal" class="blai-modal-shell blai-modal-shell-raised">
+            <div class="blai-modal-card blai-edit-modal-card blai-subrule-modal-card">
+                <div class="blai-subrule-modal-header">
+                    <div class="blai-subrule-mode-block">
+                        <div class="blai-subrule-mode-select-wrap">
+                            <select id="blai-modal-sub-mode" class="blai-input blai-subrule-mode-select">
+                                <option value="simple" data-blai-icon="fa-puzzle-piece">简易组合</option>
+                                <option value="text" data-blai-icon="fa-file-lines">普通文本</option>
+                                <option value="regex" data-blai-icon="fa-gears">正则表达式</option>
+                            </select>
+                        </div>
+                        <div id="blai-modal-sub-mode-hint" class="blai-subrule-mode-hint" aria-live="polite"></div>
+                    </div>
+                    <label id="blai-regex-highlight-switch" class="blai-ai-switch blai-regex-highlight-switch" title="在「查找内容」中高亮语法符号；普通文本模式没有语法符号。">
+                        <input type="checkbox" id="blai-regex-highlight-toggle">
+                        <span class="blai-ai-switch-track" aria-hidden="true"></span>
+                        <span>语法高亮</span>
+                    </label>
+                    <button id="blai-modal-sub-cancel" type="button" class="blai-icon-btn blai-subrule-close-btn blai-modal-close-x" title="关闭规则" aria-label="关闭规则"><i class="fas fa-times"></i></button>
+                </div>
+
+                <div class="blai-subrule-modal-body">
+                    <div class="blai-subrule-field" style="margin-bottom: 12px;">
+                        <label class="blai-field-label" style="margin-bottom: 6px;">备注（可选）</label>
+                        <input type="text" id="blai-modal-sub-remark" class="blai-input" placeholder="例如：弱化某角色的口头禅" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;">
+                    </div>
+
+                    <div class="blai-subrule-field" style="margin-bottom: 12px;">
+                        <span id="blai-modal-sub-rewrite-mode-label" class="blai-field-label" style="margin-bottom: 6px;">处理方式</span>
+                        <!-- 保留 select 作数据锚点：业务代码仍用 .val() / change 读写，视觉由下方分段按钮承担。 -->
+                        <select id="blai-modal-sub-rewrite-mode" class="blai-input blai-visually-hidden" aria-hidden="true" tabindex="-1">
+                            <option value="program">程序改写</option>
+                            <option value="ai">AI 改写</option>
+                        </select>
+                        <div id="blai-modal-sub-rewrite-mode-segment" class="blai-subrule-rewrite-segment" role="group" aria-labelledby="blai-modal-sub-rewrite-mode-label">
+                            <button type="button" class="blai-subrule-rewrite-option is-active" data-value="program" aria-pressed="true"><i class="fas fa-code" aria-hidden="true"></i><span>程序改写</span></button>
+                            <button type="button" class="blai-subrule-rewrite-option" data-value="ai" aria-pressed="false"><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i><span>AI 改写</span></button>
+                        </div>
+                    </div>
+
+                    <div id="blai-modal-sub-ai-prompt-field" class="blai-subrule-field" style="margin-bottom: 12px;" hidden>
+                        <label class="blai-field-label" style="margin-bottom: 6px;">改写要求（可选）</label>
+                        <textarea id="blai-modal-sub-ai-prompt" class="blai-textarea" rows="4" placeholder="只写这条规则的特殊要求。例如：只弱化语气，不删除原文；留空则使用全局提示词。" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>
+                        <div id="blai-modal-sub-ai-prompt-hint" class="blai-subrule-mode-hint" aria-live="polite"></div>
+                    </div>
+
+                    <div class="blai-subrule-field" style="margin-bottom: 12px;">
+                        <label class="blai-field-label" style="margin-bottom: 6px;">查找内容</label>
+                        <div id="blai-regex-flags-hint" class="blai-regex-flags-hint" hidden>
+                            <span class="blai-regex-flags-chip">gmu</span>
+                            <span>默认使用 gmu；如需其他标志，请写成 /pattern/flags。</span>
+                        </div>
+                        <div id="blai-modal-sub-target-error" class="blai-field-error" aria-live="polite"></div>
+                        <div class="blai-regex-input-wrap">
+                            <textarea id="blai-modal-sub-target" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px;"></textarea>
+                            <div id="blai-regex-target-highlight" class="blai-regex-highlight" aria-hidden="true" hidden></div>
+                        </div>
+                        <div id="blai-regex-test-block" class="blai-regex-test-block" hidden>
+                            <div id="blai-regex-test-head" class="blai-regex-test-head">
+                                <button id="blai-regex-test-toggle" type="button" class="blai-subrule-mini-btn blai-regex-test-toggle" aria-expanded="false">
+                                    <i class="fas fa-vial"></i>
+                                    <span>匹配测试</span>
+                                </button>
+                                <span id="blai-regex-test-stat" class="blai-regex-test-stat" hidden></span>
+                            </div>
+                            <div id="blai-regex-test-panel" class="blai-regex-test-panel" hidden>
+                                <div id="blai-regex-test-input-wrap" class="blai-regex-test-input-wrap">
+                                    <textarea id="blai-regex-test-text" class="blai-textarea blai-regex-test-input" rows="4" placeholder="粘贴样本文本，命中内容会高亮显示。"></textarea>
+                                    <div id="blai-regex-test-highlight" class="blai-regex-test-highlight" aria-hidden="true" hidden></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="blai-subrule-field" style="margin-bottom: 15px;">
+                        <div class="blai-subrule-replacement-head">
+                            <label id="blai-modal-sub-rep-label" class="blai-field-label" style="margin-bottom: 0;">替换为</label>
+                            <div id="blai-modal-sub-regex-actions" class="blai-regex-replacement-actions" hidden>
+                                <button id="blai-modal-sub-regex-recognize" type="button" class="blai-subrule-mini-btn" aria-label="识别为替换项" title="识别为替换项">识别替换</button>
+                            </div>
+                        </div>
+                        <textarea id="blai-modal-sub-rep" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>
+                        <div id="blai-modal-sub-regex-list" class="blai-regex-replacement-list" hidden></div>
+                    </div>
+                </div>
+
+                <div class="blai-subrule-footer">
+                    <button id="blai-modal-sub-save" type="button" class="blai-primary-btn blai-subrule-footer-save">保存规则</button>
+                </div>
+            </div>
+        </div>

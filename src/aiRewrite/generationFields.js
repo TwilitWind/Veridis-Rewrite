@@ -3,7 +3,7 @@
  * 避免同一批字段映射写在两处导致增删字段时漂移。
  * base-url / api-key / 附加参数等连接类字段由调用方各自补投影，不在此列。
  */
-import { defaultAiRewriteSettings } from '../settings/defaults.js';
+import { defaultAiRewriteSettings, normalizeAiNumericSetting } from '../settings/defaults.js';
 
 export function setValueIfNotFocused(selector, value) {
     const $field = $(selector);
@@ -11,10 +11,7 @@ export function setValueIfNotFocused(selector, value) {
 }
 
 export function getAiTimeoutSeconds(timeoutMs) {
-    const parsed = Number(timeoutMs);
-    const fallback = Number(defaultAiRewriteSettings.timeoutMs) || 120000;
-    const normalizedMs = Number.isFinite(parsed) ? parsed : fallback;
-    return Math.min(Math.max(Math.round(normalizedMs / 1000), 1), 120);
+    return normalizeAiNumericSetting('timeoutMs', timeoutMs) / 1000;
 }
 
 // 把 aiSettings 的生成参数投影到设置页字段。

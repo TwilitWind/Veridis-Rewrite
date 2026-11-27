@@ -118,25 +118,55 @@ export function getTextDiffOperations(oldStr, newStr) {
     return operations;
 }
 
+/** 删改标记的唯一 HTML 契约：contentHtml 由调用方按自己的转义规则准备好。 */
+export function renderDiffChangeTag(type, contentHtml, section, extraAttrs = []) {
+    const isDelete = type === 'delete';
+    const tag = isDelete ? 'del' : 'ins';
+    const attrs = [
+        'class="blai-diff-change"',
+        `data-blai-diff-type="${isDelete ? 'delete' : 'insert'}"`,
+    ];
+    if (['ai', 'program', 'manual'].includes(section)) attrs.push(`data-blai-diff-section="${section}"`);
+    return `<${tag} ${[...attrs, ...extraAttrs].join(' ')}>${contentHtml}</${tag}>`;
+}
+
 function renderDiffOperation(operation, section) {
     if (!operation || !operation.text) return '';
     if (operation.type === 'delete' || operation.type === 'insert') {
-        const attrs = [
-            `class="blai-diff-change"`,
-            `data-blai-diff-type="${operation.type === 'delete' ? 'delete' : 'insert'}"`,
-        ];
-        if (['ai', 'program', 'manual'].includes(section)) attrs.push(`data-blai-diff-section="${section}"`);
+        const extraAttrs = [];
         ['oldStart', 'oldEnd', 'newStart', 'newEnd'].forEach((key) => {
-            if (Number.isFinite(Number(operation[key]))) attrs.push(`data-blai-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}="${Number(operation[key])}"`);
+            if (Number.isFinite(Number(operation[key]))) extraAttrs.push(`data-blai-${key.replace(/[A-Z]/g, m => `-${m.toLowerCase()}`)}="${Number(operation[key])}"`);
         });
-        const tag = operation.type === 'delete' ? 'del' : 'ins';
-        return `<${tag} ${attrs.join(' ')}>${escapeHtml(operation.text)}</${tag}>`;
+        return renderDiffChangeTag(operation.type, escapeHtml(operation.text), section, extraAttrs);
     }
     return escapeHtml(operation.text);
 }
 
 function renderDiffOperations(operations = []) {
     return operations.map(operation => renderDiffOperation(operation, operation.section)).join('');
+}
+
+/**
+ * 把「相同文本先保留、再删除一份」的对齐改成「先删旧份、保留新份」。
+ * old="极其极其" → new="极其" 的 Myer 对齐默认落在 equal("极其") + delete("极其")，
+ * 视觉上像把保留项复制一份再划掉右边那份；把被删的那份挪到前面，
+ * 才符合「旧份被删、用户留下的那份保留」的阅读顺序。
+ */
+function alignRepeatedDeletionLeft(operations) {
+    const normalized = [];
+    for (const operation of operations) {
+        const previous = normalized[normalized.length - 1];
+        if (operation.type === 'delete' && previous?.type === 'equal'
+            && operation.text.length > 0 && previous.text.endsWith(operation.text)) {
+            previous.text = previous.text.slice(0, -operation.text.length);
+            if (!previous.text) normalized.pop();
+            normalized.push(operation);
+            normalized.push({ type: 'equal', text: operation.text });
+            continue;
+        }
+        normalized.push(operation);
+    }
+    return normalized;
 }
 
 function projectDifferenceText(value) {
@@ -165,7 +195,7 @@ function getDifferencePairOperations(pair) {
         { projection: newProjection, prefix: 'new', skip: 'delete', index: 0, offset: 0 },
     ];
     const runs = [];
-    for (const operation of getTextDiffOperations(oldProjection.text, newProjection.text)) {
+    for (const operation of alignRepeatedDeletionLeft(getTextDiffOperations(oldProjection.text, newProjection.text))) {
         let cursor = 0;
         while (cursor < operation.text.length) {
             let length = operation.text.length - cursor;
@@ -268,7 +298,7 @@ export function renderDiffDocument(pairs, mode) {
         // 句子边界只提供局部上下文；被省略的换行间隔
         // 会作为整体还原，因此纯空白变更绝不会被丢弃。
         const displayText = runs.map(run => run.text).join('');
-        const units = [];
+        let units = [];
         let cursor = 0;
         for (const range of splitTextRangeIntoSentences(displayText, { start: 0, end: displayText.length })) {
             if (cursor < range.start) units.push({ start: cursor, end: range.start });
@@ -276,6 +306,21 @@ export function renderDiffDocument(pairs, mode) {
             cursor = range.end;
         }
         if (cursor < displayText.length) units.push({ start: cursor, end: displayText.length });
+        // 段末残句（如 "。*极其" 的星号闭合后追加的文本）不能单独成一条：
+        // 它没有句末标点，且与上一句同属一个段落，合回去才不会把手改项挤成独立行。
+        const mergedUnits = [];
+        for (const unit of units) {
+            const previous = mergedUnits[mergedUnits.length - 1];
+            const text = displayText.slice(unit.start, unit.end).trimEnd();
+            const gap = previous ? displayText.slice(previous.end, unit.start) : '';
+            if (previous && text && !/[。！？!?…]$/u.test(text)
+                && !/[\r\n]/.test(text) && !/[\r\n]/.test(gap)) {
+                previous.end = unit.end;
+            } else {
+                mergedUnits.push({ start: unit.start, end: unit.end });
+            }
+        }
+        units = mergedUnits;
         let runIndex = 0;
         let runStart = 0;
         for (const unit of units) {

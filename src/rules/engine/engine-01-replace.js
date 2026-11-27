@@ -1,8 +1,9 @@
 /** engine 的分块：replace。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { mergeScopeTagsWithBuiltins, collectMvuStatusPlaceholderRanges, findNextScopeTagMatch } from '../../scope/model.js';
+import { SCOPE_TAG_MODES, mergeScopeTagsWithBuiltins, collectMvuStatusPlaceholderRanges, normalizeScopeTagMode } from '../../scope/model.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { programRuntimeState } from '../state.js';
+import { collectScopeRanges } from '../../aiRewrite/planning.js';
 import { resolveProcessorReplacement, projectTrackedRangesThroughReplacement, getReplaceCallbackOffset, getProcessorHitSources, buildProcessors } from './engine-00-patterns.js';
 
 export function applyCompiledReplacementsWithTrackedRanges(originalText, processors = [], ranges = [], options = {}) {
@@ -87,7 +88,7 @@ function getEnabledScopeTagsForSettings(settings = {}) {
 }
 
 function getScopeTagModeForSettings(settings = {}) {
-    return settings?.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect';
+    return normalizeScopeTagMode(settings?.scopeTagMode);
 }
 
 export function applyScopedCompiledReplacementsWithTrackedRanges(originalText, processors = [], scopeSettings = {}, ranges = [], options = {}) {
@@ -100,7 +101,7 @@ export function applyScopedCompiledReplacementsWithTrackedRanges(originalText, p
     if (!source || !valid) return { text: source, ranges: [...ranges], valid };
 
     const scopeTags = getEnabledScopeTagsForSettings(scopeSettings);
-    const shouldCleanseInside = getScopeTagModeForSettings(scopeSettings) === 'cleanse-inside';
+    const shouldCleanseInside = getScopeTagModeForSettings(scopeSettings) === SCOPE_TAG_MODES.CLEANSE_INSIDE;
     const transformRange = (start, end, shouldTransform) => {
         const localRanges = [];
         for (const range of ranges) {
@@ -152,35 +153,18 @@ export function applyScopedCompiledReplacementsWithTrackedRanges(originalText, p
         return { text: output, ranges: trackedRanges, valid };
     }
 
-    while (cursor < source.length) {
-        const nextMatch = findNextScopeTagMatch(source, cursor, scopeTags);
-        if (!nextMatch) {
-            appendRange(cursor, source.length, !shouldCleanseInside);
-            break;
+    for (const scopeRange of collectScopeRanges(source, scopeSettings)) {
+        if (scopeRange.start > cursor) appendRange(cursor, scopeRange.start, !shouldCleanseInside);
+        appendRange(scopeRange.start, scopeRange.bodyStart, false);
+        if (scopeRange.unclosed) {
+            appendRange(scopeRange.bodyStart, scopeRange.end, false);
+        } else {
+            appendRange(scopeRange.bodyStart, scopeRange.bodyEnd, shouldCleanseInside);
+            appendRange(scopeRange.bodyEnd, scopeRange.end, false);
         }
-
-        const { index, scopeTag } = nextMatch;
-        if (index > cursor) {
-            appendRange(cursor, index, !shouldCleanseInside);
-        }
-
-        const tagBodyStart = index + scopeTag.startTag.length;
-        const endIndex = source.indexOf(scopeTag.endTag, tagBodyStart);
-        if (endIndex < 0) {
-            if (shouldCleanseInside) {
-                appendRange(index, source.length, false);
-                break;
-            }
-            appendRange(index, tagBodyStart, false);
-            cursor = tagBodyStart;
-            continue;
-        }
-
-        appendRange(index, tagBodyStart, false);
-        appendRange(tagBodyStart, endIndex, shouldCleanseInside);
-        appendRange(endIndex, endIndex + scopeTag.endTag.length, false);
-        cursor = endIndex + scopeTag.endTag.length;
+        cursor = scopeRange.end;
     }
+    if (cursor < source.length) appendRange(cursor, source.length, !shouldCleanseInside);
 
     if (trackedRanges.length !== ranges.length) valid = false;
     return { text: output, ranges: trackedRanges, valid };
@@ -237,7 +221,7 @@ export function countScopedProcessorMatches(originalText, processors = [], setti
     if (typeof originalText !== 'string' || !originalText) return 0;
 
     const scopeTags = getEnabledScopeTagsForSettings(settings);
-    const shouldCleanseInside = getScopeTagModeForSettings(settings) === 'cleanse-inside';
+    const shouldCleanseInside = getScopeTagModeForSettings(settings) === SCOPE_TAG_MODES.CLEANSE_INSIDE;
     if (scopeTags.length === 0) {
         return shouldCleanseInside ? 0 : countProcessorMatches(originalText, processors);
     }
@@ -248,26 +232,12 @@ export function countScopedProcessorMatches(originalText, processors = [], setti
         if (end > start) hitCount += countProcessorMatches(originalText.slice(start, end), processors);
     };
 
-    while (cursor < originalText.length) {
-        const nextMatch = findNextScopeTagMatch(originalText, cursor, scopeTags);
-        if (!nextMatch) {
-            if (!shouldCleanseInside) countRange(cursor, originalText.length);
-            break;
-        }
-
-        const { index, scopeTag } = nextMatch;
-        if (!shouldCleanseInside) countRange(cursor, index);
-
-        const tagBodyStart = index + scopeTag.startTag.length;
-        const endIndex = originalText.indexOf(scopeTag.endTag, tagBodyStart);
-        if (endIndex < 0) {
-            if (!shouldCleanseInside) countRange(tagBodyStart, originalText.length);
-            break;
-        }
-
-        if (shouldCleanseInside) countRange(tagBodyStart, endIndex);
-        cursor = endIndex + scopeTag.endTag.length;
+    for (const scopeRange of collectScopeRanges(originalText, settings)) {
+        if (!shouldCleanseInside && scopeRange.start > cursor) countRange(cursor, scopeRange.start);
+        if (!scopeRange.unclosed && shouldCleanseInside) countRange(scopeRange.bodyStart, scopeRange.bodyEnd);
+        cursor = scopeRange.end;
     }
+    if (!shouldCleanseInside && cursor < originalText.length) countRange(cursor, originalText.length);
 
     return hitCount;
 }
@@ -280,7 +250,7 @@ export function applyScopedReplacementsWithTrackedRanges(originalText, ranges = 
     const { extension_settings } = getAppContext();
     const scopeSettings = options.scopeSettings ?? (extension_settings?.[extensionName] || {});
     const scopeTags = getEnabledScopeTagsForSettings(scopeSettings);
-    if (getScopeTagModeForSettings(scopeSettings) === 'cleanse-inside' && scopeTags.length === 0) {
+    if (getScopeTagModeForSettings(scopeSettings) === SCOPE_TAG_MODES.CLEANSE_INSIDE && scopeTags.length === 0) {
         return { text: originalText, ranges: [...ranges], valid: true };
     }
     const processors = buildProcessors();

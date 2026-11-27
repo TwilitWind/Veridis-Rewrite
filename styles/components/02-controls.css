@@ -524,13 +524,6 @@
     word-break: break-word;
 }
 
-/* 提示文案里被强调的关键词（原直角引号包裹内容）：只换色，不加粗不倾斜，保持清爽。 */
-.blai-plugin-dialog-text .blai-dialog-em {
-    color: var(--accent-ink);
-    font-style: normal;
-    font-weight: var(--blai-weight-normal);
-}
-
 .blai-plugin-dialog-input {
     width: 100%;
     box-sizing: border-box;

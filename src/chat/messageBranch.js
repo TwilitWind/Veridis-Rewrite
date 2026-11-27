@@ -4,6 +4,21 @@
  */
 import { generationLifecycle } from '../host/generationLifecycle.js';
 
+/** 从宿主事件负载中解析消息索引：数字/数字字符串/常见 id 字段，失败返回 -1。 */
+export function getMessageIndexFromEvent(payload) {
+    const direct = typeof payload === 'number'
+        ? payload
+        : (typeof payload === 'string' && payload.trim() !== '' ? Number(payload) : NaN);
+    if (Number.isInteger(direct)) return direct;
+    if (!payload || typeof payload !== 'object') return -1;
+    const candidates = [payload.messageId, payload.message_id, payload.mesid, payload.index, payload.id];
+    for (const value of candidates) {
+        const n = Number(value);
+        if (Number.isInteger(n) && n >= 0) return n;
+    }
+    return -1;
+}
+
 function isObject(value) {
     return !!(value && typeof value === 'object');
 }

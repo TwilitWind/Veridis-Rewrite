@@ -45,8 +45,9 @@ const SPECS = {
 
 /** 把持久化的相关规则开关同步到运行时状态；打开弹窗时调用。 */
 export function syncRelatedRuleRuntime() {
-    const { extension_settings } = getAppContext();
-    diffRuntimeState.diffRelatedRuleMode = extension_settings[extensionName]?.diffRelatedRuleEnabled === true;
+    const settings = getAppContext().extension_settings?.[extensionName] || {};
+    const spec = SPECS.diffRelatedRuleEnabled;
+    spec.write(settings, spec.read(settings));
 }
 
 /**

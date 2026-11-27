@@ -321,6 +321,22 @@ export const defaultAiRewriteSettings = {
     customIncludeHeaders: "",
 };
 
+/** AI 数值设置的唯一取值域：迁移、预设、运行时都按这里归一。 */
+export const AI_NUMERIC_LIMITS = Object.freeze({
+    timeoutMs: Object.freeze({ min: 1000, max: 120000 }),
+    maxRetries: Object.freeze({ min: 0, max: 5 }),
+    maxItemsPerRequest: Object.freeze({ min: 1, max: Infinity }),
+    maxContextChars: Object.freeze({ min: 1000, max: 60000 }),
+});
+
+export function normalizeAiNumericSetting(key, value) {
+    const limit = AI_NUMERIC_LIMITS[key];
+    if (!limit) return value;
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return defaultAiRewriteSettings[key];
+    return Math.min(Math.max(Math.round(parsed), limit.min), limit.max);
+}
+
 export function normalizeAiSamplingSettings(value = {}) {
     const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     const readNumber = (key, min, max, fallback) => {
@@ -339,6 +355,9 @@ export function normalizeAiSamplingSettings(value = {}) {
         maxTokens: readInteger('maxTokens', 0, 65536, defaultAiRewriteSettings.maxTokens),
     };
 }
+
+/** 采样字段清单由归一化函数派生，新增字段时不用再改事件层。 */
+export const AI_SAMPLING_KEYS = Object.freeze(Object.keys(normalizeAiSamplingSettings({})));
 
 export const defaultSettings = {
     rules: [],

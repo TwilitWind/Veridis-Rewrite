@@ -1,10 +1,10 @@
 /** 规则事件：list。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
-import { getSelectedIndexesFromState, getBatchOperationContext, shouldBatchTransferRule, handleDeleteRule, renderTagsPreserveBatchSelection, batchMoveRules } from './events-00-shared.js';
+import { getSelectedIndexesFromState, getBatchOperationContext, shouldBatchTransferRule, deleteRulesWithConfirm, renderTagsPreserveBatchSelection, batchMoveRules } from './events-00-shared.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { markRulesDataDirty } from '.././state.js';
 import { buildRuleActivationConfirmMessage, isRuleActivationWarningEnabled } from '.././model.js';
-import { showConfirmModal, showRiskConfirmModal, showToast } from '../../ui/notifications.js';
+import { showRiskConfirmModal } from '../../ui/notifications.js';
 import { openTransferModal } from '.././view.js';
 
 export function bindRuleListEvents() {
@@ -68,16 +68,9 @@ export function bindRuleListEvents() {
     });
 
     $(document).off('click', '.blai-rule-del').on('click', '.blai-rule-del', async function() {
-        if (!await showConfirmModal('确定要删除这个规则分组吗？删除后无法恢复。', { danger: true, okText: '删除' })) return;
         const rules = extension_settings[extensionName].rules || [];
         const index = Number($(this).data('index'));
         if (!Number.isInteger(index) || index < 0 || index >= rules.length) return;
-        const deletingCount = shouldBatchTransferRule(index, rules) ? getSelectedIndexesFromState(rules).length : 1;
-        if (handleDeleteRule(index, rules)) {
-            markRulesDataDirty();
-            saveSettingsDebounced();
-            renderTagsPreserveBatchSelection();
-            showToast(deletingCount > 1 ? `已删除 ${deletingCount} 个规则` : '已删除规则', undefined, 'success');
-        }
+        await deleteRulesWithConfirm(index, rules);
     });
 }

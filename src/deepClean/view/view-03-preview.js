@@ -2,7 +2,6 @@
 
 import {
     filterDeepCleanPreviewItems,
-    getPreviewItemModes,
     getRevertedBlockSet,
     isAiPreviewRelevant,
     isProgramPreviewRelevant,
@@ -10,6 +9,8 @@ import {
     revertedBlockCount,
 } from '../preview.js';
 import { deepCleanSafeHtml, setDeepCleanWorkspaceHeader } from './view-00-selection.js';
+import { renderSourceLegend } from '../../diff/diffCopy.js';
+import { renderDiffChangeTag } from '../../diff/compare.js';
 import { deepCleanRuntimeState } from '../state.js';
 import { resolveReviewRunsText } from '../review.js';
 
@@ -49,14 +50,6 @@ function filterCounts(preview) {
     };
 }
 
-function modeLabel(run, itemIndex) {
-    const modes = getPreviewItemModes(run, itemIndex);
-    if (run.input?.processingMode === 'program-ai' && modes.includes('ai')) {
-        return modes.includes('program') ? '程序 + AI' : 'AI 改写';
-    }
-    return '程序改写';
-}
-
 function renderPreviewList(preview, items) {
     if (items.length === 0) return '<p class="blai-deep-clean-empty">当前筛选下没有条目。</p>';
     return items.map((itemIndex, listIndex) => {
@@ -76,7 +69,7 @@ function renderPreviewList(preview, items) {
     }).join('');
 }
 
-/** 预览差异沿用「透视净化」的 del/ins 标记：删除线 + 来源色底纹，不复用审核态的选中样式。
+/** 预览差异与透视净化共用 del/ins 标记契约：删除线 + 来源色底纹，不复用审核态的选中样式。
     每个改写项左侧的复选框默认勾选；取消勾选 = 该项撤销改写、保留原文。 */
 function renderPreviewDiffDocument(preview, reviewItem) {
     const section = preview.mode === 'ai' ? 'ai' : 'program';
@@ -95,9 +88,10 @@ function renderPreviewDiffDocument(preview, reviewItem) {
         const oldText = resolveReviewRunsText(block.oldRuns);
         const newText = resolveReviewRunsText(block.newRuns);
         const checkId = `blai-preview-change-${itemIndex}-${blockIndex}`;
+        const deleted = oldText ? renderDiffChangeTag('delete', deepCleanSafeHtml(oldText), section) : '';
         const body = isReverted
-            ? `<del class="blai-diff-change" data-blai-diff-type="delete" data-blai-diff-section="${section}">${deepCleanSafeHtml(oldText)}</del>`
-            : `${oldText ? `<del class="blai-diff-change" data-blai-diff-type="delete" data-blai-diff-section="${section}">${deepCleanSafeHtml(oldText)}</del>` : ''}<ins class="blai-diff-change" data-blai-diff-type="insert" data-blai-diff-section="${section}">${deepCleanSafeHtml(newText)}</ins>`;
+            ? renderDiffChangeTag('delete', deepCleanSafeHtml(oldText), section)
+            : `${deleted}${renderDiffChangeTag('insert', deepCleanSafeHtml(newText), section)}`;
         // 容器是 white-space:pre-wrap：模板里的缩进/换行会被当作正文显示，必须零空白拼接。
         return `<span class="blai-deep-clean-preview-change ${isReverted ? 'is-reverted' : ''}" data-blai-preview-change-block="${blockIndex}" data-blai-preview-change-index="${changeIndex}">`
             + `<span class="blai-deep-clean-preview-change-check">`
@@ -160,7 +154,11 @@ export function renderDeepCleanPreview(preview) {
     const currentRevertedCount = getRevertedBlockSet(preview, preview.currentItemIndex)?.size || 0;
     const revertedEntries = listRevertedBlocks(preview);
 
-    setDeepCleanWorkspaceHeader(`预览并筛选 · ${characterName(preview.run)}`, '');
+    const sourceLegend = `<span class="blai-deep-clean-source-legend" aria-label="改写来源图例">${renderSourceLegend([
+        { key: 'program', label: '程序', title: '程序改写' },
+        { key: 'ai', label: 'AI', title: 'AI 改写' },
+    ])}</span>`;
+    setDeepCleanWorkspaceHeader(`预览并筛选 · ${characterName(preview.run)}`, '', sourceLegend);
     if (items.length === 0) {
         $('#blai-deep-clean-content').html(`
             <section class="blai-deep-clean-preview-preview-empty">
@@ -203,7 +201,6 @@ export function renderDeepCleanPreview(preview) {
                 </div>
                 <div class="blai-deep-clean-preview-entry-bar">
                     <h3>条目·${deepCleanSafeHtml(compactIdentity(currentItem))}</h3>
-                    <span class="blai-deep-clean-preview-badge">${deepCleanSafeHtml(modeLabel(preview.run, preview.currentItemIndex))}</span>
                     <div class="blai-deep-clean-preview-entry-trailing">
                         ${blockCount ? `
                         <div class="blai-deep-clean-preview-change-nav" aria-label="改写项导航">
@@ -211,7 +208,7 @@ export function renderDeepCleanPreview(preview) {
                             <span class="blai-deep-clean-preview-change-counter ${currentRevertedCount ? 'has-reverted' : ''}" ${currentRevertedCount ? `title="本条目已撤销 ${currentRevertedCount} 项改写"` : ''}>${preview.changeIndex + 1} / ${blockCount}${currentRevertedCount ? `<i class="fas fa-circle-minus blai-deep-clean-preview-change-reverted-dot" aria-hidden="true"></i>` : ''}</span>
                             <button type="button" data-deep-clean-preview-change="next" aria-label="下一个改写项" title="下一个改写项"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
                         </div>` : ''}
-                        <label class="blai-deep-clean-preview-include" title="纳入本次清理"><input class="blai-check-native" type="checkbox" data-deep-clean-preview-include ${preview.included.has(preview.currentItemIndex) ? 'checked' : ''}>纳入改写</label>
+                        <label class="blai-deep-clean-preview-include" title="勾选后本条参与改写"><input class="blai-check-native" type="checkbox" data-deep-clean-preview-include ${preview.included.has(preview.currentItemIndex) ? 'checked' : ''}>改写本条</label>
                         ${generateButton}
                     </div>
                 </div>

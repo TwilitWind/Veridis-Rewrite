@@ -1,6 +1,7 @@
 import { collectAiMatches, compileAiMatchers } from '../aiRewrite/matching.js';
 import { compileProcessors, countScopedProcessorMatches } from '../rules/engine.js';
 import { getPresetRules } from '../presets/model.js';
+import { SCOPE_TAG_MODES, normalizeScopeTagMode } from '../scope/model.js';
 
 const affectedTypeKeys = ['Message', 'World Book'];
 const scanChunkSize = 32;
@@ -24,16 +25,23 @@ export function isWorldBookItem(item) {
 /** 世界书条目忽略标签作用域，聊天消息继续按用户选择的模式处理。 */
 export function scopeSettingsForDeepCleanItem(settings, item) {
     if (!isWorldBookItem(item)) return settings;
-    return { ...settings, scopeTags: [], scopeTagBuiltinDismissed: [], scopeTagMode: 'protect' };
+    return { ...settings, scopeTags: [], scopeTagBuiltinDismissed: [], scopeTagMode: SCOPE_TAG_MODES.PROTECT };
+}
+
+/** 冻结的 processingSemantics → 匹配器/提示词共用的作用域设置。 */
+export function scopeSettingsFromSemantics(semantics = {}) {
+    return {
+        scopeTags: semantics.scopeTags || [],
+        scopeTagBuiltinDismissed: semantics.scopeTagBuiltinDismissed || [],
+        scopeTagMode: normalizeScopeTagMode(semantics.scopeTagMode),
+    };
 }
 
 export function createDeepCleanMatcherSettings(input) {
     const semantics = input.processingSemantics || {};
     return {
         rules: getPresetRules(input.preset),
-        scopeTags: semantics.scopeTags || [],
-        scopeTagBuiltinDismissed: semantics.scopeTagBuiltinDismissed || [],
-        scopeTagMode: semantics.scopeTagMode || 'protect',
+        ...scopeSettingsFromSemantics(semantics),
         zhVariantCompatEnabled: semantics.zhVariantCompatEnabled === true,
         zhVariantCompatOptions: semantics.zhVariantCompatOptions || {},
     };

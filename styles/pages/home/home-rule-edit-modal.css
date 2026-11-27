@@ -30,7 +30,7 @@
 
 #blai-rule-edit-modal .blai-edit-modal-head #blai-edit-modal-title {
     margin: 0 !important;
-    font-size: var(--blai-font-14) !important;
+    font-size: var(--blai-fs-title) !important;
     font-weight: var(--blai-weight-bold) !important;
     line-height: 1.3 !important;
 }
@@ -162,7 +162,7 @@
 }
 
 #blai-rule-edit-modal .blai-edit-modal-title, #blai-subrule-edit-modal .blai-edit-modal-title {
-    font-size: var(--blai-font-18);
+    font-size: var(--blai-fs-title);
     font-weight: var(--blai-weight-bold);
     letter-spacing: 0;
     color: var(--text-main);

@@ -211,10 +211,6 @@ export function offerMainTourFirstUse() {
     offerFirstUse('main');
 }
 
-export function offerDeepCleanTourFirstUse() {
-    offerFirstUse('deep-clean');
-}
-
 export function bindTourEvents() {
     $(document).off('click', '#blai-tour-help').on('click', '#blai-tour-help', function() {
         try { startTour('main', this, false); } catch (error) { tourError('Veridis Rewrite 界面导览无法开始', error); }

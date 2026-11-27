@@ -86,18 +86,6 @@ export function fadeOutThen(el, done) {
 }
 
 /**
- * 取消进行中的淡出：作废旧任务（其 done 不再执行）、移除退场类。
- * 用于「元素淡出到一半又被重新显示」的场景（如快速来回切页）：
- * 不取消的话，旧定时器到点仍会执行 done，把刚重新激活的元素又隐藏掉。
- */
-export function cancelFadeOut(el) {
-    const node = el && el.jquery ? el[0] : el;
-    if (!node) return;
-    const cancel = leaveTokens.get(node);
-    if (cancel) cancel();
-}
-
-/**
  * 整块重渲染列表时的轻量 FLIP：记住旧位置，渲染后把仍在的元素从旧位置滑到新位置，
  * 新元素从上方 6px 淡入。删除项立即移除，不留下参与布局的幽灵节点。
  * 只看 transform/opacity，可在 reduced-motion 下整体跳过。
@@ -140,14 +128,3 @@ export function renderWithFlip(container, html, { selector = '[data-flip-key]', 
     });
 }
 
-/**
- * 让元素重新淡入：移除退场类并强制重排后，浏览器会重放入场动画。
- * 用于 innerHTML 重渲染的内容区（新节点天然带入场动画则无需调用）。
- */
-export function restartFadeIn(el) {
-    const node = el && el.jquery ? el[0] : el;
-    if (!node || prefersReducedMotion()) return;
-    node.classList.remove(LEAVE_CLASS);
-    // 触发一次重排，确保入场动画从 opacity:0 重新开始。
-    void node.offsetWidth;
-}

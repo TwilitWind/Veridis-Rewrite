@@ -3,6 +3,13 @@ import { getAppContext } from '../host/appContext.js';
 
 // 作用域标签的解析、规范化与保护语义。
 
+export const SCOPE_TAG_MODES = Object.freeze({ PROTECT: 'protect', CLEANSE_INSIDE: 'cleanse-inside' });
+
+/** 作用域模式只有两态；任何其它值（含 undefined）一律回退 protect。 */
+export function normalizeScopeTagMode(value) {
+    return value === SCOPE_TAG_MODES.CLEANSE_INSIDE ? SCOPE_TAG_MODES.CLEANSE_INSIDE : SCOPE_TAG_MODES.PROTECT;
+}
+
 export function collectMvuStatusPlaceholderRanges(text) {
     const source = String(text ?? '');
     const literal = '<StatusPlaceHolderImpl/>';

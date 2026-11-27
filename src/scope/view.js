@@ -4,7 +4,7 @@ import { getAppContext } from '../host/appContext.js';
 import { showResponsivePage } from '../ui/shell.js';
 import { renderWithFlip } from '../ui/motion.js';
 import { safeHtml } from '../ui/html.js';
-import { COT_SCOPE_TAG_DISPLAY_TEXT, DEFAULT_SCOPE_TAG_GROUP_ID, DEFAULT_SCOPE_TAG_GROUP_NAME, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeCollapsedGroupList, normalizeScopeTagGroupList } from './model.js';
+import { COT_SCOPE_TAG_DISPLAY_TEXT, DEFAULT_SCOPE_TAG_GROUP_ID, DEFAULT_SCOPE_TAG_GROUP_NAME, SCOPE_TAG_MODES, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeCollapsedGroupList, normalizeScopeTagGroupList, normalizeScopeTagMode } from './model.js';
 function getScopeTagGroupsForSettings(settings = {}) {
     return normalizeScopeTagGroupList(settings?.scopeTagGroups);
 }
@@ -72,8 +72,8 @@ export function renderScopeTagsModal({ animate = false } = {}) {
     );
     const editId = String($('#blai-scope-tag-input').data('scope-edit-id') || '');
     const isEditing = editId !== '';
-    const scopeTagMode = settings.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect';
-    const isCleanseInsideMode = scopeTagMode === 'cleanse-inside';
+    const scopeTagMode = normalizeScopeTagMode(settings.scopeTagMode);
+    const isCleanseInsideMode = scopeTagMode === SCOPE_TAG_MODES.CLEANSE_INSIDE;
     const displayScopeTags = [];
     let cotDisplayTag = null;
 

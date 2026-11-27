@@ -1,5 +1,12 @@
 /* 深度清理：预览筛选、纵向条目导航与当前条目差异。桌面与窄容器共用同一套单列布局。 */
 
+#blai-deep-clean-workspace .blai-deep-clean-source-legend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+    flex: 0 0 auto;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-preview {
     height: 100%;
     min-height: 0;
@@ -74,7 +81,7 @@
 }
 
 /* 筛选、导航、视图都用轻量文字控件：选中只留底部强调线，不堆边框和底色。 */
-#blai-deep-clean-workspace :is(.blai-deep-clean-preview-filters, .blai-deep-clean-preview-bar, .blai-deep-clean-preview-tabs, .blai-deep-clean-preview-views) button {
+#blai-deep-clean-workspace :is(.blai-deep-clean-preview-filters, .blai-deep-clean-preview-bar) button {
     min-height: var(--blai-size-28);
     padding: var(--blai-space-2) var(--blai-space-6);
     border: 0;
@@ -88,7 +95,7 @@
 }
 
 /* 选中态只靠颜色，不再叠一条指示线去压顶栏分隔线。 */
-#blai-deep-clean-workspace :is(.blai-deep-clean-preview-filters, .blai-deep-clean-preview-tabs, .blai-deep-clean-preview-views) button[aria-pressed="true"] {
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters button[aria-pressed="true"] {
     color: var(--accent-ink);
 }
 
@@ -127,12 +134,6 @@
     display: inline-flex;
     align-items: center;
     gap: var(--blai-space-4);
-}
-
-#blai-deep-clean-workspace :is(.blai-deep-clean-preview-tabs, .blai-deep-clean-preview-views) {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: var(--blai-space-2);
 }
 
 /* 条目列表默认收起；展开后只占内容区一部分高度，永远纵向滚动。 */
@@ -215,7 +216,8 @@
     margin: 0;
     min-width: 0;
     flex: 0 1 auto;
-    font-size: var(--blai-fs-control);
+    /* 条目名是次级信息：比正文控件小一档，世界书条目名与「消息 N」同样受益。 */
+    font-size: calc(var(--blai-fs-control) - 1px);
     font-weight: var(--blai-weight-medium);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -257,15 +259,6 @@
 #blai-deep-clean-workspace .blai-deep-clean-preview-change-reverted-dot {
     margin-left: var(--blai-space-3);
     font-size: var(--blai-fs-note);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-badge {
-    padding: var(--blai-space-1) var(--blai-space-4);
-    border-radius: var(--blai-radius-3);
-    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
-    color: var(--accent-ink);
-    font-size: var(--blai-fs-note);
-    font-weight: var(--blai-weight-normal);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview-projection {
@@ -316,6 +309,14 @@
     border-radius: var(--blai-radius-full);
     background: var(--blai-diff-source-manual-color);
     transform: translateY(-2px);
+}
+/* 步骤导航定位到当前改写项：与净化对比的逐条定位同款——淡底 + 单层描边，
+   只描改写文本不描复选框，桌面与窄容器共用，避免高亮只在手机端出现。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-change.is-located .blai-diff-change {
+    background-color: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    outline: var(--blai-border-2) solid var(--accent-color);
+    outline-offset: 0;
+    border-radius: var(--blai-radius-4);
 }
 #blai-deep-clean-workspace .blai-deep-clean-preview-equal {
     color: var(--text-main);

@@ -1,5 +1,5 @@
 /** runtime 的分块：ui。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { normalizeLimit } from '../planning.js';
+import { normalizeAiNumericSetting } from '../../settings/defaults.js';
 import { aiRewriteState } from '../state.js';
 import { logger } from '../../log.js';
 import { recordAiRewriteDebug } from '../debug.js';
@@ -14,8 +14,13 @@ import { isAiRewriteResponseFormatError } from '../response.js';
 import { isMessageDiffReverted } from '../../diff/messageMeta.js';
 import { applyProgramFallbackRewrites } from '../apply.js';
 
+/** 消息失效时的统一失败提示：调用方只说明发生在哪个阶段。 */
+export function notifyStaleFailure(reason) {
+    notifyAiRewriteStatus('error', 'AI 改写失败', reason, { timeOut: 8000, extendedTimeOut: 16000 });
+}
+
 export function getAiRetryCount(aiSettings) {
-    return normalizeLimit(aiSettings?.maxRetries, 2, 0, 5);
+    return normalizeAiNumericSetting('maxRetries', aiSettings?.maxRetries);
 }
 
 const AI_TOAST_CONTAINER_ID = 'blai-ai-toast-container';

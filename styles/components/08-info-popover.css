@@ -1,7 +1,7 @@
 /* 通用说明按钮与说明气泡：工具页楼层数与 API 连接共用。
    气泡由 popover.js 挂到 body，字体、边框、投影都必须由自身令牌解析，不能依赖插件容器。 */
 
-#blai-purifier-popup .blai-info-trigger {
+:is(#blai-purifier-popup, #blai-ai-generation-modal) .blai-info-trigger {
     flex: 0 0 auto;
     width: var(--blai-info-trigger-size);
     height: var(--blai-info-trigger-size);
@@ -23,13 +23,13 @@
         background-color var(--blai-duration-fast) var(--blai-ease-out);
 }
 
-#blai-purifier-popup .blai-info-trigger:hover,
-#blai-purifier-popup .blai-info-trigger[aria-expanded="true"] {
+:is(#blai-purifier-popup, #blai-ai-generation-modal) .blai-info-trigger:hover,
+:is(#blai-purifier-popup, #blai-ai-generation-modal) .blai-info-trigger[aria-expanded="true"] {
     background: color-mix(in srgb, var(--accent-color) 12%, transparent);
     color: var(--accent-ink);
 }
 
-#blai-purifier-popup .blai-info-trigger:focus-visible {
+:is(#blai-purifier-popup, #blai-ai-generation-modal) .blai-info-trigger:focus-visible {
     outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 78%, transparent);
     outline-offset: var(--blai-focus-offset);
 }

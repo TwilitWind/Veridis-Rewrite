@@ -1,6 +1,6 @@
 # 词汇映射 架构说明（开发者）
 
-面向改代码的人：先建立鸟瞰与边界，再按索引进专项文档。本文件只写不常变的东西（运行形态、初始化链、模块分层、边界与不变量）；机制细节、令牌清单与改动落点已下沉到 [docs/architecture/](docs/architecture/)。安装与使用见 [README.md](README.md)，构建与调试见 [DEVELOPMENT.md](DEVELOPMENT.md)，版本差异见 [CHANGELOG.md](CHANGELOG.md)。
+面向改代码的人：先建立鸟瞰与边界，再按索引进专项文档。本文件只写不常变的东西（运行形态、初始化链、模块分层、边界与不变量）；机制细节、令牌清单与改动落点已下沉到 [docs/architecture/](docs/architecture/)。安装与使用见 [README.md](README.md)，构建与闸门见 [DEVELOPMENT.md](DEVELOPMENT.md)，版本差异见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 一、运行形态
 
@@ -29,10 +29,9 @@ Veridis-Rewrite/
 ├── style.css(.map)         构建产物，勿手改
 ├── build-css.mjs           拼接压缩 + token 等价校验 + sourcemap
 ├── build-check.mjs         构建闸门
-├── test/                   构建、审计与同步脚本，入口见 DEVELOPMENT.md
 ├── src/                    业务模块
 ├── styles/                 样式唯一真源：tokens/ base/ components/ layouts/ pages/
-├── templates/purifier.html 工作台全部 DOM（五页 + 弹窗）
+├── templates/          工作台 DOM 分片：purifier-shell / -page-* / -modals / -diff / -forms
 ├── docs/architecture/      本文件的专项文档（模块 / 机制 / 样式 / 落点）
 ├── images/
 └── vendor/                 pinyin-pro、sql.js（本地化）
@@ -80,17 +79,13 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 
 ## 四、边界与不变量
 
-从代码里不容易看出的约束，改动时先确认没有越界。展开说明见 [mechanics.md](docs/architecture/mechanics.md)，样式侧约束见 [style-tokens.md](docs/architecture/style-tokens.md)。
+从代码里不容易看出的约束，改动时先确认没有越界；展开与例外见 [mechanics.md](docs/architecture/mechanics.md)，样式侧见 [style-tokens.md](docs/architecture/style-tokens.md)。
 
-- **宿主读取只有两层**：`host/appContext.js` 一次性注入宿主能力槽位，是所有宿主能力的唯一入口；`host/context.js` 在其上做所有降级读取。新代码读宿主一律走这两层，不直接摸全局。
-- **编译永不收 AI 规则**：`compileProcessors` 供最终写回，不含 AI 规则；AI 只在流式视觉投影里被纳入。执行顺序固定：先 AI 局部改写，再程序规则净化。
-- **撤回只看元数据**：撤回按钮可用条件只看 `meta` 是否存在，不要求当前正文与记录一致——手动编辑后仍能撤回，别退回文本相等判断。
-- **深度净化只两类资源**：当前角色卡的世界书与聊天记录；`is_system === true` 不是跳过条件（`/hide` 楼层要参与并标 `isHidden`）；运行预设经 `frozenRunInput` 冻结，结束不写回全局。
-- **页面与导航是成对的**：五个 page id（`overview` / `ai` / `clean` / `tools` / `feedback`），宽屏 `.rail` 与窄屏 `.bottom-nav` 两处都要有 `[data-page-target]` 按钮。
-- **原生对话框一律禁用**：`window.confirm/alert/prompt` 统一走 `ui/notifications.js`；所有大弹窗是 body 直属节点，不在 `#blai-purifier-popup` 内。
-- **转场单一状态源**：切页待办只在 `ui/shell.js` 的 `pendingPageSwap`，可复用的退场/FLIP 在 `ui/motion.js`，portal 定位只由 `ui/popover.js` 写 `left/top`；动效不得改定位元素的 transform，也不做横向 push/pop。
-- **z-index 只走 token**：所有层级在 `tokens/03-scale.css` 的 `--blai-z-*`，页面文件一律 `var(...)`；toast 取最高层，不改宿主 `#toast-container`。
-- **设置命名空间是数据主键**：`ultimate_purifier_ai_rewrite`（`settings/defaults.js` 的 `extensionName`）不可随显示名改动，否则既有规则、预设、AI 配置读不到。
+- **宿主与数据**：宿主能力只走 `host/appContext.js` + `host/context.js` 两层；设置主键 `ultimate_purifier_ai_rewrite` 不随显示名改动。
+- **净化与撤回**：`compileProcessors` 不含 AI 规则，先 AI 后程序；撤回只看 `meta` 是否存在，手动编辑后仍可撤回。
+- **深度净化**：只处理当前角色卡的世界书与聊天记录，`is_system === true` 不跳过，运行预设由 `frozenRunInput` 冻结。
+- **界面与浮层**：五个 page id 与两套导航按钮成对；禁用原生对话框，大弹窗必须是 body 直属；层级只走 `--blai-z-*`，portal 定位只由 `ui/popover.js` 写。
+- **动效**：切页待办只在 `ui/shell.js` 的 `pendingPageSwap`，动效只动 transform / opacity，不改定位元素的 transform，不做横向 push / pop。
 
 ## 五、专项文档
 
@@ -101,4 +96,4 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 | [style-tokens.md](docs/architecture/style-tokens.md) | 令牌分区、界面令牌落点、反馈页高亮、`!important` 例外登记 | 要改样式或令牌 |
 | [change-map.md](docs/architecture/change-map.md) | "想改什么 → 改哪里"速查表、样式文件职责速查 | 动手前定位改动落点 |
 
-专项文档同样随插件发布；新增内容按上表归位，不要堆回本文件。本文件超过 150 行或细节喧宾夺主时按工作区规范继续下沉。
+专项文档同样随插件发布；新增内容按上表归位，不要堆回本文件。本文件超过 150 行或细节喧宾夺主时继续下沉到专项文档。

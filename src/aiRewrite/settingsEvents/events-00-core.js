@@ -11,6 +11,12 @@ import { focusOnFinePointer } from '../../ui/popover.js';
 import { syncAiGenerationFieldsUI, setValueIfNotFocused } from '../generationFields.js';
 
 // AI 设置的核心闭包：状态与工具函数集中在此，绑定层通过返回对象读取。
+const AI_API_CHECK_MESSAGES = {
+    disabled: 'AI 改写未启用，开启后再拉取模型列表。',
+    missing: '需要先填写 API 地址和 API Key。',
+};
+const API_PRESET_NAME_REQUIRED = 'API 预设名称不能为空';
+
 let aiApiCheckSequence = 0;
 
 export function createAiSettingsCore() {
@@ -81,12 +87,12 @@ export function createAiSettingsCore() {
     const resetAiApiCheckState = () => {
         aiApiCheckSequence += 1;
         if (ensureAiRewriteSettings().enabled !== true) {
-            setAiApiCheckState('disabled', 'AI 改写未启用，开启后再拉取模型列表。');
+            setAiApiCheckState('disabled', AI_API_CHECK_MESSAGES.disabled);
             return;
         }
         const aiSettings = ensureAiRewriteSettings();
         if (!String(aiSettings.baseUrl || '').trim() || !String(aiSettings.apiKey || '')) {
-            setAiApiCheckState('missing', '需要先填写 API 地址和 API Key。');
+            setAiApiCheckState('missing', AI_API_CHECK_MESSAGES.missing);
             return;
         }
         setAiApiCheckState('idle');
@@ -179,7 +185,7 @@ export function createAiSettingsCore() {
             if (enteredName === null) return false;
             name = String(enteredName || '').trim();
             if (!name) {
-                showToast('API 预设名称不能为空', undefined, 'error');
+                showToast(API_PRESET_NAME_REQUIRED, undefined, 'error');
                 return false;
             }
             if (Object.prototype.hasOwnProperty.call(aiSettings.apiPresets, name)
@@ -201,7 +207,7 @@ export function createAiSettingsCore() {
         if (enteredName === null) return false;
         const nextName = String(enteredName || '').trim();
         if (!nextName) {
-            showToast('API 预设名称不能为空', undefined, 'error');
+            showToast(API_PRESET_NAME_REQUIRED, undefined, 'error');
             return false;
         }
         if (nextName === activeName) return false;
@@ -232,13 +238,13 @@ export function createAiSettingsCore() {
     const runAiModelsHealthCheck = async () => {
         const aiSettings = ensureAiRewriteSettings();
         if (aiSettings.enabled !== true) {
-            setAiApiCheckState('disabled', 'AI 改写未启用，开启后再拉取模型列表。');
+            setAiApiCheckState('disabled', AI_API_CHECK_MESSAGES.disabled);
             return false;
         }
         const apiurl = String(aiSettings.baseUrl || '').trim();
         const key = String(aiSettings.apiKey || '');
         if (!apiurl || !key) {
-            setAiApiCheckState('missing', '需要先填写 API 地址和 API Key。');
+            setAiApiCheckState('missing', AI_API_CHECK_MESSAGES.missing);
             return false;
         }
         const tavernHelper = getTavernHelperApi();
@@ -305,7 +311,7 @@ export function createAiSettingsCore() {
         $('#blai-ai-enabled-status')
             .html(aiEnabled ? 'AI改写 <span class="blai-ai-state-word is-on">开启</span>' : 'AI改写 <span class="blai-ai-state-word">关闭</span>');
         syncAiAutoTriggerAvailability(aiSettings);
-        if (aiSettings.enabled !== true) setAiApiCheckState('disabled', 'AI 改写未启用，开启后再拉取模型列表。');
+        if (aiSettings.enabled !== true) setAiApiCheckState('disabled', AI_API_CHECK_MESSAGES.disabled);
         $('#blai-ai-http-warning').prop('hidden', isLocalHttpUrl(aiSettings.baseUrl));
     };
 

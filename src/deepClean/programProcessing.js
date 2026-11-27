@@ -10,15 +10,11 @@ import {
     createDeepCleanMatcherSettings,
     getDeepCleanItemAiScopeSettings,
     scopeSettingsForDeepCleanItem,
+    scopeSettingsFromSemantics,
 } from './scan.js';
 
 function getProgramScopeSettings(input, item) {
-    const semantics = input.processingSemantics || {};
-    return scopeSettingsForDeepCleanItem({
-        scopeTags: semantics.scopeTags || [],
-        scopeTagBuiltinDismissed: semantics.scopeTagBuiltinDismissed || [],
-        scopeTagMode: semantics.scopeTagMode || 'protect',
-    }, item);
+    return scopeSettingsForDeepCleanItem(scopeSettingsFromSemantics(input.processingSemantics || {}), item);
 }
 
 export function buildDeepCleanProgramExecution(input, item, compiledSemantics, sourceText, ranges = []) {

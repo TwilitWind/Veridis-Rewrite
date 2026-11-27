@@ -1,4 +1,4 @@
-const extensionsPathMarker = '/scripts/extensions/';
+export const extensionsPathMarker = '/scripts/extensions/';
 
 /**
  * 从加载入口模块的 URL 推导该扩展的 SillyTavern 标识，

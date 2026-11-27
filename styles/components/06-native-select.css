@@ -156,8 +156,3 @@
     gap: var(--blai-dropdown-gap);
 }
 
-.blai-native-select-group-label {
-    padding: var(--blai-space-2) var(--blai-dropdown-item-pad-x) 0;
-    color: var(--text-secondary);
-    font-size: var(--blai-font-11);
-}

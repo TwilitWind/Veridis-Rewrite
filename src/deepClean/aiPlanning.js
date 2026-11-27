@@ -1,7 +1,7 @@
 import { renderMultiItemPromptPure } from '../aiRewrite/planning.js';
 import { buildAiRewriteGenerateRawConfig } from '../aiRewrite/generation.js';
 import { getPresetAiRewriteSettings } from '../presets/model.js';
-import { getDeepCleanItemAiScopeSettings } from './scan.js';
+import { getDeepCleanItemAiScopeSettings, scopeSettingsFromSemantics } from './scan.js';
 
 const normalSourceLimit = 40_000;
 const completePromptLimit = 50_000;
@@ -16,12 +16,7 @@ function getFrozenPromptSettings(input) {
 }
 
 function getPromptScopeSettings(input) {
-    const semantics = input.processingSemantics || {};
-    return {
-        scopeTags: semantics.scopeTags || [],
-        scopeTagBuiltinDismissed: semantics.scopeTagBuiltinDismissed || [],
-        scopeTagMode: semantics.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect',
-    };
+    return scopeSettingsFromSemantics(input.processingSemantics || {});
 }
 
 function getItemAiSettings(input, item, promptSettings) {

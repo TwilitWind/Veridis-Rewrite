@@ -1,5 +1,5 @@
-import { defaultAiRewriteSettings } from '../settings/defaults.js';
-import { mergeScopeTagsWithBuiltins, findNextScopeTagMatch } from '../scope/model.js';
+import { normalizeAiNumericSetting } from '../settings/defaults.js';
+import { mergeScopeTagsWithBuiltins, findNextScopeTagMatch, normalizeScopeTagMode, SCOPE_TAG_MODES } from '../scope/model.js';
 import { collectXmlCommentRanges, maskXmlCommentRanges } from './commentProtection.js';
 import { recordAiRewriteDebug } from './debug.js';
 import { collectVariableUpdateRanges } from '../text/variableUpdates.js';
@@ -12,14 +12,22 @@ export function normalizeLimit(value, fallback, min, max) {
     return Math.min(Math.max(Math.round(parsed), min), max);
 }
 
-function normalizePositiveInteger(value, fallback) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? Math.max(Math.round(parsed), 1) : fallback;
-}
-
 function getEnabledScopeTags(settings) {
     const scopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed);
     return scopeTags.filter((tag) => tag?.enabled !== false);
+}
+
+/** 作用域扫描前的统一预处理：排除变量块与（可选）XML 注释，保持坐标不变。 */
+export function buildScopeScanText(source, aiSettings) {
+    const variableRanges = collectVariableUpdateRanges(source);
+    const commentRanges = aiSettings?.protectXmlComments === true ? collectXmlCommentRanges(source) : [];
+    const excludedRanges = [...variableRanges, ...commentRanges].sort((a, b) => a.start - b.start);
+    return {
+        scanText: maskXmlCommentRanges(source, excludedRanges),
+        excludedRanges,
+        variableRanges,
+        commentRanges,
+    };
 }
 
 export function collectScopeRanges(text, settings) {
@@ -35,8 +43,17 @@ export function collectScopeRanges(text, settings) {
         const bodyStart = index + scopeTag.startTag.length;
         const endIndex = text.indexOf(scopeTag.endTag, bodyStart);
         if (endIndex < 0) {
-            cursor = bodyStart;
-            continue;
+            // 未闭合标签统一按「从起始标签起到文末都受保护」处理：正文不再当成可改写区间，
+            // 避免规则引擎与 AI 匹配器各自猜一套策略。
+            ranges.push({
+                start: index,
+                bodyStart,
+                bodyEnd: bodyStart,
+                end: text.length,
+                startTag: scopeTag.startTag,
+                unclosed: true,
+            });
+            break;
         }
         ranges.push({
             start: index,
@@ -51,7 +68,7 @@ export function collectScopeRanges(text, settings) {
 }
 
 function getContextWindow(text, items, maxContextChars) {
-    const limit = normalizeLimit(maxContextChars, 12000, 1000, 60000);
+    const limit = normalizeAiNumericSetting('maxContextChars', maxContextChars);
     if (text.length <= limit) return { start: 0, end: text.length };
     if (!items.length) return { start: 0, end: limit };
 
@@ -125,11 +142,8 @@ function buildAnnotatedSource(originalText, items, settings, maxContextChars, ru
     const window = completeSource
         ? { start: 0, end: source.length }
         : getContextWindow(source, sortedItems, maxContextChars);
-    const variableRanges = collectVariableUpdateRanges(source);
-    const commentRanges = aiSettings?.protectXmlComments === true ? collectXmlCommentRanges(source) : [];
-    const excludedRanges = [...variableRanges, ...commentRanges].sort((a, b) => a.start - b.start);
-    const scopeScanText = maskXmlCommentRanges(source, excludedRanges);
-    const scopeRanges = settings.scopeTagMode === 'cleanse-inside' ? [] : collectScopeRanges(scopeScanText, settings);
+    const { scanText: scopeScanText, excludedRanges, variableRanges, commentRanges } = buildScopeScanText(source, aiSettings);
+    const scopeRanges = normalizeScopeTagMode(settings.scopeTagMode) === SCOPE_TAG_MODES.CLEANSE_INSIDE ? [] : collectScopeRanges(scopeScanText, settings);
     const protectedRanges = [
         ...variableRanges.map(range => ({ bodyStart: range.start, bodyEnd: range.end, omit: true })),
         ...scopeRanges,
@@ -158,7 +172,7 @@ function buildAnnotatedSource(originalText, items, settings, maxContextChars, ru
 }
 
 export function groupRewriteItemsByPrompt(items, aiSettings) {
-    const batchSize = normalizePositiveInteger(aiSettings.maxItemsPerRequest, defaultAiRewriteSettings.maxItemsPerRequest);
+    const batchSize = normalizeAiNumericSetting('maxItemsPerRequest', aiSettings.maxItemsPerRequest);
     const groups = [];
     for (let start = 0; start < items.length; start += batchSize) {
         groups.push({

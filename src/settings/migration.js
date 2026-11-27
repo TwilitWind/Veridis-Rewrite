@@ -4,13 +4,13 @@
 import * as extensionsModule from "../../../../../extensions.js";
 import { saveSettingsDebounced } from "../../../../../../script.js";
 
-import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsPromptMigrationConfirm, normalizeAiSamplingSettings, normalizeDiffFontSize, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
+import { aiRewritePromptProtocolVersion, applyGemini31TemperatureMigration, defaultAiRewriteSettings, defaultSettings, extensionName, modifiedExtensionName, legacyExtensionName, isKnownBuiltInAiRewritePrompt, migrateKnownAiRewritePrompt, needsPromptMigrationConfirm, normalizeAiNumericSetting, normalizeAiSamplingSettings, normalizeDiffFontSize, normalizeDiffLineHeight, normalizeDiffParagraphGap, normalizeDiffTrackedMessageLimit, normalizeShujukuAutoProgramRewriteEnabled, resolveCustomGlobalPromptMigration } from './defaults.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { logger } from '../log.js';
 import { cleanupInvalidPresetBindings } from '../presets/bindings.js';
 import { buildPresetEntry, getActivePresetAiSettings, getPresetAiRewriteSettings, getPresetRules } from '../presets/model.js';
 import { normalizeRuleActivationSafety } from '../rules/model.js';
-import { mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeCollapsedGroupList, normalizeScopeTagGroupList } from '../scope/model.js';
+import { mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeCollapsedGroupList, normalizeScopeTagGroupList, normalizeScopeTagMode } from '../scope/model.js';
 import { normalizeZhVariantSettings, restoreZhDictionaryPackageFromCache } from '../zh/dictionary.js';
 
 const { extension_settings } = extensionsModule;
@@ -87,18 +87,18 @@ function normalizeAiRewriteSettings(settings) {
         || savedPromptTemplate === defaultAiRewriteSettings.promptTemplate
         || current.globalPromptMigrationDecisionMade === true;
     Object.assign(next, normalizeAiSamplingSettings(next));
-    const normalizedTimeoutMs = Number.isFinite(Number(next.timeoutMs)) ? Math.min(Math.max(Math.round(Number(next.timeoutMs)), 1000), 120000) : defaultAiRewriteSettings.timeoutMs;
+    const normalizedTimeoutMs = normalizeAiNumericSetting('timeoutMs', next.timeoutMs);
     next.timeoutMs = current.timeoutDefault120sApplied !== true && normalizedTimeoutMs === 20000
         ? defaultAiRewriteSettings.timeoutMs
         : normalizedTimeoutMs;
     next.timeoutDefault120sApplied = true;
-    next.maxRetries = Number.isFinite(Number(next.maxRetries)) ? Math.min(Math.max(Math.round(Number(next.maxRetries)), 0), 5) : defaultAiRewriteSettings.maxRetries;
-    const normalizedMaxItems = Number.isFinite(Number(next.maxItemsPerRequest)) ? Math.max(Math.round(Number(next.maxItemsPerRequest)), 1) : defaultAiRewriteSettings.maxItemsPerRequest;
+    next.maxRetries = normalizeAiNumericSetting('maxRetries', next.maxRetries);
+    const normalizedMaxItems = normalizeAiNumericSetting('maxItemsPerRequest', next.maxItemsPerRequest);
     next.maxItemsPerRequest = current.maxItemsDefault20Applied !== true && normalizedMaxItems === 8
         ? defaultAiRewriteSettings.maxItemsPerRequest
         : normalizedMaxItems;
     next.maxItemsDefault20Applied = true;
-    next.maxContextChars = Number.isFinite(Number(next.maxContextChars)) ? Math.min(Math.max(Math.round(Number(next.maxContextChars)), 1000), 60000) : defaultAiRewriteSettings.maxContextChars;
+    next.maxContextChars = normalizeAiNumericSetting('maxContextChars', next.maxContextChars);
     next.protectXmlComments = next.protectXmlComments === true;
     settings.aiRewrite = next;
 }
@@ -189,7 +189,7 @@ export function ensureSettingsShape() {
     settings.scopeTagCollapsedGroups = normalizeCollapsedGroupList(settings.scopeTagCollapsedGroups, settings.scopeTagGroups);
     settings.scopeTagBuiltinDismissed = normalizeScopeTagBuiltinDismissedList(settings.scopeTagBuiltinDismissed);
     settings.scopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed);
-    if (!['protect', 'cleanse-inside'].includes(settings.scopeTagMode)) settings.scopeTagMode = 'protect';
+    settings.scopeTagMode = normalizeScopeTagMode(settings.scopeTagMode);
     settings.enableVisualDiff = true;
     if (!['snippet', 'full'].includes(settings.diffViewMode)) settings.diffViewMode = 'snippet';
     if (settings.diffRelatedRuleEnabled === undefined) settings.diffRelatedRuleEnabled = false;

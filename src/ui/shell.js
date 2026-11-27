@@ -144,14 +144,29 @@ export async function setupUI(renderTemplate, templateDirectory) {
     ensureExtensionPanelEntry();
     window.setTimeout(ensureExtensionPanelEntry, 500);
 
-    const templateHtml = await renderTemplate(
-        templateDirectory,
-        'purifier',
-        { logoUrl: new URL('../../images/veridis-logo.png', import.meta.url).href },
-        false,
-        false,
-    );
-    $('body').append(templateHtml);
+    const templateData = { logoUrl: new URL('../../images/veridis-logo.png', import.meta.url).href };
+    const templateIds = [
+        'purifier-shell',
+        'purifier-page-overview',
+        'purifier-page-ai',
+        'purifier-page-clean',
+        'purifier-page-tools',
+        'purifier-modals',
+        'purifier-diff',
+        'purifier-forms',
+    ];
+    const rendered = await Promise.all(templateIds.map((id) => renderTemplate(templateDirectory, id, templateData, false, false)));
+    // 宿主的渲染函数吞掉加载异常后返回 undefined；不显式拦下会拼出缺半边的 UI。
+    const failedIds = templateIds.filter((_, index) => typeof rendered[index] !== 'string');
+    if (failedIds.length > 0) {
+        throw new Error(`模板渲染失败：${failedIds.join(', ')}`);
+    }
+
+    // 页面片段先装进脱离文档的外壳，再与弹窗一起一次性挂到 body：
+    // 弹窗必须是 #blai-purifier-popup 的后续 body 直属兄弟，否则 backdrop-filter 会让 fixed 遮罩失效。
+    const $shell = $(rendered[0]);
+    $shell.find('.pages').prepend(rendered.slice(1, 5).join(''));
+    $('body').append($shell).append(rendered.slice(5).join(''));
     updateLegacyPurifierWarning();
     window.setTimeout(updateLegacyPurifierWarning, 800);
     markRulesUiDirty(true);

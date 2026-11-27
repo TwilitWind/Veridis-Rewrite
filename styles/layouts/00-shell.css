@@ -395,7 +395,6 @@
 
 /* 预设操作的真按钮藏在模板里，只作为 #id 选择器的锚点；必须整块隐藏，
    否则会掉到 rail 下面溢出可见（曾因删掉本规则露出 5 个灰按钮）。 */
-#blai-purifier-popup.blai-app-shell .blai-hidden-real-button,
 #blai-purifier-popup.blai-app-shell .blai-hidden-real-controls {
     display: none;
 }
@@ -429,8 +428,6 @@
 
 @media (max-width: 600px) {
 #blai-purifier-popup.blai-app-shell {
-    --blai-mobile-type-large: var(--blai-fs-hero);
-    --blai-mobile-type-medium: var(--blai-fs-title);
     --blai-mobile-type-small: var(--blai-fs-body);
     --blai-mobile-type-tiny: var(--blai-fs-note);
     inset: 0;

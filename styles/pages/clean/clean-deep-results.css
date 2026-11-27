@@ -47,16 +47,6 @@
     margin-top: var(--blai-space-8);
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-stopped-state h3 {
-    color: var(--accent-ink);
-    font-size: var(--blai-font-18);
-    font-weight: var(--blai-weight-bold);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-stopped-state p {
-    max-width: 34em;
-}
-
 #blai-deep-clean-workspace .blai-deep-clean-error-state > i, #blai-deep-clean-workspace .blai-deep-clean-error-state .blai-deep-clean-error {
     color: var(--status-danger);
 }

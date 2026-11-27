@@ -11,6 +11,7 @@ import { syncPersonaDescriptionProtectionControl } from './ui/personaProtection.
 import { normalizeZhVariantSettings } from './zh/dictionary.js';
 import { showConfirmModal } from './ui/notifications.js';
 import { getFadeDuration } from './ui/motion.js';
+import { syncToggleState } from './ui/toggle.js';
 import { bindHostLifecycleEvents } from './host/lifecycleEvents.js';
 import { bindAiSettingsEvents } from './aiRewrite/settingsEvents.js';
 import { bindThemeEvents } from './ui/theme.js';
@@ -85,34 +86,29 @@ export function bindEvents() {
     const settings = extension_settings[extensionName];
     normalizeZhVariantSettings(settings);
     const syncSkipUserToggle = () => {
-        const enabled = settings.skipUserMessages === true;
-        $('#blai-skip-user-toggle')
-            .attr('aria-pressed', String(enabled))
-            .attr('title', enabled ? '关闭跳过用户消息' : '开启跳过用户消息')
-            .find('.blai-switch-state')
-            .text(enabled ? '开启' : '关闭');
+        syncToggleState('#blai-skip-user-toggle', settings.skipUserMessages === true, {
+            onTitle: '关闭跳过用户消息',
+            offTitle: '开启跳过用户消息',
+            stateSelector: '.blai-switch-state',
+        });
     };
     syncSkipUserToggle();
 
     const syncComposerButtonToggle = () => {
-        const enabled = settings.showComposerAiRewriteButton === true;
-        $('#blai-composer-button-toggle')
-            .attr('aria-pressed', String(enabled))
-            .attr('title', enabled ? '关闭 AI改写快捷键' : '开启 AI改写快捷键')
-            .attr('aria-label', enabled ? '关闭 AI改写快捷键' : '开启 AI改写快捷键')
-            .find('.blai-tools-switch-state')
-            .text(enabled ? '开启' : '关闭');
+        syncToggleState('#blai-composer-button-toggle', settings.showComposerAiRewriteButton === true, {
+            onTitle: '关闭 AI改写快捷键',
+            offTitle: '开启 AI改写快捷键',
+            ariaLabel: true,
+        });
     };
     syncComposerButtonToggle();
 
     const syncShujukuAutoRewriteToggle = () => {
-        const enabled = settings.shujukuAutoProgramRewriteEnabled === true;
-        $('#blai-shujuku-auto-rewrite-toggle')
-            .attr('aria-pressed', String(enabled))
-            .attr('title', enabled ? '关闭数据库自动净化' : '开启数据库自动净化')
-            .attr('aria-label', enabled ? '关闭数据库自动净化' : '开启数据库自动净化')
-            .find('.blai-tools-switch-state')
-            .text(enabled ? '开启' : '关闭');
+        syncToggleState('#blai-shujuku-auto-rewrite-toggle', settings.shujukuAutoProgramRewriteEnabled === true, {
+            onTitle: '关闭数据库自动净化',
+            offTitle: '开启数据库自动净化',
+            ariaLabel: true,
+        });
     };
     syncShujukuAutoRewriteToggle();
 

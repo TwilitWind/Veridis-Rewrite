@@ -12,10 +12,11 @@ import { getMessageDiffBranchKey } from '../../chat/messageBranch.js';
 import { getCurrentChatIdentity } from '../../host/context.js';
 import { buildRewriteItems, countMatchedAiRules, collectAiMatches, collectAiScopeSegments } from '../matching.js';
 import { logger } from '../../log.js';
-import { notifyAiRewriteStatus, applyAiProgramFallback, formatAiRewriteCompletionMessage, hasFinalCleanseAfterTaskStart, getTaskMessageKey, freezeAiRewriteContentIdentity, clearAiRewriteStatusToast, cancelAiRewriteTask } from './runtime-00-ui.js';
+import { notifyAiRewriteStatus, notifyStaleFailure, applyAiProgramFallback, formatAiRewriteCompletionMessage, hasFinalCleanseAfterTaskStart, getTaskMessageKey, freezeAiRewriteContentIdentity, clearAiRewriteStatusToast, cancelAiRewriteTask } from './runtime-00-ui.js';
 
-export function finishAiRewriteApply(task, accepted) {
+export function finishAiRewriteApply(task, accepted, options = {}) {
     const rewriteState = aiRewriteState;
+    const partial = options.partial || null;
     if (isSameAiRewriteTask(rewriteState.pendingApply?.task, task)) rewriteState.pendingApply = null;
 
     if (!isTaskStillFresh(task)) {
@@ -24,7 +25,7 @@ export function finishAiRewriteApply(task, accepted) {
             generationId: task.generationId || '',
             reason: freshnessIssue,
         }, 'warn');
-        notifyAiRewriteStatus('error', 'AI 改写失败', '消息状态已变化，未写回', { timeOut: 8000, extendedTimeOut: 16000 });
+        notifyStaleFailure('消息状态已变化，未写回');
         if (task.automatic === true) generationLifecycle.clearStreamingProgram(task.generationId);
         return { status: 'stale' };
     }
@@ -32,12 +33,31 @@ export function finishAiRewriteApply(task, accepted) {
     const applyResult = applyAcceptedRewrites(task, accepted);
     const appliedCount = applyResult.appliedCount || 0;
     if (appliedCount > 0) {
-        recordAiRewriteDebug('run-success', {
+        recordAiRewriteDebug(partial ? 'run-partial-success' : 'run-success', {
             generationId: task.generationId || '',
             appliedCount,
+            partial: partial || null,
         });
+        if (partial) {
+            const remaining = Math.max(0, Number(partial.total || 0) - Number(partial.done || 0));
+            notifyAiRewriteStatus(
+                'warning',
+                '部分改写已应用',
+                formatAiRewriteCompletionMessage(task, `已应用 ${partial.done} 批，${remaining} 批未完成`),
+                { timeOut: 8000, extendedTimeOut: 16000 },
+            );
+            return { status: 'partial-applied', applyResult, partial };
+        }
         notifyAiRewriteStatus('success', 'AI 改写成功', formatAiRewriteCompletionMessage(task, `已应用 ${appliedCount} 个句子改写`), { timeOut: 5000 });
         return { status: 'applied', applyResult };
+    }
+    if (partial && applyResult.reason === 'no-text-change') {
+        recordAiRewriteDebug('run-partial-no-change', {
+            generationId: task.generationId || '',
+            acceptedCount: accepted.size,
+        }, 'warn');
+        notifyAiRewriteStatus('info', '部分改写未写入', '已完成的批没有产生文本变化', { timeOut: 6000 });
+        return { status: 'no-change', applyResult, partial };
     }
     if (applyResult.reason !== 'no-text-change') {
         recordAiRewriteDebug('run-apply-failed', {
@@ -63,12 +83,13 @@ export function finishAiRewriteApply(task, accepted) {
     return { status: 'no-change', applyResult };
 }
 
-function deferAiRewriteApplyUntilFinalCleanse(task, accepted) {
+function deferAiRewriteApplyUntilFinalCleanse(task, accepted, options = {}) {
     const rewriteState = aiRewriteState;
     rewriteState.pendingApply = {
         mode: 'accepted',
         task,
         accepted: new Map(accepted),
+        partial: options.partial || null,
     };
     recordAiRewriteDebug('apply-deferred', {
         generationId: task.generationId || '',
@@ -100,11 +121,11 @@ export function deferAiRewriteFallbackUntilFinalCleanse(task, reason) {
     return { status: 'deferred-fallback' };
 }
 
-export function finishOrDeferAiRewriteApply(task, accepted) {
+export function finishOrDeferAiRewriteApply(task, accepted, options = {}) {
     if (!hasFinalCleanseAfterTaskStart(task)) {
-        return deferAiRewriteApplyUntilFinalCleanse(task, accepted);
+        return deferAiRewriteApplyUntilFinalCleanse(task, accepted, options);
     }
-    return finishAiRewriteApply(task, accepted);
+    return finishAiRewriteApply(task, accepted, options);
 }
 
 export function getPendingApplyCount(messageKey) {
@@ -135,10 +156,10 @@ export function flushPendingApply(messageKey) {
     });
     const result = entry.mode === 'fallback'
         ? applyAiProgramFallback(entry.task, entry.reason)
-        : finishAiRewriteApply(entry.task, entry.accepted);
+        : finishAiRewriteApply(entry.task, entry.accepted, { partial: entry.partial || null });
     return entry.mode === 'fallback'
         ? Number(result?.applied === true)
-        : Number(['applied', 'fallback-applied'].includes(result?.status));
+        : Number(['applied', 'fallback-applied', 'partial-applied'].includes(result?.status));
 }
 
 export function buildAiRewriteCandidate(payload, options = {}) {

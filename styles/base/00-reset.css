@@ -1,18 +1,18 @@
 /* 全局重置：隐藏辅助类、滚动条、命中高亮动画。 */
 
-/* 可见滚动条统一细条 + 中性灰拇指。粗细走 --blai-scrollbar-size（桌面 8px / 手机 4px）。
+/* 可见滚动条统一细条 + 中性灰拇指。粗细走 --blai-scrollbar-size（桌面 7px / 手机 5px）。
    Firefox 的 scrollbar-width/color 必须包在 @supports 里：Chrome 121+ 一旦看到这两个标准属性，
    就会整页忽略 ::-webkit-scrollbar，导致伪元素里的宽度变量失效（此前写死 7px 却实测 16px 就是这个原因）。
    刻意隐藏的滚动条（后代显式 scrollbar-width: none / ::-webkit-scrollbar display:none）不受影响。 */
 @supports (-moz-appearance: none) {
-    :where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer) {
+    :where(#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer, .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu) {
         scrollbar-width: thin;
         scrollbar-color: var(--blai-scrollbar-thumb) var(--blai-scrollbar-track);
     }
 }
 /* 下面四条伪元素规则刻意不用 :where() 包裹：:where 特异性为 0，
    会与酒馆全局的 ::-webkit-scrollbar{width:.7rem} 同分而被后者（后加载）压掉。
-   用真实 ID 列表提升特异性，确保 8px/4px 变量生效。 */
+   用真实 ID 列表提升特异性，确保 7px/5px 变量生效。 */
 #blai-purifier-popup ::-webkit-scrollbar,
 .blai-modal-shell ::-webkit-scrollbar,
 #blai-scope-tag-editor-modal ::-webkit-scrollbar,
@@ -22,9 +22,12 @@
 #blai-preset-import-choice-modal ::-webkit-scrollbar,
 .blai-toast ::-webkit-scrollbar,
 #blai-loading-overlay ::-webkit-scrollbar,
-#blai-tour-layer ::-webkit-scrollbar {
-    width: var(--blai-scrollbar-size, 8px);
-    height: var(--blai-scrollbar-size, 8px);
+#blai-tour-layer ::-webkit-scrollbar,
+.blai-portal-menu ::-webkit-scrollbar,
+.blai-feedback-area-options ::-webkit-scrollbar,
+.blai-native-select-menu ::-webkit-scrollbar {
+    width: var(--blai-scrollbar-size, 7px);
+    height: var(--blai-scrollbar-size, 7px);
 }
 #blai-purifier-popup ::-webkit-scrollbar-thumb,
 .blai-modal-shell ::-webkit-scrollbar-thumb,
@@ -35,8 +38,11 @@
 #blai-preset-import-choice-modal ::-webkit-scrollbar-thumb,
 .blai-toast ::-webkit-scrollbar-thumb,
 #blai-loading-overlay ::-webkit-scrollbar-thumb,
-#blai-tour-layer ::-webkit-scrollbar-thumb {
-    border-radius: var(--blai-radius-full);
+#blai-tour-layer ::-webkit-scrollbar-thumb,
+.blai-portal-menu ::-webkit-scrollbar-thumb,
+.blai-feedback-area-options ::-webkit-scrollbar-thumb,
+.blai-native-select-menu ::-webkit-scrollbar-thumb {
+    border-radius: var(--blai-scrollbar-radius, var(--blai-radius-full));
     background: var(--blai-scrollbar-thumb);
 }
 #blai-purifier-popup ::-webkit-scrollbar-thumb:hover,
@@ -48,7 +54,10 @@
 #blai-preset-import-choice-modal ::-webkit-scrollbar-thumb:hover,
 .blai-toast ::-webkit-scrollbar-thumb:hover,
 #blai-loading-overlay ::-webkit-scrollbar-thumb:hover,
-#blai-tour-layer ::-webkit-scrollbar-thumb:hover {
+#blai-tour-layer ::-webkit-scrollbar-thumb:hover,
+.blai-portal-menu ::-webkit-scrollbar-thumb:hover,
+.blai-feedback-area-options ::-webkit-scrollbar-thumb:hover,
+.blai-native-select-menu ::-webkit-scrollbar-thumb:hover {
     background: var(--blai-scrollbar-thumb-hover);
 }
 #blai-purifier-popup ::-webkit-scrollbar-track,
@@ -60,47 +69,19 @@
 #blai-preset-import-choice-modal ::-webkit-scrollbar-track,
 .blai-toast ::-webkit-scrollbar-track,
 #blai-loading-overlay ::-webkit-scrollbar-track,
-#blai-tour-layer ::-webkit-scrollbar-track {
+#blai-tour-layer ::-webkit-scrollbar-track,
+.blai-portal-menu ::-webkit-scrollbar-track,
+.blai-feedback-area-options ::-webkit-scrollbar-track,
+.blai-native-select-menu ::-webkit-scrollbar-track {
     background: var(--blai-scrollbar-track);
 }
 
-/* 手机端滚动条统一 4px：只改变量，粗细规则在上面共用一份。
-   注意这里不能用 :where()——它的特异性是 0，压不过 tokens 里 #blai-purifier-popup（ID）定义的 8px。 */
+/* 手机端滚动条统一 5px：只改变量，粗细规则在上面共用一份。
+   注意这里不能用 :where()——它的特异性是 0，压不过 tokens 里带 ID 的定义。 */
 @media (max-width: 600px) {
-    #blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
-        --blai-scrollbar-size: 4px;
+    #blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer, .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu {
+        --blai-scrollbar-size: 5px;
     }
-}
-
-/* portal 到 body 的自绘菜单脱离了主面板作用域，单独接回同一组灰色滚动条 token，
-   避免落到酒馆原生的紫色竖条。选择器用真实 class（不是 :where）以压过酒馆全局伪元素规则。 */
-@supports (-moz-appearance: none) {
-    .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu {
-        scrollbar-width: thin;
-        scrollbar-color: var(--blai-scrollbar-thumb) var(--blai-scrollbar-track);
-    }
-}
-.blai-portal-menu::-webkit-scrollbar,
-.blai-feedback-area-options::-webkit-scrollbar,
-.blai-native-select-menu::-webkit-scrollbar {
-    width: var(--blai-scrollbar-size, 8px);
-    height: var(--blai-scrollbar-size, 8px);
-}
-.blai-portal-menu::-webkit-scrollbar-thumb,
-.blai-feedback-area-options::-webkit-scrollbar-thumb,
-.blai-native-select-menu::-webkit-scrollbar-thumb {
-    border-radius: var(--blai-radius-full);
-    background: var(--blai-scrollbar-thumb);
-}
-.blai-portal-menu::-webkit-scrollbar-thumb:hover,
-.blai-feedback-area-options::-webkit-scrollbar-thumb:hover,
-.blai-native-select-menu::-webkit-scrollbar-thumb:hover {
-    background: var(--blai-scrollbar-thumb-hover);
-}
-.blai-portal-menu::-webkit-scrollbar-track,
-.blai-feedback-area-options::-webkit-scrollbar-track,
-.blai-native-select-menu::-webkit-scrollbar-track {
-    background: var(--blai-scrollbar-track);
 }
 
 /* 全局自绘复选框：插件内所有可见 checkbox 共用这组 token 几何与配色，

@@ -1,5 +1,5 @@
 /** runtime 的分块：task。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { defaultAiRewriteSettings } from '../../settings/defaults.js';
+import { normalizeAiNumericSetting } from '../../settings/defaults.js';
 import { logger } from '../../log.js';
 import { AiRewriteRequestFormatError, isBadRequestError, requestAiRewrite } from '../generation.js';
 import { recordAiRewriteDebug } from '../debug.js';
@@ -10,11 +10,11 @@ import { streamingRuntimeState } from '../../host/streamingState.js';
 import { aiRewriteState } from '../state.js';
 import { getMessageDiffBranchKey } from '../../chat/messageBranch.js';
 import { generationLifecycle } from '../../host/generationLifecycle.js';
-import { notifyAiRewriteProgress, getAiRetryCount, notifyAiRewriteStatus, hasFinalCleanseAfterTaskStart, isNonRetryableAiRewriteError, applyAiProgramFallback, cancelAiRewriteTask } from './runtime-00-ui.js';
+import { notifyAiRewriteProgress, getAiRetryCount, notifyAiRewriteStatus, notifyStaleFailure, hasFinalCleanseAfterTaskStart, isNonRetryableAiRewriteError, applyAiProgramFallback, cancelAiRewriteTask } from './runtime-00-ui.js';
 import { deferAiRewriteFallbackUntilFinalCleanse, finishOrDeferAiRewriteApply, finishAutomaticTaskBeforeRun, buildAiRewriteTaskCheck, notifyAiRewriteNotSent } from './runtime-01-apply.js';
 
 export async function requestAcceptedRewritesOnce(task, rewriteState, attempt, maxAttempts, accepted, completedGroupKeys) {
-    const timeoutMs = normalizeLimit(task.aiSettings.timeoutMs, defaultAiRewriteSettings.timeoutMs, 1000, 120000);
+    const timeoutMs = normalizeAiNumericSetting('timeoutMs', task.aiSettings.timeoutMs);
     const groups = groupRewriteItemsByPrompt(task.items, task.aiSettings);
     for (const [groupOffset, group] of groups.entries()) {
         if (completedGroupKeys.has(group.key)) {
@@ -181,10 +181,10 @@ export async function runAiRewriteForMessage(payload, options = {}) {
     };
     rewriteState.runningTask = task;
 
+    const accepted = new Map();
+    const completedGroupKeys = new Set();
     try {
         const maxAttempts = getAiRetryCount(aiSettings) + 1;
-        const accepted = new Map();
-        const completedGroupKeys = new Set();
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
                 const result = await requestAcceptedRewritesOnce(task, rewriteState, attempt, maxAttempts, accepted, completedGroupKeys);
@@ -200,7 +200,7 @@ export async function runAiRewriteForMessage(payload, options = {}) {
                     const freshnessIssue = getTaskFreshnessIssue(task) || 'stale';
                     if (task.automatic === true) generationLifecycle.markRequestFailed(task.generationId, freshnessIssue);
                     recordAiRewriteDebug('run-stale', { generationId: task.generationId || '', reason: freshnessIssue }, 'warn');
-                    notifyAiRewriteStatus('error', 'AI 改写失败', '消息已变化，未写回', { timeOut: 8000, extendedTimeOut: 16000 });
+                    notifyStaleFailure('消息已变化，未写回');
                     return;
                 }
                 break;
@@ -222,6 +222,24 @@ export async function runAiRewriteForMessage(payload, options = {}) {
         if (task.automatic === true) generationLifecycle.markRequestFailed(task.generationId, err?.message || 'request-failed');
         logger.warn('AI 改写失败', err);
         recordAiRewriteDebug('run-error', { generationId: task.generationId || '', reason: err?.message || '请求未完成' }, 'warn');
+        if (isTaskStillFresh(task) && accepted.size > 0) {
+            const totalGroups = groupRewriteItemsByPrompt(task.items, task.aiSettings).length;
+            const doneGroups = completedGroupKeys.size;
+            const partial = {
+                done: doneGroups,
+                total: totalGroups,
+                reason: err?.message || '请求未完成',
+            };
+            recordAiRewriteDebug('run-partial-apply', {
+                generationId: task.generationId || '',
+                doneGroups,
+                totalGroups,
+                appliedCount: accepted.size,
+                reason: partial.reason,
+            }, 'warn');
+            const result = finishOrDeferAiRewriteApply(task, accepted, { partial });
+            return { ...result, partial };
+        }
         if (isTaskStillFresh(task)) {
             if (!hasFinalCleanseAfterTaskStart(task)) {
                 deferAiRewriteFallbackUntilFinalCleanse(task, 'ai-failed');

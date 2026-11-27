@@ -12,6 +12,16 @@
     box-shadow: 0 12px 30px var(--blai-modal-shadow);
 }
 
+/* 顶栏组吸顶：标题、工具行与勾选操作条作为一组，长文滚动时不随正文被推出。
+   桌面正文自身滚动，这里只锁住流式位置；手机把滚动交给卡片，sticky 才真正生效。 */
+#blai-diff-modal .blai-diff-sticky-head {
+    flex: 0 0 auto;
+    position: sticky;
+    top: 0;
+    z-index: var(--blai-z-inner-raised);
+    background: var(--bg-surface);
+}
+
 /* 正文三档字号：只映射到现成的五档语义刻度，手机端整档 +1px 自动生效，
    不在档位里写裸 px。默认中档，JS 把选择写到 data-diff-font-size 上。 */
 #blai-diff-modal {
@@ -77,10 +87,11 @@
 }
 
 /* 顶栏收成单行：标题在左、动作在右，省掉原来整行按钮占的高度。
-   主操作最多两个常驻，其余进 ⋮；窄屏全部收进 ⋮，只留标题与关闭。 */
+   主操作最多两个常驻，其余进 ⋮；窄屏全部收进 ⋮，只留标题与关闭。
+   标题与问号之间只留一档极小间距，让说明入口紧贴标题。 */
 #blai-diff-modal .blai-diff-modal-header {
     flex-wrap: nowrap;
-    gap: var(--blai-space-8);
+    gap: var(--blai-space-2);
     /* 上下留白比工具行紧，线不画在顶栏下方后内容顺势上移。 */
     padding: var(--blai-space-4) var(--blai-diff-inline-pad) var(--blai-space-2);
 }
@@ -88,7 +99,7 @@
 #blai-diff-modal .blai-diff-modal-title {
     flex: 0 1 auto;
     min-width: 0;
-    font-size: var(--blai-font-14);
+    font-size: var(--blai-fs-title);
 }
 
 #blai-diff-modal .blai-diff-header-actions {
@@ -141,10 +152,11 @@
 }
 
 #blai-diff-modal .blai-diff-modal-title {
-    flex: 1 1 auto;
-    /* 窄屏标题与右侧按钮同排；手机档 --blai-fs-sub 会涨到 15px，
-       六字标题会被省略号截断，这里固定用比正文档再小 1px 的字号。 */
-    font-size: calc(var(--blai-fs-body) - 1px);
+    /* 不撑满整行：标题保持内容宽度，问号才能紧贴标题右侧；
+       其余空间由 header-actions 的 margin-left:auto 吃掉。
+       字号与其他界面的顶栏标题同档（桌面 15 / 手机 16）。 */
+    flex: 0 1 auto;
+    font-size: var(--blai-fs-title);
 }
 }
 
@@ -196,6 +208,11 @@
     max-width: none;
     height: var(--blai-viewport-h);
     max-height: var(--blai-viewport-h);
+    /* 手机端滚动交给整张卡片：顶栏组 sticky 才会真正贴住顶部，
+       正文不再另起一个滚动容器，避免长文把顶栏推出可视区。 */
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     border: 0;
     border-radius: 0;
     box-shadow: none;
@@ -241,8 +258,9 @@
 #blai-diff-modal .blai-diff-modal-content {
     margin: 0;
     padding: var(--blai-space-8) var(--blai-space-12);
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     min-height: 0;
+    overflow: visible;
 }
 
 }

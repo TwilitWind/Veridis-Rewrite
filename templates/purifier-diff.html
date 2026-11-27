@@ -1,0 +1,97 @@
+        <div id="blai-diff-modal" style="display:none;">
+            <div class="blai-diff-modal-card">
+                <!-- 顶栏、工具行与操作条作为一组吸顶：正文滚动时它们不会被推出可视区。 -->
+                <div class="blai-diff-sticky-head">
+                <div class="blai-diff-modal-header">
+                    <h3 class="blai-diff-modal-title"><i class="fa-solid fa-eye"></i><span class="blai-diff-title-text">净化对比</span></h3>
+                    <button id="blai-diff-rewrite-info" type="button" class="blai-icon-btn blai-diff-header-btn" data-blai-info-trigger="blai-diff-rewrite-info-panel" aria-label="查看改写说明" aria-controls="blai-diff-rewrite-info-panel" aria-expanded="false" title="查看改写说明"><i class="fas fa-circle-question" aria-hidden="true"></i></button>
+                    <span id="blai-diff-rewrite-info-panel" class="blai-info-popover" role="tooltip" hidden></span>
+                    <div class="blai-diff-header-actions">
+                        <div class="blai-diff-header-primary">
+                        <button id="blai-diff-pick-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="勾选改写项后逐条撤回">
+                            <i id="blai-diff-pick-icon" class="fa-solid fa-list-check"></i> <span id="blai-diff-pick-text">撤回所选</span>
+                        </button>
+                        <button id="blai-diff-revert-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="撤回净化并保护原文">
+                            <i id="blai-diff-revert-icon" class="fas fa-rotate-left"></i> <span id="blai-diff-revert-text">撤回</span>
+                        </button>
+                        <button id="blai-diff-mode-toggle" type="button" class="blai-icon-btn blai-diff-header-btn" title="切换到全文模式" aria-label="切换到全文模式">
+                            <i id="blai-diff-mode-icon" class="fa-solid fa-file-lines"></i> <span id="blai-diff-mode-text">全文模式</span>
+                        </button>
+                        </div>
+                        <div class="blai-diff-header-trailing">
+                        <div class="blai-diff-menu-wrap">
+                            <button id="blai-diff-menu-toggle" type="button" class="blai-icon-btn blai-diff-header-btn blai-diff-menu-toggle" title="更多操作" aria-label="更多操作" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div id="blai-diff-actions-menu" class="blai-diff-actions-menu" hidden>
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-pick-toggle">
+                                    <i class="fa-solid fa-list-check"></i>
+                                    <span>撤回所选</span>
+                                </button>
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-revert-toggle">
+                                    <i class="fas fa-rotate-left"></i>
+                                    <span>撤回净化</span>
+                                </button>
+                                <button type="button" class="blai-diff-actions-item blai-diff-menu-action" data-blai-header-action="blai-diff-mode-toggle" data-blai-header-label="blai-diff-mode-text">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                    <span>全文模式</span>
+                                </button>
+                                <div class="blai-diff-menu-divider" aria-hidden="true"></div>
+                                <button id="blai-diff-related-mode-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffRelatedRuleEnabled" title="点击改写项查看命中的规则">
+                                    <i id="blai-diff-related-mode-icon" class="fa-solid fa-crosshairs"></i>
+                                    <span id="blai-diff-related-mode-text">规则定位: 关闭</span>
+                                </button>
+                                <button id="blai-diff-menu-pos-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffButtonInExtraMenu" title="将顶部按钮收纳进菜单">
+                                    <i id="blai-diff-menu-pos-icon" class="fa-solid fa-ellipsis-vertical"></i>
+                                    <span id="blai-diff-menu-pos-text">顶部按钮: 显示</span>
+                                </button>
+                                <button id="blai-diff-menu-bottom-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="showBottomDiffButton" title="隐藏消息尾部按钮">
+                                    <i id="blai-diff-menu-bottom-icon" class="fa-solid fa-eye-slash"></i>
+                                    <span id="blai-diff-menu-bottom-text">尾部按钮: 显示</span>
+                                </button>
+                                <div class="blai-diff-menu-typography-divider" aria-hidden="true"></div>
+                                <button id="blai-diff-font-size-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffFontSize" title="切换正文字号（片段与全文通用）">
+                                    <i class="fa-solid fa-font" aria-hidden="true"></i>
+                                    <span id="blai-diff-font-size-text">字号大小: 中</span>
+                                </button>
+                                <button id="blai-diff-line-height-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffLineHeight" title="切换正文行距（片段与全文通用）">
+                                    <i class="fa-solid fa-text-height"></i>
+                                    <span id="blai-diff-line-height-text">行高距离: 1.5</span>
+                                </button>
+                                <button id="blai-diff-paragraph-gap-toggle" type="button" class="blai-diff-actions-item" data-blai-pref="diffParagraphGap" title="切换段落间距（片段与全文通用）">
+                                    <i class="fa-solid fa-grip-lines"></i>
+                                    <span id="blai-diff-paragraph-gap-text">段落间距: 标准</span>
+                                </button>
+                            </div>
+                        </div>
+                        <button id="blai-diff-modal-close" type="button" class="blai-diff-modal-close" aria-label="关闭"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div id="blai-diff-toolbar" class="blai-diff-toolbar" aria-label="改写来源、逐条定位与筛选">
+                    <div id="blai-diff-sources" class="blai-diff-sources" role="group" aria-label="改写来源颜色与数量"></div>
+                    <div class="blai-diff-nav" role="group" aria-label="逐条定位改写项">
+                        <button type="button" id="blai-diff-nav-prev" class="blai-diff-nav-btn" title="上一个改写项" aria-label="上一个改写项"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
+                        <span id="blai-diff-nav-count" class="blai-diff-nav-count" aria-live="polite">0 / 0</span>
+                        <button type="button" id="blai-diff-nav-next" class="blai-diff-nav-btn" title="下一个改写项" aria-label="下一个改写项"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+                    </div>
+                    <button type="button" id="blai-diff-filter-toggle" class="blai-diff-filter-toggle" title="展开来源筛选，可多选" aria-label="展开来源筛选，可多选" aria-pressed="false" aria-expanded="false" aria-controls="blai-diff-filter-panel"><i class="fa-solid fa-filter" aria-hidden="true"></i></button>
+                </div>
+                <div id="blai-diff-filter-panel" class="blai-diff-filter-panel" role="group" aria-label="按改写来源筛选，可多选" hidden>
+                    <button type="button" class="blai-diff-filter-chip" data-blai-diff-filter-source="program" aria-pressed="false" title="只看程序改写">程序</button>
+                    <button type="button" class="blai-diff-filter-chip" data-blai-diff-filter-source="ai" aria-pressed="false" title="只看 AI 改写">AI</button>
+                    <button type="button" class="blai-diff-filter-chip" data-blai-diff-filter-source="manual" aria-pressed="false" title="只看插件改写后的手动改动">手改</button>
+                </div>
+                <div id="blai-diff-pick-bar" class="blai-diff-pick-bar" hidden>
+                    <span id="blai-diff-pick-hint" class="blai-diff-pick-hint">点击改写项勾选要撤回的内容</span>
+                    <button id="blai-diff-pick-confirm" type="button" class="blai-icon-btn blai-diff-pick-confirm" disabled>
+                        <i class="fas fa-rotate-left"></i> <span>确认撤回</span>
+                    </button>
+                    <button id="blai-diff-pick-cancel" type="button" class="blai-icon-btn">取消</button>
+                </div>
+                </div>
+                <div id="blai-diff-modal-content" class="blai-diff-modal-content"></div>
+            </div>
+        </div>
+
+

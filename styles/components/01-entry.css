@@ -4,17 +4,13 @@
     text-shadow: none;
 }
 
+/* 魔法棒菜单条目：DOM 已完整复用酒馆原生的
+   .list-group-item.flex-container.flexGap5 + div.extensionsMenuExtensionButton，
+   与原生 attachments/manage-button.html 同构。布局（flex / baseline / gap /
+   换行）全部交给原生类计算，这里只留 cursor —— 一旦写 display/align/gap/
+   nowrap 就会和原生声明打架，让「词汇映射」文字缩进与上下条目不一致。 */
 #blai-wand-btn {
     cursor: pointer;
-    /* 复用酒馆原生魔法棒条目的契约（.list-group-item.flex-container.flexGap5）：
-       baseline 对齐、窄菜单里允许换行。display/align 的 !important 用于防止
-       输入栏强声明覆盖；gap 绝不在这里写死，必须沿用原生 .flexGap5 —— 原生值
-       会被酒馆在真机上动态改成 5px，写死 10px 会让「词汇映射」比上下条目右移
-       5px，而 CDP 模拟环境里原生恰好也是 10px，所以模拟测不出来。
-       不能加 white-space:nowrap，否则窄屏下文字不换行，缩进同样会偏。 */
-    display: flex !important;
-    align-items: baseline !important;
-    line-height: normal;
 }
 
 .blai-extension-settings-entry .inline-drawer-content {

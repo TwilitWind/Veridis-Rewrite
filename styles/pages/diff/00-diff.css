@@ -7,12 +7,6 @@
 }
 
 #blai-diff-modal {
-    --blai-diff-source-program-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-program));
-    --blai-diff-source-program-background: color-mix(in srgb, var(--blai-diff-source-program-color) 16%, transparent);
-    --blai-diff-source-ai-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-ai));
-    --blai-diff-source-ai-background: color-mix(in srgb, var(--blai-diff-source-ai-color) 16%, transparent);
-    --blai-diff-source-manual-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-manual));
-    --blai-diff-source-manual-background: color-mix(in srgb, var(--blai-diff-source-manual-color) 16%, transparent);
     --blai-diff-body-line-height: 1.5;
     --blai-diff-body-paragraph-gap: 8px;
     /* 两种模式正文的唯一字号来源：片段与全文必须一样大。 */
@@ -53,6 +47,7 @@
     margin: 0;
     color: var(--text-main);
     font-size: var(--blai-font-16);
+    font-weight: var(--blai-weight-bold);
     display: flex;
     align-items: center;
     gap: var(--blai-space-8);
@@ -328,8 +323,10 @@
     border: var(--blai-border-2) solid var(--text-secondary);
     border-radius: var(--blai-radius-4);
     background: var(--bg-surface);
-    /* 与所在行文本垂直居中：middle 对齐到行盒中线，不用负偏移把方块压到基线以下。 */
+    /* 与所在行文本垂直居中：middle 的对齐点比字形中线低约 0.125em，
+       与深度清理预览同款上移校正，避免复选框看起来偏下。 */
     vertical-align: middle;
+    transform: translateY(-0.125em);
     line-height: var(--blai-size-16);
     text-decoration: none;
     box-sizing: border-box;

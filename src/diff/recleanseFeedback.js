@@ -1,10 +1,7 @@
-/** 重新净化的用户反馈：按正文是否真的变化给提示，不把元数据变化当成改写成功。 */
+/** 重新净化的用户反馈：正文变化可直接看到，不再弹提示；未产生改写时说明原因。 */
 import { showToast } from '../ui/notifications.js';
 
 export function showRecleanseFeedback(textChanged) {
-    showToast(
-        textChanged ? '已按当前程序规则重新净化' : '已重新净化：这条原文没有程序规则命中',
-        undefined,
-        textChanged ? 'success' : 'info',
-    );
+    if (textChanged) return;
+    showToast('本次未产生改写：规则未命中或结果相同', undefined, 'info');
 }

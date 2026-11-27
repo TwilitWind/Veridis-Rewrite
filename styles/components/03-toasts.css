@@ -200,14 +200,6 @@
     box-shadow: var(--blai-shadow-lg) !important;
     box-sizing: border-box !important;
 }
-.blai-modal-shell .blai-edit-modal-title,
-.blai-modal-shell h3
-{
-    font-size: var(--blai-font-16) !important;
-    line-height: 1.2 !important;
-    font-weight: var(--blai-weight-bold) !important;
-}
-
 .blai-modal-shell :is(input, select, textarea) {
     font-size: var(--blai-font-12);
 }
@@ -251,6 +243,14 @@
     max-height: calc(var(--blai-viewport-h) - var(--blai-size-40));
     border-radius: var(--blai-radius-lg);
 }}
+
+/* 所有弹窗标题统一 title 档；放在断点外，桌面端才不会落回浏览器默认 h3 样式。 */
+.blai-modal-shell .blai-edit-modal-title,
+.blai-modal-shell h3 {
+    font-size: var(--blai-fs-title) !important;
+    line-height: 1.2 !important;
+    font-weight: var(--blai-weight-bold) !important;
+}
 
 @media (min-width: 601px) {.blai-modal-shell {
     padding: clamp(var(--blai-space-24), 4vw, var(--blai-space-44));

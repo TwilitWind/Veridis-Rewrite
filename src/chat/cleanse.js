@@ -8,7 +8,7 @@ import { isAssistantMessage } from '../diff/tracking.js';
 import { refreshDiffViewer } from '../diff/state.js';
 import { ensureMessageDiffButton, injectDiffButtons } from '../diff/view.js';
 import { getMessageDomNode } from '../dom/message.js';
-import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from './messageBranch.js';
+import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, getMessageIndexFromEvent, syncCurrentSwipeExtra } from './messageBranch.js';
 import { getMessageDiffMeta, isMessageDiffReverted, migrateChatDiffMetadata, setMessageDiffProgramMes, writeMessageDiffProgram } from '../diff/messageMeta.js';
 import { maintainDiffRetention } from '../diff/retention.js';
 import { markHostChatDirtyFromIndex } from '../integrations/tauriTavern.js';
@@ -19,24 +19,7 @@ import { recordAiRewriteDebug } from '../aiRewrite/debug.js';
 import { refreshMessageDisplay } from './display.js';
 import { recordRuleHitTrace } from '../diff/ruleHitTrace.js';
 
-/**
- * 从事件负载中解析消息索引。
- * @param {number|object} payload 事件载荷或直接索引。
- * @returns {number} 解析出的索引，失败返回 -1。
- */
-export function getMessageIndexFromEvent(payload) {
-    const direct = typeof payload === 'number'
-        ? payload
-        : (typeof payload === 'string' && payload.trim() !== '' ? Number(payload) : NaN);
-    if (Number.isInteger(direct)) return direct;
-    if (!payload || typeof payload !== 'object') return -1;
-    const candidates = [payload.messageId, payload.message_id, payload.mesid, payload.index, payload.id];
-    for (const value of candidates) {
-        const n = Number(value);
-        if (Number.isInteger(n) && n >= 0) return n;
-    }
-    return -1;
-}
+export { getMessageIndexFromEvent } from './messageBranch.js';
 
 /**
  * 解析“可追踪非 user 消息”的最新索引。

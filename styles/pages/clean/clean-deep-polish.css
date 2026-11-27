@@ -123,26 +123,67 @@
         padding: var(--blai-space-6) var(--blai-space-10);
     }
 
-    /* 窄屏顶栏分三行：筛选行 / 条目标题行 / 改写项与纳入操作行。
-       标题不再被导航控件挤成省略号，操作区也不再越界。 */
+    /* 窄屏顶栏三行：筛选 / 条目 / 条目导航。每行控件固定不折字。
+       筛选行单独占满宽度并可横向滚动；计数紧跟各自标签，不再掉到下一行。 */
+    #blai-deep-clean-workspace .blai-deep-clean-preview-header {
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--blai-space-4);
+    }
+
+    /* 打平 bar 这一层，让筛选条与步骤导航成为顶栏的独立两行。 */
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar {
+        display: contents;
+    }
+
     #blai-deep-clean-workspace .blai-deep-clean-preview-filters {
-        flex: 1 1 auto;
+        order: 1;
+        width: 100%;
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        overflow-x: auto;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-filters button,
+    #blai-deep-clean-workspace .blai-deep-clean-preview-filters button span {
+        flex: 0 0 auto;
+        white-space: nowrap;
     }
 
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
-        flex-wrap: wrap;
-        row-gap: var(--blai-space-4);
+        order: 2;
+        width: 100%;
+        flex-wrap: nowrap;
+        gap: var(--blai-space-4);
     }
 
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar h3 {
         flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar :is(.blai-deep-clean-preview-entry-trailing, .blai-deep-clean-preview-change-nav, .blai-deep-clean-preview-change-counter, .blai-deep-clean-preview-include) {
+        flex: 0 0 auto;
+        white-space: nowrap;
     }
 
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-trailing {
-        flex: 1 1 100%;
+        margin-left: 0;
+        gap: var(--blai-space-2);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing {
+        order: 3;
+        width: 100%;
+        flex: 0 0 auto;
         margin-left: 0;
         justify-content: flex-start;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        white-space: nowrap;
     }
 }
 
@@ -253,31 +294,3 @@
     min-height: var(--blai-size-32);
 }
 
-/* 内容区是普通块，子元素的 height:100% 不解析；停止态先让父级 flex 撑满，再垂直居中。 */
-#blai-deep-clean-workspace:has(> .blai-deep-clean-content > .blai-deep-clean-stopped-state) > .blai-deep-clean-content {
-    display: flex;
-}
-
-/* 停止态只有一句说明和一个动作：整块居中，留白收拢，不再空成一片。 */
-#blai-deep-clean-workspace .blai-deep-clean-stopped-state {
-    flex: 1 1 auto;
-    padding: var(--blai-space-24);
-    place-content: center;
-    justify-items: center;
-    text-align: center;
-    gap: var(--blai-space-12);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-stopped-state p {
-    max-width: 30em;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-stopped-state > button {
-    margin-top: var(--blai-space-8);
-}
-
-@media (max-width: 600px) {
-    #blai-deep-clean-workspace .blai-deep-clean-stopped-state {
-        padding: var(--blai-space-16);
-    }
-}

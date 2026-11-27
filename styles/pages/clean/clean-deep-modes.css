@@ -71,19 +71,6 @@
     order: 2;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-program-policy {
-    order: 3;
-    grid-column: 1 / -1;
-    margin: var(--blai-space-2) 0 var(--blai-space-1);
-    padding: var(--blai-space-4) var(--blai-space-8) var(--blai-space-4) var(--blai-space-10);
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--blai-space-2) var(--blai-space-8);
-    border-left: var(--blai-border-1) solid var(--border-color);
-    border-radius: 0 var(--blai-radius-8) var(--blai-radius-8) 0;
-    background: var(--bg-surface);
-}
-
 /* 处理范围与处理设置同级：整块自带同一张卡片边界，标题在框内。 */
 #blai-deep-clean-workspace .blai-deep-clean-resources {
     min-width: 0;
@@ -207,22 +194,6 @@
 #blai-deep-clean-workspace .blai-deep-clean-resource-summary strong {
     color: var(--text-main);
     font-variant-numeric: tabular-nums;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-search-selection-actions {
-    display: inline-flex;
-    gap: var(--blai-space-8);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-search-selection-actions button {
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--accent-ink);
-    font: inherit;
-    font-size: var(--blai-font-10);
-    text-decoration: underline;
-    box-shadow: none;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-resource-list {

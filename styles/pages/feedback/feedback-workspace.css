@@ -248,10 +248,6 @@
         grid-template-rows: none;
     }
 
-    #blai-feedback-workspace .blai-feedback-form:has(#blai-feedback-preview-section[hidden]):has(.blai-feedback-update-warning) {
-        grid-template-rows: none;
-    }
-
     #blai-feedback-workspace .blai-feedback-form:has(#blai-feedback-preview-section[hidden]) > .blai-feedback-form-main {
         grid-template-rows: none;
         height: auto;
@@ -287,13 +283,12 @@
     gap: var(--blai-space-10);
 }
 
-/* 版本提示：按文字宽度收缩，不铺满整行；行高必须够，避免被下方标签行压住。 */
+/* 版本提示：表单外的独立提示块，按文字宽度收缩；与表单之间只用这一个间距令牌。 */
 #blai-feedback-workspace .blai-feedback-update-warning {
-    grid-column: 1 / -1;
     justify-self: start;
     max-width: 100%;
     box-sizing: border-box;
-    margin: 0;
+    margin: 0 0 var(--blai-feedback-update-gap);
     padding: var(--blai-space-7) var(--blai-space-11);
     border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
     border-radius: var(--blai-radius-8);
@@ -423,7 +418,6 @@
     --blai-dropdown-ink: var(--text-main);
     --blai-dropdown-border: var(--border-color);
     --blai-dropdown-radius: var(--blai-radius-10);
-    --blai-dropdown-pad: var(--blai-space-6) calc(var(--blai-space-6) + var(--blai-scrollbar-gutter)) var(--blai-space-6) var(--blai-space-6);
     --blai-dropdown-gap: var(--blai-space-2);
     --blai-dropdown-shadow: var(--blai-shadow-sm);
     --blai-dropdown-item-radius: var(--blai-radius-sm);

@@ -1,0 +1,113 @@
+                    <section class="page-panel" data-page="clean">
+                        <div class="blai-clean-page">
+                            <div class="blai-clean-columns">
+                                <main class="blai-clean-primary-column">
+                                    <section class="blai-clean-section" aria-labelledby="blai-clean-scope-title">
+                                        <header class="blai-clean-section-header">
+                                            <h2 id="blai-clean-scope-title">标签作用范围</h2>
+                                            <p>选择全局标签的处理逻辑，并配置将受影响的标签列表。</p>
+                                        </header>
+
+                                        <div class="blai-clean-mode-cards" role="radiogroup" aria-label="范围标签处理模式">
+                                            <button id="blai-scope-mode-protect" type="button" class="blai-clean-mode-card" data-mode="protect" role="radio" aria-checked="false" aria-label="保护特定标签" title="保护特定标签">
+                                                <span class="blai-clean-mode-copy">
+                                                    <span class="blai-clean-mode-title">
+                                                        <i class="fas fa-shield-halved" aria-hidden="true"></i>
+                                                        <strong>保护标签</strong>
+                                                    </span>
+                                                    <span class="blai-clean-mode-desc">跳过列表内标签包裹的内容，只净化标签之外的文本。</span>
+                                                </span>
+                                            </button>
+                                            <button id="blai-scope-mode-cleanse" type="button" class="blai-clean-mode-card" data-mode="cleanse-inside" role="radio" aria-checked="false" aria-label="净化特定标签" title="净化特定标签">
+                                                <span class="blai-clean-mode-copy">
+                                                    <span class="blai-clean-mode-title">
+                                                        <i class="fas fa-code" aria-hidden="true"></i>
+                                                        <strong>净化标签</strong>
+                                                    </span>
+                                                    <span class="blai-clean-mode-desc">只处理列表内标签包裹的内容，标签之外的文本保持不变。</span>
+                                                </span>
+                                            </button>
+                                        </div>
+
+                                        <div class="blai-clean-list-toolbar">
+                                            <div class="blai-clean-list-label">
+                                                <strong>应用标签列表</strong>
+                                                <span id="blai-scope-tag-total-count" class="blai-clean-count-badge">0</span>
+                                            </div>
+                                            <div class="blai-clean-list-actions">
+                                                <button id="blai-scope-tag-new" type="button" class="blai-clean-toolbar-button">
+                                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                                    <span class="blai-clean-toolbar-button-label">新建标签</span>
+                                                </button>
+                                                <button id="blai-scope-group-add" type="button" class="blai-clean-toolbar-button">
+                                                    <i class="fas fa-folder-plus" aria-hidden="true"></i>
+                                                    <span class="blai-clean-toolbar-button-label">新建分组</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div id="blai-scope-tags-list" class="blai-clean-group-list"></div>
+                                    </section>
+                                </main>
+
+                                <aside class="blai-clean-secondary-column">
+                                    <section class="blai-clean-section" aria-labelledby="blai-clean-protection-title">
+                                        <header class="blai-clean-section-header">
+                                            <h2 id="blai-clean-protection-title">内容保护设置</h2>
+                                            <p>配置净化过程中的例外规则。</p>
+                                        </header>
+                                        <div class="blai-clean-settings-list">
+                                            <div class="blai-clean-setting-row">
+                                                <div>
+                                                    <strong>跳过用户消息</strong>
+                                                    <p>用户消息、发送输入框和编辑输入区不进入净化。</p>
+                                                </div>
+                                                <button id="blai-skip-user-toggle" type="button" class="blai-clean-switch" aria-pressed="false" aria-label="跳过用户消息">
+                                                    <span class="blai-clean-switch-track" aria-hidden="true"></span>
+                                                    <span class="blai-switch-state">关闭</span>
+                                                </button>
+                                            </div>
+                                            <div class="blai-clean-setting-row">
+                                                <div>
+                                                    <strong>保护人设描述</strong>
+                                                    <p>保护 persona_description，深度清理时也不会改写。</p>
+                                                </div>
+                                                <button type="button" class="blai-clean-switch blai-persona-description-protect-toggle" aria-pressed="false" aria-label="保护人设描述" title="点击保护用户设定描述">
+                                                    <span class="blai-clean-switch-track" aria-hidden="true"></span>
+                                                    <span class="blai-switch-state blai-persona-protect-text">关闭</span>
+                                                </button>
+                                            </div>
+                                            <label class="blai-clean-setting-row" for="blai-ai-protect-comments">
+                                                <div>
+                                                    <strong>保护 HTML/XML 注释</strong>
+                                                    <p>保留标签内的注释文本，不让 AI 改写处理注释内容。</p>
+                                                </div>
+                                                <span class="blai-clean-checkbox-switch">
+                                                    <input type="checkbox" id="blai-ai-protect-comments" aria-label="保护 HTML/XML 注释">
+                                                    <span class="blai-clean-switch-track" aria-hidden="true"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </section>
+
+                                    <section class="blai-clean-danger-zone" aria-labelledby="blai-clean-danger-title">
+                                        <header class="blai-clean-danger-header">
+                                            <h2 id="blai-clean-danger-title">深度清理</h2>
+                                        </header>
+                                        <div class="blai-clean-danger-content">
+                                            <h3>启动深度清理</h3>
+                                            <p>先预览改写，再决定是否写入。</p>
+                                            <div class="blai-clean-warning" role="note">
+                                                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+                                                <span>扫描只读，不写入；确认后才按模式应用。中途停止或关闭不会改动数据。</span>
+                                            </div>
+                                            <button id="blai-deep-clean-btn" type="button" class="blai-clean-danger-button" aria-label="启动深度清理" title="启动深度清理">
+                                                <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+                                                <span>启动清理</span>
+                                            </button>
+                                        </div>
+                                    </section>
+                                </aside>
+                            </div>
+                        </div>
+                    </section>

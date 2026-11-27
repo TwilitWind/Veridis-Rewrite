@@ -14,16 +14,22 @@
     --blai-toast-ink: #FFFFFF;
 }
 
-#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer {
+#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer, .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu {
     --status-danger: #B6494B;
     --status-success: #5D8A68;
     /* 危险语义的浅底文字：说明气泡里的清理警告用这一档，不直接用实心危险红。 */
     --blai-text-danger-soft: color-mix(in srgb, var(--status-danger) 72%, var(--text-main));
-    /* 净化透视四种来源的实心圆点 / 改写文字色。夜间在 02-themes.css 覆盖为亮一档。 */
-    --blai-diff-original: #6B7280;
+    /* 净化透视三种来源（程序/AI/手改）的实心圆点 / 改写文字色；原文用正文色。夜间在 02-themes.css 覆盖为亮一档。 */
     --blai-diff-program: #3D6FB4;
     --blai-diff-ai: #7A4FA8;
     --blai-diff-manual: #B0742A;
+    /* 来源色公式只在 tokens 定义一次：净化对比与深度清理顶栏共用同一组圆点色。 */
+    --blai-diff-source-program-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-program));
+    --blai-diff-source-program-background: color-mix(in srgb, var(--blai-diff-source-program-color) 16%, transparent);
+    --blai-diff-source-ai-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-ai));
+    --blai-diff-source-ai-background: color-mix(in srgb, var(--blai-diff-source-ai-color) 16%, transparent);
+    --blai-diff-source-manual-color: color-mix(in srgb, var(--text-main) 42%, var(--blai-diff-manual));
+    --blai-diff-source-manual-background: color-mix(in srgb, var(--blai-diff-source-manual-color) 16%, transparent);
     /* 遮罩与投影统一走中性黑，按主题在 02-themes.css 调整浓度。 */
     --blai-scrim: rgba(0, 0, 0, 0.52);
     --blai-modal-shadow: rgba(0, 0, 0, 0.24);
@@ -31,18 +37,19 @@
        不再用 --text-main 混色——夜间主题正文是浅色，混出来的「阴影」会发白发光。
        数值只是浓度，颜色恒为中性黑；夜间主题在 02-themes.css 里加深。 */
     --blai-shadow-color: rgba(0, 0, 0, 0.16);
-    --blai-shadow-xs: 0 1px 3px var(--blai-shadow-color);
+ 0 1px 3px var(--blai-shadow-color);
     --blai-shadow-sm: 0 4px 10px var(--blai-shadow-color);
     --blai-shadow-md: 0 6px 18px var(--blai-shadow-color);
     --blai-shadow-lg: 0 12px 32px var(--blai-shadow-color);
-    /* 固定栏下沿的细分隔投影，spread 收负，只留一条软边。 */
-    --blai-shadow-divider: 0 6px 16px -12px rgba(0, 0, 0, 0.62);
+ 0 6px 16px -12px rgba(0, 0, 0, 0.62);
     /* 结构分隔线（顶栏下沿、左侧栏、底栏、工具栏）专用：低对比半透明，
        与控件描边 --border-color 分开，避免跟随主题/暗色下边框显得过重。 */
     --blai-border-soft: color-mix(in srgb, var(--text-main) 10%, transparent);
     /* 滚动条统一细条 + 中性灰拇指：不用强调色，避免紫色竖条抢眼；夜色在 02-themes.css 加深。
-       粗细走 --blai-scrollbar-size：桌面 8px、手机 4px（窄屏覆盖见 base/00-reset.css）。 */
-    --blai-scrollbar-size: 8px;
+       粗细走 --blai-scrollbar-size：桌面 7px、手机 5px（窄屏覆盖见 base/00-reset.css）。
+       portal 到 body 的菜单不继承面板变量，故上面选择器列表把菜单类也接进来了。 */
+    --blai-scrollbar-size: 7px;
+    --blai-scrollbar-radius: var(--blai-radius-full);
     /* 滚动条与左侧内容之间的留白：滚区右侧统一预留，避免拇指贴住菜单项或列表文字。 */
     --blai-scrollbar-gutter: var(--blai-space-6);
     --blai-scrollbar-thumb: rgba(0, 0, 0, 0.26);

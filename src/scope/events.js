@@ -4,7 +4,7 @@ import { getAppContext } from '../host/appContext.js';
 import { showConfirmModal, showPromptModal, showToast } from '../ui/notifications.js';
 import { closeScopeTagsModal, openScopeTagsModal, renderScopeTagsModal } from './view.js';
 import { closeMenuPopover, openMenuPopover, focusOnFinePointer } from '../ui/popover.js';
-import { DEFAULT_SCOPE_TAG_GROUP_ID, createScopeTagGroupId, createScopeTagId, formatScopeTagInput, getBuiltinStartTagKey, getCotScopeTagBuiltinKeys, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeCollapsedGroupList, normalizeScopeTagGroupList, normalizeScopeTagList, parseScopeTagInput } from './model.js';
+import { DEFAULT_SCOPE_TAG_GROUP_ID, SCOPE_TAG_MODES, createScopeTagGroupId, createScopeTagId, formatScopeTagInput, getBuiltinStartTagKey, getCotScopeTagBuiltinKeys, isCotScopeTagEntry, mergeScopeTagsWithBuiltins, normalizeScopeTagBuiltinDismissedList, normalizeCollapsedGroupList, normalizeScopeTagGroupList, normalizeScopeTagList, normalizeScopeTagMode, parseScopeTagInput } from './model.js';
 
 export function bindScopeEvents() {
     const { extension_settings, saveSettingsDebounced } = getAppContext();
@@ -33,7 +33,7 @@ export function bindScopeEvents() {
         renderScopeTagGroupOptions(scopeTag?.groupId || DEFAULT_SCOPE_TAG_GROUP_ID);
         $('#blai-scope-tag-input').val(scopeTag ? tagName : '').data('scope-edit-id', scopeTag?.id || ''); $('#blai-scope-tag-label-input').val(scopeTag?.label || ''); clearScopeTagValidationState(); renderScopeTagsModal(); $('#blai-scope-tag-editor-modal').addClass('blai-is-open').attr('aria-hidden', 'false'); window.setTimeout(() => focusOnFinePointer($('#blai-scope-tag-input')), 20);
     };
-    const setScopeTagMode = (mode) => { const nextMode = mode === 'cleanse-inside' ? 'cleanse-inside' : 'protect'; if (settings.scopeTagMode === nextMode) { renderScopeTagsModal(); return; } settings.scopeTagMode = nextMode; saveSettingsDebounced(); renderScopeTagsModal(); };
+    const setScopeTagMode = (mode) => { const nextMode = normalizeScopeTagMode(mode); if (settings.scopeTagMode === nextMode) { renderScopeTagsModal(); return; } settings.scopeTagMode = nextMode; saveSettingsDebounced(); renderScopeTagsModal(); };
     const persistScopeTagGroups = (groups, options = {}) => {
         const normalizedGroups = normalizeScopeTagGroupList(groups); settings.scopeTagGroups = normalizedGroups; settings.scopeTagCollapsedGroups = normalizeCollapsedGroupList(settings.scopeTagCollapsedGroups, normalizedGroups);
         const knownGroupIds = new Set(normalizedGroups.map((group) => group.id)); const currentScopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed);
@@ -127,7 +127,7 @@ export function bindScopeEvents() {
     $(document).off('click', '.blai-clean-group-move-up').on('click', '.blai-clean-group-move-up', function(e) { e.stopPropagation(); if ($(this).prop('disabled')) return; closeScopeGroupMenus(); moveScopeGroup(String($(this).attr('data-group-id') || ''), 'up'); });
     $(document).off('click', '.blai-clean-group-move-down').on('click', '.blai-clean-group-move-down', function(e) { e.stopPropagation(); if ($(this).prop('disabled')) return; closeScopeGroupMenus(); moveScopeGroup(String($(this).attr('data-group-id') || ''), 'down'); });
     $(document).off('click', '.blai-clean-group-delete').on('click', '.blai-clean-group-delete', async function(e) { e.stopPropagation(); if ($(this).prop('disabled')) return; closeScopeGroupMenus(); const groupId = String($(this).attr('data-group-id') || ''); if (!groupId || groupId === DEFAULT_SCOPE_TAG_GROUP_ID) return; const group = getScopeTagGroups().find((item) => item.id === groupId); if (!group || !await showConfirmModal(`确定删除分组 "${group.name}" 吗？\n该分组内的标签会移至默认分组。`, { danger: true, okText: '删除' })) return; const currentScopeTags = mergeScopeTagsWithBuiltins(settings.scopeTags, settings.scopeTagBuiltinDismissed); settings.scopeTags = currentScopeTags.map((tag) => tag.groupId === groupId ? { ...tag, groupId: DEFAULT_SCOPE_TAG_GROUP_ID } : tag); settings.scopeTagCollapsedGroups = normalizeCollapsedGroupList((settings.scopeTagCollapsedGroups || []).filter((id) => id !== groupId), getScopeTagGroups().filter((item) => item.id !== groupId)); persistScopeTagGroups(getScopeTagGroups().filter((item) => item.id !== groupId)); });
-    $(document).off('click', '#blai-scope-tag-mode-toggle').on('click', '#blai-scope-tag-mode-toggle', () => setScopeTagMode(settings.scopeTagMode === 'cleanse-inside' ? 'protect' : 'cleanse-inside'));
+    $(document).off('click', '#blai-scope-tag-mode-toggle').on('click', '#blai-scope-tag-mode-toggle', () => setScopeTagMode(normalizeScopeTagMode(settings.scopeTagMode) === SCOPE_TAG_MODES.CLEANSE_INSIDE ? SCOPE_TAG_MODES.PROTECT : SCOPE_TAG_MODES.CLEANSE_INSIDE));
     $(document).off('click', '#blai-scope-mode-protect, #blai-scope-mode-cleanse').on('click', '#blai-scope-mode-protect, #blai-scope-mode-cleanse', function() { setScopeTagMode(String($(this).data('mode') || 'protect')); });
     $(document).off('click', '#blai-scope-tags-close').on('click', '#blai-scope-tags-close', () => closeScopeTagsModal({ reset: true }));
     $(document).off('click', '#blai-scope-tag-reset').on('click', '#blai-scope-tag-reset', resetScopeTagEditor);

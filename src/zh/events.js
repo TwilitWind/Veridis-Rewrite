@@ -6,6 +6,7 @@ import { extensionName } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { markRulesDataDirty } from '../rules/state.js';
 import { showToast } from '../ui/notifications.js';
+import { syncToggleState } from '../ui/toggle.js';
 import {
     closeLoadingOverlay,
     closeZhDictionaryModal,
@@ -68,15 +69,14 @@ export function bindZhEvents() {
             options.hk ? '港繁' : '',
         ].filter(Boolean).join('、') || '标准简繁';
         $('#blai-zh-dict-install-open').prop('hidden', ready);
-        $('#blai-zh-compat-toggle')
-            .prop('hidden', !ready)
-            .attr('aria-pressed', String(enabled))
-            .attr('aria-label', enabled ? '关闭简繁转换' : '开启简繁转换')
-            .attr('title', enabled
-                ? `关闭简繁转换（${regionText} 变体参与匹配）`
-                : `开启简繁转换（${regionText} 变体参与匹配）`)
-            .find('.blai-tools-switch-state')
-            .text(enabled ? '开启' : '关闭');
+        $('#blai-zh-compat-toggle').prop('hidden', !ready);
+        syncToggleState('#blai-zh-compat-toggle', enabled, {
+            onTitle: `关闭简繁转换（${regionText} 变体参与匹配）`,
+            offTitle: `开启简繁转换（${regionText} 变体参与匹配）`,
+            onLabel: '关闭简繁转换',
+            offLabel: '开启简繁转换',
+            ariaLabel: true,
+        });
     };
     const enableVerifiedZhCompat = () => {
         if (!restoreZhDictionaryPackageFromCache(settings)) {

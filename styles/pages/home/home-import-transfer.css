@@ -319,7 +319,7 @@
 
 @media screen and (max-width: 600px) {
 .blai-edit-modal-title {
-    font-size: var(--blai-font-15);
+    font-size: var(--blai-fs-title);
 }
 
 .blai-subrule-replacement-head {
@@ -464,37 +464,6 @@
     max-height: calc(var(--blai-viewport-h) - var(--blai-size-48));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-}}
-
-.blai-subrule-btn-group button {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    font-size: var(--blai-font-15);
-    color: var(--text-secondary);
-    min-width: auto;
-    width: auto;
-    height: auto;
-    padding: var(--blai-space-2);
-    transition: transform 0.2s, color 0.2s;
-}
-
-.blai-subrule-btn-group button.blai-danger-btn {
-    color: var(--status-danger);
-}
-
-.blai-subrule-btn-group button:hover {
-    background: transparent !important;
-    transform: scale(1.15);
-}
-
-@media screen and (max-width: 600px) {.blai-subrule-btn-group button {
-    width: auto;
-    height: auto;
-    min-width: auto;
-    min-height: auto;
-    font-size: var(--blai-font-15);
-    padding: var(--blai-space-4);
 }}
 
 #blai-edit-subrules-container .blai-mapping-badge {

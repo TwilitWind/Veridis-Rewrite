@@ -1,12 +1,12 @@
 /** matching 的分块：compile。实现按依赖拓扑拆分，对外接口从同名 barrel 导出。 */
-import { omitVariableUpdates, collectVariableUpdateRanges } from '../../text/variableUpdates.js';
+import { omitVariableUpdates } from '../../text/variableUpdates.js';
+import { intersectRanges, rangeOverlapsAny, subtractRanges } from '../../text/ranges.js';
 import { logger } from '../../log.js';
 import { buildSimpleTargetPattern, buildTargetLiteralPattern, pickReplacement, resolveProcessorReplacement } from '../../rules/engine.js';
 import { compileRegexTarget } from '../../rules/regex.js';
 import { getZhVariantCompatOptions, isZhDictionaryReady } from '../../zh/dictionary.js';
-import { collectMvuStatusPlaceholderRanges } from '../../scope/model.js';
-import { collectXmlCommentRanges, maskXmlCommentRanges } from '../commentProtection.js';
-import { collectScopeRanges } from '../planning.js';
+import { SCOPE_TAG_MODES, collectMvuStatusPlaceholderRanges, normalizeScopeTagMode } from '../../scope/model.js';
+import { buildScopeScanText, collectScopeRanges } from '../planning.js';
 
 export function collectAiScopeSegments(text) {
     const source = String(text || '');
@@ -21,49 +21,6 @@ export function collectAiScopeSegments(text) {
 
 export function getAiScopeRequestText(text) {
     return omitVariableUpdates(String(text || ''));
-}
-
-function rangeOverlaps(aStart, aEnd, bStart, bEnd) {
-    return aStart < bEnd && bStart < aEnd;
-}
-
-function rangeOverlapsAny(start, end, ranges) {
-    return ranges.some((range) => rangeOverlaps(start, end, range.start, range.end));
-}
-
-function intersectRanges(leftRanges, rightRanges) {
-    const intersections = [];
-    for (const left of leftRanges) {
-        for (const right of rightRanges) {
-            const start = Math.max(left.start, right.start);
-            const end = Math.min(left.end, right.end);
-            if (start < end) intersections.push({ start, end });
-        }
-    }
-    return intersections.sort((left, right) => left.start - right.start || left.end - right.end);
-}
-
-function subtractRanges(sourceRanges, excludedRanges) {
-    const excluded = [...excludedRanges]
-        .filter((range) => Number.isInteger(range?.start) && Number.isInteger(range?.end) && range.start < range.end)
-        .sort((left, right) => left.start - right.start || left.end - right.end);
-    const remaining = [];
-
-    for (const sourceRange of sourceRanges) {
-        let cursor = sourceRange.start;
-        for (const excludedRange of excluded) {
-            if (excludedRange.end <= cursor) continue;
-            if (excludedRange.start >= sourceRange.end) break;
-            if (excludedRange.start > cursor) {
-                remaining.push({ start: cursor, end: Math.min(excludedRange.start, sourceRange.end) });
-            }
-            cursor = Math.max(cursor, excludedRange.end);
-            if (cursor >= sourceRange.end) break;
-        }
-        if (cursor < sourceRange.end) remaining.push({ start: cursor, end: sourceRange.end });
-    }
-
-    return remaining;
 }
 
 function collectCodeRanges(text) {
@@ -160,15 +117,11 @@ export function collectAiMatches(text, settings, aiSettings, options = {}) {
     if (segments.length === 0) return [];
     const codeRanges = collectCodeRanges(source);
     const placeholderRanges = collectMvuStatusPlaceholderRanges(source);
-    const commentRanges = [
-        ...collectVariableUpdateRanges(source),
-        ...(aiSettings.protectXmlComments === true ? collectXmlCommentRanges(source) : []),
-    ].sort((a, b) => a.start - b.start);
-    const scopeScanText = commentRanges.length > 0 ? maskXmlCommentRanges(source, commentRanges) : source;
+    const { scanText: scopeScanText, commentRanges } = buildScopeScanText(source, aiSettings);
     const scopeRanges = collectScopeRanges(scopeScanText, settings);
-    const scopeTagMode = settings.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect';
+    const scopeTagMode = normalizeScopeTagMode(settings.scopeTagMode);
     const isAllowedByScope = (start, end) => {
-        if (scopeTagMode === 'cleanse-inside') {
+        if (scopeTagMode === SCOPE_TAG_MODES.CLEANSE_INSIDE) {
             return scopeRanges.some((range) => start >= range.bodyStart && end <= range.bodyEnd);
         }
         return !rangeOverlapsAny(start, end, scopeRanges);
@@ -269,15 +222,11 @@ export function collectEditableRanges(text, settings, aiSettings) {
     const xmlSegments = collectAiScopeSegments(source);
     if (xmlSegments.length === 0) return [];
 
-    const commentRanges = [
-        ...collectVariableUpdateRanges(source),
-        ...(aiSettings?.protectXmlComments === true ? collectXmlCommentRanges(source) : []),
-    ].sort((a, b) => a.start - b.start);
-    const scopeScanText = commentRanges.length > 0 ? maskXmlCommentRanges(source, commentRanges) : source;
+    const { scanText: scopeScanText, commentRanges } = buildScopeScanText(source, aiSettings);
     const scopeRanges = collectScopeRanges(scopeScanText, settings);
-    const scopeTagMode = settings?.scopeTagMode === 'cleanse-inside' ? 'cleanse-inside' : 'protect';
+    const scopeTagMode = normalizeScopeTagMode(settings?.scopeTagMode);
     const xmlBodies = xmlSegments.map((segment) => ({ start: segment.start, end: segment.end }));
-    const scopeEditable = scopeTagMode === 'cleanse-inside'
+    const scopeEditable = scopeTagMode === SCOPE_TAG_MODES.CLEANSE_INSIDE
         ? intersectRanges(xmlBodies, scopeRanges.map((range) => ({ start: range.bodyStart, end: range.bodyEnd })))
         : subtractRanges(xmlBodies, scopeRanges.map((range) => ({ start: range.start, end: range.end })));
     const editable = subtractRanges(scopeEditable, [

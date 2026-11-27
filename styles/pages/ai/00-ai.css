@@ -185,7 +185,7 @@
 #blai-ai-prompt-modal .blai-ai-prompt-modal-title h3 {
     margin: 0 !important;
     color: var(--text-main) !important;
-    font-size: var(--blai-font-18) !important;
+    font-size: var(--blai-fs-title) !important;
     font-weight: var(--blai-weight-bold) !important;
     line-height: 1.2 !important;
     display: inline-flex !important;
@@ -252,6 +252,14 @@
     color: var(--text-secondary) !important;
     font-size: var(--blai-font-11) !important;
     line-height: 1.45 !important;
+}
+
+/* 生成参数标题与说明按钮同排：问号紧贴标题右侧。 */
+:is(#blai-purifier-popup.blai-app-shell, #blai-ai-generation-modal) .blai-ai-generation-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-6);
+    min-width: 0;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-columns {

@@ -2,6 +2,31 @@
  * 透视弹窗说明文案的唯一来源。
  * 界面只在对应场景显示一小段；完整流程由标题旁的「改写说明」气泡承载。
  */
+import { escapeHtml } from './compare.js';
+
+/** 来源图例的唯一模板：净化对比（含计数）与深度清理顶栏（不含计数）共用。 */
+export function renderSourceLegend(items) {
+    return items.map((item) => {
+        const key = String(item.key || '');
+        const className = ['blai-diff-source', item.key === 'original' ? 'blai-diff-source-original' : '', item.key === 'manual' ? 'blai-diff-source-manual' : ''].filter(Boolean).join(' ');
+        const data = key ? ` data-blai-diff-source="${escapeHtml(key)}"` : '';
+        const title = escapeHtml(item.title || item.label || '');
+        const count = item.countId ? ` <span class="blai-diff-stat" id="${escapeHtml(item.countId)}">0</span>` : '';
+        return `<span class="${className}"${data} title="${title}"><i aria-hidden="true"></i>${escapeHtml(item.label || '')}${count}</span>`;
+    }).join('');
+}
+
+const DIFF_SOURCE_LEGEND_ITEMS = [
+    { key: 'original', label: '原文', title: '原文' },
+    { key: 'program', label: '程序', title: '程序改写', countId: 'blai-diff-stat-program' },
+    { key: 'ai', label: 'AI', title: 'AI 改写', countId: 'blai-diff-stat-ai' },
+    { key: 'manual', label: '手改', title: '插件改写后的手动改动', countId: 'blai-diff-stat-manual' },
+];
+
+export function mountDiffSourceLegend() {
+    const container = document.getElementById('blai-diff-sources');
+    if (container) container.innerHTML = renderSourceLegend(DIFF_SOURCE_LEGEND_ITEMS);
+}
 
 const REWRITE_HELP_ROWS = [
     ['自动改写', 'AI 回复完成后，插件把净化前的文本记为原文，再按当前模式改写。'],

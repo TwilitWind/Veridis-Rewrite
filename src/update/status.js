@@ -83,13 +83,15 @@ function projectToolsVersion(message = '正在检查版本信息…') {
 
 export function projectFeedbackUpdateWarning() {
     const form = document.getElementById('blai-feedback-form');
-    if (!form) return;
-    form.querySelector('.blai-feedback-update-warning')?.remove();
+    const content = document.getElementById('blai-feedback-workspace-content');
+    if (!form || !content) return;
+    // 提示块是表单外的独立节点：表单重渲染或标签切换后都从内容区统一清掉，避免残留。
+    content.querySelector('.blai-feedback-update-warning')?.remove();
     if (!updateState || updateState.kind === 'latest') return;
 
     const warning = makeElement('p', 'blai-feedback-update-warning', '当前不是最新版本哦，建议先更新再反馈～');
     warning.setAttribute('role', 'note');
-    form.prepend(warning);
+    content.insertBefore(warning, form);
 }
 
 function projectUpdateSurfaces() {

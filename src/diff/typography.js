@@ -31,8 +31,8 @@ export function syncDiffTypographyState() {
     // 字号按档位交给 CSS 映射到语义刻度，手机端整档 +1px 自动生效。
     if (modal) modal.dataset.diffFontSize = fontSize;
 
-    $('#blai-diff-font-size-text').text(`字号${diffFontSizeLabels[fontSize]}`);
-    $('#blai-diff-line-height-text').text(`行距${lineHeight}`);
+    $('#blai-diff-font-size-text').text(`字号大小: ${diffFontSizeLabels[fontSize]}`);
+    $('#blai-diff-line-height-text').text(`行高距离: ${lineHeight}`);
     const gapIndex = Math.max(0, diffParagraphGapOptions.indexOf(gap));
-    $('#blai-diff-paragraph-gap-text').text(`段距${DIFF_GAP_LABELS[gapIndex]}`);
+    $('#blai-diff-paragraph-gap-text').text(`段落间距: ${DIFF_GAP_LABELS[gapIndex]}`);
 }

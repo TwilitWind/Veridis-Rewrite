@@ -6,12 +6,17 @@ import { getTextDiffOperations } from './compare.js';
 import { getMessageDiffMeta, isMessageDiffReverted } from './messageMeta.js';
 import { omitVariableUpdates } from '../text/variableUpdates.js';
 
-/** 插件产出与当前正文之间的差异，连续的一段算一次手改。 */
+/** 手改检测的唯一谓词：插件产出与当前正文的差异（排除变量更新块），撤回态不算手改。 */
+export function hasManualEdit(msg, meta) {
+    if (!msg || !meta || isMessageDiffReverted(msg)) return false;
+    return omitVariableUpdates(meta.programMes ?? '') !== omitVariableUpdates(msg.mes ?? '');
+}
+
+/** 连续的一段手改算一次，供工具行计数。 */
 function countManualHunks(msg, meta) {
-    if (!msg || !meta || isMessageDiffReverted(msg)) return 0;
+    if (!hasManualEdit(msg, meta)) return 0;
     const before = omitVariableUpdates(meta.programMes ?? '');
     const after = omitVariableUpdates(msg.mes ?? '');
-    if (before === after) return 0;
     let hunks = 0;
     let inHunk = false;
     for (const operation of getTextDiffOperations(before, after)) {

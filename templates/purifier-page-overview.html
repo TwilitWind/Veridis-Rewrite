@@ -1,0 +1,71 @@
+                    <section class="page-panel active blai-home-page" data-page="overview">
+                        <section class="blai-home-topbar" aria-label="规则集信息与操作">
+                            <div id="blai-legacy-purifier-warning" class="blai-legacy-warning" role="status" aria-live="polite" hidden>
+                                <div class="blai-legacy-warning-icon" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></div>
+                                <div class="blai-legacy-warning-main">
+                                    <div class="blai-legacy-warning-title">检测到旧版 purifier</div>
+                                    <div class="blai-legacy-warning-text">旧版与 AI 版只能保留一个，请在 SillyTavern 扩展管理中关闭旧插件。</div>
+                                </div>
+                                <button id="blai-close-legacy-plugin" type="button" class="blai-legacy-warning-action" aria-label="关闭旧插件" title="关闭旧插件">关闭旧版</button>
+                            </div>
+                            <div class="blai-home-topbar-row blai-home-topbar-row-primary">
+                                <div class="blai-home-topbar-main">
+                                    <div class="blai-home-preset-field">
+                                        <span class="blai-visually-hidden">当前规则集</span>
+                                        <button type="button" id="blai-preset-select-trigger" class="blai-home-preset-select blai-preset-select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="当前规则集"><span id="blai-preset-select-label">-- 临时规则 (未绑定存档) --</span></button>
+                                        <div id="blai-preset-menu" class="blai-preset-menu" role="listbox" hidden></div>
+                                        <select id="blai-preset-select" class="blai-visually-hidden" aria-label="当前规则集（数据锚点）" tabindex="-1"></select>
+                                    </div>
+                                    <button type="button" id="blai-preset-actions-toggle" class="blai-preset-actions-toggle" aria-label="规则集操作" aria-haspopup="menu" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
+                                    <div id="blai-preset-actions-menu" class="blai-preset-menu blai-preset-actions-menu" role="menu" aria-label="规则集操作" hidden>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>新建</span></button>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-rename"><i class="fas fa-pen-to-square" aria-hidden="true"></i><span>重命名</span></button>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-import"><i class="fas fa-file-import" aria-hidden="true"></i><span>导入</span></button>
+                                        <button type="button" class="blai-preset-menu-item" role="menuitem" data-blai-preset-action="#blai-preset-export"><i class="fas fa-file-export" aria-hidden="true"></i><span>导出</span></button>
+                                        <button type="button" class="blai-preset-menu-item blai-preset-action-danger" role="menuitem" data-blai-preset-action="#blai-preset-delete"><i class="fas fa-trash" aria-hidden="true"></i><span>删除</span></button>
+                                    </div>
+                                    <div class="blai-home-dataset-actions" aria-label="规则集操作">
+                                        <button type="button" data-blai-click-proxy="#blai-preset-new"><i class="fas fa-plus" aria-hidden="true"></i><span>新建</span></button>
+                                        <button type="button" data-blai-click-proxy="#blai-preset-rename"><i class="fas fa-pen-to-square" aria-hidden="true"></i><span>重命名</span></button>
+                                        <button type="button" data-blai-click-proxy="#blai-preset-import"><i class="fas fa-file-import" aria-hidden="true"></i><span>导入</span></button>
+                                        <button type="button" data-blai-click-proxy="#blai-preset-export"><i class="fas fa-file-export" aria-hidden="true"></i><span>导出</span></button>
+                                        <button type="button" class="blai-home-danger-action" data-blai-click-proxy="#blai-preset-delete"><i class="fas fa-trash" aria-hidden="true"></i><span>删除</span></button>
+                                    </div>
+                                </div>
+                                <div class="blai-home-metrics" aria-label="规则集统计">
+                                    <span class="blai-home-metric"><b id="blai-rule-group-count">0</b> 规则组</span>
+                                    <span class="blai-home-metric"><b id="blai-ai-rule-count">0</b> AI 项</span>
+                                    <span class="blai-home-metric"><span id="blai-ai-enabled-status">AI 启用中</span></span>
+                                </div>
+                            </div>
+                            <div class="blai-home-topbar-row blai-home-topbar-row-secondary">
+                                <div class="blai-home-topbar-title">
+                                    <strong>规则分组</strong>
+                                    <span id="blai-home-group-hint">按规则分组展示当前规则集</span>
+                                </div>
+                                <div class="blai-home-toolbar-actions" aria-label="规则集工具栏">
+                                    <button id="blai-open-new-rule-btn" type="button" class="blai-home-toolbar-button blai-home-toolbar-button-primary"><i class="fas fa-plus" aria-hidden="true"></i><span>添加</span></button>
+                                    <button id="blai-preset-search" type="button" class="blai-home-toolbar-button"><i class="fas fa-magnifying-glass" aria-hidden="true"></i><span>搜索</span></button>
+                                    <button id="blai-batch-toggle" type="button" class="blai-home-toolbar-button" aria-expanded="false" aria-controls="blai-batch-operations"><i class="fas fa-list-check" aria-hidden="true"></i><span>编辑分组</span></button>
+                                    <button id="blai-rule-sort-toggle" type="button" class="blai-home-toolbar-button" title="反转当前分组顺序" aria-label="反转当前分组顺序"><i class="fas fa-arrows-up-down" aria-hidden="true"></i><span>反序排序</span></button>
+                                </div>
+                            </div>
+                            <section class="blai-home-batch-panel" id="blai-batch-operations" aria-label="批量编辑面板">
+                                <div class="blai-home-batch-heading">
+                                    <strong>批量编辑模式</strong>
+                                    <span>规则集</span>
+                                </div>
+                                <div class="blai-home-batch-actions">
+                                    <button type="button" id="blai-btn-select-all" aria-label="全选"><i class="far fa-square-check" aria-hidden="true"></i><span>全选</span></button>
+                                    <button type="button" id="blai-btn-select-invert" aria-label="反选"><i class="far fa-square-minus" aria-hidden="true"></i><span>反选</span></button>
+                                    <button type="button" id="blai-btn-batch-copy" aria-label="复制选中规则组到其它存档"><i class="far fa-copy" aria-hidden="true"></i><span>复制</span></button>
+                                    <button type="button" id="blai-btn-batch-move" aria-label="移动选中规则组到其它存档"><i class="fas fa-arrow-right" aria-hidden="true"></i><span>移动</span></button>
+                                    <button type="button" class="blai-home-danger-action" id="blai-btn-batch-delete" aria-label="删除选中规则组"><i class="far fa-trash-can" aria-hidden="true"></i><span>删除</span></button>
+                                </div>
+                            </section>
+                        </section>
+
+                        <section class="blai-home-rules" aria-label="规则卡片列表">
+                            <div id="blai-home-rule-grid" class="blai-home-rule-grid"></div>
+                        </section>
+                    </section>

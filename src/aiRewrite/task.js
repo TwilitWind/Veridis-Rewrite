@@ -2,8 +2,9 @@ import { extensionName } from '../settings/defaults.js';
 import { getAppContext } from '../host/appContext.js';
 import { getCurrentChatIdentity } from '../host/context.js';
 import { generationLifecycle } from '../host/generationLifecycle.js';
-import { getMessageDiffBranchKey } from '../chat/messageBranch.js';
+import { getMessageDiffBranchKey, getMessageIndexFromEvent } from '../chat/messageBranch.js';
 import { isMessageDiffReverted } from '../diff/messageMeta.js';
+import { normalizeScopeTagMode } from '../scope/model.js';
 import { isAssistantMessage } from '../diff/tracking.js';
 import { compileProcessors } from '../rules/engine.js';
 import { getZhVariantCompatOptions, isZhDictionaryReady } from '../zh/dictionary.js';
@@ -24,7 +25,7 @@ export function getAiSettings() {
 
 export function snapshotAiRewriteTaskSettings(settings, aiSettings) {
     const frozenSettings = {
-        scopeTagMode: settings?.scopeTagMode,
+        scopeTagMode: normalizeScopeTagMode(settings?.scopeTagMode),
         scopeTags: Array.isArray(settings?.scopeTags)
             ? settings.scopeTags.map((scopeTag) => ({ ...scopeTag }))
             : [],
@@ -125,11 +126,8 @@ export function isTaskStillFresh(task) {
 }
 
 export function getAiRewriteMessageId(payload) {
-    if (Number.isInteger(payload) && payload >= 0) return payload;
-    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return -1;
-    return Number.isInteger(payload.messageId) && payload.messageId >= 0
-        ? payload.messageId
-        : -1;
+    const index = getMessageIndexFromEvent(payload);
+    return index >= 0 ? index : -1;
 }
 
 export function getAiConfigIssue(aiSettings) {

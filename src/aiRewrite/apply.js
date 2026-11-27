@@ -1,4 +1,5 @@
 import { getAppContext } from '../host/appContext.js';
+import { rangesOverlap } from '../text/ranges.js';
 import { refreshMessageDisplay } from '../chat/display.js';
 import { queueIncrementalChatSave } from '../chat/persistence.js';
 import { clearMessageDisplayText, commitCurrentMessageText, getMessageDiffBranchKey, syncCurrentSwipeExtra } from '../chat/messageBranch.js';
@@ -16,10 +17,6 @@ import { generationLifecycle } from '../host/generationLifecycle.js';
 
 // 负责基于 Original 的 AI/回退组合、最后一次普通 Program 处理、
 // 手动尾部保留，以及消息/Swipe 与分支归属的原子提交。
-
-function rangesOverlap(left, right) {
-    return left.start < right.end && right.start < left.end;
-}
 
 function applyResolvedReplacements(text, replacements) {
     let output = String(text ?? '');

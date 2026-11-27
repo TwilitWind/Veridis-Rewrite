@@ -1,0 +1,64 @@
+
+        <div id="blai-purifier-popup" class="blai-app-shell scheme-a" data-theme="auto" style="display:none;">
+            <header class="blai-global-header">
+                <div class="blai-global-title-group">
+                    <strong id="blai-responsive-title" class="blai-global-heading" data-title>首页</strong>
+                    <p id="blai-responsive-description" class="blai-global-description">管理规则集、查看统计并编辑规则。</p>
+                </div>
+                <div class="blai-global-actions">
+                    <span id="blai-responsive-model-pill" class="blai-global-model-label">AI 改写</span>
+                    <button id="blai-tour-help" type="button" class="blai-global-icon-button" title="界面导览" aria-label="界面导览">
+                        <i class="fas fa-question" aria-hidden="true"></i>
+                    </button>
+                    <button id="blai-theme-toggle" type="button" class="blai-global-icon-button blai-theme-button" title="选择主题" aria-label="选择主题" aria-haspopup="menu" aria-expanded="false" aria-controls="blai-theme-menu">
+                        <i class="fas fa-circle-half-stroke" aria-hidden="true"></i>
+                    </button>
+                    <div id="blai-theme-menu" class="blai-theme-menu" role="menu" aria-label="选择主题" hidden>
+                        <button type="button" role="menuitemradio" data-theme-mode="auto" aria-checked="true"><i class="fas fa-circle-half-stroke" aria-hidden="true"></i><span>跟随酒馆</span><i class="fas fa-check blai-theme-menu-check" aria-hidden="true"></i></button>
+                        <button type="button" role="menuitemradio" data-theme-mode="light" aria-checked="false"><i class="fas fa-sun" aria-hidden="true"></i><span>素白</span><i class="fas fa-check blai-theme-menu-check" aria-hidden="true"></i></button>
+                        <button type="button" role="menuitemradio" data-theme-mode="warm" aria-checked="false"><i class="fas fa-seedling" aria-hidden="true"></i><span>暖米</span><i class="fas fa-check blai-theme-menu-check" aria-hidden="true"></i></button>
+                        <button type="button" role="menuitemradio" data-theme-mode="dark" aria-checked="false"><i class="fas fa-moon" aria-hidden="true"></i><span>墨夜</span><i class="fas fa-check blai-theme-menu-check" aria-hidden="true"></i></button>
+                        <button type="button" role="menuitemradio" data-theme-mode="dim" aria-checked="false"><i class="fas fa-cloud" aria-hidden="true"></i><span>柔灰</span><i class="fas fa-check blai-theme-menu-check" aria-hidden="true"></i></button>
+                    </div>
+                    <button id="blai-close-btn" type="button" class="blai-global-icon-button" title="关闭" aria-label="关闭">
+                        <i class="fas fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </header>
+            <div class="app-main">
+                <nav class="rail">
+                    <div class="brand" aria-label="Veridis Rewrite"><img src="{{logoUrl}}" alt=""></div>
+                    <button type="button" class="rail-btn active" data-page-target="overview"><i class="fas fa-table-cells-large" aria-hidden="true"></i><span>首页</span></button><button type="button" class="rail-btn" data-page-target="ai"><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i><span>AI</span></button><button type="button" class="rail-btn" data-page-target="clean"><i class="fas fa-filter-circle-xmark" aria-hidden="true"></i><span>净化</span></button><button type="button" class="rail-btn" data-page-target="tools"><i class="fas fa-sliders" aria-hidden="true"></i><span>工具</span></button>
+                <button type="button" class="rail-btn" data-page-target="feedback"><i class="fas fa-comment-dots" aria-hidden="true"></i><span>反馈</span></button></nav>
+                <div class="pages">
+                    <section class="page-panel blai-feedback-page" data-page="feedback">
+                        <section id="blai-feedback-workspace" class="blai-feedback-workspace" aria-label="反馈与诊断">
+                            <header class="blai-feedback-workspace-header">
+                                <div class="blai-feedback-header-row">
+                                    <nav class="blai-feedback-workspace-nav" role="tablist" aria-label="反馈与诊断视图">
+                                        <button type="button" role="tab" data-feedback-view="runtime-log" aria-pressed="true" aria-selected="true"><span>运行日志</span></button>
+                                        <button type="button" role="tab" data-feedback-view="ai-context" aria-pressed="false" aria-selected="false" aria-label="AI 上下文" title="AI 上下文"><span>上下文</span></button>
+                                        <button type="button" role="tab" data-feedback-view="diagnostics" aria-pressed="false" aria-selected="false" aria-label="深度清理诊断" title="深度清理诊断"><span>清理诊断</span></button>
+                                        <button type="button" role="tab" data-feedback-view="submit" aria-pressed="false" aria-selected="false"><span>提交反馈</span></button>
+                                    </nav>
+                                </div>
+                            </header>
+                            <div id="blai-feedback-workspace-content" class="blai-feedback-workspace-content" aria-live="polite"></div>
+                        </section>
+                    </section>
+                </div>
+            </div>
+            <nav class="bottom-nav">
+                <button type="button" class="nav-item active" data-page-target="overview"><i class="fas fa-table-cells-large" aria-hidden="true"></i><span>首页</span></button><button type="button" class="nav-item" data-page-target="ai"><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i><span>AI</span></button><button type="button" class="nav-item" data-page-target="clean"><i class="fas fa-filter-circle-xmark" aria-hidden="true"></i><span>净化</span></button><button type="button" class="nav-item" data-page-target="tools"><i class="fas fa-sliders" aria-hidden="true"></i><span>工具</span></button>
+            <button type="button" class="nav-item" data-page-target="feedback"><i class="fas fa-comment-dots" aria-hidden="true"></i><span>反馈</span></button></nav>
+            <div class="blai-hidden-real-controls">
+                <button id="blai-preset-rename" type="button">重命名</button>
+                <button id="blai-preset-new" type="button">新建</button>
+                <button id="blai-preset-delete" type="button">删除</button>
+                <button id="blai-preset-import" type="button">导入</button>
+                <button id="blai-preset-export" type="button">导出</button>
+                <button id="blai-default-toggle" type="button" title="设为全局默认净化预设" aria-hidden="true" tabindex="-1"></button>
+            </div>
+
+        </div>
+

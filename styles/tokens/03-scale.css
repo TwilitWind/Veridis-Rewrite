@@ -34,19 +34,13 @@
   --blai-space-24: 24px;
   --blai-space-26: 26px;
   --blai-space-28: 28px;
-  --blai-space-30: 30px;
   --blai-space-32: 32px;
   --blai-space-34: 34px;
   --blai-space-36: 36px;
   --blai-space-38: 38px;
-  --blai-space-39: 39px;
   --blai-space-40: 40px;
-  --blai-space-42: 42px;
   --blai-space-44: 44px;
   --blai-space-48: 48px;
-  --blai-space-56: 56px;
-  --blai-space-64: 64px;
-  --blai-space-84: 84px;
   --blai-space-680: 680px;
   --blai-space-0: 0;
 
@@ -87,7 +81,6 @@
   --blai-font-20: var(--blai-fs-hero);
   --blai-font-22: var(--blai-fs-hero);
   --blai-font-24: var(--blai-fs-hero);
-  --blai-font-26: var(--blai-fs-hero);
 
   /* 字重：正文正常 400、按钮等控件中等 500、小标题加粗 600。 */
   --blai-weight-normal: 400;
@@ -155,12 +148,9 @@
   --blai-radius-8: 8px;
   --blai-radius-9: 9px;
   --blai-radius-10: 10px;
-  --blai-radius-11: 11px;
   --blai-radius-12: 12px;
   --blai-radius-13: 13px;
   --blai-radius-14: 14px;
-  --blai-radius-15: 15px;
-  --blai-radius-16: 16px;
   --blai-radius-18: 18px;
   --blai-radius-20: 20px;
   --blai-radius-full: 999px;
@@ -222,17 +212,14 @@
   --blai-size-120: 120px;
   --blai-size-122: 122px;
   --blai-size-132: 132px;
-  --blai-size-140: 140px;
   --blai-size-142: 142px;
   --blai-size-148: 148px;
   --blai-size-150: 150px;
   --blai-size-152: 152px;
   --blai-size-160: 160px;
-  --blai-size-168: 168px;
   --blai-size-180: 180px;
   --blai-size-200: 200px;
   --blai-size-208: 208px;
-  --blai-size-210: 210px;
   --blai-size-220: 220px;
   --blai-size-240: 240px;
   --blai-size-260: 260px;
@@ -249,7 +236,6 @@
   --blai-size-468: 468px;
   --blai-size-480: 480px;
   --blai-size-520: 520px;
-  --blai-size-540: 540px;
   --blai-size-560: 560px;
   --blai-size-580: 580px;
   --blai-size-620: 620px;
@@ -259,7 +245,6 @@
   --blai-size-760: 760px;
   --blai-size-860: 860px;
   --blai-size-900: 900px;
-  --blai-size-980: 980px;
   --blai-size-1180: 1180px;
   --blai-size-1440: 1440px;
 }
@@ -274,6 +259,8 @@
   --blai-panel-pad-tight: var(--blai-space-10);
   /* 模块与模块之间、上下堆叠卡片之间 */
   --blai-panel-gap: var(--blai-canvas-pad);
+  /* 反馈页版本提示与表单之间的唯一间距：桌面/手机同值 */
+  --blai-feedback-update-gap: var(--blai-panel-gap);
   /* 左右分栏之间 */
   --blai-column-gap: var(--blai-canvas-pad);
   /* 模块标题块与正文之间 */
@@ -283,17 +270,12 @@
   /* 列表行上下内边距 */
   --blai-row-pad: var(--blai-space-10);
 
-  /* 输入框内边距统一令牌：只有两档——单行输入/下拉用 inline，多行文本域用 area。
-     页面与模板不得再写具体 padding；旧别名收口到这两档，避免弹窗与主页算出不同值。 */
+  /* 输入框内边距统一令牌：单行输入/下拉用 inline，多行文本域用 area。
+     页面与模板不得再写具体 padding，避免弹窗与主页算出不同值。 */
   --blai-input-pad-inline: 0 var(--blai-space-12);
   --blai-input-pad-area: var(--blai-space-12) var(--blai-space-14);
   /* 窄屏下拉：高度只有 32px，横向留白相应收紧 */
   --blai-input-pad-inline-tight: var(--blai-space-3) var(--blai-space-8);
-  /* 兼容别名：逐步迁移中仍被旧规则引用，值统一指向上面两档，不再引入第三套留白。 */
-  --blai-input-pad-y: var(--blai-space-12);
-  --blai-input-pad-x: var(--blai-space-14);
-  --blai-input-pad: var(--blai-input-pad-area);
-  --blai-input-pad-compact: var(--blai-input-pad-area);
   --blai-input-pad-dialog: var(--blai-input-pad-area);
   --blai-input-pad-inline-compact: var(--blai-input-pad-inline);
   --blai-input-pad-inline-wide: var(--blai-input-pad-inline);
