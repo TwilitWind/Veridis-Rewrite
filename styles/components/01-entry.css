@@ -13,6 +13,19 @@
     cursor: pointer;
 }
 
+/* 窄屏下菜单图标字形宽度不一，固定图标槽位，让文字与相邻条目保持同一列。 */
+@media (max-width: 600px) {
+    #blai-wand-btn .extensionsMenuExtensionButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--blai-size-20);
+        min-width: var(--blai-size-20);
+        height: var(--blai-size-20);
+        flex-shrink: 0;
+    }
+}
+
 .blai-extension-settings-entry .inline-drawer-content {
     padding: var(--blai-space-8) 0 var(--blai-space-12);
 }
