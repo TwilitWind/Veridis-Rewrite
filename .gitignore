@@ -6,6 +6,9 @@ screenshots/
 shots/
 _archive/
 
+# 协作过程文件（本地待办，不进版本库）
+todo.md
+
 # 一次性/备份文件
 *.bak
 *.orig
