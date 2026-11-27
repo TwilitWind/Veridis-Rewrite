@@ -249,6 +249,11 @@
     cursor: pointer;
 }
 
+/* 分组规则弹窗不再提供上移/下移：按钮保留在 DOM 里但隐藏，事件绑定不受影响。 */
+.blai-subrule-menu-item[hidden] {
+    display: none;
+}
+
 .blai-rule-menu-item i,
 .blai-subrule-menu-item i {
     width: var(--blai-size-14);

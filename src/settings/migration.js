@@ -206,6 +206,9 @@ export function ensureSettingsShape() {
     if (settings.logLevel === undefined) settings.logLevel = 2;
     if (settings.skipUserMessages === undefined) settings.skipUserMessages = false;
     settings.showComposerAiRewriteButton = settings.showComposerAiRewriteButton === true;
+    settings.miniModeEnabled = settings.miniModeEnabled === true;
+    // 迷你态本身跨刷新保活：球会继续显示；界面停留战况（页面/弹窗）不保存，刷新后回到默认页。
+    settings.miniModeActive = settings.miniModeActive === true && settings.miniModeEnabled === true;
     settings.shujukuAutoProgramRewriteEnabled = normalizeShujukuAutoProgramRewriteEnabled(settings.shujukuAutoProgramRewriteEnabled);
     normalizeZhVariantSettings(settings);
     if (settings.zhVariantCompatEnabled === true && !restoreZhDictionaryPackageFromCache(settings)) {

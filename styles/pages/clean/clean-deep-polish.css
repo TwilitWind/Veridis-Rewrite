@@ -18,18 +18,15 @@
     gap: 0;
 }
 
+/* 处理设置、处理范围各成一张独立卡片：边框 + 圆角 + 内边距，和截图一致。 */
 #blai-deep-clean-workspace .blai-deep-clean-section,
 #blai-deep-clean-workspace .blai-deep-clean-resources {
+    min-width: 0;
     margin: 0;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
+    padding: var(--blai-space-12) var(--blai-space-14);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-lg);
     background: transparent;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-resources {
-    padding-top: var(--blai-space-10);
-    border-top: var(--blai-border-1) solid var(--blai-border-soft);
 }
 
 #blai-deep-clean-workspace :is(.blai-deep-clean-section h3, .blai-deep-clean-resource-header h3) {
@@ -292,5 +289,12 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-state button {
     min-height: var(--blai-size-32);
+}
+
+/* 错误页只有一行报错和一个按钮：沿用大工作区尺寸，但把内容在面板里上下左右居中，避免贴着左上角。 */
+#blai-deep-clean-workspace .blai-deep-clean-state.blai-deep-clean-error-state {
+    place-content: center center;
+    justify-items: center;
+    text-align: center;
 }
 

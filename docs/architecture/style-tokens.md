@@ -46,11 +46,12 @@
 
 ### !important 例外登记
 
-`build-check.mjs` 按「相对基线累计增量」给 5 处预算：`+1~+5` 只在输出里记一行 info，不逐条 warn；超过 5 直接拦截。只有被拦截并确认确实无法用特异性 / token / `@layer` 解决时，才在下表补一行，然后同步更新 `styles/quality-baseline.json` 的预算。
+共享脚本 `code-audit/build-check.mjs` 按「相对基线累计增量」给 5 处预算：`+1~+5` 只在输出里记一行 info，不逐条 warn；超过 5 直接拦截。只有被拦截并确认确实无法用特异性 / token / `@layer` 解决时，才在下表补一行，然后同步更新 `styles/quality-baseline.json` 的预算。
 
 | 文件 | 选择器 / 属性 | 对抗对象 | 不能用 token / 特异性的原因 | 登记日期 |
 | --- | --- | --- | --- | --- |
 | `styles/pages/home/home-rule-edit-modal.css` | `.blai-modal-close-x { border: 0 !important }` | 主题对裸 `button` 的强声明 | 提高特异性仍压不过；叉号必须无边框 | 2026-11-24 |
 | `styles/pages/ai/01-ai.css` | `#blai-ai-model-manage-close, .blai-ai-model-manage-delete { border: none !important; box-shadow: none !important }` | 主题对裸 `button` 的边框/阴影强声明 | 与既有叉号同类，提高特异性仍压不过；管理弹窗两个叉号必须无边框 | 2026-11-24 |
+| `styles/components/01-entry.css` | `#qr--bar > .qr--buttons { width: auto !important }` | 酒馆 quick-reply 给脚本按钮组设 `width:100%` | 只改插件自身的组仍会被两侧满宽组挤到中间行；三组同属一行快捷按钮，必须统一按内容宽 | 2026-11-27 |
 
 新增条目时写明原因与已排除方案再登记这张表；不要只改 `styles/quality-baseline.json` 绕过闸门。

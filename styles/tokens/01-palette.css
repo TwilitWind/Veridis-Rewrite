@@ -14,7 +14,7 @@
     --blai-toast-ink: #FFFFFF;
 }
 
-#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer, .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu {
+#blai-purifier-popup, .blai-modal-shell, #blai-scope-tag-editor-modal, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-tour-layer, .blai-portal-menu, .blai-feedback-area-options, .blai-native-select-menu, #blai-mini-ball {
     --status-danger: #B6494B;
     --status-success: #5D8A68;
     /* 危险语义的浅底文字：说明气泡里的清理警告用这一档，不直接用实心危险红。 */

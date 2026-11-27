@@ -10,6 +10,8 @@ import { setSingleRuleReplacementEditor } from './view-01-modal.js';
 export function renderSubrulesToModal() {
     const container = $('#blai-edit-subrules-container');
     if (!container.length) return;
+    // 分组弹窗已隐藏 AI/程序筛选，强制按全部显示，避免残留筛选态让规则莫名消失。
+    rulesUiState.currentEditingFilter = 'all';
     syncRuleEditFilterUi();
     if (rulesUiState.currentEditingSubrules.length === 0) {
         container.html('<div class="blai-subrule-empty">这个分组还没有规则。点击「新增规则」开始添加。</div>');
@@ -71,11 +73,11 @@ export function renderSubrulesToModal() {
                         <div class="blai-subrule-menu-wrap">
                             <button class="blai-subrule-menu-toggle blai-subrule-action-btn" type="button" data-index="${i}" title="更多操作" aria-label="更多操作" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-vertical" aria-hidden="true"></i></button>
                             <div class="blai-subrule-menu" data-index="${i}" hidden>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="up" data-index="${i}" ${moveUpDisabled}><i class="fas fa-arrow-up" aria-hidden="true"></i>上移</button>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="down" data-index="${i}" ${moveDownDisabled}><i class="fas fa-arrow-down" aria-hidden="true"></i>下移</button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="up" data-index="${i}" ${moveUpDisabled} hidden><i class="fas fa-arrow-up" aria-hidden="true"></i>上移</button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="down" data-index="${i}" ${moveDownDisabled} hidden><i class="fas fa-arrow-down" aria-hidden="true"></i>下移</button>
                                 <button type="button" class="blai-subrule-menu-item" data-subrule-action="copy" data-index="${i}"><i class="fas fa-clone" aria-hidden="true"></i>复制</button>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="transfer" data-index="${i}"><i class="fas fa-arrows-turn-right" aria-hidden="true"></i><span aria-hidden="true">移至分组</span><span class="blai-visually-hidden">移至其他规则分组</span></button>
-                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="remark" data-index="${i}"><i class="fas fa-comment-dots" aria-hidden="true"></i>编辑备注</button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="transfer" data-index="${i}"><i class="fas fa-arrows-turn-right" aria-hidden="true"></i><span aria-hidden="true">移动</span><span class="blai-visually-hidden">移至其他规则分组</span></button>
+                                <button type="button" class="blai-subrule-menu-item" data-subrule-action="remark" data-index="${i}"><i class="fas fa-comment-dots" aria-hidden="true"></i>备注</button>
                                 <button type="button" class="blai-subrule-menu-item blai-subrule-menu-item--danger" data-subrule-action="delete" data-index="${i}"><i class="fas fa-trash" aria-hidden="true"></i>删除</button>
                             </div>
                         </div>

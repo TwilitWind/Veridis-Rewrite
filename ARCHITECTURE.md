@@ -9,14 +9,14 @@ SillyTavern 扩展，无打包器、无 npm 依赖。`manifest.json` 只声明�
 | 产物 | 来源 | 说明 |
 | --- | --- | --- |
 | `index.js` | 手写 | ESM 入口，直接 `import` `src/` 模块，源码即产物 |
-| `style.css` | `build-css.mjs` 按 `styles/ORDER.json` 拼接压缩 `styles/` 分文件 | 产物勿手改，附 `style.css.map` |
+| `style.css` | 共享脚本 `code-audit/build-css.mjs` 按 `styles/ORDER.json` 拼接压缩 `styles/` 分文件 | 产物勿手改，附 `style.css.map` |
 
 写产物前做 token 级等价校验（源码与产物 token 序列逐项相同），不一致即报错、不写文件。构建闸门与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。
 
 四条硬约束：
 
 1. `src/` `styles/` `templates/` `vendor/` 必须随扩展安装；只拷两个产物会因模块加载失败不启动。
-2. 样式只改 `styles/` 分文件；改完跑 `node build-css.mjs && node build-check.mjs`。
+2. 样式只改 `styles/` 分文件；改完按 [DEVELOPMENT.md](DEVELOPMENT.md) 跑共享脚本库的 `build-css.mjs` → `build-check.mjs`。
 3. 改完刷新酒馆页面：ESM 与 CSS 都走浏览器缓存。
 4. 不引入打包器；校验靠 `node --check` 与真机刷新核对。
 
@@ -27,8 +27,6 @@ Veridis-Rewrite/
 ├── manifest.json           display_name「词汇映射」/ js index.js / css style.css / version 3.5 / loading_order 110
 ├── index.js                入口：读宿主模块 → 注入 appContext → 依次初始化
 ├── style.css(.map)         构建产物，勿手改
-├── build-css.mjs           拼接压缩 + token 等价校验 + sourcemap
-├── build-check.mjs         构建闸门
 ├── src/                    业务模块
 ├── styles/                 样式唯一真源：tokens/ base/ components/ layouts/ pages/
 ├── templates/          工作台 DOM 分片：purifier-shell / -page-* / -modals / -diff / -forms
@@ -36,6 +34,8 @@ Veridis-Rewrite/
 ├── images/
 └── vendor/                 pinyin-pro、sql.js（本地化）
 ```
+
+构建与自查脚本不在本仓库：`build-css.mjs`、`build-check.mjs`、`project-audit.mjs` 的实现统一放在共享脚本库 `sillytavern-extension-dev/scripts/code-audit/`，调用时传入本仓库根目录作为参数。
 
 ## 二、初始化链
 

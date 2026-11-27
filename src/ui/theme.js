@@ -15,7 +15,7 @@ export const THEME_MODES = [
     { mode: 'dim', label: '柔灰', icon: 'fa-cloud' },
 ];
 
-const SURFACES = '#blai-purifier-popup, .blai-modal-shell, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-scope-tag-editor-modal, #blai-tour-layer';
+const SURFACES = '#blai-purifier-popup, .blai-modal-shell, #blai-rule-transfer-modal, #blai-diff-modal, #blai-rule-search-modal, #blai-preset-import-choice-modal, .blai-toast, #blai-loading-overlay, #blai-scope-tag-editor-modal, #blai-tour-layer, #blai-mini-ball';
 const themeByMode = new Map(THEME_MODES.map((item) => [item.mode, item]));
 
 export function normalizeThemeMode(mode) {

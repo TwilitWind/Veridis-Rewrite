@@ -1,6 +1,6 @@
 /* 主题覆盖：auto / light / warm / dark / dim 五套主题下的背景、文字、边框、强调色。 */
 
-#blai-purifier-popup[data-theme="auto"], .blai-modal-shell[data-theme="auto"], #blai-scope-tag-editor-modal[data-theme="auto"], #blai-rule-transfer-modal[data-theme="auto"], #blai-diff-modal[data-theme="auto"], #blai-rule-search-modal[data-theme="auto"], #blai-preset-import-choice-modal[data-theme="auto"], .blai-toast[data-theme="auto"], #blai-loading-overlay[data-theme="auto"], #blai-tour-layer[data-theme="auto"] {
+#blai-purifier-popup[data-theme="auto"], .blai-modal-shell[data-theme="auto"], #blai-scope-tag-editor-modal[data-theme="auto"], #blai-rule-transfer-modal[data-theme="auto"], #blai-diff-modal[data-theme="auto"], #blai-rule-search-modal[data-theme="auto"], #blai-preset-import-choice-modal[data-theme="auto"], .blai-toast[data-theme="auto"], #blai-loading-overlay[data-theme="auto"], #blai-tour-layer[data-theme="auto"], #blai-mini-ball[data-theme="auto"] {
     /* 跟随酒馆：底色在酒馆背景上压暗一档、卡片提亮一档，
        浅色与深色酒馆主题下都能分出「外底 / 卡片」两层。 */
     --bg-base: color-mix(in srgb, var(--SmartThemeBlurTintColor) 86%, #000000);
@@ -37,7 +37,8 @@
     #blai-preset-import-choice-modal,
     .blai-toast,
     #blai-loading-overlay,
-    #blai-tour-layer
+    #blai-tour-layer,
+    #blai-mini-ball
 ):is([data-theme="light"], [data-theme="warm"]) {
     /* 日间：最外层接近白的灰白画布。取纯中性灰（三通道齐平、不做蓝偏移），
        再往上就是纯白，会和卡片糊在一起；往下压会吃掉输入框与画布的层次。 */
@@ -68,7 +69,8 @@
     #blai-preset-import-choice-modal,
     .blai-toast,
     #blai-loading-overlay,
-    #blai-tour-layer
+    #blai-tour-layer,
+    #blai-mini-ball
 ):is([data-theme="dark"], [data-theme="dim"]) {
     /* 墨夜取 ayu dark 的深蓝灰层次，但整体往中性灰蓝偏：上一版 G-R（绿-红）差偏大，
        在深底上泛青冷、不适合久读；这一版把底/卡/正文/浅字的 G-R 压到 1~3，只留极小蓝偏，
@@ -121,7 +123,8 @@
     #blai-preset-import-choice-modal,
     .blai-toast,
     #blai-loading-overlay,
-    #blai-tour-layer
+    #blai-tour-layer,
+    #blai-mini-ball
 )[data-theme="warm"] {
     --bg-base: #F4F1EA;
     --bg-surface: #FBF9F3;
@@ -158,7 +161,8 @@
     #blai-preset-import-choice-modal,
     .blai-toast,
     #blai-loading-overlay,
-    #blai-tour-layer
+    #blai-tour-layer,
+    #blai-mini-ball
 )[data-theme="dim"] {
     --bg-base: #262A30;
     --bg-surface: #31363E;

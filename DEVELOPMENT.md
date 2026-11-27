@@ -7,19 +7,29 @@
 ## 环境
 
 - SillyTavern 1.16.0；扩展目录 `data/<handle>/extensions/<folder>`，装的是源码直连副本。
-- 无打包器、无 npm 依赖；Node 只用来跑根目录的构建与闸门脚本（`build-css.mjs`、`build-check.mjs`）。
+- 无打包器、无 npm 依赖；Node 只用来跑共享脚本库 `sillytavern-extension-dev/scripts/code-audit/` 里的构建、闸门与自查脚本。
 - `src/` 与 `templates/` 必须随扩展安装，不能只装产物。
 
 ## 构建
 
-`style.css` 是产物，`styles/` 分文件是唯一真源。改动后按序执行：
+`style.css` 是产物，`styles/` 分文件是唯一真源。先按本机环境设置共享脚本库路径（下面用 `SCRIPTS` 代指 `sillytavern-extension-dev/scripts/code-audit`），在本插件根目录按序执行：
 
 ```bash
-node build-css.mjs     # 拼接压缩 + token 级等价校验 + sourcemap
-node build-check.mjs   # 构建闸门，与上一命令独立，必须单独跑
+SCRIPTS="<本机共享脚本库>/scripts/code-audit"
+node "$SCRIPTS/build-css.mjs" .     # 拼接压缩 + token 级等价校验 + sourcemap
+node "$SCRIPTS/build-check.mjs" .   # 构建闸门，与上一命令独立，必须单独跑
 ```
 
 `build-css.mjs` 在写产物前做 token 级等价校验：源码与产物 token 序列逐项相同，不一致即报错、不写文件。改 JS 后先做语法检查；跨模块导入名还要静态核对——ESM 漏写 `import` 不会被语法检查发现，只有运行到那条分支才报错。
+
+改完 JS 跑静态自查（只读，只出线索）：
+
+```bash
+node "$SCRIPTS/project-audit.mjs" .        # 每类默认显示 8 条
+node "$SCRIPTS/project-audit.mjs" . --all  # 看全部线索
+```
+
+它检查 import 路径与导出名、调用却没导入的函数、循环依赖、单入口渲染、事件未解绑、hover 与几何 API 冲突、`[hidden]` 被覆盖、双状态源、定时器未清理与文件体积。
 
 ## 构建闸门
 
