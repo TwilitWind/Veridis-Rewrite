@@ -127,6 +127,12 @@
         display: contents;
     }
 
+    /* 菜单由 popover.js 挂到 body；在网格里保留绝对定位兜底，
+       展开瞬间就不会自动生成第二行把下方画布顶下去。 */
+    #blai-purifier-popup .blai-home-topbar-row-primary .blai-preset-menu {
+        position: absolute;
+    }
+
     #blai-purifier-popup .blai-home-topbar .blai-home-preset-field {
         grid-column: 1;
         grid-row: 1;

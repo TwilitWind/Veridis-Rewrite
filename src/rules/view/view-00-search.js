@@ -22,7 +22,7 @@ export function normalizeReplacementList(replacements) {
 
 export function getRulePreviewTagText(mode = 'text') {
     if (mode === 'regex') return '正则';
-    if (mode === 'simple') return '组合';
+    if (mode === 'simple') return '简易';
     return '文本';
 }
 

@@ -33,7 +33,7 @@ function bindAiApiPresetActionsMenu() {
             return;
         }
         syncDisabledItems();
-        menu.removeAttribute('hidden');
+        // hidden 交由 openMenuPopover 在 portal 之后解除，防止菜单在顶栏网格里占位。
         toggle.setAttribute('aria-expanded', 'true');
         openMenuPopover(toggle, menu);
     });

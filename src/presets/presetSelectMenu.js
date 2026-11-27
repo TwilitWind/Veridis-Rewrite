@@ -22,7 +22,7 @@ export function bindPresetSelectMenu(switchPreset) {
         }
         // 宽度交给 CSS 按最长选项自适应；写死触发器宽度会把长预设名折成多行。
         menu.style.removeProperty('width');
-        menu.removeAttribute('hidden');
+        // hidden 交由 openMenuPopover 在挂到 body 之后解除，避免展开瞬间撑高网格顶栏。
         $('#blai-preset-select-trigger').attr('aria-expanded', 'true');
         openMenuPopover(trigger, menu);
     });

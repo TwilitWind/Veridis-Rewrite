@@ -196,8 +196,8 @@ export function renderDeepCleanPreview(preview) {
                     </nav>
                     <div class="blai-deep-clean-preview-bar-trailing">
                         <span class="blai-deep-clean-preview-step">${position + 1}/${items.length}</span>
-                        <button type="button" data-deep-clean-preview-nav="previous" aria-label="上一个" title="上一个" ${position <= 0 ? 'disabled' : ''}><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
-                        <button type="button" data-deep-clean-preview-nav="next" aria-label="下一个" title="下一个" ${position >= items.length - 1 ? 'disabled' : ''}><i class="fas fa-arrow-down" aria-hidden="true"></i></button>
+                        <button type="button" data-deep-clean-preview-nav="previous" aria-label="上一个" title="上一个" ${position <= 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
+                        <button type="button" data-deep-clean-preview-nav="next" aria-label="下一个" title="下一个" ${position >= items.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
                         <button type="button" class="blai-deep-clean-preview-list-toggle" data-deep-clean-preview-list-toggle aria-expanded="${listOpen}" aria-label="条目列表（${items.length}）" title="条目列表（${items.length}）"><i class="fas fa-list" aria-hidden="true"></i><span>${items.length}</span></button>
                     </div>
                 </div>
@@ -207,9 +207,9 @@ export function renderDeepCleanPreview(preview) {
                     <div class="blai-deep-clean-preview-entry-trailing">
                         ${blockCount ? `
                         <div class="blai-deep-clean-preview-change-nav" aria-label="改写项导航">
-                            <button type="button" data-deep-clean-preview-change="previous" aria-label="上一个改写项" title="上一个改写项"><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
+                            <button type="button" data-deep-clean-preview-change="previous" aria-label="上一个改写项" title="上一个改写项"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
                             <span class="blai-deep-clean-preview-change-counter ${currentRevertedCount ? 'has-reverted' : ''}" ${currentRevertedCount ? `title="本条目已撤销 ${currentRevertedCount} 项改写"` : ''}>${preview.changeIndex + 1} / ${blockCount}${currentRevertedCount ? `<i class="fas fa-circle-minus blai-deep-clean-preview-change-reverted-dot" aria-hidden="true"></i>` : ''}</span>
-                            <button type="button" data-deep-clean-preview-change="next" aria-label="下一个改写项" title="下一个改写项"><i class="fas fa-arrow-down" aria-hidden="true"></i></button>
+                            <button type="button" data-deep-clean-preview-change="next" aria-label="下一个改写项" title="下一个改写项"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
                         </div>` : ''}
                         <label class="blai-deep-clean-preview-include" title="纳入本次清理"><input class="blai-check-native" type="checkbox" data-deep-clean-preview-include ${preview.included.has(preview.currentItemIndex) ? 'checked' : ''}>纳入改写</label>
                         ${generateButton}

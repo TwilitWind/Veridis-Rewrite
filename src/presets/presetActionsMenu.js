@@ -20,7 +20,8 @@ export function bindPresetActionsMenu() {
             toggle.setAttribute('aria-expanded', 'false');
             return;
         }
-        menu.removeAttribute('hidden');
+        // hidden 的解除交给 openMenuPopover（先 portal 再显示），
+        // 否则菜单会在网格里短暂占位，把顶栏下方的画布顶下去。
         toggle.setAttribute('aria-expanded', 'true');
         openMenuPopover(toggle, menu);
     });

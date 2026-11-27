@@ -53,9 +53,9 @@ export function renderDeepCleanReview(session, lookaheadProgress = null) {
                 <aside id="blai-deep-clean-lookahead" class="blai-deep-clean-batch-summary" aria-live="polite">${deepCleanLookaheadHtml(lookaheadProgress)}</aside>
             </div>
             <nav class="blai-deep-clean-review-navigation" aria-label="审核内容项导航">
-                <button type="button" data-deep-clean-review-nav="previous" aria-label="上一个" title="上一个" ${position === 0 ? 'disabled' : ''}><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
+                <button type="button" data-deep-clean-review-nav="previous" aria-label="上一个" title="上一个" ${position === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
                 <strong>当前项 ${position + 1} / ${total}</strong>
-                <button type="button" data-deep-clean-review-nav="next" aria-label="下一个" title="下一个" ${position === total - 1 ? 'disabled' : ''}><i class="fas fa-arrow-down" aria-hidden="true"></i></button>
+                <button type="button" data-deep-clean-review-nav="next" aria-label="下一个" title="下一个" ${position === total - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
             </nav>
             <footer class="blai-deep-clean-review-apply">
                 <p>当前批 · <strong>${total} 个内容项</strong></p>

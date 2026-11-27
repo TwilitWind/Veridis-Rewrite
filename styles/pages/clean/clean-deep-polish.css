@@ -122,6 +122,28 @@
     #blai-deep-clean-workspace .blai-deep-clean-preview-document {
         padding: var(--blai-space-6) var(--blai-space-10);
     }
+
+    /* 窄屏顶栏分三行：筛选行 / 条目标题行 / 改写项与纳入操作行。
+       标题不再被导航控件挤成省略号，操作区也不再越界。 */
+    #blai-deep-clean-workspace .blai-deep-clean-preview-filters {
+        flex: 1 1 auto;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
+        flex-wrap: wrap;
+        row-gap: var(--blai-space-4);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar h3 {
+        flex: 1 1 auto;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-trailing {
+        flex: 1 1 100%;
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
 }
 
 /* ---- 扫描结果：标题降档，统计三列留白，分布用同款轻卡片 ---- */

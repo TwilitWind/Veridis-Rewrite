@@ -37,7 +37,7 @@ export function renderSubrulesToModal() {
         const moveUpDisabled = i === 0 ? 'disabled' : '';
         const moveDownDisabled = i === rulesUiState.currentEditingSubrules.length - 1 ? 'disabled' : '';
 
-        const badgeText = mode === 'regex' ? '正则' : mode === 'simple' ? '组合' : '文本';
+        const badgeText = mode === 'regex' ? '正则' : mode === 'simple' ? '简易' : '文本';
         const badgeHTML = `<span class="blai-mapping-badge">${badgeText}</span>`;
 
         const tPreview = getRuleSourcePreviewText(sub);
