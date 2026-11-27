@@ -136,10 +136,8 @@ export async function setupUI(renderTemplate, templateDirectory) {
     };
 
     if (!$('#blai-wand-btn').length) {
-        const $wandGroup = $('<div class="extension_container"></div>');
-        $wandGroup.insertAfter('#data_bank_wand_container');
-        $wandGroup.append(`
-            <div id="blai-wand-btn" class="list-group-item flex-container flexGap5 interactable" tabindex="0" role="listitem" title="词汇映射管理">
+        $('#data_bank_wand_container').append(`
+            <div id="blai-wand-btn" class="list-group-item flex-container flexGap5" title="词汇映射管理">
                 <div class="fa-fw fa-solid fa-language extensionsMenuExtensionButton"></div><span>词汇映射</span>
             </div>`);
     }
