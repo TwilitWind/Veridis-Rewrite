@@ -110,7 +110,10 @@ export function getTaskFreshnessIssue(task) {
     }
     if (msg !== task.messageRef) return 'message-ref-changed';
     if (!isAssistantMessage(msg)) return 'not-assistant-message';
-    if (isMessageDiffReverted(msg)) return 'message-reverted';
+    // 撤回态本就是「重新净化」的起点：显式 recleanse 任务必须放行 reverted，
+    // 否则请求前/后的新鲜度检查会把任务判为过期，报「消息已变化，未写回」。
+    // 普通任务仍禁止在撤回态写回，保留保护语义。
+    if (isMessageDiffReverted(msg) && task.recleanse !== true) return 'message-reverted';
     if (getMessageDiffBranchKey(msg) !== task.branchKey) return 'branch-changed';
     if (typeof msg.mes !== 'string') return 'message-text-missing';
     if (task.automatic !== true

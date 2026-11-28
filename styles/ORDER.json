@@ -13,6 +13,7 @@
   "components/06-native-select.css",
   "components/07-menu-fill.css",
   "components/08-info-popover.css",
+  "components/09-mini-mode.css",
   "layouts/00-shell.css",
   "layouts/01-responsive.css",
   "pages/tour/00-tour.css",

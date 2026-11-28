@@ -35,6 +35,8 @@ import {
     renderDeepCleanReview,
     renderDeepCleanApplyProgress,
     renderDeepCleanComplete,
+    renderDeepCleanPreview,
+    renderDeepCleanScanResult,
     showInitialSelectionError,
 } from './view.js';
 import { bindDeepCleanPreviewEvents } from './events/events-01-preview.js';

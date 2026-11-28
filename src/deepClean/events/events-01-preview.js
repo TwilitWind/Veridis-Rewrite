@@ -1,7 +1,7 @@
 // 深度净化的预览区交互：入口、筛选、逐条定位、差异勾选与提交。
 // 从 events.js 拆出；主流程通过 startDeepCleanProcessing 回调接回执行阶段。
 import { logger } from '../../log.js';
-import { showConfirmModal } from '../../ui/notifications.js';
+import { showAlertModal, showConfirmModal } from '../../ui/notifications.js';
 import { deepCleanRuntimeState } from '../state.js';
 import { applyDeepCleanPreviewSelection } from '../lifecycle.js';
 import { cancelDeepCleanReviewComparisons } from '../review.js';
@@ -73,6 +73,11 @@ const commitPreviewAndRun = async (preview, runAll) => {
 $(document).off('click', '#blai-deep-clean-preview').on('click', '#blai-deep-clean-preview', () => {
     const lifecycle = deepCleanRuntimeState.deepCleanSelection;
     if (!lifecycle?.run?.scanResult) return;
+    const itemIndexes = lifecycle.run.scanResult.affectedItemIndexes;
+    if (!Array.isArray(itemIndexes) || itemIndexes.length === 0) {
+        showAlertModal('本次扫描没有命中内容项，无法进入预览。请调整规则或处理范围后重新扫描。');
+        return;
+    }
     cancelDeepCleanReviewComparisons(lifecycle.currentReviewSession);
     const preview = createDeepCleanPreviewSession(lifecycle);
     if (!preview) return;

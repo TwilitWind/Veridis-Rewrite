@@ -4,6 +4,7 @@ import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { programRuntimeState } from '../state.js';
 import { collectScopeRanges } from '../../aiRewrite/planning.js';
+import { getXmlCommentProtectRanges, shouldProtectXmlComments } from '../../aiRewrite/commentProtection.js';
 import { resolveProcessorReplacement, projectTrackedRangesThroughReplacement, getReplaceCallbackOffset, getProcessorHitSources, buildProcessors } from './engine-00-patterns.js';
 
 export function applyCompiledReplacementsWithTrackedRanges(originalText, processors = [], ranges = [], options = {}) {
@@ -12,9 +13,16 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
 
     let text = source;
     let trackedRanges = (Array.isArray(ranges) ? ranges : []).map((range) => ({ ...range }));
+    // 注释保护对所有改写链路统一生效：程序改写、流式、深度清理与 AI 回退都汇入这里。
+    // 局部作用域段传来的 source 已是段内文本，注释范围天然落在段内坐标，无需额外换算。
+    const { extension_settings } = getAppContext();
+    const protectXmlComments = typeof options.protectXmlComments === 'boolean'
+        ? options.protectXmlComments
+        : shouldProtectXmlComments(extension_settings?.[extensionName]);
     let protectedRanges = [
         ...collectMvuStatusPlaceholderRanges(source),
         ...(options.protectedRanges || []).map((range) => ({ ...range })),
+        ...getXmlCommentProtectRanges(source, protectXmlComments),
     ];
     let valid = trackedRanges.every((range) => Number.isInteger(range.start)
         && Number.isInteger(range.end)

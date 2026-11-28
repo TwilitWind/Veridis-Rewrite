@@ -174,7 +174,11 @@ export function buildAiRewriteCandidate(payload, options = {}) {
 
     const msg = chat[index];
     if (!isAssistantMessage(msg)) return { task: null, reason: '目标消息不是助手消息' };
-    if (isMessageDiffReverted(msg) && options.recleanse !== true) {
+    // 撤回态是「已保护原文」的状态：任何手动改写请求（输入框快捷键等）都应视为重新净化，
+    // 而不是被拒绝。净化对比的重新净化按钮已显式传 recleanse，这里补上其他入口。
+    const effectiveRecleanse = options.recleanse === true
+        || (options.manual === true && isMessageDiffReverted(msg));
+    if (isMessageDiffReverted(msg) && effectiveRecleanse !== true) {
         return { task: null, reason: '目标消息已撤回净化' };
     }
     const isAutomatic = payload?.automatic === true;
@@ -270,7 +274,7 @@ export function buildAiRewriteCandidate(payload, options = {}) {
             claimedMessageText: currentText,
             claimedMeta: previous,
             automatic: isAutomatic,
-            recleanse: options.recleanse === true,
+            recleanse: effectiveRecleanse === true,
             generationId: isAutomatic ? String(payload.generationId || '') : '',
             chatId: isAutomatic ? String(payload.chatId || '') : '',
             scheduleSource: isAutomatic ? String(payload.source || '') : 'manual',

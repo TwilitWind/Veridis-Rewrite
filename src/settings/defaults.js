@@ -387,6 +387,8 @@ export const defaultSettings = {
     logLevel: 2,  // 0=关闭, 1=错误, 2=警告(默认), 3=信息, 4=调试
     skipUserMessages: false,
     showComposerAiRewriteButton: false,
+    miniModeEnabled: false,
+    miniModeActive: false,
     shujukuAutoProgramRewriteEnabled: false,
     zhVariantCompatEnabled: false,
     zhVariantCompatOptions: { tw: true, hk: true },

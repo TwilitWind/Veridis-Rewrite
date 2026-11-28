@@ -52,5 +52,6 @@
 | --- | --- | --- | --- | --- |
 | `styles/pages/home/home-rule-edit-modal.css` | `.blai-modal-close-x { border: 0 !important }` | 主题对裸 `button` 的强声明 | 提高特异性仍压不过；叉号必须无边框 | 2026-11-24 |
 | `styles/pages/ai/01-ai.css` | `#blai-ai-model-manage-close, .blai-ai-model-manage-delete { border: none !important; box-shadow: none !important }` | 主题对裸 `button` 的边框/阴影强声明 | 与既有叉号同类，提高特异性仍压不过；管理弹窗两个叉号必须无边框 | 2026-11-24 |
+| `styles/components/01-entry.css` | `#qr--bar > .qr--buttons { width: auto !important }` | 酒馆 quick-reply 给脚本按钮组设 `width:100%` | 只改插件自身的组仍会被两侧满宽组挤到中间行；三组同属一行快捷按钮，必须统一按内容宽 | 2026-11-27 |
 
 新增条目时写明原因与已排除方案再登记这张表；不要只改 `styles/quality-baseline.json` 绕过闸门。

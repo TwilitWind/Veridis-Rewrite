@@ -59,10 +59,10 @@
                                         <div class="blai-clean-settings-list">
                                             <div class="blai-clean-setting-row">
                                                 <div>
-                                                    <strong>跳过用户消息</strong>
+                                                    <strong>跳过用户输入</strong>
                                                     <p>用户消息、发送输入框和编辑输入区不进入净化。</p>
                                                 </div>
-                                                <button id="blai-skip-user-toggle" type="button" class="blai-clean-switch" aria-pressed="false" aria-label="跳过用户消息">
+                                                <button id="blai-skip-user-toggle" type="button" class="blai-clean-switch" aria-pressed="false" aria-label="跳过用户输入">
                                                     <span class="blai-clean-switch-track" aria-hidden="true"></span>
                                                     <span class="blai-switch-state">关闭</span>
                                                 </button>
@@ -80,10 +80,10 @@
                                             <label class="blai-clean-setting-row" for="blai-ai-protect-comments">
                                                 <div>
                                                     <strong>保护 HTML/XML 注释</strong>
-                                                    <p>保留标签内的注释文本，不让 AI 改写处理注释内容。</p>
+                                                    <p>保护 &lt;!-- 注释 --&gt; 格式的注释文本，程序改写、AI 改写、流式改写与深度清理都不会处理其中的内容。</p>
                                                 </div>
                                                 <span class="blai-clean-checkbox-switch">
-                                                    <input type="checkbox" id="blai-ai-protect-comments" aria-label="保护 HTML/XML 注释">
+                                                    <input type="checkbox" id="blai-ai-protect-comments" aria-label="保护 HTML/XML 注释，程序改写与 AI 改写均跳过">
                                                     <span class="blai-clean-switch-track" aria-hidden="true"></span>
                                                 </span>
                                             </label>

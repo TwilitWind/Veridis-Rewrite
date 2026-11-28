@@ -185,6 +185,8 @@ function frozenRunInput(selection, settings) {
             zhVariantCompatOptions: structuredClone(getZhVariantCompatOptions(settings)),
             zhVariantDictionaryReady: isZhDictionaryRuntimeReady(),
             aiProtectXmlComments: settings.aiRewrite?.protectXmlComments === true,
+            // 冻结 AI 总开关：下游据此过滤预设里的 AI 改写规则，避免关闭后仍被当空替换回退。
+            aiRewriteEnabled: settings.aiRewrite?.enabled === true,
         },
     });
 }

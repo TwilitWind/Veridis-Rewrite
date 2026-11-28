@@ -29,3 +29,11 @@
     font-weight: var(--blai-weight-bold);
     white-space: nowrap;
 }
+
+/* 输入框手动 AI 改写按钮不独占一行：酒馆助手给每个脚本组 width:100%，
+   #qr--bar 又 flex-wrap:wrap，于是每个脚本组各占满一行。三个组同属一行
+   快捷按钮，统一按内容宽排列才紧凑；单改插件组仍会被两侧满宽组挤到中间行。
+   对抗对象：酒馆 quick-reply 的 #qr--bar > .qr--buttons { width:100% }。 */
+#qr--bar > .qr--buttons {
+    width: auto !important;
+}

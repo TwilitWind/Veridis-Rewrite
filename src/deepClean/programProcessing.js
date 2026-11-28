@@ -23,6 +23,8 @@ export function buildDeepCleanProgramExecution(input, item, compiledSemantics, s
         compiledSemantics.programProcessors,
         getProgramScopeSettings(input, item),
         ranges,
+        // 深度清理必须沿用启动时冻结的注释保护语义，不能受运行期设置变化影响。
+        { protectXmlComments: input.processingSemantics?.aiProtectXmlComments === true },
     );
 }
 
@@ -43,10 +45,15 @@ export function processDeepCleanProgramCandidates(input, contentItems, scanResul
         const originalText = String(item.originalText || '');
         if (input.processingMode === 'program') {
             if (item.programEligible !== true) continue;
-            const programSource = applyAiProgramFallbackMatches(
-                originalText,
-                collectDeepCleanAiMatches(input, item, compiledSemantics),
-            );
+            // AI 总开关关闭时不得走 AI 规则回退：那些规则没有程序替换文本，
+            // 回退只会把匹配内容换成空串。规则过滤已剔除它们，这里再拦截一次。
+            const aiEnabled = input.processingSemantics?.aiRewriteEnabled === true;
+            const programSource = aiEnabled
+                ? applyAiProgramFallbackMatches(
+                    originalText,
+                    collectDeepCleanAiMatches(input, item, compiledSemantics),
+                )
+                : originalText;
             const programCandidate = buildDeepCleanProgramText(input, item, compiledSemantics, programSource);
             if (programCandidate !== originalText) proposedResults.push({ itemIndex, programCandidate });
             continue;

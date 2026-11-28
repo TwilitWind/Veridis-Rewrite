@@ -37,10 +37,30 @@ export function scopeSettingsFromSemantics(semantics = {}) {
     };
 }
 
+/**
+ * 与净化对比的 buildProcessors 对齐：AI 改写总开关关闭时，预设里的 AI 子规则不参与深度清理。
+ * 只剔除 rewriteMode==='ai' 的子规则，保留程序子规则与规则分组的其余字段。
+ */
+export function filterPresetRulesForAiSetting(rules, aiEnabled) {
+    const source = Array.isArray(rules) ? rules : [];
+    if (aiEnabled === true) return source;
+    return source
+        .map((rule) => {
+            if (!rule || !Array.isArray(rule.subRules)) return rule;
+            const kept = rule.subRules.filter((sub) => sub?.rewriteMode !== 'ai');
+            if (kept.length === rule.subRules.length) return rule;
+            return { ...rule, subRules: kept };
+        })
+        .filter((rule) => !rule || !Array.isArray(rule.subRules) || rule.subRules.length > 0);
+}
+
 export function createDeepCleanMatcherSettings(input) {
     const semantics = input.processingSemantics || {};
     return {
-        rules: getPresetRules(input.preset),
+        rules: filterPresetRulesForAiSetting(
+            getPresetRules(input.preset),
+            semantics.aiRewriteEnabled === true,
+        ),
         ...scopeSettingsFromSemantics(semantics),
         zhVariantCompatEnabled: semantics.zhVariantCompatEnabled === true,
         zhVariantCompatOptions: semantics.zhVariantCompatOptions || {},

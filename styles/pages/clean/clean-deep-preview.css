@@ -99,6 +99,11 @@
     color: var(--accent-ink);
 }
 
+/* 首个筛选标签贴齐顶栏左缘，与下方正文同一条竖线；其余标签保留左右留白。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-filters button:first-child {
+    padding-left: 0;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-preview-filters button span {
     margin-left: var(--blai-space-6);
     color: inherit;

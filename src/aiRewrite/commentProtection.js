@@ -15,6 +15,16 @@ export function collectXmlCommentRanges(text) {
     return ranges;
 }
 
+/** AI 改写开关是否同时保护 HTML/XML 注释；规则引擎与 AI 链路共用同一判定。 */
+export function shouldProtectXmlComments(settings = {}) {
+    return settings?.aiRewrite?.protectXmlComments === true;
+}
+
+/** 按开关返回需要跳过的注释范围（原文坐标）；关闭时返回空数组。 */
+export function getXmlCommentProtectRanges(text, protect = false) {
+    return protect === true ? collectXmlCommentRanges(text) : [];
+}
+
 export function maskXmlCommentRanges(text, ranges = collectXmlCommentRanges(text)) {
     const source = String(text ?? '');
     if (!source || !Array.isArray(ranges) || ranges.length === 0) return source;

@@ -1,0 +1,72 @@
+/* 悬浮球：body 直属，令牌作用域由 palette.css / theme.js 注入。 */
+
+#blai-mini-ball {
+    position: fixed;
+    right: var(--blai-space-12);
+    bottom: var(--blai-space-18);
+    z-index: var(--blai-z-panel);
+    width: var(--blai-size-48);
+    height: var(--blai-size-48);
+    display: none;
+    place-items: center;
+    box-sizing: border-box;
+    padding: 0;
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-full);
+    background: var(--bg-surface);
+    color: var(--accent-ink);
+    box-shadow: var(--blai-shadow-md);
+    font-size: var(--blai-font-16);
+    cursor: grab;
+    touch-action: none;
+    transition: left var(--blai-duration-slow) var(--blai-ease-out), top var(--blai-duration-slow) var(--blai-ease-out), transform var(--blai-duration-fast) var(--blai-ease-out), box-shadow var(--blai-duration-fast) var(--blai-ease-out), background var(--blai-duration-fast) var(--blai-ease-out), opacity var(--blai-duration-fast) var(--blai-ease-out);
+}
+
+#blai-mini-ball.is-visible {
+    display: grid;
+}
+
+#blai-mini-ball:hover,
+#blai-mini-ball:focus-visible {
+    background: color-mix(in srgb, var(--bg-surface) 88%, var(--accent-color));
+    color: var(--accent-ink);
+    transform: scale(1.06);
+}
+
+#blai-mini-ball.is-dragging {
+    cursor: grabbing;
+    box-shadow: var(--blai-shadow-lg, var(--blai-shadow-md));
+    transform: scale(1.06);
+    /* 拖动跟手：位置不走缓动，松手吸附时才由基础规则滑过去。 */
+    transition: box-shadow var(--blai-duration-fast) var(--blai-ease-out), background var(--blai-duration-fast) var(--blai-ease-out);
+}
+
+/* 贴边：只留一半在视口内，悬停/聚焦/拖动时整颗弹出并恢复不透明。 */
+#blai-mini-ball.is-edge-snapped {
+    opacity: .55;
+}
+
+#blai-mini-ball.is-snap-left.is-edge-snapped:hover,
+#blai-mini-ball.is-snap-left.is-edge-snapped:focus-visible {
+    transform: translateX(50%) scale(1.06);
+}
+
+#blai-mini-ball.is-snap-right.is-edge-snapped:hover,
+#blai-mini-ball.is-snap-right.is-edge-snapped:focus-visible {
+    transform: translateX(-50%) scale(1.06);
+}
+
+#blai-mini-ball.is-edge-snapped:hover,
+#blai-mini-ball.is-edge-snapped:focus-visible,
+#blai-mini-ball.is-edge-snapped.is-dragging {
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    #blai-mini-ball {
+        right: var(--blai-space-10);
+        bottom: var(--blai-space-14);
+        width: var(--blai-size-52);
+        height: var(--blai-size-52);
+    }
+}

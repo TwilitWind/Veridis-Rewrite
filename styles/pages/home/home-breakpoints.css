@@ -311,6 +311,11 @@
     padding: 0;
 }
 
+/* 分组规则弹窗已隐藏 AI/程序筛选，保留 DOM 仅供兼容性，不参与展示。 */
+#blai-rule-edit-modal .blai-edit-filter-wrap[hidden] {
+    display: none;
+}
+
 #blai-rule-edit-modal .blai-edit-filter-trigger {
     display: inline-flex;
     align-items: center;

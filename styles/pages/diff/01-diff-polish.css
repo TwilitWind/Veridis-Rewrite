@@ -12,12 +12,12 @@
     box-shadow: 0 12px 30px var(--blai-modal-shadow);
 }
 
-/* 顶栏组吸顶：标题、工具行与勾选操作条作为一组，长文滚动时不随正文被推出。
-   桌面正文自身滚动，这里只锁住流式位置；手机把滚动交给卡片，sticky 才真正生效。 */
+/* 顶栏组吸顶：标题、工具行与勾选操作条作为一组固定在卡片顶部。
+   两端统一由正文作为唯一滚动容器，顶栏是卡片的 flex 项、不参与滚动，
+   这样长文滚动时它绝不会被推出可视区（手机浏览器上 sticky 不可靠）。 */
 #blai-diff-modal .blai-diff-sticky-head {
     flex: 0 0 auto;
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: var(--blai-z-inner-raised);
     background: var(--bg-surface);
 }
@@ -208,11 +208,9 @@
     max-width: none;
     height: var(--blai-viewport-h);
     max-height: var(--blai-viewport-h);
-    /* 手机端滚动交给整张卡片：顶栏组 sticky 才会真正贴住顶部，
-       正文不再另起一个滚动容器，避免长文把顶栏推出可视区。 */
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    /* 卡片自身不滚动：顶栏组作为 flex 项固定在顶部，滚动只发生在正文，
+       避免手机浏览器把 sticky 顶栏连同卡片一起推出可视区。 */
+    overflow: hidden;
     border: 0;
     border-radius: 0;
     box-shadow: none;
@@ -258,9 +256,13 @@
 #blai-diff-modal .blai-diff-modal-content {
     margin: 0;
     padding: var(--blai-space-8) var(--blai-space-12);
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     min-height: 0;
-    overflow: visible;
+    max-height: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 }

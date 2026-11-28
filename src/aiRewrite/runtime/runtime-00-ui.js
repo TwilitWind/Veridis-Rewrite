@@ -399,7 +399,8 @@ export function applyAiProgramFallback(taskLike, reason = '') {
 
     const msg = chat[index];
     if (!isAssistantMessage(msg)) return { applied: false, reason: 'not-assistant-message' };
-    if (isMessageDiffReverted(msg)) return { applied: false, reason: 'message-reverted' };
+    // 与 getTaskFreshnessIssue 对齐：显式重新净化的回退也要能在撤回态落盘。
+    if (isMessageDiffReverted(msg) && taskLike?.recleanse !== true) return { applied: false, reason: 'message-reverted' };
     if (taskLike?.messageRef && msg !== taskLike.messageRef) return { applied: false, reason: 'message-ref-changed' };
     if (taskLike?.automatic === true) {
         const validation = validateAutomaticAiRewriteContent(taskLike, { source: 'program-fallback' });

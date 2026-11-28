@@ -21,23 +21,36 @@ import { closeScopeTagsModal, renderScopeTagsModal } from './scope/view.js';
 import { bindDiffEvents } from './diff/events.js';
 import { bindDeepCleanEvents } from './deepClean/events.js';
 import { bindComposerButtonAiRewriteEvent, updateComposerButtonSetting } from './aiRewrite/composerButton.js';
+import { bindMiniModeEvents, setMiniModeExpandHandler, setMiniModeEnabled, isMiniModeEnabled, isMiniModeActive, enterMiniMode, exitMiniMode } from './ui/miniMode.js';
 import { bindFeedbackEvents, openFeedbackPage } from './feedback/events.js';
 import { bindInfoPopoverEvents } from './ui/infoPopover.js';
 import { bindTourEvents, offerMainTourFirstUse } from './ui/tour.js';
 
 export function bindEvents() {
     const { extension_settings, saveSettingsDebounced, eventSource } = getAppContext();
-    const openPurifier = () => {
+    // 工具栏入口与悬浮球入口共用同一套首屏刷新，避免球态刷新启动后列表空白。
+    const refreshPurifierUi = () => {
         updateToolbarUI();
         updateLegacyPurifierWarning();
         showResponsivePage('overview');
         renderTags();
         renderScopeTagsModal();
-        // 进场用 base 节奏（与 --blai-duration-base 一致），退场用 fast，避免整块慢淡出。
-        $('#blai-purifier-popup').css('display', 'grid').hide().fadeIn(getFadeDuration('in'));
+    };
+    const openPurifier = () => {
+        // 从酒馆工具栏打开面板时若还处于悬浮球态，先退出迷你态，
+        // 避免「已经在插件界面」却仍留着一颗悬浮球。
+        if (isMiniModeActive()) {
+            exitMiniMode();
+        } else {
+            refreshPurifierUi();
+            // 进场用 base 节奏（与 --blai-duration-base 一致），退场用 fast，避免整块慢淡出。
+            $('#blai-purifier-popup').css('display', 'grid').hide().fadeIn(getFadeDuration('in'));
+        }
         offerMainTourFirstUse();
     };
     bindComposerButtonAiRewriteEvent(eventSource);
+    setMiniModeExpandHandler(refreshPurifierUi);
+    bindMiniModeEvents();
     bindFeedbackEvents();
     bindInfoPopoverEvents();
     bindTourEvents();
@@ -78,6 +91,11 @@ export function bindEvents() {
     });
 
     $(document).off('click', '#blai-close-btn').on('click', '#blai-close-btn', () => {
+        // 悬浮球模式开关开启时，× 收起为悬浮球；未开启时 × 仍是真正的关闭。
+        if (isMiniModeEnabled()) {
+            enterMiniMode();
+            return;
+        }
         // 改动已由 markRulesDataDirty 的钩子实时写回预设快照，关闭无需再弹「未保存」确认。
         closeRuleSearchModal({ reset: true });
         closeScopeTagsModal({ reset: true });
@@ -87,8 +105,8 @@ export function bindEvents() {
     normalizeZhVariantSettings(settings);
     const syncSkipUserToggle = () => {
         syncToggleState('#blai-skip-user-toggle', settings.skipUserMessages === true, {
-            onTitle: '关闭跳过用户消息',
-            offTitle: '开启跳过用户消息',
+            onTitle: '关闭跳过用户输入',
+            offTitle: '开启跳过用户输入',
             stateSelector: '.blai-switch-state',
         });
     };
@@ -102,6 +120,15 @@ export function bindEvents() {
         });
     };
     syncComposerButtonToggle();
+
+    const syncMiniModeToggle = () => {
+        syncToggleState('#blai-mini-mode-toggle', isMiniModeEnabled(), {
+            onTitle: '关闭悬浮球模式',
+            offTitle: '开启悬浮球模式',
+            ariaLabel: true,
+        });
+    };
+    syncMiniModeToggle();
 
     const syncShujukuAutoRewriteToggle = () => {
         syncToggleState('#blai-shujuku-auto-rewrite-toggle', settings.shujukuAutoProgramRewriteEnabled === true, {
@@ -125,6 +152,12 @@ export function bindEvents() {
         const enabled = settings.showComposerAiRewriteButton !== true;
         updateComposerButtonSetting(enabled);
         syncComposerButtonToggle();
+    });
+
+    $(document).off('click', '#blai-mini-mode-toggle').on('click', '#blai-mini-mode-toggle', function(e) {
+        e.preventDefault();
+        setMiniModeEnabled(!isMiniModeEnabled());
+        syncMiniModeToggle();
     });
 
     $(document).off('click', '#blai-skip-user-toggle').on('click', '#blai-skip-user-toggle', function(e) {
