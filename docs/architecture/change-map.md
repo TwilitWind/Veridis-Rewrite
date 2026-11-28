@@ -21,7 +21,7 @@
 | 改下拉滚动关闭行为 | `ui/popover.js` 的 scroll 捕获：portal 菜单内部滚动必须 return，外部才 `closeAllMenuPopovers` |
 | 改下拉外观 / 限高 | `styles/tokens/02-themes.css` 的 `--blai-dropdown-*`（pad/gap/item-radius/max-height），组件不写裸值；`ui/popover.js` 的 `positionManually` 再按锚点空间收紧。portal 到 body 的菜单必须带 `.blai-portal-menu`，否则继承不到 token |
 | 改导览卡定位 | `ui/tour/tour-01-steps.js` 的 `calculateTourPopoverPlacement` / `positionTourPopover` + `styles/pages/tour/00-tour.css`。导览卡不要挂 `.blai-modal-card`：通用弹窗规则的 `width:100%!important` 会把按内容限宽的气囊撑到视口宽，手机端再被 clamp 推成负 left |
-| CDP 探针不要伪造外壳 display | `#blai-purifier-popup.blai-app-shell` 自身是 grid 布局；探针里写 `shell.style.display='flex'` 会覆盖 grid，让 `.rail` 变成整行竖排、页面内容塌到下方，截图看起来像「没显示完」。需要打开界面时走真实入口，或只清掉 inline `display:none`，不要强行设 `flex` |
+| 检查界面显隐时不要伪造外壳 display | `#blai-purifier-popup.blai-app-shell` 自身是 grid 布局；调试时写 `shell.style.display='flex'` 会覆盖 grid，让 `.rail` 变成整行竖排、页面内容塌到下方，看起来像「没显示完」。需要打开界面时走真实入口，或只清掉 inline `display:none`，不要强行设 `flex` |
 | 改滑动开关 | `styles/components/02-controls.css`：轨道和滑块全用 CSS 绘制，模板 / `scope/view.js` 只输出空 track；轨道 `inline-flex + align-items:center + justify-content:flex-start + padding:0 2px` 让圆点垂直居中且关闭态靠左，开启态只改 `--blai-switch-knob`（近白色，不用主题 `accent-contrast`）与 `--blai-switch-offset: calc(100% - 14px)`；页面级规则也必须写 `flex-start`，写 `center` 会把关闭态圆点推到中间 |
 | 改 API 手动模型 | `aiRewrite/settingsEvents/events-00-core.js` 的 `syncAiModelControl` / `removeManualAiModel`（手动在前），`events-01-bindings.js` 的管理弹窗绑定，模板 `#blai-ai-model-manage-modal` |
 | 给原生 select 选项加图标 | `ui/nativeSelectMenu.js` 读 `data-blai-icon`，自绘 trigger / menu 都渲染 `<i class="fas fa-*">`；图标类必须在 FA 6.5.2 存在 |
@@ -32,8 +32,8 @@
 | 改差异记录 | `diff/tracking.js`（谁被记录）+ `messageMeta.js`（存取）+ `view.js` / `compare.js`（渲染） |
 | 改命中规则定位 | `rules/ruleIdentity.js`（指纹）+ `rules/engine/engine-00-patterns.js`（processor 带来源）+ `engine-01-replace.js`（命中回调）+ `diff/ruleHitTrace.js`（存取回查）+ `diff/events/diffRelatedRules.js`（UI） |
 | 改全文改写上色 | `styles/pages/diff/00-diff.css`（`.blai-diff-modal-content ins/del` 用 `--blai-diff-stage-*`，片段/全文共用） |
-| 改深度净化范围 | `inventory.js`（列什么）+ `contentItems.js`（读什么）+ `apply/`（写回什么）+ `view.js`（界面说明） |
-| 改深度净化预览交互 | `deepClean/events/events-01-preview.js`（入口、筛选、逐条定位、差异勾选、取消在途请求）；主流程在 `deepClean/events.js`，执行阶段由 `startDeepCleanProcessing` 回调接回 |
+| 改深度清理范围 | `inventory.js`（列什么）+ `contentItems.js`（读什么）+ `apply/`（写回什么）+ `view.js`（界面说明） |
+| 改深度清理预览交互 | `deepClean/events/events-01-preview.js`（入口、筛选、逐条定位、差异勾选、取消在途请求）；主流程在 `deepClean/events.js`，执行阶段由 `startDeepCleanProcessing` 回调接回 |
 | 改扫描结果指标文案 / 布局 | `deepClean/view/view-00-selection.js` 的 `renderDeepCleanScanResult`（指标名 + 口径说明 + 按钮文案）+ `styles/pages/clean/clean-deep-processing.css` + `clean-deep-responsive.css`；计数口径以 `deepClean/scan.js` 为准 |
 | 改新手指引步骤 / 锚点 | `ui/tour/tour-01-steps.js`（文案）与 `tour-00-targets.js`（目标函数）。目标必须桌面/手机都存在且可见；手机端滚动由 `tour-02-runtime.js` 的 `phoneTourScrollOwner` 处理。改完在桌面与手机双视口实测锚点与显隐 |
 | 改对话框外观 | `ui/notifications.js` + `styles/components/02-controls.css` 的 `.blai-plugin-dialog-card` 段 |
@@ -62,11 +62,11 @@
 | `pages/clean/clean-main.css` | 净化页主列、模式卡、标签分组列表与分组开关 |
 | `pages/clean/clean-scope-tags.css` | 标签（分组详情）编辑器弹窗 |
 | `pages/clean/clean-tag-list.css` | 净化页标签列表、分组开关、下拉菜单 |
-| `pages/clean/clean-deep-shell.css` | 深度净化外壳：遮罩、头部、内容区、选择与配置 |
-| `pages/clean/clean-deep-modes.css` | 深度净化：规则预设、处理模式、执行面板、处理范围信息行 |
-| `pages/clean/clean-deep-processing.css` | 深度净化：批处理进度、扫描与完成态 |
-| `pages/clean/clean-deep-results.css` | 深度净化：进度、结果、完成态 |
-| `pages/clean/clean-deep-responsive.css` | 深度净化响应式：900 / 600 / 920 / 700 四档媒体查询 |
+| `pages/clean/clean-deep-shell.css` | 深度清理外壳：遮罩、头部、内容区、选择与配置 |
+| `pages/clean/clean-deep-modes.css` | 深度清理：规则预设、处理模式、执行面板、处理范围信息行 |
+| `pages/clean/clean-deep-processing.css` | 深度清理：批处理进度、扫描与完成态 |
+| `pages/clean/clean-deep-results.css` | 深度清理：进度、结果、完成态 |
+| `pages/clean/clean-deep-responsive.css` | 深度清理响应式：900 / 600 / 920 / 700 四档媒体查询 |
 | `pages/feedback/feedback-workspace.css` | 反馈页工作区、视图标签、提交表单 |
 | `pages/feedback/feedback-form.css` | 反馈页表单控件：勾选框、按钮、状态与提示 |
 | `pages/feedback/feedback-diagnostics.css` | 反馈页本地诊断与预览、手机窄屏顶栏 |

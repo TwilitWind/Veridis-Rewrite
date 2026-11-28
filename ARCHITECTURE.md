@@ -83,16 +83,16 @@ jQuery(() => { createDefaultSettings → 旧命名空间导入 → legacy 拷贝
 
 - **宿主与数据**：宿主能力只走 `host/appContext.js` + `host/context.js` 两层；设置主键 `ultimate_purifier_ai_rewrite` 不随显示名改动。
 - **净化与撤回**：`compileProcessors` 不含 AI 规则，先 AI 后程序；撤回只看 `meta` 是否存在，手动编辑后仍可撤回。
-- **深度净化**：只处理当前角色卡的世界书与聊天记录，`is_system === true` 不跳过，运行预设由 `frozenRunInput` 冻结。
+- **深度清理**：只处理当前角色卡的世界书与聊天记录，`is_system === true` 不跳过，运行预设由 `frozenRunInput` 冻结。
 - **界面与浮层**：五个 page id 与两套导航按钮成对；禁用原生对话框，大弹窗必须是 body 直属；层级只走 `--blai-z-*`，portal 定位只由 `ui/popover.js` 写。
-- **动效**：切页待办只在 `ui/shell.js` 的 `pendingPageSwap`，动效只动 transform / opacity，不改定位元素的 transform，不做横向 push / pop。
+- **切换**：切页、弹窗、菜单一律即时显示，不做转场；快速连点由 `ui/shell.js` 的 `pendingPageSwap` 只保留最后一次目标。portal 菜单的定位元素不叠 transform。
 
 ## 五、专项文档
 
 | 文档 | 内容 | 什么时候读 |
 | --- | --- | --- |
 | [modules.md](docs/architecture/modules.md) | 各目录模块职责、关键导出：入口与宿主、UI 外壳、文本内核、AI 改写、净化差异、其余 | 想知道"某功能由哪个模块实现" |
-| [mechanics.md](docs/architecture/mechanics.md) | 净化管道、撤回、深度净化范围、差异记录、页面导航、弹窗浮层、命名空间、存储键 | 要改机制或查运行约束 |
+| [mechanics.md](docs/architecture/mechanics.md) | 净化管道、撤回、深度清理范围、差异记录、页面导航、弹窗浮层、命名空间、存储键 | 要改机制或查运行约束 |
 | [style-tokens.md](docs/architecture/style-tokens.md) | 令牌分区、界面令牌落点、反馈页高亮、`!important` 例外登记 | 要改样式或令牌 |
 | [change-map.md](docs/architecture/change-map.md) | "想改什么 → 改哪里"速查表、样式文件职责速查 | 动手前定位改动落点 |
 

@@ -47,11 +47,11 @@
 | `debug.js` / `debugStore.js` / `debugView.js` / `communicationMonitor.js` | `debug.js` 对外入口（记录事件、导出文本）；`debugStore.js` 管常量、脱敏、localStorage 读写与事件合并（普通 100 条、关键 160 条）；`debugView.js` 中文标签表与时间线排版；`communicationMonitor.js` 通信记录（最近 10 次）。反馈页三面板数据源 |
 | `composerButton.js` / `settingsEvents.js` | 输入框快捷按钮注入、AI 页事件与两开关联动 |
 
-**执行顺序与失败边界**：开启 AI 改写时，普通聊天、透视重新净化与深度净化「程序 + AI 改写」一律先按序发起所有 AI 改写，AI 全部完成后再按序执行程序改写。`applyAiProgramFallback` 在总开关开启时直接拒绝回退；未发送、请求失败或写回失败只给非交互提示并带原因，绝不改跑程序改写。深度净化的 AI 请求基于原文构建，成功结果先落 AI 候选，最后才把程序规则作用到该候选；AI 失败项保持原文并计入失败摘要。关闭总开关时三条链路都只跑程序改写。
+**执行顺序与失败边界**：开启 AI 改写时，普通聊天、透视重新净化与深度清理「程序 + AI 改写」一律先按序发起所有 AI 改写，AI 全部完成后再按序执行程序改写。`applyAiProgramFallback` 在总开关开启时直接拒绝回退；未发送、请求失败或写回失败只给非交互提示并带原因，绝不改跑程序改写。深度清理的 AI 请求基于原文构建，成功结果先落 AI 候选，最后才把程序规则作用到该候选；AI 失败项保持原文并计入失败摘要。关闭总开关时三条链路都只跑程序改写。
 
 **附加参数**：对齐酒馆原生 API 设置三项（主体参数 / 排除主体参数 / 包含请求标头），做成 API 连接区按钮 + 弹窗，按钮小圆点提示「未填写 / 已填写」。三个字段 `customIncludeBody` / `customExcludeBody` / `customIncludeHeaders` 是全局 AI 设置（不进 API 预设快照），存 YAML 文本。**关键在透传形态**：TavernHelper（JS-Slash-Runner）把 `custom_api` 三个字段各自 `YAML.stringify` 后交后端，故 `generation.js` 必须把用户文本解析成对象/数组再放入 `custom_api`，不能原样传字符串。`additionalParameters.js` 是零依赖 YAML 子集解析器（扁平键值、一层缩进对象、字符串数组、数字/布尔/null/引号串/行内 JSON、注释容错），非法行静默跳过。合并策略：用户 `custom_include_body` 为基础，插件必需的 `response_format:{type:'json_object'}` 与 UI 派生的 `repetition_penalty` 后置覆盖；`custom_exclude_body` / `custom_include_headers` 仅非空时加入。
 
-### 净化、差异与深度净化
+### 净化、差异与深度清理
 
 | 模块 | 关键导出 / 职责 |
 | --- | --- |

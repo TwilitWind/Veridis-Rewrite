@@ -51,7 +51,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 实现为动态挂载 `.blai-modal-shell.blai-plugin-dialog` + `.blai-modal-card.blai-plugin-dialog-card`，样式在 `styles/components/02-controls.css`，居中由遮罩层 flex 保证。
 
-**切页是 fade through，弹窗走退场后切换**：`showResponsivePage` 在点击当帧把 `.active` 唯一地切到目标页（导览与业务代码读到的永远是目标页），旧页保留布局加 `.blai-is-leaving` 淡出 80ms，新页加 `.blai-is-entering` 等旧页退完再淡入 120ms。待办切换只存在 `pendingPageSwap` 一处，快速连点作废旧任务，最终只留最后一次目标。弹窗与反馈页标签的退场后切换由 `src/ui/motion.js` 的 `fadeOutThen` 提供。切页/弹窗只改 `opacity`，弹卡入场允许在卡片自身叠轻 scale；portal 菜单的定位元素不叠 `transform`。时长取自 `03-scale.css` 的动效令牌，JS 兜底定时器与 jQuery 淡入淡出也读同一组值，不在调用点写死。横向 push/pop 禁用，理由见 `DESIGN.md`。
+**切页与弹窗即时切换，不做转场**：`showResponsivePage` 在点击当帧把 `.active` 唯一地切到目标页，导览与业务代码读到的永远是目标页。快速连点由 `src/ui/shell.js` 的 `pendingPageSwap` 作废旧任务，最终只留最后一次目标。`src/ui/motion.js` 保留 `fadeOutThen` / `renderWithFlip` / `getFadeDuration` 等导出名供调用方共用，但内部一律直接落到终态：退场回调立即执行、重渲染直接写 HTML、时长返回 0，`styles/components/04-motion.css` 不再定义任何转场动画。原因见 `DESIGN.md`：整页 crossfade 会闪、横向 push/pop 与本插件的 dismiss 形态不符，手机端还会掉帧。
 
 **挂载位置**：所有大弹窗都必须是 `#blai-purifier-popup` 之后的 body 直属兄弟。模板按顶层节点拆成 `templates/purifier-shell.html`（外壳 + 反馈页）、`purifier-page-overview/ai/clean/tools.html`（四个页面面板）、`purifier-modals.html`、`purifier-diff.html`、`purifier-forms.html`，由 `src/ui/shell.js` 并发渲染后先注入脱离文档的外壳，再按「外壳 → 其余片段」顺序一次性 append 到 body。`#blai-purifier-popup` 带 `backdrop-filter`，会生成层叠上下文，内部 `position:fixed` 相对它定位，遮罩铺不满视口、弹窗还可能被主界面挡住。新增弹窗时同步补 `src/ui/shell.js` 的初始化清理清单，否则重复加载残留旧节点；新增模板片段时同步补 `templateIds` 数组，宿主渲染失败会返回 `undefined`，拼装处必须显式报错而不是静默缺块。
 
@@ -63,7 +63,7 @@ const name = await showPromptModal('分组名', '', { placeholder: '分组名' }
 
 **AI 改写提示独立容器**：`notifyAiRewriteStatus` 在 `#blai-ai-toast-container` 里自建 `.blai-ai-rewrite-toast`，不碰宿主 `toastApi`。sticky、关闭/终止按钮、进度标题/正文、自动消失与悬停暂停齐备；`data-type` 决定语义色与 FA 字形图标。这样能压在透视弹窗上、顶部居中，且不动宿主和其他插件的 toastr。
 
-四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(100dvh - 28px)` 高、16px 圆角（`styles/pages/home/home-breakpoints.css`）；600px 以下整屏（`100vw/100dvh`）、去圆角、适配安全区。
+四个大弹窗（搜索/编辑规则/编辑分组/子规则）在 `@media (min-width: 601px)` 下统一 `min(560px, 100vw - 28px)` 宽、`calc(var(--blai-viewport-h) - 28px)` 高、16px 圆角（`styles/pages/home/home-breakpoints.css`）；600px 以下整屏（`100vw` × `--blai-viewport-h`）、去圆角、适配安全区。视口高度只走 `--blai-viewport-h`（`100vh` 回退、支持时用 `100svh`），不写 `100dvh`：手机软键盘弹出时不重排布局。
 
 **`[hidden]` 失效**：`.blai-subrule-field{display:flex!important}` 会压掉默认 `[hidden]{display:none}`，靠 `prop('hidden', …)` 切换的块都要补 `.X[hidden]{display:none!important}`（`styles/pages/home/home-overview.css` 有先例）。
 
