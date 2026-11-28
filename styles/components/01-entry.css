@@ -4,11 +4,6 @@
     text-shadow: none;
 }
 
-/* 魔法棒菜单条目：DOM 已完整复用酒馆原生的
-   .list-group-item.flex-container.flexGap5 + div.extensionsMenuExtensionButton，
-   与原生 attachments/manage-button.html 同构。布局（flex / baseline / gap /
-   换行）全部交给原生类计算，这里只留 cursor —— 一旦写 display/align/gap/
-   nowrap 就会和原生声明打架，让「词汇映射」文字缩进与上下条目不一致。 */
 #blai-wand-btn {
     cursor: pointer;
 }

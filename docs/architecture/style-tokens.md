@@ -46,7 +46,7 @@
 
 ### !important 例外登记
 
-`build-check.mjs` 按「相对基线累计增量」给 5 处预算：`+1~+5` 只在输出里记一行 info，不逐条 warn；超过 5 直接拦截。只有被拦截并确认确实无法用特异性 / token / `@layer` 解决时，才在下表补一行，然后同步更新 `styles/quality-baseline.json` 的预算。
+共享脚本 `code-audit/build-check.mjs` 按「相对基线累计增量」给 5 处预算：`+1~+5` 只在输出里记一行 info，不逐条 warn；超过 5 直接拦截。只有被拦截并确认确实无法用特异性 / token / `@layer` 解决时，才在下表补一行，然后同步更新 `styles/quality-baseline.json` 的预算。
 
 | 文件 | 选择器 / 属性 | 对抗对象 | 不能用 token / 特异性的原因 | 登记日期 |
 | --- | --- | --- | --- | --- |

@@ -1,5 +1,5 @@
 {
-  "note": "把 styles/ 当前的硬编码颜色/像素与 !important 用量记成基线；build-check.mjs 用它防止上涨。改完要涨就先说服自己，再改这里的数。important 一列必须等于当前实际数量，否则闸门第 10 条形同虚设。",
+  "note": "把 styles/ 当前的硬编码颜色/像素与 !important 用量记成基线；共享脚本 code-audit/build-check.mjs 用它防止上涨。改完要涨就先说服自己，再改这里的数。important 一列必须等于当前实际数量，否则闸门第 10 条形同虚设。",
   "base": {
     "tokens/01-palette.css": {
       "hex": 9,
