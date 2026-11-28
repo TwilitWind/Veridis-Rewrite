@@ -616,22 +616,3 @@
     margin: 0 0 var(--blai-space-2);
     padding: 0;
 }}
-
-/* 切页 fade through（M3 top-level）：旧页保留布局淡出，新页等旧页退完再淡入。
-   .active 在点击当帧就切走，导览/业务取当前页时不会读到正在退场的内容。 */
-#blai-purifier-popup .page-panel.blai-is-leaving {
-    display: grid;
-    pointer-events: none;
-    animation: blai-fade-out var(--blai-duration-page-out) var(--blai-ease-out) both;
-}
-
-#blai-purifier-popup .page-panel.blai-is-entering {
-    animation: blai-page-enter var(--blai-duration-page-in) var(--blai-ease-out) var(--blai-duration-page-out) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    #blai-purifier-popup .page-panel.blai-is-leaving,
-    #blai-purifier-popup .page-panel.blai-is-entering {
-        animation: none;
-    }
-}

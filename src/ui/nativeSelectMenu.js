@@ -95,24 +95,37 @@ function syncTrigger(select, state) {
     state.trigger.classList.toggle('is-empty', !selectedOption(select) || selectedOption(select).value === '');
 }
 
+function menuSignature(select, placeholder) {
+    // innerHTML 覆盖选项文本 / 分组 / 禁用状态，value 覆盖 select.value 切换造成的 selected 变化。
+    return `${placeholder}\u0000${select.value}\u0000${select.innerHTML}`;
+}
+
 function syncMenu(select, state) {
     if (!state.menu) return;
-    state.menu.innerHTML = buildMenuHtml(select, state.placeholder);
+    const signature = menuSignature(select, state.placeholder);
+    if (state.menuSignature !== signature) {
+        state.menu.innerHTML = buildMenuHtml(select, state.placeholder);
+        state.menuSignature = signature;
+    }
     syncTrigger(select, state);
 }
 
-// 菜单自身是 grid + minmax(0,1fr)，getBoundingClientRect() 不会把长文案算进固有宽度。
-// 直接读文字的 scrollWidth，再加图标列、间距与两侧 padding，得到「不换行所需宽度」。
+// 菜单是 grid + minmax(0,1fr)，普通宽度下长文案不会撑开容器。
+// 旧实现逐项读 scrollWidth，每项都会强制一次同步布局，选项一多展开就卡。
+// 这里用 canvas 按菜单实际字体量文本，再加图标列 / 间距 / 内边距：
+// 只读一次样式、不触发布局，长选项也不会被提前截断。
 function naturalMenuWidth(menu) {
     const px = (value) => parseFloat(value) || 0;
-    const nodes = [...menu.querySelectorAll(`.${ITEM_TEXT_CLASS}, .${GROUP_CLASS}-label`)];
-    const text = nodes.reduce((max, node) => Math.max(max, node.scrollWidth), 0);
     const item = menu.querySelector(`.${ITEM_CLASS}`);
-    const itemStyle = item ? getComputedStyle(item) : null;
+    const itemStyle = item ? getComputedStyle(item) : getComputedStyle(menu);
     const menuStyle = getComputedStyle(menu);
-    const icon = item?.querySelector('i')?.getBoundingClientRect().width || 0;
-    const gap = itemStyle ? px(itemStyle.columnGap) : 0;
-    const itemPad = itemStyle ? px(itemStyle.paddingLeft) + px(itemStyle.paddingRight) : 0;
+    const context = document.createElement('canvas').getContext('2d');
+    context.font = `${itemStyle.fontStyle} ${itemStyle.fontWeight} ${itemStyle.fontSize} ${itemStyle.fontFamily}`;
+    const nodes = [...menu.querySelectorAll(`.${ITEM_TEXT_CLASS}, .${GROUP_CLASS}-label`)];
+    const text = nodes.reduce((max, node) => Math.max(max, context.measureText(node.textContent || '').width), 0);
+    const icon = px(menuStyle.getPropertyValue('--blai-dropdown-icon-slot'));
+    const gap = px(itemStyle.columnGap);
+    const itemPad = px(itemStyle.paddingLeft) + px(itemStyle.paddingRight);
     const shell = px(menuStyle.paddingLeft) + px(menuStyle.paddingRight)
         + px(menuStyle.borderLeftWidth) + px(menuStyle.borderRightWidth);
     return Math.ceil(shell + itemPad + icon + gap + text);
@@ -158,7 +171,7 @@ export function enhanceNativeSelect(select, options = {}) {
 
     const placeholder = options.placeholder ?? '';
     const ariaLabel = options.ariaLabel ?? select.getAttribute('aria-label') ?? '';
-    const state = { select, placeholder, ariaLabel, trigger: null, labelEl: null, menu: null, observer: null };
+    const state = { select, placeholder, ariaLabel, trigger: null, labelEl: null, menu: null, observer: null, menuSignature: '' };
 
     const wrapper = document.createElement('div');
     wrapper.className = `${WRAPPER_CLASS}${options.className ? ` ${options.className}` : ''}`;

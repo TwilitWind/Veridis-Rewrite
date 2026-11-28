@@ -122,7 +122,8 @@ export function cleanseMessageDataAtIndex(index, options = {}) {
     const metadataChanged = manualEditBaseline
         ? writeMessageDiffProgram(msg, getMessageDiffBranchKey(msg), currentMes, msg.mes)
         : explicit
-            ? (setMessageDiffProgramMes(msg, msg.mes) || syncMessageDiffMetadata(msg, sourceMes, msg.mes).metadataChanged)
+            ? (setMessageDiffProgramMes(msg, msg.mes, getMessageDiffBranchKey(msg), { clearAiStage: options.clearAiStage === true })
+                || syncMessageDiffMetadata(msg, sourceMes, msg.mes).metadataChanged)
             : syncMessageDiffMetadata(msg, sourceMes, msg.mes).metadataChanged;
     const traceChanged = recordRuleHitTrace(msg, sourceMes);
     maintainDiffRetention();

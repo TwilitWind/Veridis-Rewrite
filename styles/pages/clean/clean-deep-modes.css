@@ -299,12 +299,8 @@
 
 
 #blai-deep-clean-workspace .blai-deep-clean-selection-actions {
-    min-height: var(--blai-size-52);
-    padding: var(--blai-space-8) var(--blai-space-16);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: var(--blai-space-9);
     border-top: var(--blai-border-1) solid var(--border-color);
     background: var(--bg-surface);
 }

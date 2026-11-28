@@ -456,6 +456,6 @@
     flex: 0 0 auto !important;
     min-width: var(--blai-size-96);
     padding: var(--blai-modal-btn-pad) !important;
-    min-height: var(--blai-size-38);
-    font-size: var(--blai-font-13) !important;
+    min-height: var(--blai-modal-btn-height);
+    font-size: var(--blai-modal-btn-font-size) !important;
 }

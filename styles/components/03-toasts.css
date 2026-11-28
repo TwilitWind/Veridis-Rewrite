@@ -105,13 +105,13 @@
 
 /* 弹窗底栏主/次按钮是独立短文案操作，统一胶囊；卡片与输入框仍用中圆角。 */
 .blai-modal-shell :is(.blai-secondary-btn, .blai-primary-btn) {
-    min-height: var(--blai-size-38);
+    min-height: var(--blai-modal-btn-height);
     border-radius: var(--blai-radius-sm);
     border: var(--blai-border-1) solid var(--border-color);
     background: transparent;
     color: var(--text-main);
-    font-size: var(--blai-font-13);
-    font-weight: var(--blai-weight-bold);
+    font-size: var(--blai-modal-btn-font-size);
+    font-weight: var(--blai-modal-btn-font-weight);
     box-shadow: none;
 }
 
@@ -223,18 +223,19 @@
     padding-top: 0 !important;
 }
 
-/* 所有弹窗底栏按钮同一套尺寸与字重：32px 高、--blai-fs-control 字号、Medium 500，不靠加粗区分主次。 */
+/* 所有弹窗底栏按钮同一套几何与排版：数值只从弹窗按钮令牌读取。 */
 .blai-modal-shell .blai-primary-btn, .blai-modal-shell .blai-secondary-btn, .blai-modal-shell .blai-modal-actions button, .blai-modal-shell .blai-subrule-footer button {
-    min-height: var(--blai-size-32) !important;
+    min-height: var(--blai-modal-btn-height) !important;
     padding: var(--blai-modal-btn-pad) !important;
+    margin: var(--blai-modal-btn-margin) !important;
     border-radius: var(--blai-radius-sm) !important;
-    font-size: var(--blai-fs-control) !important;
-    font-weight: var(--blai-weight-medium) !important;
+    font-size: var(--blai-modal-btn-font-size) !important;
+    font-weight: var(--blai-modal-btn-font-weight) !important;
 }
 
 .blai-modal-shell :is(.blai-modal-actions, .blai-subrule-footer) button {
-    height: var(--blai-size-32);
-    max-height: var(--blai-size-32);
+    height: var(--blai-modal-btn-height);
+    max-height: var(--blai-modal-btn-height);
 }
 
 #blai-risk-confirm-modal > .blai-risk-confirm-card, #blai-risk-info-modal > .blai-risk-info-card {

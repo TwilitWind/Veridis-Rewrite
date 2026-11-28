@@ -59,6 +59,8 @@ export function recleanseDiffMessageAtIndex(index) {
     const changed = cleanseMessageDataAtIndex(index, {
         diffSourceMes: sourceMes,
         explicitRecleanse: true,
+        // AI 改写已关闭：本轮只有程序阶段，不能沿用上次 AI 改写内容当程序输入。
+        clearAiStage: true,
     });
     showRecleanseFeedback(String(msg.mes || '') !== beforeMes);
     // 与 AI 提交路径对称：用旧 DOM 快照盖住这次重绘，赢过 Tauri 手机端宿主的窗口化重绘。

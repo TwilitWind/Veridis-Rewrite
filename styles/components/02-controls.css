@@ -491,12 +491,13 @@
 .blai-modal-actions .blai-secondary-btn, .blai-modal-actions .blai-primary-btn, .blai-modal-actions button {
     flex: 1;
     padding: var(--blai-modal-btn-pad);
-    font-size: var(--blai-font-14);
+    font-size: var(--blai-modal-btn-font-size);
+    font-weight: var(--blai-modal-btn-font-weight);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: var(--blai-space-6);
-    margin: 0;
+    margin: var(--blai-modal-btn-margin);
     border-radius: var(--blai-radius-sm);
 }
 

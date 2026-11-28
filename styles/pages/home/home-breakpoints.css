@@ -412,10 +412,10 @@
  * 大弹窗顶栏 / 正文 / 底栏统一为同一层容器色，靠负外边距贴到卡片边缘；
  * 层级改由低对比边框和留白表达，不再叠三段底色。
  * --------------------------------------------------------------------------- */
+/* --blai-modal-pad-x 已在 tokens/03-scale.css 全局定义为 20px，卡片不再重定义。 */
 #blai-rule-edit-modal.blai-modal-shell > .blai-edit-modal-card,
 #blai-subrule-edit-modal.blai-modal-shell > .blai-subrule-modal-card {
     --blai-modal-pad-y: var(--blai-space-16);
-    --blai-modal-pad-x: var(--blai-space-20);
 }
 
 /* 顶栏：与卡片同色，向上/左右顶到卡片边缘 */
@@ -463,8 +463,8 @@
 
 #blai-rule-edit-modal .blai-modal-actions > button,
 #blai-subrule-edit-modal .blai-subrule-footer > button {
-    height: var(--blai-size-32) !important;
-    min-height: var(--blai-size-32) !important;
+    height: var(--blai-modal-btn-height) !important;
+    min-height: var(--blai-modal-btn-height) !important;
     padding: var(--blai-modal-btn-pad) !important;
 }
 

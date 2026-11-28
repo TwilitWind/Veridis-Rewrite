@@ -1,4 +1,4 @@
-/** view 的分块：preview。单列简约布局：两行顶栏 + 默认收起的纵向条目列表 + 当前条目正文。 */
+/** view 的分块：preview。桌面/手机同一套两行顶栏：条目列表在左，条目导航与筛选在右；复选框在标题左侧。 */
 
 import {
     filterDeepCleanPreviewItems,
@@ -9,7 +9,6 @@ import {
     revertedBlockCount,
 } from '../preview.js';
 import { deepCleanSafeHtml, setDeepCleanWorkspaceHeader } from './view-00-selection.js';
-import { renderSourceLegend } from '../../diff/diffCopy.js';
 import { renderDiffChangeTag } from '../../diff/compare.js';
 import { deepCleanRuntimeState } from '../state.js';
 import { resolveReviewRunsText } from '../review.js';
@@ -154,11 +153,7 @@ export function renderDeepCleanPreview(preview) {
     const currentRevertedCount = getRevertedBlockSet(preview, preview.currentItemIndex)?.size || 0;
     const revertedEntries = listRevertedBlocks(preview);
 
-    const sourceLegend = `<span class="blai-deep-clean-source-legend" aria-label="改写来源图例">${renderSourceLegend([
-        { key: 'program', label: '程序', title: '程序改写' },
-        { key: 'ai', label: 'AI', title: 'AI 改写' },
-    ])}</span>`;
-    setDeepCleanWorkspaceHeader(`预览并筛选 · ${characterName(preview.run)}`, '', sourceLegend);
+    setDeepCleanWorkspaceHeader(`预览并筛选 · ${characterName(preview.run)}`, '');
     if (items.length === 0) {
         $('#blai-deep-clean-content').html(`
             <section class="blai-deep-clean-preview-preview-empty">
@@ -179,39 +174,50 @@ export function renderDeepCleanPreview(preview) {
         ['included', '勾选', counts.included],
         ['excluded', '排除', counts.excluded],
     ];
+    const activeFilter = filters.find(([value]) => value === preview.filter) || filters[0];
     const generateButton = canAi && preview.mode === 'ai'
         ? `<button type="button" data-deep-clean-preview-generate-ai aria-label="${entry?.status === 'failed' ? '重试 AI 预览' : '生成 AI 预览'}" title="${entry?.status === 'failed' ? '重试 AI 预览' : '生成 AI 预览'}" ${preview.loadingKey ? 'disabled' : ''}>${entry?.status === 'failed' ? '重试' : '生成'}</button>`
         : '';
     const listOpen = preview.listOpen === true;
     const currentItem = preview.run.contentItems[preview.currentItemIndex];
 
+    // 同一组导航在桌面顶栏与手机底栏各渲染一次，靠 CSS 只显示当前断点需要的一份；
+    // data 属性不变，事件仍走原来的委托绑定。
+    const itemNavHtml = (mobile = false) => `
+        <nav class="blai-deep-clean-preview-item-nav ${mobile ? 'is-mobile-nav' : ''}" aria-label="条目导航">
+            <button type="button" data-deep-clean-preview-nav="previous" aria-label="上一个条目" title="上一个条目" ${position <= 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+            <span class="blai-deep-clean-preview-item-step"><span class="blai-deep-clean-preview-item-step-label">条目 </span>${position + 1}/${items.length}</span>
+            <button type="button" data-deep-clean-preview-nav="next" aria-label="下一个条目" title="下一个条目" ${position >= items.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+        </nav>`;
+    const entryBarHtml = (mobile = false) => `
+        <div class="blai-deep-clean-preview-entry-bar ${mobile ? 'is-mobile-entry' : ''}">
+            <label class="blai-deep-clean-preview-include" title="勾选后本条纳入本次清理，取消勾选则跳过"><input class="blai-check-native" type="checkbox" data-deep-clean-preview-include ${preview.included.has(preview.currentItemIndex) ? 'checked' : ''} aria-label="本条纳入清理"></label>
+            <h3>条目·${deepCleanSafeHtml(compactIdentity(currentItem))}</h3>
+            <div class="blai-deep-clean-preview-entry-trailing">${generateButton}</div>
+        </div>`;
+    const changeNavHtml = blockCount ? `
+        <div class="blai-deep-clean-preview-change-nav" aria-label="改写项导航">
+            <button type="button" data-deep-clean-preview-change="previous" aria-label="上一个改写项" title="上一个改写项"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+            <span class="blai-deep-clean-preview-change-counter ${currentRevertedCount ? 'has-reverted' : ''}" ${currentRevertedCount ? `title="本条目已撤销 ${currentRevertedCount} 项改写"` : ''}>改写 ${preview.changeIndex + 1}/${blockCount}${currentRevertedCount ? `<i class="fas fa-circle-minus blai-deep-clean-preview-change-reverted-dot" aria-hidden="true"></i>` : ''}</span>
+            <button type="button" data-deep-clean-preview-change="next" aria-label="下一个改写项" title="下一个改写项"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+        </div>` : '';
+
     $('#blai-deep-clean-content').html(`
         <div class="blai-deep-clean-preview ${listOpen ? 'is-list-open' : ''}">
             <header class="blai-deep-clean-preview-header">
                 <div class="blai-deep-clean-preview-bar">
-                    <nav class="blai-deep-clean-preview-filters" aria-label="预览筛选">
-                        ${filters.map(([value, label, count]) => `<button type="button" data-deep-clean-preview-filter="${value}" aria-pressed="${preview.filter === value}">${label}<span>${count}</span></button>`).join('')}
-                    </nav>
+                    <button type="button" class="blai-deep-clean-preview-list-toggle" data-deep-clean-preview-list-toggle aria-expanded="${listOpen}" aria-label="条目列表（${items.length}）" title="条目列表（${items.length}）"><i class="fas fa-list" aria-hidden="true"></i><span>${items.length}</span></button>
                     <div class="blai-deep-clean-preview-bar-trailing">
-                        <span class="blai-deep-clean-preview-step">${position + 1}/${items.length}</span>
-                        <button type="button" data-deep-clean-preview-nav="previous" aria-label="上一个" title="上一个" ${position <= 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
-                        <button type="button" data-deep-clean-preview-nav="next" aria-label="下一个" title="下一个" ${position >= items.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
-                        <button type="button" class="blai-deep-clean-preview-list-toggle" data-deep-clean-preview-list-toggle aria-expanded="${listOpen}" aria-label="条目列表（${items.length}）" title="条目列表（${items.length}）"><i class="fas fa-list" aria-hidden="true"></i><span>${items.length}</span></button>
+                        ${itemNavHtml(false)}
+                        <div class="blai-deep-clean-preview-filter-wrap">
+                            <button type="button" class="blai-deep-clean-preview-filter-trigger" data-deep-clean-preview-filter-trigger aria-haspopup="true" aria-expanded="false" aria-label="筛选：${activeFilter[1]} ${activeFilter[2]}"><span class="blai-deep-clean-preview-filter-trigger-label">${activeFilter[1]}</span><span class="blai-deep-clean-preview-filter-trigger-count">${activeFilter[2]}</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+                            <div class="blai-deep-clean-preview-filter-menu" hidden>
+                                ${filters.map(([value, label, count]) => `<button type="button" class="blai-deep-clean-preview-filter-option" data-deep-clean-preview-filter="${value}" aria-pressed="${preview.filter === value}"><span>${label}</span><span class="blai-deep-clean-preview-filter-option-count">${count}</span></button>`).join('')}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="blai-deep-clean-preview-entry-bar">
-                    <h3>条目·${deepCleanSafeHtml(compactIdentity(currentItem))}</h3>
-                    <div class="blai-deep-clean-preview-entry-trailing">
-                        ${blockCount ? `
-                        <div class="blai-deep-clean-preview-change-nav" aria-label="改写项导航">
-                            <button type="button" data-deep-clean-preview-change="previous" aria-label="上一个改写项" title="上一个改写项"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
-                            <span class="blai-deep-clean-preview-change-counter ${currentRevertedCount ? 'has-reverted' : ''}" ${currentRevertedCount ? `title="本条目已撤销 ${currentRevertedCount} 项改写"` : ''}>${preview.changeIndex + 1} / ${blockCount}${currentRevertedCount ? `<i class="fas fa-circle-minus blai-deep-clean-preview-change-reverted-dot" aria-hidden="true"></i>` : ''}</span>
-                            <button type="button" data-deep-clean-preview-change="next" aria-label="下一个改写项" title="下一个改写项"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
-                        </div>` : ''}
-                        <label class="blai-deep-clean-preview-include" title="勾选后本条参与改写"><input class="blai-check-native" type="checkbox" data-deep-clean-preview-include ${preview.included.has(preview.currentItemIndex) ? 'checked' : ''}>改写本条</label>
-                        ${generateButton}
-                    </div>
-                </div>
+                ${entryBarHtml(false)}
             </header>
             ${listOpen ? `<nav class="blai-deep-clean-preview-list" aria-label="命中条目">${renderPreviewList(preview, items)}</nav>` : ''}
             <main class="blai-deep-clean-preview-detail">
@@ -219,6 +225,13 @@ export function renderDeepCleanPreview(preview) {
                     ${renderPreviewDocument(preview, preview.currentItemIndex, entry)}
                 </div>
             </main>
+            <div class="blai-deep-clean-preview-toolbar">
+                ${entryBarHtml(true)}
+                <div class="blai-deep-clean-preview-nav-strip">
+                    ${itemNavHtml(true)}
+                    ${changeNavHtml}
+                </div>
+            </div>
             <footer class="blai-deep-clean-preview-actions">
                 ${revertedEntries.length ? `<button class="blai-deep-clean-preview-reverted-open" type="button" data-deep-clean-preview-reverted-open aria-label="查看已撤销改写（${revertedEntries.length}）" title="查看已撤销改写（${revertedEntries.length}）"><i class="fas fa-rotate-left" aria-hidden="true"></i>已撤销 ${revertedEntries.length}</button>` : ''}
                 <span class="blai-deep-clean-preview-actions-spacer"></span>

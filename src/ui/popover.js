@@ -31,7 +31,9 @@ function copyThemeVars(anchor, menu) {
     const computed = window.getComputedStyle(anchor);
     THEME_VARS.forEach((name) => {
         const value = String(computed.getPropertyValue(name) || '').trim();
-        if (value) menu.style.setProperty(name, value);
+        // 关闭菜单时不再清空主题变量（见 closeMenuPopover），这里只改真正变化的项，
+        // 避免每次展开都重写 19 个自定义属性触发整棵菜单的样式重算。
+        if (value && menu.style.getPropertyValue(name) !== value) menu.style.setProperty(name, value);
     });
 }
 
@@ -65,13 +67,17 @@ export function computeMenuPlacement({
 }
 
 function positionManually(anchor, menu) {
+    // 菜单从原 wrap（inline-flex）移出后布局才回稳；此时重读锚点，避免量到被菜单撑开的位置。
     const anchorRect = anchor.getBoundingClientRect();
-    // 临时解除 CSS 上限再量：--blai-dropdown-max-height 会把自然高度截断，
-    // 不解开的话下方即使有大片空间，也只会按被截断的高度摆放。
+    // 菜单已 portal 到 body，但此时仍带着原父容器给的约束（inline-flex 宽度 / min-width 继承），
+    // offsetWidth 会把这些约束算进去，得到比实际宽一倍的值，菜单因此左偏一个身位。
+    // 先归位到视口左上角并解除高度上限，再从渲染后的几何读真实尺寸。
+    menu.style.setProperty('left', '0px', 'important');
+    menu.style.setProperty('top', '0px', 'important');
     menu.style.setProperty('max-height', 'none', 'important');
-    const menuWidth = menu.offsetWidth;
-    const naturalHeight = menu.offsetHeight;
-    menu.style.removeProperty('max-height');
+    const menuRect = menu.getBoundingClientRect();
+    const menuWidth = menuRect.width;
+    const naturalHeight = menuRect.height;
     const placement = computeMenuPlacement({
         anchorRect,
         viewportWidth: window.innerWidth,
@@ -174,7 +180,7 @@ export function closeMenuPopover(menu) {
     else if (menu.parentNode) menu.parentNode.removeChild(menu);
     menu.__blaiPlaceholder = null;
     CLEARED_STYLES.forEach((name) => menu.style.removeProperty(name));
-    THEME_VARS.forEach((name) => menu.style.removeProperty(name));
+    // 主题变量保留在菜单上：菜单下次展开时只需覆盖变化项，不必每轮重写 19 个属性。
 }
 
 export function closeAllMenuPopovers() {

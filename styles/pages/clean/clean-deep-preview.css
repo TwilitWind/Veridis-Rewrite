@@ -12,18 +12,21 @@
     min-height: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    /* 顶栏、正文、导航条、底栏；条目列表展开时正文再拆成列表与文档两行。 */
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
     overflow: hidden;
 }
 
-/* 条目列表展开后上下四六分：列表占内容区 40%，正文占 60%，各自独立滚动。
-   列表不再挤进顶栏占高，正文区始终有剩余高度，不会出现列表很长却空白不显示。 */
 #blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open {
-    grid-template-rows: auto minmax(0, 2fr) minmax(0, 3fr) auto;
+    grid-template-rows: auto minmax(0, 2fr) minmax(0, 3fr) auto auto;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-header {
+#blai-deep-clean-workspace .blai-deep-clean-preview-header {
     grid-row: 1;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-toolbar {
+    grid-row: 3;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-list {
@@ -34,20 +37,33 @@
     border-bottom: var(--blai-border-1) solid var(--blai-border-soft);
 }
 
+#blai-deep-clean-workspace .blai-deep-clean-preview-detail {
+    grid-row: 2;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-detail {
     grid-row: 3;
 }
 
-#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-actions {
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-toolbar {
     grid-row: 4;
 }
 
+#blai-deep-clean-workspace .blai-deep-clean-preview-actions {
+    grid-row: 4;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview.is-list-open .blai-deep-clean-preview-actions {
+    grid-row: 5;
+}
+
 #blai-deep-clean-workspace .blai-deep-clean-preview-header {
-    padding: var(--blai-space-3) var(--blai-space-12);
+    padding: var(--blai-space-8) var(--blai-space-16);
     border-bottom: var(--blai-border-1) solid var(--border-color);
 }
 
-/* 顶栏严格两行：筛选行 + 条目标题行。两行左右边缘都对齐同一内边距。 */
+/* 桌面顶栏保留列表入口、条目导航与筛选，下一行只放复选框 + 条目标题；
+   手机端顶栏收成一行（列表入口 + 筛选），条目标题与两组导航都下移到正文下方的细条。 */
 #blai-deep-clean-workspace .blai-deep-clean-preview-bar,
 #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
     display: flex;
@@ -66,26 +82,121 @@
     gap: var(--blai-space-2);
     flex: 0 0 auto;
 }
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: var(--blai-space-2) var(--blai-space-6);
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing {
+    gap: var(--blai-space-6);
 }
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters::-webkit-scrollbar {
+
+/* 正文下方的导航细条：桌面只显示改写项导航，手机额外显示条目标题与条目导航。
+   两份 DOM 共用同一套 data 属性，按断点只显示一份，不改事件绑定。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-toolbar {
+    min-width: 0;
+    padding: var(--blai-space-6) var(--blai-space-16);
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    border-top: var(--blai-border-1) solid var(--border-color);
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-toolbar .blai-deep-clean-preview-entry-bar {
+    display: none;
+    margin-top: 0;
+    flex: 1 1 auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-12);
+    flex: 0 0 auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip .blai-deep-clean-preview-item-nav {
     display: none;
 }
 
-/* 筛选、导航、视图都用轻量文字控件：选中只留底部强调线，不堆边框和底色。 */
-#blai-deep-clean-workspace :is(.blai-deep-clean-preview-filters, .blai-deep-clean-preview-bar) button {
+/* 导航条自带上边界，紧邻的底栏不再重复画一条线。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-toolbar + .blai-deep-clean-preview-actions {
+    border-top: 0;
+}
+
+/* 筛选在桌面与手机都收成同一个下拉入口；菜单走 popover 挂到 body。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-filter-wrap {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar .blai-deep-clean-preview-filter-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-4);
+    min-height: var(--blai-size-28);
+    padding: 0 var(--blai-space-8);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-size: var(--blai-fs-control);
+    font-weight: var(--blai-weight-medium);
+    white-space: nowrap;
+}
+
+#blai-deep-clean-workspace .blai-deep-clean-preview-filter-trigger-count {
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.blai-deep-clean-preview-filter-menu {
+    display: grid;
+    gap: var(--blai-space-1);
+    min-width: var(--blai-size-96);
+    padding: var(--blai-space-4);
+    border: var(--blai-border-1) solid var(--border-color);
+    border-radius: var(--blai-radius-10);
+    background: var(--bg-surface);
+    box-shadow: var(--blai-shadow-sm);
+    box-sizing: border-box;
+}
+
+.blai-deep-clean-preview-filter-menu[hidden] {
+    display: none;
+}
+
+.blai-deep-clean-preview-filter-option {
+    display: flex;
+    align-items: center;
+    gap: var(--blai-space-8);
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-8);
+    border: 0;
+    border-radius: var(--blai-radius-sm);
+    background: transparent;
+    color: var(--text-main);
+    font-size: var(--blai-fs-control);
+    text-align: left;
+}
+
+.blai-deep-clean-preview-filter-option-count {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.blai-deep-clean-preview-filter-option[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    color: var(--accent-color);
+}
+
+/* 顶栏里的列表入口与条目翻页用轻量文字控件，不堆边框和底色；
+   筛选触发器保留自己的描边卡片样式，不受这组规则影响。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar > .blai-deep-clean-preview-list-toggle,
+#blai-deep-clean-workspace .blai-deep-clean-preview-bar [data-deep-clean-preview-nav],
+#blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip [data-deep-clean-preview-nav] {
     min-height: var(--blai-size-28);
     padding: var(--blai-space-2) var(--blai-space-6);
     border: 0;
-    border-radius: 0;
+    border-radius: var(--blai-radius-sm);
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
@@ -94,41 +205,34 @@
     box-shadow: none;
 }
 
-/* 选中态只靠颜色，不再叠一条指示线去压顶栏分隔线。 */
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters button[aria-pressed="true"] {
-    color: var(--accent-ink);
+/* 两组导航都用左右箭头：条目导航在第一行右侧，改写项导航在第二行最右。 */
+#blai-deep-clean-workspace .blai-deep-clean-preview-item-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--blai-space-2);
 }
 
-/* 首个筛选标签贴齐顶栏左缘，与下方正文同一条竖线；其余标签保留左右留白。 */
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters button:first-child {
-    padding-left: 0;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-filters button span {
-    margin-left: var(--blai-space-6);
-    color: inherit;
-    font-size: .9em;
-    font-variant-numeric: tabular-nums;
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-preview-step {
+#blai-deep-clean-workspace .blai-deep-clean-preview-item-step {
     color: var(--text-secondary);
     font-size: var(--blai-fs-note);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
+/* 复选框固定在标题左侧，不参与标题的省略号压缩。 */
 #blai-deep-clean-workspace .blai-deep-clean-preview-include {
     display: inline-flex;
     align-items: center;
+    flex: 0 0 auto;
     gap: var(--blai-space-4);
     color: var(--text-main);
     font-size: var(--blai-fs-control);
     font-weight: var(--blai-weight-medium);
+    white-space: nowrap;
 }
 
 /* 上一条 / 下一条只留字体图标：按钮盒保持方形，屏幕阅读器用 aria-label。 */
-#blai-deep-clean-workspace .blai-deep-clean-preview-bar [data-deep-clean-preview-nav] {
+#blai-deep-clean-workspace :is(.blai-deep-clean-preview-bar, .blai-deep-clean-preview-nav-strip) [data-deep-clean-preview-nav] {
     width: var(--blai-size-28);
     padding: 0;
     justify-content: center;
@@ -221,9 +325,9 @@
     margin: 0;
     min-width: 0;
     flex: 0 1 auto;
-    /* 条目名是次级信息：比正文控件小一档，世界书条目名与「消息 N」同样受益。 */
+    /* 条目名不放大，只加粗；长标题由省略号截断，右侧控件不参与压缩。 */
     font-size: calc(var(--blai-fs-control) - 1px);
-    font-weight: var(--blai-weight-medium);
+    font-weight: var(--blai-weight-bold);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -256,6 +360,7 @@
     color: var(--accent-ink);
     font-size: var(--blai-fs-note);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 /* 当前条目有撤销改写项时，计数徽章补一枚来源色点，不新增控件、不抬高顶栏。 */
 #blai-deep-clean-workspace .blai-deep-clean-preview-change-counter.has-reverted {
@@ -394,13 +499,9 @@
 }
 
 @container (max-width: 700px) {
-    #blai-deep-clean-workspace .blai-deep-clean-preview-header {
-        padding: var(--blai-space-4) var(--blai-space-8);
-    }
-
     #blai-deep-clean-workspace .blai-deep-clean-preview-bar,
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
-        gap: var(--blai-space-2);
+        gap: var(--blai-space-4);
     }
     #blai-deep-clean-workspace .blai-deep-clean-preview-document {
         padding: var(--blai-space-6) var(--blai-space-8);

@@ -51,11 +51,16 @@ export function writeMessageDiffProgram(msg, branchKey, originalMes, programMes)
     return writeBranchMeta(msg, branchKey, { originalMes, aiMes: null, programMes, reverted: false });
 }
 
-/** 显式重新净化只刷新程序结果，保留已保存的原文基线与其他阶段文本。 */
-export function setMessageDiffProgramMes(msg, programMes, branchKey = getMessageDiffBranchKey(msg)) {
+/** 显式重新净化默认只刷新程序结果，保留原文基线；clearAiStage 用于本轮没有 AI 阶段时清掉旧记录。 */
+export function setMessageDiffProgramMes(msg, programMes, branchKey = getMessageDiffBranchKey(msg), { clearAiStage = false } = {}) {
     const entry = getMessageDiffMeta(msg, branchKey);
     if (!entry) return false;
-    return writeBranchMeta(msg, branchKey, { ...entry, programMes: String(programMes ?? ''), reverted: false });
+    return writeBranchMeta(msg, branchKey, {
+        ...entry,
+        aiMes: clearAiStage ? null : entry.aiMes,
+        programMes: String(programMes ?? ''),
+        reverted: false,
+    });
 }
 
 export function writeMessageDiffAiStage(msg, branchKey, originalMes, aiMes, programMes) {

@@ -159,15 +159,8 @@
         box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
     }
 
-    /* 下拉菜单只做一次短淡入：去掉逐项错峰与位移，触摸端不再有「慢半拍」错觉。 */
-    .blai-portal-menu[data-menu-direction] > * {
-        animation-name: blai-fade-in;
-        animation-duration: var(--blai-duration-fast);
-        animation-delay: 0ms;
-    }
-
     /* 步骤导航箭头缩到与周围控件同档，不再用放大的 18px 图标。 */
-    #blai-deep-clean-workspace :is(.blai-deep-clean-preview-bar [data-deep-clean-preview-nav], .blai-deep-clean-preview-change-nav button, .blai-deep-clean-review-navigation button) {
+    #blai-deep-clean-workspace :is(.blai-deep-clean-preview-bar [data-deep-clean-preview-nav], .blai-deep-clean-preview-nav-strip [data-deep-clean-preview-nav], .blai-deep-clean-preview-change-nav button, .blai-deep-clean-review-navigation button) {
         font-size: var(--blai-fs-control);
         line-height: 1;
     }

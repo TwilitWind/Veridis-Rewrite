@@ -2,6 +2,7 @@
 // 从 events.js 拆出；主流程通过 startDeepCleanProcessing 回调接回执行阶段。
 import { logger } from '../../log.js';
 import { showAlertModal, showConfirmModal } from '../../ui/notifications.js';
+import { openMenuPopover, closeMenuPopover } from '../../ui/popover.js';
 import { deepCleanRuntimeState } from '../state.js';
 import { applyDeepCleanPreviewSelection } from '../lifecycle.js';
 import { cancelDeepCleanReviewComparisons } from '../review.js';
@@ -86,9 +87,23 @@ $(document).off('click', '#blai-deep-clean-preview').on('click', '#blai-deep-cle
     loadPreviewEntry(preview);
 });
 
+$(document).off('click', '[data-deep-clean-preview-filter-trigger]').on('click', '[data-deep-clean-preview-filter-trigger]', function(event) {
+    event.preventDefault();
+    const menu = this.parentElement?.querySelector('.blai-deep-clean-preview-filter-menu');
+    if (!menu) return;
+    if (!menu.hidden) {
+        closeMenuPopover(menu);
+        return;
+    }
+    openMenuPopover(this, menu);
+    this.setAttribute('aria-expanded', 'true');
+});
+
 $(document).off('click', '[data-deep-clean-preview-filter]').on('click', '[data-deep-clean-preview-filter]', function() {
     const preview = currentPreviewSession();
     if (!preview) return;
+    const menu = $(this).closest('.blai-deep-clean-preview-filter-menu')[0];
+    if (menu) closeMenuPopover(menu);
     preview.listOpen = false;
     preview.listScrollTop = 0;
     preview.changeIndex = 0;
@@ -155,8 +170,13 @@ $(document).off('change', '[data-deep-clean-preview-include]').on('change', '[da
         .attr('aria-label', `清理所选（${preview.included.size}）`)
         .attr('title', `清理所选（${preview.included.size}）`)
         .prop('disabled', preview.included.size === 0);
-    $('[data-deep-clean-preview-filter="included"] span').text(String(preview.included.size));
-    $('[data-deep-clean-preview-filter="excluded"] span').text(String(preview.skipped.size));
+    // 菜单项是 `<span>标签</span><span>数量</span>`：只改数量，不能把标签写成数字。
+    const setFilterCount = (value, count) => {
+        const target = document.querySelector(`.blai-deep-clean-preview-filter-option[data-deep-clean-preview-filter="${value}"] .blai-deep-clean-preview-filter-option-count`);
+        if (target) target.textContent = String(count);
+    };
+    setFilterCount('included', preview.included.size);
+    setFilterCount('excluded', preview.skipped.size);
     if (preview.filter === 'included' || preview.filter === 'excluded') renderDeepCleanPreview(preview);
 });
 

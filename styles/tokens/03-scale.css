@@ -287,9 +287,16 @@
   --blai-btn-pad-x: var(--blai-space-12);
   --blai-btn-pad: var(--blai-btn-pad-y) var(--blai-btn-pad-x);
   --blai-btn-pad-compact: 0 var(--blai-space-10);
-  /* 弹窗/对话框底部操作按钮的统一内边距：右对齐与居中铺满整行的按钮同值。
-     桌面与手机在各自 :root 里分别定义（见本文件末尾的手机 media），当前取值相同但可独立调整。 */
+  /* 弹窗/对话框底部操作按钮：字号、字重、内边距、外边距与高度共用一组令牌。
+     --blai-modal-btn-pad 桌面与手机在各自 :root 里分别定义（见本文件末尾的手机 media），
+     当前取值相同但可独立调整；字号跟随 --blai-fs-control，手机端自动升一档。 */
+  --blai-modal-btn-font-size: var(--blai-fs-control);
+  --blai-modal-btn-font-weight: var(--blai-weight-medium);
   --blai-modal-btn-pad: var(--blai-btn-pad);
+  --blai-modal-btn-margin: var(--blai-space-0);
+  --blai-modal-btn-height: var(--blai-size-32);
+  /* 弹窗底栏左右留白：按钮距卡片边缘的统一距离，深度清理底栏也读这里。 */
+  --blai-modal-pad-x: var(--blai-space-20);
   /* 开关与同排文字/图标之间的横向间距：全站只有一个值，避免各行疏密不一。 */
   --blai-switch-gap: var(--blai-space-8);
   /* 净化透视弹窗：顶栏与工具行视作一组，左右内边距共用同一来源；

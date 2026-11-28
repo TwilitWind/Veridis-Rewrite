@@ -86,9 +86,10 @@
     font-size: var(--blai-font-10);
 }
 
+/* 底栏左右留白与其它弹窗底栏一致（--blai-modal-pad-x），按钮距卡片右缘同样是 20px。 */
 #blai-deep-clean-workspace .blai-deep-clean-selection-actions {
     min-height: var(--blai-size-48);
-    padding: var(--blai-space-8) var(--blai-space-14);
+    padding: var(--blai-space-8) var(--blai-modal-pad-x);
     justify-content: flex-end;
     gap: var(--blai-space-8);
 }
@@ -111,8 +112,7 @@
 }
 
 @container (max-width: 700px) {
-    #blai-deep-clean-workspace .blai-deep-clean-result,
-    #blai-deep-clean-workspace .blai-deep-clean-preview-header {
+    #blai-deep-clean-workspace .blai-deep-clean-result {
         padding: var(--blai-space-8) var(--blai-space-10);
     }
 
@@ -120,39 +120,17 @@
         padding: var(--blai-space-6) var(--blai-space-10);
     }
 
-    /* 窄屏顶栏三行：筛选 / 条目 / 条目导航。每行控件固定不折字。
-       筛选行单独占满宽度并可横向滚动；计数紧跟各自标签，不再掉到下一行。 */
-    #blai-deep-clean-workspace .blai-deep-clean-preview-header {
-        display: flex;
-        flex-direction: column;
-        row-gap: var(--blai-space-4);
-    }
-
-    /* 打平 bar 这一层，让筛选条与步骤导航成为顶栏的独立两行。 */
-    #blai-deep-clean-workspace .blai-deep-clean-preview-bar {
-        display: contents;
-    }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-filters {
-        order: 1;
-        width: 100%;
+    /* 窄屏沿用同一两行结构，只收紧控件间距；标题仍由省略号截断，不换行。 */
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing,
+    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-trailing {
         flex: 0 0 auto;
         flex-wrap: nowrap;
-        white-space: nowrap;
-        overflow-x: auto;
-    }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-filters button,
-    #blai-deep-clean-workspace .blai-deep-clean-preview-filters button span {
-        flex: 0 0 auto;
         white-space: nowrap;
     }
 
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar {
-        order: 2;
-        width: 100%;
         flex-wrap: nowrap;
-        gap: var(--blai-space-4);
+        gap: var(--blai-space-2);
     }
 
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar h3 {
@@ -163,25 +141,72 @@
         text-overflow: ellipsis;
     }
 
-    #blai-deep-clean-workspace .blai-deep-clean-preview-entry-bar :is(.blai-deep-clean-preview-entry-trailing, .blai-deep-clean-preview-change-nav, .blai-deep-clean-preview-change-counter, .blai-deep-clean-preview-include) {
-        flex: 0 0 auto;
-        white-space: nowrap;
-    }
-
     #blai-deep-clean-workspace .blai-deep-clean-preview-entry-trailing {
-        margin-left: 0;
         gap: var(--blai-space-2);
     }
 
-    #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing {
-        order: 3;
-        width: 100%;
-        flex: 0 0 auto;
+    #blai-deep-clean-workspace .blai-deep-clean-preview-change-nav {
+        gap: var(--blai-space-1);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-change-counter {
+        padding-inline: var(--blai-space-3);
+    }
+}
+
+/* 真机手机视口：顶栏只留列表入口 + 筛选，条目标题与两组导航都移到正文下方细条。
+   桌面窄弹窗仍走容器查询里的间距收紧，不切到手机布局。 */
+@media (max-width: 600px) {
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing .blai-deep-clean-preview-item-nav,
+    #blai-deep-clean-workspace .blai-deep-clean-preview-header .blai-deep-clean-preview-entry-bar {
+        display: none;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-toolbar {
+        flex-wrap: wrap;
+        gap: var(--blai-space-4);
+        padding: var(--blai-space-6) var(--blai-space-12);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-toolbar .blai-deep-clean-preview-entry-bar {
+        display: flex;
+        flex: 1 1 100%;
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip {
         margin-left: 0;
-        /* 独占一行时靠右对齐：计数与上下条定位贴住这一行的右缘。 */
-        justify-content: flex-end;
-        flex-wrap: nowrap;
-        white-space: nowrap;
+        width: 100%;
+        justify-content: space-between;
+        gap: var(--blai-space-6);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip .blai-deep-clean-preview-item-nav {
+        display: inline-flex;
+    }
+}
+
+/* 320~360px 极窄屏：两组左右箭头与「条目 N/M」标签都保留，只收紧几何。 */
+@container (max-width: 360px) {
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing {
+        gap: var(--blai-space-3);
+    }
+
+    #blai-deep-clean-workspace :is(.blai-deep-clean-preview-bar, .blai-deep-clean-preview-nav-strip) [data-deep-clean-preview-nav] {
+        width: var(--blai-size-24);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar > .blai-deep-clean-preview-list-toggle,
+    #blai-deep-clean-workspace .blai-deep-clean-preview-bar .blai-deep-clean-preview-filter-trigger {
+        padding-inline: var(--blai-space-6);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-change-nav button {
+        width: var(--blai-size-20);
+        min-height: var(--blai-size-20);
+    }
+
+    #blai-deep-clean-workspace .blai-deep-clean-preview-change-counter {
+        padding-inline: var(--blai-space-2);
     }
 }
 
@@ -243,8 +268,8 @@
 
 /* ---- 预览顶栏：标题与角色卡名合并，不再另占描述行 ---- */
 #blai-deep-clean-workspace:has(> .blai-deep-clean-content > .blai-deep-clean-preview) > .blai-deep-clean-header {
-    min-height: var(--blai-size-36);
-    padding: var(--blai-space-2) var(--blai-space-12);
+    min-height: var(--blai-size-44);
+    padding: var(--blai-space-8) var(--blai-space-16);
 }
 
 #blai-deep-clean-workspace:has(> .blai-deep-clean-content > .blai-deep-clean-preview) .blai-deep-clean-header h2 {
@@ -259,18 +284,15 @@
     line-height: 1.7;
 }
 
-/* 扫描结果与预览底栏统一靠右单行；字号与内边距只走对话框控件令牌。 */
+/* 扫描结果与预览底栏统一靠右单行；按钮几何与排版由 clean-deep-shell.css 的一组令牌统一给出。 */
 #blai-deep-clean-workspace :is(.blai-deep-clean-result .blai-deep-clean-actions, .blai-deep-clean-preview-actions) {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-end;
+    gap: var(--blai-space-8);
 }
 
 #blai-deep-clean-workspace :is(.blai-deep-clean-result .blai-deep-clean-actions, .blai-deep-clean-preview-actions) button {
-    min-height: var(--blai-size-32);
-    padding: var(--blai-modal-btn-pad);
-    font-size: var(--blai-fs-control);
-    font-weight: var(--blai-weight-medium);
     white-space: nowrap;
 }
 
@@ -286,10 +308,6 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-state h3 {
     font-size: var(--blai-font-14);
-}
-
-#blai-deep-clean-workspace .blai-deep-clean-state button {
-    min-height: var(--blai-size-32);
 }
 
 /* 错误页只有一行报错和一个按钮：沿用大工作区尺寸，但把内容在面板里上下左右居中，避免贴着左上角。 */
