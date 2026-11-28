@@ -13,7 +13,7 @@ export function applyCompiledReplacementsWithTrackedRanges(originalText, process
 
     let text = source;
     let trackedRanges = (Array.isArray(ranges) ? ranges : []).map((range) => ({ ...range }));
-    // 注释保护对所有改写链路统一生效：程序改写、流式、深度清理与 AI 回退都汇入这里。
+    // 注释与 html 代码块保护对所有改写链路统一生效：程序改写、流式、深度清理与 AI 回退都汇入这里。
     // 局部作用域段传来的 source 已是段内文本，注释范围天然落在段内坐标，无需额外换算。
     const { extension_settings } = getAppContext();
     const protectXmlComments = typeof options.protectXmlComments === 'boolean'

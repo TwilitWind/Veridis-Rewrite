@@ -182,7 +182,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-review-empty-branch.is-active {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background: color-mix(in srgb, var(--accent-color) 10%, transparent);
     color: var(--accent-ink);
 }
@@ -294,7 +294,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-review-navigation strong {
     color: var(--text-main);
-    font: var(--blai-weight-bold) 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+    font: var(--blai-weight-bold) var(--blai-fs-mono-counter)/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
     font-variant-numeric: tabular-nums;
 }
 

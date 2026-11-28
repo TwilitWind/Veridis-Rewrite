@@ -271,8 +271,8 @@
 /* 逐条定位的当前项：只用与删除线同粗（2px）的单层描边 + 极淡底纹。
    不叠 outline-offset 的第二层、不加 box-shadow，避免与勾选态/规则定位态的边框叠成厚框。 */
 .blai-diff-change.blai-diff-nav-current {
-    background-color: color-mix(in srgb, var(--accent-color) 12%, transparent);
-    outline: var(--blai-border-2) solid var(--accent-color);
+    background-color: color-mix(in srgb, var(--blai-border-highlight) 12%, transparent);
+    outline: var(--blai-border-2) solid var(--blai-border-highlight);
     outline-offset: 0;
     border-radius: var(--blai-radius-4);
 }
@@ -301,7 +301,7 @@
 
 .blai-diff-pick-confirm:not(:disabled) {
     color: var(--accent-ink);
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
 }
 
 /* 勾选模式：差异片段变成可点击的复选项。方框与对勾走内容与字体 token，
@@ -339,7 +339,7 @@
     font-size: var(--blai-font-10);
     color: var(--accent-contrast);
     background: var(--accent-color);
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
 }
 
 /* 勾选态用下划线标记，不用 outline 包裹：差异片段常在句中换行，
@@ -456,9 +456,9 @@
 }
 
 .blai-diff-related-mode .blai-diff-change:hover, .blai-diff-related-mode .blai-diff-change-selected {
-    outline: var(--blai-border-2) solid var(--accent-color) !important;
+    outline: var(--blai-border-2) solid var(--blai-border-highlight) !important;
     outline-offset: var(--blai-focus-offset) !important;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 18%, transparent) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--blai-border-highlight) 18%, transparent) !important;
 }
 
 #blai-diff-related-modal {
@@ -538,7 +538,7 @@
 }
 
 .blai-diff-related-candidate:hover {
-    border-color: var(--accent-color) !important;
+    border-color: var(--blai-border-highlight) !important;
     background: var(--bg-surface) !important;
 }
 

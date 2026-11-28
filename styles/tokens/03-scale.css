@@ -63,6 +63,11 @@
   /* 深度清理预览正文：连续长文按正文档读，双端同档 13px。
      不跟随手机 --blai-fs-body 的 +1px 放大，否则手机端比桌面大。 */
   --blai-fs-deep-preview-body: 13px;
+  /* 紧凑控件标题：比 control 小一档，避免用 calc 拼出 12px 以外的中间值。 */
+  --blai-fs-control-compact: 12px;
+  /* 等宽流程/计数文字：低于浅字档，双端固定，不跟随 5 档整体放大。 */
+  --blai-fs-mono-template: 9px;
+  --blai-fs-mono-counter: 10px;
 
   /* 旧数字 token → 5 档别名（映射见 docs/font-convergence-plan.md）。 */
   --blai-font-8: var(--blai-fs-note);
@@ -305,6 +310,32 @@
   --blai-diff-divider: var(--border-color);
 }
 
+/* 只收窄这组对话框底栏：编辑规则弹窗、子规则编辑底栏与深度清理各阶段动作条
+   继续读 --blai-modal-btn-* 原值，不在此列。桌面 / 手机分别给内边距与侧留白，
+   手机再收一档；数值全部走既有整数刻度，不写小数 px。 */
+:is(
+    #blai-ai-prompt-modal, #blai-ai-additional-modal, #blai-ai-generation-modal,
+    #blai-ai-model-manage-modal, #blai-risk-confirm-modal, #blai-risk-info-modal,
+    #blai-binding-history-modal, #blai-zh-dictionary-modal, #blai-rule-transfer-modal
+) {
+    --blai-dialog-btn-pad: var(--blai-btn-pad);
+    --blai-dialog-btn-height: var(--blai-size-32);
+    --blai-dialog-btn-min-width: var(--blai-size-104);
+    --blai-dialog-actions-gap: var(--blai-space-8);
+    --blai-dialog-actions-pad-x: var(--blai-space-20);
+}
+
+@media (max-width: 600px) {
+:is(
+    #blai-ai-prompt-modal, #blai-ai-additional-modal, #blai-ai-generation-modal,
+    #blai-ai-model-manage-modal, #blai-risk-confirm-modal, #blai-risk-info-modal,
+    #blai-binding-history-modal, #blai-zh-dictionary-modal, #blai-rule-transfer-modal
+) {
+    --blai-dialog-btn-pad: var(--blai-space-6) var(--blai-space-10);
+    --blai-dialog-actions-pad-x: var(--blai-space-16);
+}
+}
+
 /* 手机端 5 档字号：整档比桌面大 1px，浅字也不再压到 11px。 */
 @media (max-width: 600px) {
 :root {
@@ -315,6 +346,7 @@
   --blai-fs-hero: 18px;
   --blai-fs-control: 14px;
   --blai-fs-control-icon: 18px;
+  --blai-fs-control-compact: 13px;
   /* 弹窗底部按钮：手机端单独一档，与桌面分离；当前同为 8px 12px。 */
   --blai-modal-btn-pad: var(--blai-btn-pad);
 }

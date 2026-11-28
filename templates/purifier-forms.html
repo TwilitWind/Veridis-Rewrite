@@ -33,7 +33,7 @@
                 <div class="blai-subrule-modal-body">
                     <div class="blai-subrule-field" style="margin-bottom: 12px;">
                         <label class="blai-field-label" style="margin-bottom: 6px;">备注（可选）</label>
-                        <input type="text" id="blai-modal-sub-remark" class="blai-input" placeholder="例如：弱化某角色的口头禅" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;">
+                        <input type="text" id="blai-modal-sub-remark" class="blai-input" placeholder="例如：弱化某角色的口头禅" style="background: var(--blai-input-bg); border-radius: 8px; font-size: var(--blai-fs-sub);">
                     </div>
 
                     <div class="blai-subrule-field" style="margin-bottom: 12px;">
@@ -51,7 +51,7 @@
 
                     <div id="blai-modal-sub-ai-prompt-field" class="blai-subrule-field" style="margin-bottom: 12px;" hidden>
                         <label class="blai-field-label" style="margin-bottom: 6px;">改写要求（可选）</label>
-                        <textarea id="blai-modal-sub-ai-prompt" class="blai-textarea" rows="4" placeholder="只写这条规则的特殊要求。例如：只弱化语气，不删除原文；留空则使用全局提示词。" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>
+                        <textarea id="blai-modal-sub-ai-prompt" class="blai-textarea" rows="4" placeholder="只写这条规则的特殊要求。例如：只弱化语气，不删除原文；留空则使用全局提示词。" style="background: var(--blai-input-bg); border-radius: 8px; font-size: var(--blai-fs-sub);"></textarea>
                         <div id="blai-modal-sub-ai-prompt-hint" class="blai-subrule-mode-hint" aria-live="polite"></div>
                     </div>
 
@@ -90,7 +90,7 @@
                                 <button id="blai-modal-sub-regex-recognize" type="button" class="blai-subrule-mini-btn" aria-label="识别为替换项" title="识别为替换项">识别替换</button>
                             </div>
                         </div>
-                        <textarea id="blai-modal-sub-rep" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px; font-size: 14px;"></textarea>
+                        <textarea id="blai-modal-sub-rep" class="blai-textarea" rows="4" style="background: var(--blai-input-bg); border-radius: 8px; font-size: var(--blai-fs-sub);"></textarea>
                         <div id="blai-modal-sub-regex-list" class="blai-regex-replacement-list" hidden></div>
                     </div>
                 </div>

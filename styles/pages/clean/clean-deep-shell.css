@@ -182,7 +182,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-primary-action, #blai-deep-clean-workspace .blai-deep-clean-actions .blai-deep-clean-primary-action, #blai-deep-clean-workspace .blai-deep-clean-review-apply button:not(:disabled) {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background: var(--accent-color);
     color: var(--accent-contrast);
 }
@@ -342,7 +342,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-hidden-toggle input[type="checkbox"]:checked {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background-color: var(--accent-color);
     background-image: none;
 }

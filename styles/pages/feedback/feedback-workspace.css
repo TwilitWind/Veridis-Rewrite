@@ -290,7 +290,7 @@
     box-sizing: border-box;
     margin: 0 0 var(--blai-feedback-update-gap);
     padding: var(--blai-space-7) var(--blai-space-11);
-    border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--blai-border-highlight) 42%, var(--border-color));
     border-radius: var(--blai-radius-8);
     background: color-mix(in srgb, var(--accent-color) 8%, transparent);
     color: var(--text-main);

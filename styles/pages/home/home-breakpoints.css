@@ -311,7 +311,7 @@
     padding: 0;
 }
 
-/* 分组规则弹窗已隐藏 AI/程序筛选，保留 DOM 仅供兼容性，不参与展示。 */
+/* 显式 hidden 时覆盖上面的 display: inline-flex。 */
 #blai-rule-edit-modal .blai-edit-filter-wrap[hidden] {
     display: none;
 }

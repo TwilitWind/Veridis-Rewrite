@@ -88,7 +88,7 @@
 }
 
 .blai-scope-tag-confirm {
-    border: var(--blai-border-1) solid var(--accent-color);
+    border: var(--blai-border-1) solid var(--blai-border-highlight);
     background: var(--accent-color);
     color: var(--accent-contrast);
 }

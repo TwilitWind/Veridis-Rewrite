@@ -17,7 +17,7 @@ function getEnabledScopeTags(settings) {
     return scopeTags.filter((tag) => tag?.enabled !== false);
 }
 
-/** 作用域扫描前的统一预处理：排除变量块与（可选）XML 注释，保持坐标不变。 */
+/** 作用域扫描前的统一预处理：排除变量块与（可选）注释、html 代码块，保持坐标不变。 */
 export function buildScopeScanText(source, aiSettings) {
     const variableRanges = collectVariableUpdateRanges(source);
     const commentRanges = aiSettings?.protectXmlComments === true ? collectXmlCommentRanges(source) : [];

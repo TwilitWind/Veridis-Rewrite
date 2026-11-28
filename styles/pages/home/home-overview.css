@@ -18,9 +18,20 @@
     opacity: 0.56;
 }
 
+/* 视觉方框保持 16px，点击热区用内边距扩到 24px；
+   等量负 margin 抵消，行间距与徽标位置都不变。 */
 .blai-subrule-enable-label {
     flex: 0 0 auto;
-    margin: 0;
+    margin: calc(-1 * var(--blai-space-4));
+    padding: var(--blai-space-4);
+}
+
+@media screen and (max-width: 600px) {
+    /* 手机上扩到 32px，仍用负 margin 保持视觉布局不变。 */
+    .blai-subrule-enable-label {
+        margin: calc(-1 * var(--blai-space-8));
+        padding: var(--blai-space-8);
+    }
 }
 
 #blai-rule-edit-modal {
@@ -228,5 +239,5 @@
 
 .blai-subrule-mini-btn:hover {
     background: var(--bg-surface) !important;
-    border-color: var(--accent-color) !important;
+    border-color: var(--blai-border-highlight) !important;
 }

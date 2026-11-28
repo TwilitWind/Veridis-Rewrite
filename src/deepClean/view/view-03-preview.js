@@ -181,16 +181,16 @@ export function renderDeepCleanPreview(preview) {
     const listOpen = preview.listOpen === true;
     const currentItem = preview.run.contentItems[preview.currentItemIndex];
 
-    // 同一组导航在桌面顶栏与手机底栏各渲染一次，靠 CSS 只显示当前断点需要的一份；
-    // data 属性不变，事件仍走原来的委托绑定。
-    const itemNavHtml = (mobile = false) => `
-        <nav class="blai-deep-clean-preview-item-nav ${mobile ? 'is-mobile-nav' : ''}" aria-label="条目导航">
+    // 手机与桌面共用同一套顶栏结构：第一行列表 + 条目导航 + 筛选，第二行复选框 + 条目标题；
+    // 正文下方细条只放改写项导航，两层导航不再按断点换位置。
+    const itemNavHtml = () => `
+        <nav class="blai-deep-clean-preview-item-nav" aria-label="条目导航">
             <button type="button" data-deep-clean-preview-nav="previous" aria-label="上一个条目" title="上一个条目" ${position <= 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
             <span class="blai-deep-clean-preview-item-step"><span class="blai-deep-clean-preview-item-step-label">条目 </span>${position + 1}/${items.length}</span>
             <button type="button" data-deep-clean-preview-nav="next" aria-label="下一个条目" title="下一个条目" ${position >= items.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
         </nav>`;
-    const entryBarHtml = (mobile = false) => `
-        <div class="blai-deep-clean-preview-entry-bar ${mobile ? 'is-mobile-entry' : ''}">
+    const entryBarHtml = () => `
+        <div class="blai-deep-clean-preview-entry-bar">
             <label class="blai-deep-clean-preview-include" title="勾选后本条纳入本次清理，取消勾选则跳过"><input class="blai-check-native" type="checkbox" data-deep-clean-preview-include ${preview.included.has(preview.currentItemIndex) ? 'checked' : ''} aria-label="本条纳入清理"></label>
             <h3>条目·${deepCleanSafeHtml(compactIdentity(currentItem))}</h3>
             <div class="blai-deep-clean-preview-entry-trailing">${generateButton}</div>
@@ -208,7 +208,7 @@ export function renderDeepCleanPreview(preview) {
                 <div class="blai-deep-clean-preview-bar">
                     <button type="button" class="blai-deep-clean-preview-list-toggle" data-deep-clean-preview-list-toggle aria-expanded="${listOpen}" aria-label="条目列表（${items.length}）" title="条目列表（${items.length}）"><i class="fas fa-list" aria-hidden="true"></i><span>${items.length}</span></button>
                     <div class="blai-deep-clean-preview-bar-trailing">
-                        ${itemNavHtml(false)}
+                        ${itemNavHtml()}
                         <div class="blai-deep-clean-preview-filter-wrap">
                             <button type="button" class="blai-deep-clean-preview-filter-trigger" data-deep-clean-preview-filter-trigger aria-haspopup="true" aria-expanded="false" aria-label="筛选：${activeFilter[1]} ${activeFilter[2]}"><span class="blai-deep-clean-preview-filter-trigger-label">${activeFilter[1]}</span><span class="blai-deep-clean-preview-filter-trigger-count">${activeFilter[2]}</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
                             <div class="blai-deep-clean-preview-filter-menu" hidden>
@@ -217,7 +217,7 @@ export function renderDeepCleanPreview(preview) {
                         </div>
                     </div>
                 </div>
-                ${entryBarHtml(false)}
+                ${entryBarHtml()}
             </header>
             ${listOpen ? `<nav class="blai-deep-clean-preview-list" aria-label="命中条目">${renderPreviewList(preview, items)}</nav>` : ''}
             <main class="blai-deep-clean-preview-detail">
@@ -226,9 +226,7 @@ export function renderDeepCleanPreview(preview) {
                 </div>
             </main>
             <div class="blai-deep-clean-preview-toolbar">
-                ${entryBarHtml(true)}
                 <div class="blai-deep-clean-preview-nav-strip">
-                    ${itemNavHtml(true)}
                     ${changeNavHtml}
                 </div>
             </div>

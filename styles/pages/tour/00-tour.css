@@ -23,7 +23,7 @@
 #blai-tour-layer .blai-tour-spotlight {
     position: fixed;
     z-index: var(--blai-z-inner);
-    border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 78%, white 22%);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--blai-border-highlight) 78%, white 22%);
     border-radius: var(--blai-radius-10);
     box-shadow: 0 0 0 100vmax var(--blai-tour-scrim);
     pointer-events: none;
@@ -38,7 +38,7 @@
     max-width: min(var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))), calc(100vw - var(--blai-size-24)));
     max-height: min(var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24))), calc(var(--blai-viewport-h) - var(--blai-size-24)));
     padding: var(--blai-space-18);
-    border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 28%, var(--border-color) 72%);
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--blai-border-highlight) 28%, var(--border-color) 72%);
     border-radius: var(--blai-radius-lg);
     background: var(--bg-surface);
     box-shadow: 0 16px 38px color-mix(in srgb, var(--bg-base) 45%, transparent);
@@ -62,9 +62,9 @@
 
 #blai-tour-layer button { min-height: var(--blai-size-32); padding: var(--blai-space-6) var(--blai-space-10); border: var(--blai-border-1) solid var(--border-color); border-radius: var(--blai-radius-8); background: var(--bg-surface); color: var(--text-main); font: inherit; font-size: var(--blai-font-12); font-weight: var(--blai-weight-bold); }
 
-#blai-tour-layer button:not(.blai-tour-primary):hover:not(:disabled), #blai-tour-layer button:not(.blai-tour-primary):focus-visible { border-color: var(--accent-color); color: var(--accent-ink); outline: none; }
+#blai-tour-layer button:not(.blai-tour-primary):hover:not(:disabled), #blai-tour-layer button:not(.blai-tour-primary):focus-visible { border-color: var(--blai-border-highlight); color: var(--accent-ink); outline: none; }
 
-#blai-tour-layer .blai-tour-primary { border-color: var(--accent-color); background: var(--accent-color); color: var(--accent-contrast); }
+#blai-tour-layer .blai-tour-primary { border-color: var(--blai-border-highlight); background: var(--accent-color); color: var(--accent-contrast); }
 
 #blai-tour-layer button:disabled { opacity: .45; cursor: default; }
 
@@ -116,13 +116,13 @@
 
 #blai-tour-layer .blai-tour-review-navigation span:last-child { justify-self: end; }
 
-#blai-tour-layer .blai-tour-review-navigation strong { color: var(--text-main); font: var(--blai-weight-bold) 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; }
+#blai-tour-layer .blai-tour-review-navigation strong { color: var(--text-main); font: var(--blai-weight-bold) var(--blai-fs-mono-counter)/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; }
 
 #blai-tour-layer .blai-tour-review-apply { display: flex; align-items: center; justify-content: space-between; gap: var(--blai-space-8); min-height: var(--blai-size-44); padding: var(--blai-space-7) var(--blai-space-10); border-top: var(--blai-border-1) solid var(--border-color); color: var(--text-secondary); font-size: var(--blai-font-10); }
 
 #blai-tour-layer .blai-tour-review-apply strong { color: var(--text-main); }
 
-#blai-tour-layer .blai-tour-review-apply b { display: inline-flex; align-items: center; min-height: var(--blai-size-26); padding: 0 var(--blai-space-8); border: var(--blai-border-1) solid var(--accent-color); border-radius: var(--blai-radius-6); background: var(--accent-color); color: var(--accent-contrast); font-size: var(--blai-font-10); white-space: nowrap; }
+#blai-tour-layer .blai-tour-review-apply b { display: inline-flex; align-items: center; min-height: var(--blai-size-26); padding: 0 var(--blai-space-8); border: var(--blai-border-1) solid var(--blai-border-highlight); border-radius: var(--blai-radius-6); background: var(--accent-color); color: var(--accent-contrast); font-size: var(--blai-font-10); white-space: nowrap; }
 
 @media (min-width: 601px) {
     #blai-tour-layer .blai-tour-card { position: fixed; width: min(390px, calc(100vw - var(--blai-size-32))); max-width: min(var(--blai-tour-popover-max-width, calc(100vw - var(--blai-size-24))), calc(100vw - var(--blai-size-24))); max-height: min(680px, var(--blai-tour-popover-max-height, calc(var(--blai-viewport-h) - var(--blai-size-24))), calc(var(--blai-viewport-h) - var(--blai-size-24))); }

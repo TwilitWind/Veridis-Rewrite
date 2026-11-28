@@ -10,8 +10,7 @@ import { setSingleRuleReplacementEditor } from './view-01-modal.js';
 export function renderSubrulesToModal() {
     const container = $('#blai-edit-subrules-container');
     if (!container.length) return;
-    // 分组弹窗已隐藏 AI/程序筛选，强制按全部显示，避免残留筛选态让规则莫名消失。
-    rulesUiState.currentEditingFilter = 'all';
+    // 筛选只影响展示，不改变 currentEditingSubrules 的真实顺序与保存内容。
     syncRuleEditFilterUi();
     if (rulesUiState.currentEditingSubrules.length === 0) {
         container.html('<div class="blai-subrule-empty">这个分组还没有规则。点击「新增规则」开始添加。</div>');
@@ -51,7 +50,7 @@ export function renderSubrulesToModal() {
         let remarkHTML = '';
         if (remark) {
             remarkHTML = `
-                <div class="blai-subrule-remark" style="margin-top: 8px; padding-top: 10px; border-top: 1px dotted color-mix(in srgb, var(--text-main) 35%, color-mix(in srgb, var(--bg-base) 12%, transparent)); font-size: 11px; color: var(--text-secondary); font-style: italic;">
+                <div class="blai-subrule-remark" style="margin-top: 8px; padding-top: 10px; border-top: 1px dotted color-mix(in srgb, var(--text-main) 35%, color-mix(in srgb, var(--bg-base) 12%, transparent)); font-size: var(--blai-fs-note); color: var(--text-secondary);">
                     <i class="fas fa-info-circle" style="margin-right: 4px;"></i>${safeHtml(remark)}
                 </div>
             `;
@@ -85,7 +84,7 @@ export function renderSubrulesToModal() {
                 </div>
                 <div class="blai-subrule-preview">
                     <span class="blai-subrule-preview-source">${tPreview}</span>
-                    <i class="fas fa-arrow-right" style="color: var(--text-secondary); font-size: 11px; margin: 0 6px;"></i>
+                    <i class="fas fa-arrow-right" style="color: var(--text-secondary); font-size: var(--blai-fs-note); margin: 0 6px;"></i>
                     <span class="blai-subrule-preview-replacement">${rPreview}</span>
                 </div>
                 ${remarkHTML}

@@ -76,7 +76,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-pipeline li.is-active .blai-deep-clean-pipeline-marker {
-    border: var(--blai-border-2) solid var(--accent-color);
+    border: var(--blai-border-2) solid var(--blai-border-highlight);
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-pipeline li.is-active .blai-deep-clean-pipeline-marker::after {
@@ -106,7 +106,7 @@
 
 #blai-deep-clean-workspace .blai-deep-clean-pipeline span {
     color: var(--text-secondary);
-    font: 9px/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
+    font: var(--blai-fs-mono-template)/1.35 ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-pipeline span > .fa-spinner {

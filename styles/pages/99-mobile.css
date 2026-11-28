@@ -142,21 +142,21 @@
     :is(#blai-purifier-popup, .blai-modal-shell) .blai-proxy-field:is(:focus-visible, :active),
     :is(#blai-purifier-popup, .blai-modal-shell) .field.blai-proxy-field.is-active,
     .blai-regex-replacement-chip.is-active {
-        border-color: var(--border-color) !important;
+        border-color: var(--blai-border-highlight) !important;
         background-color: var(--bg-surface) !important;
         outline: none !important;
-        box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+        box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
     }
 
     /* 输入框/文本域/下拉：焦点态保留控件边框作为背景框，叠加单层内描边。
        之前把 border-color 压成 transparent 会让 1px 边框整圈消失，看着像控件没了。 */
     /* 复选框不走文本框焦点底色：否则已勾选的原生勾会被浅底盖成「空框」。
-       手机端定位改写项改为高亮整段容器，复选框只保留原生勾选态。 */
+       定位改写项只给 del/ins 淡底，复选框保持原生勾选态。 */
     :is(#blai-purifier-popup, .blai-modal-shell) :is(input:not([type="checkbox"]), textarea, select):is(:focus, :focus-visible) {
-        border-color: var(--border-color) !important;
+        border-color: var(--blai-border-highlight) !important;
         background-color: var(--bg-surface) !important;
         outline: none !important;
-        box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+        box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
     }
 
     /* 步骤导航箭头缩到与周围控件同档，不再用放大的 18px 图标。 */
@@ -168,6 +168,6 @@
     .blai-diff-related-mode .blai-diff-change:hover,
     .blai-diff-related-mode .blai-diff-change-selected {
         outline: none !important;
-        box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+        box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
     }
 }

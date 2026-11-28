@@ -257,7 +257,7 @@
 }
 
 #blai-purifier-popup .blai-tools-binding-main-action:focus-visible, #blai-purifier-popup .blai-tools-switch:focus-visible, #blai-purifier-popup .blai-tools-primary-button:focus-visible, #blai-purifier-popup #blai-diff-limit-input:focus-visible {
-    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 78%, transparent);
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--blai-border-highlight) 78%, transparent);
     outline-offset: var(--blai-focus-offset);
 }
 

@@ -1,5 +1,5 @@
 /** 规则事件：search。实现从原 events.js 拆出，对外仍从 events.js 的 bindRuleEvents 进入。 */
-import { openRuleEditTarget, resetRuleSearchQueryState, commitRuleSearchKeyword } from './events-00-shared.js';
+import { openRuleEditTarget, resetRuleSearchQueryState, commitRuleSearchKeyword, noteRuleSearchInput } from './events-00-shared.js';
 import { extensionName } from '../../settings/defaults.js';
 import { getAppContext } from '../../host/appContext.js';
 import { rulesUiState } from '.././state.js';
@@ -23,12 +23,15 @@ export function bindRuleSearchEvents() {
     });
 
     $(document).off('input', '#blai-rule-search-input').on('input', '#blai-rule-search-input', function() {
+        noteRuleSearchInput();
         rulesUiState.ruleSearchDraftKeyword = String($(this).val() || '');
         rulesUiState.ruleSearchExpandedMenuKey = '';
         syncRuleSearchInputUi();
         if (rulesUiState.ruleSearchDraftKeyword.trim() === '') {
             rulesUiState.ruleSearchKeyword = '';
             rulesUiState.ruleSearchHasSearched = false;
+            rulesUiState.ruleSearchHistorySessionOpen = false;
+            rulesUiState.ruleSearchLastInputAt = 0;
         }
         if (ruleSearchDebounceTimer) window.clearTimeout(ruleSearchDebounceTimer);
         ruleSearchDebounceTimer = window.setTimeout(() => {
@@ -44,7 +47,7 @@ export function bindRuleSearchEvents() {
             window.clearTimeout(ruleSearchDebounceTimer);
             ruleSearchDebounceTimer = 0;
         }
-        commitRuleSearchKeyword();
+        commitRuleSearchKeyword({ endSession: true });
     });
 
     $(document).off('click', '#blai-rule-search-history-clear').on('click', '#blai-rule-search-history-clear', async function(e) {
@@ -70,6 +73,8 @@ export function bindRuleSearchEvents() {
         rulesUiState.ruleSearchExpandedMenuKey = '';
         syncRuleSearchInputUi({ syncValue: true });
         pushRuleSearchHistory(keyword);
+        rulesUiState.ruleSearchHistorySessionOpen = false;
+        rulesUiState.ruleSearchLastInputAt = 0;
         renderRuleSearchModal();
     });
 
@@ -99,7 +104,8 @@ export function bindRuleSearchEvents() {
 
     $(document).off('click', '#blai-rule-search-scope .blai-rule-search-scope-item').on('click', '#blai-rule-search-scope .blai-rule-search-scope-item', function(e) {
         e.preventDefault();
-        const nextScope = String($(this).attr('data-scope') || 'all');
+        const rawScope = String($(this).attr('data-scope') || 'all');
+        const nextScope = rawScope === 'preset' ? 'rule' : rawScope;
         if ((rulesUiState.ruleSearchScope || 'all') === nextScope) return;
         rulesUiState.ruleSearchScope = nextScope;
         rulesUiState.ruleSearchExpandedMenuKey = '';
@@ -115,7 +121,8 @@ export function bindRuleSearchEvents() {
         renderRuleSearchModal();
     });
 
-    $(document).off('click', '#blai-rule-search-modal .blai-rule-search-menu-item').on('click', '#blai-rule-search-modal .blai-rule-search-menu-item', function(e) {
+    // 菜单由 popover.js 挂到 body，不在搜索弹窗内；委托选择器不能带 #blai-rule-search-modal 祖先。
+    $(document).off('click', '.blai-rule-search-menu-item').on('click', '.blai-rule-search-menu-item', function(e) {
         e.preventDefault();
         e.stopPropagation();
         const action = String($(this).data('action') || '');

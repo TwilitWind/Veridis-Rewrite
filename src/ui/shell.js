@@ -50,7 +50,7 @@ const responsivePageMetadata = {
     },
     clean: {
         title: '净化',
-        description: '管理需要被改写或保护的 XML 标签范围及深度净化设置。',
+        description: '管理需要被改写或保护的 XML 标签范围及深度清理设置。',
     },
     bind: {
         title: '绑定',
@@ -126,7 +126,7 @@ export async function setupUI(renderTemplate, templateDirectory) {
                     <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down interactable"></div>
                 </div>
                 <div class="inline-drawer-content">
-                    <button id="blai-wand-btn-panel" type="button" class="menu_button blai-extension-open-btn" aria-label="打开 AI 词汇映射" title="打开 AI 词汇映射">
+                    <button id="blai-wand-btn-panel" type="button" class="menu_button blai-extension-open-btn" aria-label="打开词汇映射" title="打开词汇映射">
                         <i class="fa-solid fa-language fa-fw"></i>
                         <span>词汇映射</span>
                     </button>
@@ -137,7 +137,7 @@ export async function setupUI(renderTemplate, templateDirectory) {
 
     if (!$('#blai-wand-btn').length) {
         $('#data_bank_wand_container').append(`
-            <div id="blai-wand-btn" class="list-group-item flex-container flexGap5" title="词汇映射管理">
+            <div id="blai-wand-btn" class="list-group-item flex-container flexGap5" title="打开词汇映射">
                 <div class="fa-fw fa-solid fa-language extensionsMenuExtensionButton"></div><span>词汇映射</span>
             </div>`);
     }

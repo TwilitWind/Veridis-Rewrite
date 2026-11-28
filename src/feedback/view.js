@@ -1,4 +1,4 @@
-// 负责专用反馈工作区与深度净化诊断工作区渲染。
+// 负责专用反馈工作区与深度清理诊断工作区渲染。
 import { feedbackAreas, feedbackTypes } from './payload.js';
 import {
     applyDebugDisplayOrder,
@@ -13,7 +13,7 @@ import { projectFeedbackUpdateWarning } from '../update/status.js';
 let feedbackDraftForm = null;
 
 const feedbackAreaLabels = Object.freeze({
-    'Deep Clean': '深度净化',
+    'Deep Clean': '深度清理',
     'AI Rewrite': 'AI 改写',
     'Program Rewrite': '程序改写',
     'Streaming Filter': '流式过滤',
@@ -100,7 +100,7 @@ export function renderFeedbackForm(slots = {}) {
 
                 <fieldset class="blai-feedback-fieldset">
                     <legend>涉及区域</legend>
-                    <p>可选择多个相关区域；例如深度净化中的结果或审查问题，可以同时选择「深度净化」和「净化结果 / 审查」。</p>
+                    <p>可选择多个相关区域；例如深度清理中的结果或审查问题，可以同时选择「深度清理」和「净化结果 / 审查」。</p>
                     <div class="blai-feedback-area-select" data-blai-area-select>
                         <button type="button" class="blai-feedback-area-trigger" aria-haspopup="true" aria-expanded="false">
                             <span class="blai-feedback-area-summary">选择区域</span>
@@ -135,7 +135,7 @@ export function renderFeedbackForm(slots = {}) {
                     ${diagnosticAttachment('第三方扩展与酒馆助手脚本环境', 'installedEnabledExtensions', true, '包括已安装且未禁用的第三方扩展，以及酒馆助手中已启用的全局脚本；不会附加脚本正文。')}
                     ${diagnosticAttachment('运行日志', 'runtimeLog', true, '包括 Veridis 已记录的结构化运行事件；不会附加 AI 上下文中的提示词、请求或回复正文。')}
                     ${diagnosticAttachment('最近一次失败的深度清理诊断', 'deepCleanLatestFailure', Boolean(slots.latestFailure))}
-                    ${diagnosticAttachment('上一次失败的 深度清理诊断', 'deepCleanPreviousFailure', Boolean(slots.previousFailure))}
+                    ${diagnosticAttachment('上一次失败的深度清理诊断', 'deepCleanPreviousFailure', Boolean(slots.previousFailure))}
                     ${diagnosticAttachment('最近一次成功的深度清理诊断', 'deepCleanLastSuccess', Boolean(slots.lastSuccess))}
                     <div class="blai-feedback-file-picker">
                         <div class="blai-feedback-file-copy">
@@ -151,7 +151,7 @@ export function renderFeedbackForm(slots = {}) {
 
             <div class="blai-feedback-form-footer">
                 <p class="blai-feedback-privacy" role="note">
-                    Veridis 不会自动读取或附加 API Key、聊天内容、提示词、AI 回复、角色卡正文或世界书正文。请勿在详细说明或所选文件中包含敏感信息。
+                    Veridis 不会自动读取或附加 API Key、聊天内容、提示词、AI 回复、角色卡正文或世界书正文。建议在详细说明和所选文件中不要包含敏感信息。
                 </p>
                 <div class="blai-feedback-form-actions">
                     <div id="blai-feedback-status" class="blai-feedback-status" aria-live="polite"></div>

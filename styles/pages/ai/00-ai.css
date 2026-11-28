@@ -46,7 +46,7 @@
     top: 50%;
     transform: translateY(-50%);
     font-family: "Font Awesome 6 Free";
-    font-weight: 900;
+    font-weight: var(--blai-weight-icon);
     font-size: var(--blai-font-15);
     color: var(--blai-toast-ink);
     pointer-events: none;
@@ -69,7 +69,7 @@
 
 #blai-ai-toast-container > .blai-ai-rewrite-toast > .toast-title {
     margin: 0;
-    font-size: calc(var(--blai-font-14) + 1pt);
+    font-size: var(--blai-fs-title);
     line-height: 1.2;
     text-align: left;
     white-space: nowrap;
@@ -80,7 +80,7 @@
     color: var(--blai-toast-ink);
     min-width: 0;
     margin: 0;
-    font-size: calc(var(--blai-font-12-5) + 1pt);
+    font-size: var(--blai-fs-sub);
     line-height: 1.2;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -381,12 +381,13 @@
     padding-right: var(--blai-space-32) !important;
 }
 
-/* 需求 1.3：输入框/下拉框只保留单层高亮——输入框无边框，焦点用内阴影描边，
+/* 输入框/下拉框保留 1px 边框定界，焦点态边框与内描边统一走高亮令牌；
    不叠加 outline（以前 outline + border-color 同时生效会像双层描边）。 */
 #blai-purifier-popup.blai-app-shell .blai-ai-control > .blai-input:focus, #blai-purifier-popup.blai-app-shell .blai-ai-compound-control > .blai-select-box:focus, #blai-purifier-popup.blai-app-shell .blai-ai-compound-control > .blai-input:focus, #blai-purifier-popup.blai-app-shell .blai-ai-key-control > .blai-input:focus, #blai-purifier-popup.blai-app-shell .blai-ai-prompt-input:focus {
     outline: none !important;
     outline-offset: 0 !important;
-    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+    border-color: var(--blai-border-highlight) !important;
+    box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-compound-control {
@@ -467,7 +468,7 @@
 
 
 #blai-purifier-popup.blai-app-shell .blai-ai-icon-button:hover {
-    border-color: var(--accent-color) !important;
+    border-color: var(--blai-border-highlight) !important;
     background: var(--bg-surface) !important;
     color: var(--accent-ink) !important;
 }

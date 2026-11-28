@@ -59,8 +59,12 @@
     --blai-checkbox-border: color-mix(in srgb, var(--text-main) 34%, var(--border-color));
     --blai-checkbox-bg: var(--bg-surface);
     --blai-checkbox-checked-bg: var(--accent-color);
-    --blai-checkbox-checked-border: var(--accent-color);
+    --blai-checkbox-checked-border: var(--blai-border-highlight);
     --blai-checkbox-ink: var(--accent-contrast);
+    /* 边框高亮唯一颜色源：焦点 / 选中 / 悬停的描边与内描边都取当前主题强调色。
+       宿主原生 textarea:focus 会画自己的主题色边框，插件控件用同名优先级覆盖，
+       不再出现「强调色内环 + 宿主色外框」两种颜色叠在一起。 */
+    --blai-border-highlight: var(--accent-color);
     /* 危险实心块（删除类按钮）上的文字色 */
     --danger-contrast: #FFFFFF;
 

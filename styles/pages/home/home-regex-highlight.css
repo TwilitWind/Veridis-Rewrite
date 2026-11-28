@@ -103,10 +103,10 @@
 /* 括号配对底纹：光标贴着 []、()、{} 任一侧时，整对闭合范围铺主题强调色。
    只用背景与内阴影，不加 padding/border/字号，避免高亮字形与输入框里的真字错位。 */
 .blai-regex-bracket-pair {
-    background: color-mix(in srgb, var(--accent-color) 22%, transparent);
+    background: color-mix(in srgb, var(--blai-border-highlight) 22%, transparent);
     /* 直角底纹：圆角会把配对符号两端的底色吃掉，逐字符比对时不好认边界。 */
     border-radius: 0;
-    box-shadow: var(--blai-ring-inset) color-mix(in srgb, var(--accent-color) 42%, transparent);
+    box-shadow: var(--blai-ring-inset) color-mix(in srgb, var(--blai-border-highlight) 42%, transparent);
 }
 
 .blai-regex-flags-hint {
@@ -151,7 +151,7 @@
 }
 
 .blai-regex-test-toggle.is-open {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
 }
 
 /* 展开按钮与命中计数同一行：计数在测试框外的右上角，不压在样本输入框上。 */
@@ -309,8 +309,8 @@
 }
 
 .blai-regex-replacement-chip.is-active {
-    border-color: var(--accent-color);
-    box-shadow: var(--blai-ring-inset) color-mix(in srgb, var(--accent-color) 45%, transparent);
+    border-color: var(--blai-border-highlight);
+    box-shadow: var(--blai-ring-inset) color-mix(in srgb, var(--blai-border-highlight) 45%, transparent);
 }
 
 .blai-regex-replacement-chip-main {
@@ -381,7 +381,7 @@
     min-height: var(--blai-size-32) !important;
     padding: 0 var(--blai-space-12) !important;
     border-radius: var(--blai-radius-sm) !important;
-    border: var(--blai-border-1) solid var(--accent-color) !important;
+    border: var(--blai-border-1) solid var(--blai-border-highlight) !important;
     background: var(--accent-color) !important;
     color: var(--accent-contrast) !important;
     font-size: var(--blai-font-13) !important;
@@ -392,7 +392,7 @@
 
 .blai-subrule-footer-save:hover {
     background: color-mix(in srgb, var(--accent-color) 88%, var(--text-main) 12%) !important;
-    border-color: color-mix(in srgb, var(--accent-color) 88%, var(--text-main) 12%) !important;
+    border-color: color-mix(in srgb, var(--blai-border-highlight) 88%, var(--text-main) 12%) !important;
 }
 
 .blai-subrule-card {

@@ -96,6 +96,8 @@ export function openRuleSearchModal() {
     }
     $('.blai-home-card-menu-toggle').attr('aria-expanded', 'false');
     hydrateRuleSearchHistory();
+    rulesUiState.ruleSearchHistorySessionOpen = false;
+    rulesUiState.ruleSearchLastInputAt = 0;
     syncRuleSearchInputUi({ syncValue: true });
     renderRuleSearchModal();
     $('#blai-rule-search-modal').css('display', 'flex').hide().fadeIn(getFadeDuration('in'));

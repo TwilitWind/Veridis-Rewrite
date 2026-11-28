@@ -17,6 +17,9 @@ export const rulesUiState = {
     ruleSearchExpandedMenuKey: '',
     ruleSearchScope: 'all',
     ruleSearchHistory: [],
+    // 同一轮连续输入只保留最终词；这些字段只存活于当前会话，不写设置。
+    ruleSearchHistorySessionOpen: false,
+    ruleSearchLastInputAt: 0,
     searchEditFlow: {
         active: false,
         returnMode: '',

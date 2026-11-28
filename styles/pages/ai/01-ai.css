@@ -1,7 +1,7 @@
 /* AI 页：API 连接、生成参数、开关与两栏布局。 */
 
 #blai-purifier-popup.blai-app-shell .blai-ai-switch input:focus-visible ~ .blai-ai-switch-track {
-    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 40%, transparent) !important;
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--blai-border-highlight) 40%, transparent) !important;
     outline-offset: var(--blai-focus-offset) !important;
 }
 
@@ -158,7 +158,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-generation-open:focus-visible {
-    border-color: var(--accent-color) !important;
+    border-color: var(--blai-border-highlight) !important;
     outline: none !important;
     outline-offset: 0 !important;
     box-shadow: none !important;
@@ -328,7 +328,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .blai-ai-additional-open:focus-visible {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     outline: none;
     box-shadow: none;
 }

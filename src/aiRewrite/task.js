@@ -137,7 +137,7 @@ export function getAiConfigIssue(aiSettings) {
     if (aiSettings?.enabled !== true) {
         return {
             code: 'disabled',
-            reason: 'AI改写未启用',
+            reason: 'AI 改写未启用',
         };
     }
 

@@ -187,8 +187,13 @@ $(document).off('click', '[data-deep-clean-preview-generate-ai]').on('click', '[
     loadPreviewEntry(preview, { retry: true });
 });
 
-let locatedChangeBlock = null;
+let locatedDiffNodes = [];
 let locateHighlightTimer = 0;
+
+const clearLocatedDiffNodes = () => {
+    locatedDiffNodes.forEach(node => node.classList.remove('blai-diff-nav-current'));
+    locatedDiffNodes = [];
+};
 
 const locateDeepCleanPreviewChange = (preview, blockIndex) => {
     const target = document.querySelector(`[data-blai-preview-change-block="${blockIndex}"]`);
@@ -199,17 +204,14 @@ const locateDeepCleanPreviewChange = (preview, blockIndex) => {
         documentPane.scrollTop = Math.max(0, offset - documentPane.clientHeight / 2);
         preview.documentScrollTop = documentPane.scrollTop;
     }
-    // 高亮落在整段改写项上；聚焦复选框会让已勾选态看起来像被取消勾选。
-    if (locatedChangeBlock && locatedChangeBlock !== target) locatedChangeBlock.classList.remove('is-located');
+    // 与净化对比逐条定位同款：高亮只落在 del/ins 节点上，不描整段容器、不碰复选框。
     const active = document.activeElement;
     if (active instanceof HTMLElement && target.contains(active)) active.blur();
-    target.classList.add('is-located');
-    locatedChangeBlock = target;
+    clearLocatedDiffNodes();
+    locatedDiffNodes = Array.from(target.querySelectorAll('.blai-diff-change'));
+    locatedDiffNodes.forEach(node => node.classList.add('blai-diff-nav-current'));
     window.clearTimeout(locateHighlightTimer);
-    locateHighlightTimer = window.setTimeout(() => {
-        target.classList.remove('is-located');
-        if (locatedChangeBlock === target) locatedChangeBlock = null;
-    }, 1200);
+    locateHighlightTimer = window.setTimeout(clearLocatedDiffNodes, 1200);
 };
 
 $(document).off('click', '[data-deep-clean-preview-change]').on('click', '[data-deep-clean-preview-change]', function() {

@@ -40,7 +40,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-mode-option input:checked {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background-image: radial-gradient(circle, var(--accent-color) 0 var(--blai-size-4), transparent var(--blai-size-4));
 }
 
@@ -251,7 +251,7 @@
 }
 
 #blai-deep-clean-workspace .blai-deep-clean-choice input:checked {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background-color: var(--accent-color);
     background-image: none;
 }

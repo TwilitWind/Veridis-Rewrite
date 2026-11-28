@@ -81,7 +81,7 @@
 
 #blai-purifier-popup .text-btn:not(.accent):hover, #blai-purifier-popup .mini-btn:not(.accent):hover, #blai-purifier-popup .round-btn:hover, #blai-purifier-popup .field.blai-proxy-field:not(.is-disabled):hover {
     background: var(--bg-surface) !important;
-    border-color: color-mix(in srgb, var(--accent-color) 32%, var(--border-color) 68%) !important;
+    border-color: color-mix(in srgb, var(--blai-border-highlight) 32%, var(--border-color) 68%) !important;
 }
 
 #blai-purifier-popup button:not(:disabled):active, #blai-purifier-popup .field.blai-proxy-field:not(.is-disabled):active, .blai-modal-shell button:not(:disabled):active {
@@ -89,7 +89,7 @@
 }
 
 #blai-purifier-popup button:focus-visible, #blai-modal-shell button:focus-visible {
-    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 62%, transparent) !important;
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--blai-border-highlight) 62%, transparent) !important;
     outline-offset: var(--blai-focus-offset) !important;
 }
 
@@ -108,7 +108,7 @@
 .blai-modal-shell input:focus, .blai-modal-shell textarea:focus, .blai-modal-shell select:focus {
     outline: none !important;
     /* 输入框本身无边框，焦点态一律用内阴影描边，不再改 border-color */
-    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+    box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
 }
 
 #blai-purifier-popup button:disabled, #blai-purifier-popup .field.blai-proxy-field.is-disabled, .blai-modal-shell button:disabled {
@@ -118,7 +118,7 @@
 }
 
 #blai-purifier-popup .field.blai-proxy-field.is-active {
-    border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color) 58%);
+    border-color: color-mix(in srgb, var(--blai-border-highlight) 42%, var(--border-color) 58%);
     background: color-mix(in srgb, var(--accent-color) 14%, var(--bg-surface) 86%);
 }
 
@@ -246,9 +246,11 @@
     line-height: 1.5;
 }
 
-.blai-input:focus, .blai-textarea:focus {
-    /* 只染已有的 1px 边框：改颜色不占位，聚焦时不会把周围元素顶开 */
-    border-color: var(--accent-color) !important;
+.blai-input:focus, .blai-textarea:focus,
+:is(#blai-purifier-popup, .blai-modal-shell) :is(.blai-input, .blai-textarea):focus {
+    /* 只染已有的 1px 边框：改颜色不占位，聚焦时不会把周围元素顶开。
+       带容器 id 的选择器用于压过宿主 textarea:focus 的 !important 主题色边框。 */
+    border-color: var(--blai-border-highlight) !important;
 }
 
 .blai-input.blai-invalid, .blai-textarea.blai-invalid {
@@ -361,7 +363,7 @@
 
 .blai-checkbox-label input:checked + .blai-custom-checkbox {
     background-color: var(--accent-color);
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
 }
 
 .blai-checkbox-label input:checked + .blai-custom-checkbox::after
@@ -540,7 +542,7 @@
 .blai-plugin-dialog-input:focus {
     outline: none !important;
     border-color: transparent !important;
-    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+    box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
 }
 
 .blai-plugin-dialog .blai-modal-actions {
@@ -584,7 +586,7 @@
 }
 
 .blai-persona-description-protect-toggle:not(.blai-clean-switch).is-active {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     color: var(--accent-ink);
     background: color-mix(in srgb, var(--accent-color) 14%, transparent);
 }
@@ -743,6 +745,6 @@
 .blai-tools-switch[aria-pressed="true"] .blai-tools-switch-track {
     --blai-switch-knob: color-mix(in srgb, white 94%, var(--bg-surface));
     --blai-switch-offset: calc(100% - var(--blai-switch-knob-size));
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background: var(--accent-color);
 }

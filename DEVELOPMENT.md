@@ -52,4 +52,13 @@ node "$SCRIPTS/project-audit.mjs" . --all  # 看全部线索
 
 写入 GitHub（push、推 tag、建仓改名、API 写入、网页上传）需用户对当次版本明确同意；本地 `git add` / `git commit` 不需要。流程：本地完成并验证 → 给出仓库与分支、commit 标题、改动摘要、版本变化与不可逆操作 → 等明确同意 → 推送后校验远端与线上 `manifest.json`。
 
-交付前确认：随包文件清单只含 `manifest.json`、声明的 js/css、被 import 的模块、`README.md` / `ARCHITECTURE.md` / `DEVELOPMENT.md` / `CHANGELOG.md`、`docs/architecture/` 专项文档与静态资源；构建脚本、钩子脚本、临时目录、截图、`DESIGN.md`、`AGENTS.md` 不随包。
+随包文件清单只含 `manifest.json`、声明的 js/css、被 import 的模块、`README.md` / `ARCHITECTURE.md` / `DEVELOPMENT.md` / `CHANGELOG.md` / `LICENSE`、`docs/architecture/` 专项文档与静态资源；构建脚本、钩子脚本、临时目录、截图、`DESIGN.md`、`AGENTS.md` 不随包。清单由仓库根目录的 `build-release.mjs` 统一执行，零依赖：
+
+```bash
+node build-release.mjs          # 默认输出到 ./dist/Veridis-Rewrite-<version>.zip
+node build-release.mjs <输出目录>
+```
+
+脚本按白名单收文件并打印完整清单，构建脚本、`todo.md`、`_archive/`、`shots/`、`*.map` 等一律不进包；生成的 zip 不等同于 git 仓库，不要把 `dist/` 的产物提交或同步到装机副本。
+
+交付前确认：先跑上面的构建与闸门命令，再生成 zip 并核对清单，最后才考虑是否发布到 GitHub。

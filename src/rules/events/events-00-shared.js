@@ -13,6 +13,9 @@ import { clearRuleSearchEditFlow, pushRuleSearchHistory, focusLatestRuleCard, op
 const ruleObjectIdMap = new WeakMap();
 let nextRuleObjectId = 1;
 
+// 同一轮连续输入的历史合并窗口：超过这个间隔就视为新的一次搜索。
+const RULE_SEARCH_HISTORY_SESSION_GAP_MS = 1500;
+
 function ensureRuleObjectId(rule) {
     if (!rule || typeof rule !== 'object') return '';
     let id = ruleObjectIdMap.get(rule);
@@ -175,24 +178,35 @@ export function resetRuleSearchQueryState() {
     rulesUiState.ruleSearchDraftKeyword = '';
     rulesUiState.ruleSearchHasSearched = false;
     rulesUiState.ruleSearchExpandedMenuKey = '';
+    rulesUiState.ruleSearchHistorySessionOpen = false;
+    rulesUiState.ruleSearchLastInputAt = 0;
     clearRuleSearchEditFlow();
 }
 
-function submitRuleSearch() {
-    rulesUiState.ruleSearchDraftKeyword = String($('#blai-rule-search-input').val() || '');
-    rulesUiState.ruleSearchKeyword = rulesUiState.ruleSearchDraftKeyword.trim();
-    rulesUiState.ruleSearchHasSearched = rulesUiState.ruleSearchKeyword.length > 0;
-    rulesUiState.ruleSearchExpandedMenuKey = '';
-    if (rulesUiState.ruleSearchHasSearched) pushRuleSearchHistory(rulesUiState.ruleSearchKeyword);
-    renderRuleSearchModal();
+// 每次输入都打点；间隔超过窗口就视为新搜索，避免把两次独立搜索合并。
+export function noteRuleSearchInput() {
+    const now = Date.now();
+    const last = rulesUiState.ruleSearchLastInputAt || 0;
+    if (!last || now - last > RULE_SEARCH_HISTORY_SESSION_GAP_MS) {
+        rulesUiState.ruleSearchHistorySessionOpen = false;
+    }
+    rulesUiState.ruleSearchLastInputAt = now;
 }
 
-
-export function commitRuleSearchKeyword() {
+export function commitRuleSearchKeyword(options = {}) {
+    const { recordHistory = true, endSession = false } = options;
     const keyword = String($('#blai-rule-search-input').val() || '').trim();
     rulesUiState.ruleSearchKeyword = keyword;
     rulesUiState.ruleSearchHasSearched = keyword.length > 0;
-    if (keyword) pushRuleSearchHistory(keyword);
+    if (recordHistory && keyword) {
+        // 同一轮输入只替换刚写入的中间词，最终结果留在历史里；不依赖 Enter，手机端也可用。
+        pushRuleSearchHistory(keyword, { replaceLatest: rulesUiState.ruleSearchHistorySessionOpen });
+        rulesUiState.ruleSearchHistorySessionOpen = true;
+    }
+    if (endSession) {
+        rulesUiState.ruleSearchHistorySessionOpen = false;
+        rulesUiState.ruleSearchLastInputAt = 0;
+    }
     renderRuleSearchModal();
 }
 
@@ -206,12 +220,18 @@ export function saveCurrentEditingRule(options = {}) {
     const rules = extension_settings[extensionName].rules || [];
     const isCreatingNewRule = rulesUiState.currentEditingIndex === -1;
     const nameVal = String($('#blai-edit-name').val() || '').trim();
-    const validSubrules = rulesUiState.currentEditingSubrules.filter(sub => sub.targets && sub.targets.length > 0);
+    const allSubrules = Array.isArray(rulesUiState.currentEditingSubrules) ? rulesUiState.currentEditingSubrules : [];
+    const emptyIndex = allSubrules.findIndex(sub => !Array.isArray(sub?.targets) || sub.targets.length === 0);
 
-    if (validSubrules.length === 0) {
+    if (emptyIndex >= 0) {
+        showToast(`第 ${emptyIndex + 1} 条规则未填写查找内容，请补全或删除后再保存。`, undefined, 'error');
+        return { ok: false };
+    }
+    if (allSubrules.length === 0) {
         showToast('规则分组至少需要一条填写了查找内容的规则。', undefined, 'error');
         return { ok: false };
     }
+    const subrulesToSave = allSubrules;
 
     const previousRule = rulesUiState.currentEditingIndex !== -1 ? rules[rulesUiState.currentEditingIndex] : null;
     const isEnabled = previousRule?.enabled !== false;
@@ -223,7 +243,7 @@ export function saveCurrentEditingRule(options = {}) {
         : `规则分组 ${rules.length + 1}`;
     const newRule = normalizeRuleActivationSafety({
         name: nameVal || fallbackName,
-        subRules: validSubrules,
+        subRules: subrulesToSave,
         activationWarning,
         activationWarningEnabled,
         enabled: activationWarningEnabled ? false : isEnabled,

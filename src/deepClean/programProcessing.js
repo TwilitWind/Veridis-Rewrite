@@ -23,7 +23,7 @@ export function buildDeepCleanProgramExecution(input, item, compiledSemantics, s
         compiledSemantics.programProcessors,
         getProgramScopeSettings(input, item),
         ranges,
-        // 深度清理必须沿用启动时冻结的注释保护语义，不能受运行期设置变化影响。
+        // 深度清理必须沿用启动时冻结的注释与 html 代码块保护语义，不能受运行期设置变化影响。
         { protectXmlComments: input.processingSemantics?.aiProtectXmlComments === true },
     );
 }

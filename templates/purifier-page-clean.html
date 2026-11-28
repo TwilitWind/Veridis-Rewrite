@@ -54,13 +54,13 @@
                                     <section class="blai-clean-section" aria-labelledby="blai-clean-protection-title">
                                         <header class="blai-clean-section-header">
                                             <h2 id="blai-clean-protection-title">内容保护设置</h2>
-                                            <p>配置净化过程中的例外规则。</p>
+                                            <p>设置不参与净化的内容与区域。</p>
                                         </header>
                                         <div class="blai-clean-settings-list">
                                             <div class="blai-clean-setting-row">
                                                 <div>
                                                     <strong>跳过用户输入</strong>
-                                                    <p>用户消息、发送输入框和编辑输入区不进入净化。</p>
+                                                    <p>用户消息、发送输入框和编辑输入区不参与实时净化，深度清理不受影响。</p>
                                                 </div>
                                                 <button id="blai-skip-user-toggle" type="button" class="blai-clean-switch" aria-pressed="false" aria-label="跳过用户输入">
                                                     <span class="blai-clean-switch-track" aria-hidden="true"></span>
@@ -69,21 +69,21 @@
                                             </div>
                                             <div class="blai-clean-setting-row">
                                                 <div>
-                                                    <strong>保护人设描述</strong>
-                                                    <p>保护 persona_description，深度清理时也不会改写。</p>
+                                                    <strong>保护用户人设</strong>
+                                                    <p>用户设定描述的编辑区不参与实时净化，深度清理不受影响。</p>
                                                 </div>
-                                                <button type="button" class="blai-clean-switch blai-persona-description-protect-toggle" aria-pressed="false" aria-label="保护人设描述" title="点击保护用户设定描述">
+                                                <button type="button" class="blai-clean-switch blai-persona-description-protect-toggle" aria-pressed="false" aria-label="保护用户人设" title="点击保护用户设定描述">
                                                     <span class="blai-clean-switch-track" aria-hidden="true"></span>
                                                     <span class="blai-switch-state blai-persona-protect-text">关闭</span>
                                                 </button>
                                             </div>
                                             <label class="blai-clean-setting-row" for="blai-ai-protect-comments">
                                                 <div>
-                                                    <strong>保护 HTML/XML 注释</strong>
-                                                    <p>保护 &lt;!-- 注释 --&gt; 格式的注释文本，程序改写、AI 改写、流式改写与深度清理都不会处理其中的内容。</p>
+                                                    <strong>保护注释内容</strong>
+                                                    <p>跳过 &lt;!-- 注释 --&gt; 与 ```html / ```HTML 代码块，程序改写、AI 改写、流式改写与深度清理都不处理其中的内容。</p>
                                                 </div>
                                                 <span class="blai-clean-checkbox-switch">
-                                                    <input type="checkbox" id="blai-ai-protect-comments" aria-label="保护 HTML/XML 注释，程序改写与 AI 改写均跳过">
+                                                    <input type="checkbox" id="blai-ai-protect-comments" aria-label="保护注释内容，程序改写、AI 改写与深度清理均跳过">
                                                     <span class="blai-clean-switch-track" aria-hidden="true"></span>
                                                 </span>
                                             </label>

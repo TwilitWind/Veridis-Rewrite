@@ -30,7 +30,7 @@
 }
 
 :is(#blai-purifier-popup, #blai-ai-generation-modal) .blai-info-trigger:focus-visible {
-    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 78%, transparent);
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--blai-border-highlight) 78%, transparent);
     outline-offset: var(--blai-focus-offset);
 }
 

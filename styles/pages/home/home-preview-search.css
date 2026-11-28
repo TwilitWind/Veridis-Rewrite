@@ -193,23 +193,19 @@
 }
 
 #blai-purifier-popup .blai-home-batch-actions {
-    gap: var(--blai-space-8);
+    flex-wrap: nowrap;
+    gap: var(--blai-space-4);
 }
 
 #blai-purifier-popup .blai-home-batch-panel {
-    padding: var(--blai-space-2) 0 var(--blai-space-10);
-    gap: var(--blai-space-8);
-}
-
-#blai-purifier-popup .blai-home-batch-heading {
-    display: none;
+    padding: var(--blai-space-2) 0 var(--blai-space-8);
 }
 
 #blai-purifier-popup .blai-home-batch-actions button {
-    min-height: var(--blai-size-34);
-    padding: var(--blai-btn-pad);
-    gap: var(--blai-space-5);
-    font-size: var(--blai-font-12);
+    min-height: var(--blai-size-32);
+    padding: 0 var(--blai-space-5);
+    gap: var(--blai-space-3);
+    font-size: var(--blai-font-11);
 }
 
 #blai-purifier-popup .blai-home-card {

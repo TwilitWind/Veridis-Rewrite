@@ -114,8 +114,8 @@ export function bindEvents() {
 
     const syncComposerButtonToggle = () => {
         syncToggleState('#blai-composer-button-toggle', settings.showComposerAiRewriteButton === true, {
-            onTitle: '关闭 AI改写快捷键',
-            offTitle: '开启 AI改写快捷键',
+            onTitle: '关闭 AI 改写快捷键',
+            offTitle: '开启 AI 改写快捷键',
             ariaLabel: true,
         });
     };

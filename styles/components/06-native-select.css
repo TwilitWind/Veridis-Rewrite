@@ -42,7 +42,7 @@
 }
 
 .blai-native-select-trigger:hover {
-    border-color: color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
+    border-color: color-mix(in srgb, var(--blai-border-highlight) 40%, var(--border-color));
 }
 
 .blai-native-select-trigger.is-empty .blai-native-select-label {

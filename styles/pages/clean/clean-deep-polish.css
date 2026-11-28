@@ -154,37 +154,6 @@
     }
 }
 
-/* 真机手机视口：顶栏只留列表入口 + 筛选，条目标题与两组导航都移到正文下方细条。
-   桌面窄弹窗仍走容器查询里的间距收紧，不切到手机布局。 */
-@media (max-width: 600px) {
-    #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing .blai-deep-clean-preview-item-nav,
-    #blai-deep-clean-workspace .blai-deep-clean-preview-header .blai-deep-clean-preview-entry-bar {
-        display: none;
-    }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-toolbar {
-        flex-wrap: wrap;
-        gap: var(--blai-space-4);
-        padding: var(--blai-space-6) var(--blai-space-12);
-    }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-toolbar .blai-deep-clean-preview-entry-bar {
-        display: flex;
-        flex: 1 1 100%;
-    }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip {
-        margin-left: 0;
-        width: 100%;
-        justify-content: space-between;
-        gap: var(--blai-space-6);
-    }
-
-    #blai-deep-clean-workspace .blai-deep-clean-preview-nav-strip .blai-deep-clean-preview-item-nav {
-        display: inline-flex;
-    }
-}
-
 /* 320~360px 极窄屏：两组左右箭头与「条目 N/M」标签都保留，只收紧几何。 */
 @container (max-width: 360px) {
     #blai-deep-clean-workspace .blai-deep-clean-preview-bar-trailing {

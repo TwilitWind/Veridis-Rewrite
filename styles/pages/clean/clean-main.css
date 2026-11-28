@@ -4,7 +4,7 @@
 #blai-deep-clean-workspace .blai-diff-full-modified:not(.blai-deep-clean-review-modified) {
     padding: var(--blai-space-12) var(--blai-space-14);
     background: var(--bg-surface);
-    border-left: 4px solid var(--accent-color);
+    border-left: 4px solid var(--blai-border-highlight);
     border-radius: var(--blai-radius-6);
 }
 
@@ -139,7 +139,7 @@
 
 /* 选中态：边框与文字用主题关键色，底色是同一关键色的半透明浅层 */
 #blai-purifier-popup .blai-clean-mode-card.is-active {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     background: color-mix(in srgb, var(--accent-color) 12%, transparent);
     color: var(--accent-ink);
 }

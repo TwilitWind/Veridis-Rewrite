@@ -13,8 +13,9 @@
     min-width: 0;
     display: grid;
     gap: 0;
-    /* 顶栏只压留白不压字号：上下留白 4px/0，控件高度仍按 30px 保证可点。 */
-    padding: var(--blai-space-4) clamp(var(--blai-space-16), 2.2vw, var(--blai-space-26)) 0;
+    /* 顶栏只压留白不压字号：上下留白 4px/0，控件高度仍按 30px 保证可点。
+       左右与下方规则卡的 --blai-canvas-pad 同线，避免顶栏文字比卡片内缩一截。 */
+    padding: var(--blai-space-4) var(--blai-canvas-pad) 0;
     border: 0;
     border-radius: 0;
     background: var(--bg-surface);
@@ -97,6 +98,12 @@
 #blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions {
     margin-left: auto;
     flex-wrap: wrap;
+}
+
+/* 行二最后一个按钮的文字要贴到右边界，与行一统计文字右对齐；
+   只去掉末位按钮的右内边距，其余按钮仍保持左右对称。 */
+#blai-purifier-popup .blai-home-topbar .blai-home-toolbar-actions > :last-child {
+    padding-right: 0;
 }
 
 @media (max-width: 1120px) {

@@ -413,7 +413,7 @@
 }
 
 #blai-purifier-popup.blai-app-shell .field.blai-proxy-field.is-active {
-    border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color) 58%);
+    border-color: color-mix(in srgb, var(--blai-border-highlight) 42%, var(--border-color) 58%);
     background: color-mix(in srgb, var(--accent-color) 14%, var(--bg-surface) 86%);
 }
 

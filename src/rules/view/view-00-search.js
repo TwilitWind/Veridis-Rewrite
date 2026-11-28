@@ -39,7 +39,8 @@ function buildRuleSearchHaystack(sub = {}) {
     const mode = sub.mode || 'text';
     const targets = Array.isArray(sub.targets) ? sub.targets.join(mode === 'text' ? ' ' : '\n') : '';
     const replacements = Array.isArray(sub.replacements) ? sub.replacements.join('\n') : '';
-    return `${targets}\n${replacements}`.toLowerCase();
+    const remark = String(sub.remark || '');
+    return `${targets}\n${replacements}\n${remark}`.toLowerCase();
 }
 
 export function getRegexReplacementEditIndex() {
@@ -133,9 +134,9 @@ export function toggleRuleEditFilterMenu() {
 
 export function getRuleSearchScopeEmptyHint() {
     const scope = rulesUiState.ruleSearchScope || 'all';
-    if (scope === 'preset') return '当前只在当前规则集的规则分组里查找';
-    if (scope === 'group') return '当前只在预设分组的名称里查找';
-    return '当前搜索分组名称、查找词与替换词';
+    if (scope === 'rule' || scope === 'preset') return '当前只在规则条目的查找词、替换词与备注里查找';
+    if (scope === 'group') return '当前只在分组名称里查找';
+    return '当前搜索分组名称、查找词、替换词与备注';
 }
 
 export function syncRuleSearchScopeUi() {
@@ -242,8 +243,9 @@ export function buildRuleSearchResults(keyword, scope = 'all') {
 
     const { extension_settings } = getAppContext();
     const rules = extension_settings?.[extensionName]?.rules || [];
-    const searchGroups = scope !== 'preset';
-    const searchEntries = scope !== 'group';
+    const normalizedScope = scope === 'preset' ? 'rule' : scope;
+    const searchGroups = normalizedScope !== 'rule';
+    const searchEntries = normalizedScope !== 'group';
     const results = [];
 
     rules.forEach((rule, ruleIndex) => {
@@ -356,6 +358,8 @@ export function resetRuleSearchState() {
     rulesUiState.ruleSearchDraftKeyword = '';
     rulesUiState.ruleSearchHasSearched = false;
     rulesUiState.ruleSearchExpandedMenuKey = '';
+    rulesUiState.ruleSearchHistorySessionOpen = false;
+    rulesUiState.ruleSearchLastInputAt = 0;
     clearRuleSearchEditFlow();
 }
 
@@ -395,11 +399,14 @@ export function hydrateRuleSearchHistory() {
     return rulesUiState.ruleSearchHistory;
 }
 
-export function pushRuleSearchHistory(keyword) {
+export function pushRuleSearchHistory(keyword, options = {}) {
+    const { replaceLatest = false } = options;
     const nextKeyword = String(keyword || '').trim();
     if (!nextKeyword) return;
     const current = normalizeRuleSearchHistory(rulesUiState.ruleSearchHistory);
-    rulesUiState.ruleSearchHistory = [nextKeyword, ...current.filter((item) => item !== nextKeyword)]
+    // 同一轮输入的中间态只替换刚写入的那条，不新增历史项。
+    const base = replaceLatest ? current.slice(1) : current;
+    rulesUiState.ruleSearchHistory = [nextKeyword, ...base.filter((item) => item !== nextKeyword)]
         .slice(0, RULE_SEARCH_HISTORY_LIMIT);
     writeStoredRuleSearchHistory(rulesUiState.ruleSearchHistory);
 }

@@ -1,4 +1,5 @@
 # 临时与验证产物（不进版本库）
+dist/
 tmp/
 test/tmp/
 dev/

@@ -1,6 +1,6 @@
 /* 净化页标签列表、分组开关、下拉菜单。 */
 
-/* 跳过用户输入 / 保护人设描述两行的状态文字只供读屏，视觉隐藏。 */
+/* 跳过用户输入 / 保护用户人设两行的状态文字只供读屏，视觉隐藏。 */
 #blai-purifier-popup .blai-clean-switch .blai-switch-state {
     position: absolute;
     width: var(--blai-size-1);
@@ -11,7 +11,7 @@
 }
 
 #blai-purifier-popup .blai-clean-group-switch:focus-visible .blai-clean-switch-track, #blai-purifier-popup .blai-clean-switch:focus-visible .blai-clean-switch-track, #blai-purifier-popup .blai-clean-tag-switch input:focus-visible + .blai-clean-switch-track, #blai-purifier-popup .blai-clean-checkbox-switch input:focus-visible + .blai-clean-switch-track {
-    outline: var(--blai-border-2) solid color-mix(in srgb, var(--accent-color) 58%, transparent);
+    outline: var(--blai-border-2) solid color-mix(in srgb, var(--blai-border-highlight) 58%, transparent);
     outline-offset: var(--blai-focus-offset);
 }
 
@@ -321,7 +321,7 @@
     grid-template-columns: 17px minmax(0, 1fr);
     align-items: start;
     gap: var(--blai-space-8);
-    border: var(--blai-border-1) solid color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+    border: var(--blai-border-1) solid color-mix(in srgb, var(--blai-border-highlight) 38%, var(--border-color));
     border-radius: var(--blai-radius-7);
     background: color-mix(in srgb, var(--accent-color) 9%, transparent);
     color: var(--accent-ink);
@@ -346,7 +346,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--blai-space-8);
-    border: var(--blai-border-1) solid var(--accent-color);
+    border: var(--blai-border-1) solid var(--blai-border-highlight);
     border-radius: var(--blai-radius-sm);
     background: var(--accent-color);
     /* 实心强调块上的字必须用 accent-contrast：自动主题下 accent-ink 可能是浅灰，压在强调色底上读不清。 */
@@ -368,7 +368,7 @@
     text-align: center;
 }
 
-/* 手机端「启动深度净化」按钮收紧：高度从 38px 收到 32px、上边距缩小。 */
+/* 手机端「启动清理」按钮收紧：高度从 38px 收到 32px、上边距缩小。 */
 @media (max-width: 600px) {
 #blai-purifier-popup .blai-clean-danger-button {
     min-height: var(--blai-size-32);

@@ -43,7 +43,7 @@
 | `planning.js` / `generation.js` / `response.js` | 提示词渲染与分组、`generateRaw` 封装与错误分类、返回结构校验 |
 | `additionalParameters.js` | `parseYamlObject` / `parseYamlList` / `buildAdditionalApiParams` / `hasAdditionalParameters` |
 | `apply.js` | `applyAcceptedRewrites`、`applyProgramFallbackRewrites` |
-| `commentProtection.js` | XML 注释范围不参与匹配 |
+| `commentProtection.js` | XML 注释与 html 代码块范围不参与匹配 |
 | `debug.js` / `debugStore.js` / `debugView.js` / `communicationMonitor.js` | `debug.js` 对外入口（记录事件、导出文本）；`debugStore.js` 管常量、脱敏、localStorage 读写与事件合并（普通 100 条、关键 160 条）；`debugView.js` 中文标签表与时间线排版；`communicationMonitor.js` 通信记录（最近 10 次）。反馈页三面板数据源 |
 | `composerButton.js` / `settingsEvents.js` | 输入框快捷按钮注入、AI 页事件与两开关联动 |
 

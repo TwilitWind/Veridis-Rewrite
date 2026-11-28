@@ -37,7 +37,7 @@ function onTourResize() {
     try {
         positionActiveTour();
     } catch (error) {
-        tourError(`${activeTour?.kind === 'deep-clean' ? '深度净化' : 'Veridis Rewrite'} 导览无法继续`, error);
+        tourError(`${activeTour?.kind === 'deep-clean' ? '深度清理' : 'Veridis Rewrite'} 导览无法继续`, error);
     }
 }
 
@@ -179,7 +179,7 @@ export function onTourClick(event) {
         if (action === 'next') { activeTour.index += 1; renderActiveTourStep(); return; }
         if (action === 'start') { startTour(activeTour.kind, activeTour.launcher, true); return; }
     } catch (error) {
-        tourError(`${activeTour?.kind === 'deep-clean' ? '深度净化' : 'Veridis Rewrite'} 导览无法继续`, error);
+        tourError(`${activeTour?.kind === 'deep-clean' ? '深度清理' : 'Veridis Rewrite'} 导览无法继续`, error);
         return;
     }
     if (action === 'finish' || action === 'skip') { finishOrSkip(); return; }
@@ -203,7 +203,7 @@ export function offerFirstUse(kind) {
         if (guidedTourSeen(kind) === true || activeTour) return;
         showWelcome(kind, kind === 'main' ? document.getElementById('blai-tour-help') : document.getElementById('blai-deep-clean-tour-help'));
     } catch (error) {
-        tourError(`${kind === 'main' ? 'Veridis Rewrite' : '深度净化'} 首次导览无法显示`, error);
+        tourError(`${kind === 'main' ? 'Veridis Rewrite' : '深度清理'} 首次导览无法显示`, error);
     }
 }
 
@@ -216,7 +216,7 @@ export function bindTourEvents() {
         try { startTour('main', this, false); } catch (error) { tourError('Veridis Rewrite 界面导览无法开始', error); }
     });
     $(document).off('click', '#blai-deep-clean-tour-help').on('click', '#blai-deep-clean-tour-help', function() {
-        try { startTour('deep-clean', this, false); } catch (error) { tourError('深度净化导览无法开始', error); }
+        try { startTour('deep-clean', this, false); } catch (error) { tourError('深度清理导览无法开始', error); }
     });
 }
 

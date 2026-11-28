@@ -22,7 +22,7 @@
 
 /* 聚焦态用内阴影描边，避免再写一条高优先级声明去压基类的 border 简写。 */
 #blai-purifier-popup #blai-diff-limit-input:focus {
-    box-shadow: var(--blai-ring-inset) var(--accent-color) !important;
+    box-shadow: var(--blai-ring-inset) var(--blai-border-highlight) !important;
     outline: none !important;
 }
 
@@ -171,7 +171,7 @@
 }
 
 #blai-purifier-popup .blai-tools-secondary-button:hover {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
 }
 
 #blai-purifier-popup .blai-tools-secondary-button[hidden] {
@@ -186,7 +186,7 @@
 #blai-purifier-popup .blai-tools-primary-button {
     min-height: var(--blai-size-36);
     padding: var(--blai-btn-pad);
-    border: var(--blai-border-1) solid var(--accent-color);
+    border: var(--blai-border-1) solid var(--blai-border-highlight);
     border-radius: var(--blai-radius-sm);
     background: var(--accent-color);
     color: var(--accent-contrast);
@@ -311,7 +311,7 @@
 }
 
 #blai-purifier-popup .blai-tools-header-action:hover {
-    border-color: var(--accent-color);
+    border-color: var(--blai-border-highlight);
     color: var(--accent-ink);
 }
 
@@ -455,7 +455,7 @@
 #blai-binding-history-modal .blai-binding-history-actions .blai-primary-btn {
     flex: 0 0 auto !important;
     min-width: var(--blai-size-96);
-    padding: var(--blai-modal-btn-pad) !important;
-    min-height: var(--blai-modal-btn-height);
+    padding: var(--blai-dialog-btn-pad, var(--blai-modal-btn-pad)) !important;
+    min-height: var(--blai-dialog-btn-height, var(--blai-modal-btn-height));
     font-size: var(--blai-modal-btn-font-size) !important;
 }

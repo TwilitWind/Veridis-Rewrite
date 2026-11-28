@@ -1,26 +1,43 @@
 const xmlCommentPattern = /<!--[\s\S]*?-->/g;
+// html / HTML 等大小写写法都算；整块连围栏标记一起保护，内部换行原样保留。
+const htmlFencePattern = /```html\b[\s\S]*?```/gi;
 
-export function collectXmlCommentRanges(text) {
-    const source = String(text ?? '');
+function collectPatternRanges(source, pattern) {
     const ranges = [];
-    xmlCommentPattern.lastIndex = 0;
+    pattern.lastIndex = 0;
     let match;
-    while ((match = xmlCommentPattern.exec(source)) !== null) {
+    while ((match = pattern.exec(source)) !== null) {
         const start = match.index;
         const end = start + match[0].length;
         ranges.push({ start, end });
-        if (match[0].length === 0) xmlCommentPattern.lastIndex += 1;
+        if (match[0].length === 0) pattern.lastIndex += 1;
     }
-    xmlCommentPattern.lastIndex = 0;
+    pattern.lastIndex = 0;
     return ranges;
 }
 
-/** AI 改写开关是否同时保护 HTML/XML 注释；规则引擎与 AI 链路共用同一判定。 */
+/** 收集注释与 html 代码块的原文坐标，重叠区间合并后按起点排序。 */
+export function collectXmlCommentRanges(text) {
+    const source = String(text ?? '');
+    const ranges = [
+        ...collectPatternRanges(source, xmlCommentPattern),
+        ...collectPatternRanges(source, htmlFencePattern),
+    ].sort((a, b) => a.start - b.start || b.end - a.end);
+    const merged = [];
+    for (const range of ranges) {
+        const last = merged[merged.length - 1];
+        if (last && range.start <= last.end) last.end = Math.max(last.end, range.end);
+        else merged.push({ ...range });
+    }
+    return merged;
+}
+
+/** AI 改写开关是否同时保护注释与 html 代码块；规则引擎与 AI 链路共用同一判定。 */
 export function shouldProtectXmlComments(settings = {}) {
     return settings?.aiRewrite?.protectXmlComments === true;
 }
 
-/** 按开关返回需要跳过的注释范围（原文坐标）；关闭时返回空数组。 */
+/** 按开关返回需要跳过的注释与 html 代码块范围（原文坐标）；关闭时返回空数组。 */
 export function getXmlCommentProtectRanges(text, protect = false) {
     return protect === true ? collectXmlCommentRanges(text) : [];
 }
