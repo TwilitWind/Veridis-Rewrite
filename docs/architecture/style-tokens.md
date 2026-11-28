@@ -1,12 +1,12 @@
 # 词汇映射 · 样式体系
 
-令牌分区、界面令牌落点、反馈页高亮约束与 `!important` 例外登记。构建命令见 [DEVELOPMENT.md](../../DEVELOPMENT.md)，样式文件职责见 [change-map.md](change-map.md)「样式文件职责速查」。
+令牌分区、界面令牌落点、反馈页高亮约束与 `!important` 例外登记。构建工具细节见源码仓库 `DEVELOPMENT.md`（不随发布包），样式文件职责见 [change-map.md](change-map.md)「样式文件职责速查」。
 
 ## 五、样式体系
 
 `styles/` 是唯一真源，五层。`styles/ORDER.json` 的 `order` 数组即层叠顺序：同特异性靠先后决胜，**调顺序会改视觉结果**，故顺序写在 JSON 而非脚本；新增分文件只改 ORDER.json。
 
-审计入口、调试与发布流程见 [DEVELOPMENT.md](../../DEVELOPMENT.md)。
+审计入口、调试与发布流程见源码仓库 `DEVELOPMENT.md`（不随发布包）。
 
 | 目录 | 职责 | 约束 |
 | --- | --- | --- |
@@ -23,7 +23,7 @@
 
 ### 界面令牌落点
 
-项目偏好与术语见根目录 `DESIGN.md`；本节只记插件令牌与坑。
+项目偏好与术语见源码仓库 `DESIGN.md`（不随发布包）；本节只记插件令牌与坑。
 
 - 颜色两层：`--bg-base`（画布）→ `--bg-surface`（卡片）。输入控件底色 `--blai-input-bg` 取 `--bg-surface`，靠 1px `--border-color` 表达可输入；跟随酒馆主题时 `--border-color` 取宿主正文色 `--SmartThemeBodyColor` 并混到 20% 不透明度（`color-mix` 混透明），不依赖宿主的 `BorderColor`，亮色与暗色主题都得到同色系低对比描边。结构分隔线另走 `--blai-border-soft`（低对比半透明），不与控件描边共用。滚动条与内容之间由 `--blai-scrollbar-gutter` 预留间距；下拉菜单 `--blai-dropdown-pad` 右侧也叠加该值，避免拇指贴住选项。粗细走 `--blai-scrollbar-size`（桌面 7px / 手机 5px），portal 菜单挂在 body 上，令牌由 `popover.js` 从锚点复制。手机端高亮只保留聚焦/按下/选中态的强调色内描边，触摸模拟触发的 hover 不产生强调色高亮；自绘下拉触发器例外，hover 时仍保留自身的默认描边与底色，避免边框消失。滑动开关轨道与滑块全用 CSS 绘制；开关按钮与同行铅笔 / 竖三点同规格（`32×32`），开启态与同行图标同色，间距走 `--blai-switch-gap`。三条容易踩的坑（宿主 FA 规则盖字号、checked 颜色被页面级规则压住、隐藏 checkbox 热区要与可见按钮同尺寸）与具体写法见 `components/02-controls.css`、`pages/clean/clean-main.css` 的相邻注释。盾牌图标只允许出现在酒馆页注入的人设保护按钮上，面板内的人设开关不得改写其 `<i>`。
 - 焦点态用 `box-shadow: inset 0 0 0 1px var(--accent-color) !important`，不占位不抖动；hover 不加描边。禁给输入框写 `transparent`（第三方主题会注入带 `!important` 的底色，闸门会拦）。主题对裸标签有强声明时把 `--ui-color-sec` 重定向到 `--blai-input-bg`，不新增 `!important`；副作用是边框也读该变量，反馈页三个裸标签用同色 inset 补可见边框。`.pages` / `.page-panel` 保持透明让 `--bg-base` 透上来；日间用实色，不用半透明叠灰底（发脏）。
@@ -46,7 +46,7 @@
 
 ### !important 例外登记
 
-共享脚本 `code-audit/build-check.mjs` 按「相对基线累计增量」给 5 处预算：`+1~+5` 只在输出里记一行 info，不逐条 warn；超过 5 直接拦截。只有被拦截并确认确实无法用特异性 / token / `@layer` 解决时，才在下表补一行，然后同步更新 `styles/quality-baseline.json` 的预算。
+构建闸门按「相对基线累计增量」给 5 处预算：`+1~+5` 只在输出里记一行 info，不逐条 warn；超过 5 直接拦截。只有被拦截并确认确实无法用特异性 / token / `@layer` 解决时，才在下表补一行，然后同步更新 `styles/quality-baseline.json` 的预算。
 
 | 文件 | 选择器 / 属性 | 对抗对象 | 不能用 token / 特异性的原因 | 登记日期 |
 | --- | --- | --- | --- | --- |

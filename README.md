@@ -2,7 +2,7 @@
 
 SillyTavern 的文本净化与局部 AI 改写扩展。用规则直接替换或删除不想保留的词句；需要时只让 AI 改写被规则命中的句子。附带规则预设、范围保护、净化对比、深度清理、更新检查与匿名反馈。
 
-文档分工：本文件面向使用者；代码结构与实现约束见 [ARCHITECTURE.md](ARCHITECTURE.md)，构建、审计、调试与发布见 [DEVELOPMENT.md](DEVELOPMENT.md)；版本差异见 [CHANGELOG.md](CHANGELOG.md)。
+文档分工：本文件面向使用者；代码结构与实现约束见 [ARCHITECTURE.md](ARCHITECTURE.md)，版本差异见 [CHANGELOG.md](CHANGELOG.md)。构建、审计、调试与发布的工具细节见源码仓库的 `DEVELOPMENT.md`（不随发布包）。
 
 ---
 

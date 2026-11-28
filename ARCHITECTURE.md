@@ -1,6 +1,6 @@
 # 词汇映射 架构说明（开发者）
 
-面向改代码的人：先建立鸟瞰与边界，再按索引进专项文档。本文件只写不常变的东西（运行形态、初始化链、模块分层、边界与不变量）；机制细节、令牌清单与改动落点已下沉到 [docs/architecture/](docs/architecture/)。安装与使用见 [README.md](README.md)，构建与闸门见 [DEVELOPMENT.md](DEVELOPMENT.md)，版本差异见 [CHANGELOG.md](CHANGELOG.md)。
+面向改代码的人：先建立鸟瞰与边界，再按索引进专项文档。本文件只写不常变的东西（运行形态、初始化链、模块分层、边界与不变量）；机制细节、令牌清单与改动落点已下沉到 [docs/architecture/](docs/architecture/)。安装与使用见 [README.md](README.md)，版本差异见 [CHANGELOG.md](CHANGELOG.md)。构建流程与开发工具见源码仓库的 `DEVELOPMENT.md`（不随发布包）。
 
 ## 一、运行形态
 
@@ -9,14 +9,14 @@ SillyTavern 扩展，无打包器、无 npm 依赖。`manifest.json` 只声明�
 | 产物 | 来源 | 说明 |
 | --- | --- | --- |
 | `index.js` | 手写 | ESM 入口，直接 `import` `src/` 模块，源码即产物 |
-| `style.css` | 共享脚本 `code-audit/build-css.mjs` 按 `styles/ORDER.json` 拼接压缩 `styles/` 分文件 | 产物勿手改，附 `style.css.map` |
+| `style.css` | 按 `styles/ORDER.json` 拼接压缩 `styles/` 分文件生成 | 产物勿手改 |
 
-写产物前做 token 级等价校验（源码与产物 token 序列逐项相同），不一致即报错、不写文件。构建闸门与命令见 [DEVELOPMENT.md](DEVELOPMENT.md)。
+写产物前做 token 级等价校验（源码与产物 token 序列逐项相同），不一致即报错、不写文件。构建流程由维护者执行，说明见源码仓库的 `DEVELOPMENT.md`。
 
 四条硬约束：
 
 1. `src/` `styles/` `templates/` `vendor/` 必须随扩展安装；只拷两个产物会因模块加载失败不启动。
-2. 样式只改 `styles/` 分文件；改完按 [DEVELOPMENT.md](DEVELOPMENT.md) 跑共享脚本库的 `build-css.mjs` → `build-check.mjs`。
+2. 样式只改 `styles/` 分文件；改完由维护者按源码仓库 `DEVELOPMENT.md` 的流程执行构建与闸门。
 3. 改完刷新酒馆页面：ESM 与 CSS 都走浏览器缓存。
 4. 不引入打包器；校验靠 `node --check` 与真机刷新核对。
 
@@ -26,7 +26,7 @@ SillyTavern 扩展，无打包器、无 npm 依赖。`manifest.json` 只声明�
 Veridis-Rewrite/
 ├── manifest.json           display_name「词汇映射」/ js index.js / css style.css / version 3.5 / loading_order 110
 ├── index.js                入口：读宿主模块 → 注入 appContext → 依次初始化
-├── style.css(.map)         构建产物，勿手改
+├── style.css               构建产物，勿手改
 ├── src/                    业务模块
 ├── styles/                 样式唯一真源：tokens/ base/ components/ layouts/ pages/
 ├── templates/          工作台 DOM 分片：purifier-shell / -page-* / -modals / -diff / -forms
@@ -35,7 +35,7 @@ Veridis-Rewrite/
 └── vendor/                 pinyin-pro、sql.js（本地化）
 ```
 
-构建与自查脚本不在本仓库：`build-css.mjs`、`build-check.mjs`、`project-audit.mjs` 的实现统一放在共享脚本库 `sillytavern-extension-dev/scripts/code-audit/`，调用时传入本仓库根目录作为参数。
+构建、闸门与自查脚本属于维护者开发工具，不随发布包提供；实现与调用方式见源码仓库的 `DEVELOPMENT.md`。
 
 ## 二、初始化链
 

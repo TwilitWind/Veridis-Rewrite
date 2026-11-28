@@ -17,7 +17,6 @@ const ROOT_FILES = [
     'LICENSE',
     'README.md',
     'ARCHITECTURE.md',
-    'DEVELOPMENT.md',
     'CHANGELOG.md',
 ];
 const TREE_DIRS = ['src', 'templates', 'vendor', 'images', 'docs/architecture'];
@@ -52,6 +51,26 @@ function collect() {
         walk(base);
     }
     return files.sort((a, b) => a.rel.localeCompare(b.rel));
+}
+
+// 随包文档边界：只写结论，不写插件目录外的脚本/工具路径与本机路径。
+// 这类细节只属于源码开发文档 DEVELOPMENT.md（不随包）。打包前机械校验，写错直接 fail。
+const EXTERNAL_TOOL_PATTERN = /(?:code-audit|sillytavern-extension-dev|build-css\.mjs|build-check\.mjs|project-audit\.mjs|pre-commit-size\.mjs|[A-Za-z]:\\|共享脚本库)/i;
+function assertPackageDocsClean(files) {
+    const offenders = [];
+    for (const { full, rel } of files) {
+        if (!rel.endsWith('.md')) continue;
+        fs.readFileSync(full, 'utf8').split(/\r?\n/).forEach((line, i) => {
+            if (EXTERNAL_TOOL_PATTERN.test(line)) offenders.push(`  ${rel}:${i + 1}  ${line.trim()}`);
+        });
+    }
+    if (offenders.length) {
+        throw new Error(
+            '随包文档出现插件目录外的脚本/工具路径，已拦截打包。\n' +
+            '这些细节只写进源码开发文档 DEVELOPMENT.md（不随发布包），随包文档只写结论。\n' +
+            offenders.join('\n')
+        );
+    }
 }
 
 // 最小 ZIP 写入器（store 模式，不压缩）：Node 内置 zlib.crc32，无需第三方库。
@@ -115,6 +134,7 @@ function writeZip(files, target) {
 }
 
 const files = collect();
+assertPackageDocsClean(files);
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
 const version = String(manifest.version || 'dev').replace(/[^\w.-]/g, '_');
 const target = path.join(outDir, `Veridis-Rewrite-${version}.zip`);

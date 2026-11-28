@@ -2,7 +2,7 @@
 
 面向改代码的人：环境、构建、闸门、提交与发布。运行形态与模块职责见 [ARCHITECTURE.md](ARCHITECTURE.md)，使用者说明见 [README.md](README.md)，版本差异见 [CHANGELOG.md](CHANGELOG.md)。
 
-本文档随插件发布；只写构建与闸门的可移植步骤，本机路径、调试端口与 profile 按各自环境处理。
+本文档是源码开发文档，不随发布包，所以可以完整记录构建、闸门、自查、调试与发布的工具和命令；路径按各自环境处理。随包文档只写结论，不写具体脚本路径。
 
 ## 环境
 
@@ -52,7 +52,7 @@ node "$SCRIPTS/project-audit.mjs" . --all  # 看全部线索
 
 写入 GitHub（push、推 tag、建仓改名、API 写入、网页上传）需用户对当次版本明确同意；本地 `git add` / `git commit` 不需要。流程：本地完成并验证 → 给出仓库与分支、commit 标题、改动摘要、版本变化与不可逆操作 → 等明确同意 → 推送后校验远端与线上 `manifest.json`。
 
-随包文件清单只含 `manifest.json`、声明的 js/css、被 import 的模块、`README.md` / `ARCHITECTURE.md` / `DEVELOPMENT.md` / `CHANGELOG.md` / `LICENSE`、`docs/architecture/` 专项文档与静态资源；构建脚本、钩子脚本、临时目录、截图、`DESIGN.md`、`AGENTS.md` 不随包。清单由仓库根目录的 `build-release.mjs` 统一执行，零依赖：
+随包文件清单只含 `manifest.json`、声明的 js/css、被 import 的模块、`README.md` / `ARCHITECTURE.md` / `CHANGELOG.md` / `LICENSE`、`docs/architecture/` 专项文档与静态资源；**本文档**、构建脚本、钩子脚本、临时目录、截图、`DESIGN.md`、`AGENTS.md` 不随包。清单由仓库根目录的 `build-release.mjs` 统一执行，零依赖，并在打包前机械校验随包文档不得出现外部脚本路径：
 
 ```bash
 node build-release.mjs          # 默认输出到 ./dist/Veridis-Rewrite-<version>.zip
